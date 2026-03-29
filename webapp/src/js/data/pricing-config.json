@@ -1,0 +1,1190 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "PRD Instant RFQ Pricing Configuration — Technology-driven hierarchy. All values are human-adjustable. Prices in USD.",
+    "lastUpdated": "2026-03-29",
+    "notes": "Price indices are relative multipliers (1.0 = baseline). Tooling costs are one-off. Setup fees are per-run. All weights in g/cm³."
+  },
+  "technologies": {
+    "cnc": {
+      "label": "CNC Machining",
+      "description": "Subtractive manufacturing — milling, turning, drilling from solid stock",
+      "baseCostPerCm3": 0.45,
+      "setupFee": 75,
+      "hasTooling": false,
+      "toolingCost": null,
+      "defaultLeadTimeDays": {
+        "economy": 30,
+        "standard": 15,
+        "express": 7,
+        "rush": 3
+      },
+      "materials": {
+        "al_6061_t6": {
+          "label": "Aluminium 6061-T6",
+          "priceIndex": 1.0,
+          "density": 2.70
+        },
+        "al_7075_t6": {
+          "label": "Aluminium 7075-T6",
+          "priceIndex": 1.25,
+          "density": 2.81
+        },
+        "al_5052": {
+          "label": "Aluminium 5052",
+          "priceIndex": 1.05,
+          "density": 2.68
+        },
+        "al_2024": {
+          "label": "Aluminium 2024",
+          "priceIndex": 1.15,
+          "density": 2.78
+        },
+        "ss_304": {
+          "label": "Stainless Steel 304",
+          "priceIndex": 1.65,
+          "density": 8.00
+        },
+        "ss_316": {
+          "label": "Stainless Steel 316",
+          "priceIndex": 1.85,
+          "density": 8.00
+        },
+        "steel_1018": {
+          "label": "Steel 1018 (Mild)",
+          "priceIndex": 1.10,
+          "density": 7.87
+        },
+        "steel_4140": {
+          "label": "Steel 4140",
+          "priceIndex": 1.35,
+          "density": 7.85
+        },
+        "steel_tool_d2": {
+          "label": "Tool Steel D2",
+          "priceIndex": 2.10,
+          "density": 7.70
+        },
+        "brass_c360": {
+          "label": "Brass C360",
+          "priceIndex": 1.45,
+          "density": 8.50
+        },
+        "copper_c101": {
+          "label": "Copper C101",
+          "priceIndex": 1.80,
+          "density": 8.94
+        },
+        "titanium_gr2": {
+          "label": "Titanium Grade 2",
+          "priceIndex": 3.50,
+          "density": 4.51
+        },
+        "titanium_gr5": {
+          "label": "Titanium Grade 5 (Ti6Al4V)",
+          "priceIndex": 4.00,
+          "density": 4.43
+        },
+        "abs": {
+          "label": "ABS (Plastic)",
+          "priceIndex": 0.65,
+          "density": 1.04
+        },
+        "pom_delrin": {
+          "label": "POM / Delrin",
+          "priceIndex": 0.75,
+          "density": 1.41
+        },
+        "nylon_pa6": {
+          "label": "Nylon PA6",
+          "priceIndex": 0.80,
+          "density": 1.14
+        },
+        "nylon_pa66": {
+          "label": "Nylon PA66",
+          "priceIndex": 0.85,
+          "density": 1.14
+        },
+        "pc_polycarbonate": {
+          "label": "Polycarbonate (PC)",
+          "priceIndex": 0.85,
+          "density": 1.20
+        },
+        "peek": {
+          "label": "PEEK",
+          "priceIndex": 8.00,
+          "density": 1.30
+        },
+        "ptfe": {
+          "label": "PTFE (Teflon)",
+          "priceIndex": 2.20,
+          "density": 2.20
+        },
+        "hdpe": {
+          "label": "HDPE",
+          "priceIndex": 0.50,
+          "density": 0.95
+        },
+        "acrylic_pmma": {
+          "label": "Acrylic (PMMA)",
+          "priceIndex": 0.70,
+          "density": 1.18
+        }
+      },
+      "surfaceFinishes": {
+        "as-machined": {
+          "label": "As Machined",
+          "costPerCm2": 0.000
+        },
+        "bead-blast": {
+          "label": "Bead Blasted",
+          "costPerCm2": 0.005
+        },
+        "anodized": {
+          "label": "Anodized",
+          "costPerCm2": 0.012
+        },
+        "hard-anodized": {
+          "label": "Hard Anodized",
+          "costPerCm2": 0.018
+        },
+        "powder-coat": {
+          "label": "Powder Coated",
+          "costPerCm2": 0.010
+        },
+        "polished": {
+          "label": "Polished",
+          "costPerCm2": 0.020
+        },
+        "sandblast": {
+          "label": "Sandblasted",
+          "costPerCm2": 0.004
+        },
+        "electroplate": {
+          "label": "Electroplated",
+          "costPerCm2": 0.015
+        },
+        "passivation": {
+          "label": "Passivation",
+          "costPerCm2": 0.006
+        },
+        "brushed": {
+          "label": "Brushed",
+          "costPerCm2": 0.008
+        },
+        "custom": {
+          "label": "Custom",
+          "costPerCm2": 0.015
+        }
+      }
+    },
+    "injection": {
+      "label": "Injection Moulding",
+      "description": "High-volume plastic part production via mould/tooling injection",
+      "baseCostPerCm3": 0.08,
+      "setupFee": 350,
+      "hasTooling": true,
+      "tooling": {
+        "baseCost": 2500,
+        "costPerCm2SurfaceArea": 0.80,
+        "cavityMultiplier": {
+          "1": 1.0,
+          "2": 1.6,
+          "4": 2.4,
+          "8": 3.5
+        },
+        "steelGrade": {
+          "aluminium_prototype": {
+            "label": "Aluminium (Proto — 1k-10k shots)",
+            "multiplier": 0.45
+          },
+          "p20": {
+            "label": "P20 Steel (50k-200k shots)",
+            "multiplier": 1.0
+          },
+          "h13": {
+            "label": "H13 Steel (200k-500k shots)",
+            "multiplier": 1.45
+          },
+          "s136": {
+            "label": "S136 Stainless (500k+ shots)",
+            "multiplier": 1.85
+          }
+        }
+      },
+      "defaultLeadTimeDays": {
+        "economy": 45,
+        "standard": 25,
+        "express": 14,
+        "rush": 7
+      },
+      "materials": {
+        "abs": {
+          "label": "ABS",
+          "priceIndex": 1.0,
+          "density": 1.04
+        },
+        "abs_pc": {
+          "label": "ABS/PC Blend",
+          "priceIndex": 1.15,
+          "density": 1.10
+        },
+        "pp": {
+          "label": "Polypropylene (PP)",
+          "priceIndex": 0.85,
+          "density": 0.90
+        },
+        "pe_hdpe": {
+          "label": "HDPE",
+          "priceIndex": 0.80,
+          "density": 0.95
+        },
+        "pe_ldpe": {
+          "label": "LDPE",
+          "priceIndex": 0.75,
+          "density": 0.92
+        },
+        "pc": {
+          "label": "Polycarbonate (PC)",
+          "priceIndex": 1.30,
+          "density": 1.20
+        },
+        "pa6_nylon": {
+          "label": "Nylon PA6",
+          "priceIndex": 1.20,
+          "density": 1.14
+        },
+        "pa66_nylon": {
+          "label": "Nylon PA66",
+          "priceIndex": 1.30,
+          "density": 1.14
+        },
+        "pa66_gf30": {
+          "label": "Nylon PA66 + 30% GF",
+          "priceIndex": 1.50,
+          "density": 1.36
+        },
+        "pom": {
+          "label": "POM / Delrin",
+          "priceIndex": 1.15,
+          "density": 1.41
+        },
+        "pmma": {
+          "label": "Acrylic (PMMA)",
+          "priceIndex": 1.10,
+          "density": 1.18
+        },
+        "pet": {
+          "label": "PET",
+          "priceIndex": 0.95,
+          "density": 1.38
+        },
+        "pbt": {
+          "label": "PBT",
+          "priceIndex": 1.20,
+          "density": 1.31
+        },
+        "pbt_gf30": {
+          "label": "PBT + 30% GF",
+          "priceIndex": 1.40,
+          "density": 1.52
+        },
+        "tpu": {
+          "label": "TPU (Flexible)",
+          "priceIndex": 1.35,
+          "density": 1.12
+        },
+        "tpe": {
+          "label": "TPE (Thermoplastic Elastomer)",
+          "priceIndex": 1.25,
+          "density": 1.05
+        },
+        "pps": {
+          "label": "PPS",
+          "priceIndex": 2.80,
+          "density": 1.35
+        },
+        "peek": {
+          "label": "PEEK",
+          "priceIndex": 8.00,
+          "density": 1.30
+        },
+        "lcp": {
+          "label": "LCP",
+          "priceIndex": 3.50,
+          "density": 1.40
+        },
+        "silicone_lsr": {
+          "label": "Liquid Silicone Rubber (LSR)",
+          "priceIndex": 2.00,
+          "density": 1.10
+        }
+      },
+      "surfaceFinishes": {
+        "as-moulded": {
+          "label": "As Moulded (SPI-D)",
+          "costPerCm2": 0.000
+        },
+        "spi-b": {
+          "label": "Semi-Gloss (SPI-B)",
+          "costPerCm2": 0.004
+        },
+        "spi-a": {
+          "label": "High Gloss (SPI-A)",
+          "costPerCm2": 0.012
+        },
+        "textured-mt": {
+          "label": "Mold-Tech Texture",
+          "costPerCm2": 0.008
+        },
+        "painted": {
+          "label": "Painted",
+          "costPerCm2": 0.010
+        },
+        "pad-print": {
+          "label": "Pad Printed",
+          "costPerCm2": 0.006
+        },
+        "custom": {
+          "label": "Custom",
+          "costPerCm2": 0.015
+        }
+      }
+    },
+    "3dp": {
+      "label": "3D Printing",
+      "description": "Additive manufacturing — FDM, SLA, SLS, MJF, Metal Printing",
+      "baseCostPerCm3": 0.35,
+      "setupFee": 15,
+      "hasTooling": false,
+      "toolingCost": null,
+      "defaultLeadTimeDays": {
+        "economy": 14,
+        "standard": 7,
+        "express": 3,
+        "rush": 1
+      },
+      "materials": {
+        "pla": {
+          "label": "PLA (FDM)",
+          "priceIndex": 0.60,
+          "density": 1.24,
+          "tech": "FDM"
+        },
+        "abs_fdm": {
+          "label": "ABS (FDM)",
+          "priceIndex": 0.70,
+          "density": 1.04,
+          "tech": "FDM"
+        },
+        "petg": {
+          "label": "PETG (FDM)",
+          "priceIndex": 0.75,
+          "density": 1.27,
+          "tech": "FDM"
+        },
+        "asa": {
+          "label": "ASA (FDM)",
+          "priceIndex": 0.85,
+          "density": 1.07,
+          "tech": "FDM"
+        },
+        "nylon_fdm": {
+          "label": "Nylon (FDM)",
+          "priceIndex": 1.20,
+          "density": 1.14,
+          "tech": "FDM"
+        },
+        "pc_fdm": {
+          "label": "Polycarbonate (FDM)",
+          "priceIndex": 1.40,
+          "density": 1.20,
+          "tech": "FDM"
+        },
+        "tpu_fdm": {
+          "label": "TPU Flexible (FDM)",
+          "priceIndex": 1.30,
+          "density": 1.12,
+          "tech": "FDM"
+        },
+        "resin_standard": {
+          "label": "Standard Resin (SLA)",
+          "priceIndex": 1.00,
+          "density": 1.18,
+          "tech": "SLA"
+        },
+        "resin_tough": {
+          "label": "Tough Resin (SLA)",
+          "priceIndex": 1.35,
+          "density": 1.15,
+          "tech": "SLA"
+        },
+        "resin_flexible": {
+          "label": "Flexible Resin (SLA)",
+          "priceIndex": 1.50,
+          "density": 1.10,
+          "tech": "SLA"
+        },
+        "resin_dental": {
+          "label": "Dental Resin (SLA)",
+          "priceIndex": 2.00,
+          "density": 1.20,
+          "tech": "SLA"
+        },
+        "resin_castable": {
+          "label": "Castable Resin (SLA)",
+          "priceIndex": 1.80,
+          "density": 1.10,
+          "tech": "SLA"
+        },
+        "resin_clear": {
+          "label": "Clear Resin (SLA)",
+          "priceIndex": 1.40,
+          "density": 1.18,
+          "tech": "SLA"
+        },
+        "pa12_sls": {
+          "label": "PA12 Nylon (SLS)",
+          "priceIndex": 1.50,
+          "density": 1.01,
+          "tech": "SLS"
+        },
+        "pa11_sls": {
+          "label": "PA11 Nylon (SLS)",
+          "priceIndex": 1.70,
+          "density": 1.03,
+          "tech": "SLS"
+        },
+        "tpu_sls": {
+          "label": "TPU (SLS)",
+          "priceIndex": 2.00,
+          "density": 1.12,
+          "tech": "SLS"
+        },
+        "pa12_gf_sls": {
+          "label": "PA12 Glass-Filled (SLS)",
+          "priceIndex": 1.80,
+          "density": 1.22,
+          "tech": "SLS"
+        },
+        "pa12_mjf": {
+          "label": "PA12 Nylon (MJF)",
+          "priceIndex": 1.40,
+          "density": 1.01,
+          "tech": "MJF"
+        },
+        "pa11_mjf": {
+          "label": "PA11 Nylon (MJF)",
+          "priceIndex": 1.60,
+          "density": 1.03,
+          "tech": "MJF"
+        },
+        "tpu_mjf": {
+          "label": "TPU (MJF)",
+          "priceIndex": 1.90,
+          "density": 1.12,
+          "tech": "MJF"
+        },
+        "ss316l_metal": {
+          "label": "SS 316L (Metal SLM)",
+          "priceIndex": 6.00,
+          "density": 8.00,
+          "tech": "Metal"
+        },
+        "ti64_metal": {
+          "label": "Ti6Al4V (Metal SLM)",
+          "priceIndex": 10.0,
+          "density": 4.43,
+          "tech": "Metal"
+        },
+        "al_alsi10mg": {
+          "label": "AlSi10Mg (Metal SLM)",
+          "priceIndex": 7.50,
+          "density": 2.67,
+          "tech": "Metal"
+        },
+        "inconel_718": {
+          "label": "Inconel 718 (Metal SLM)",
+          "priceIndex": 12.0,
+          "density": 8.19,
+          "tech": "Metal"
+        }
+      },
+      "surfaceFinishes": {
+        "as-printed": {
+          "label": "As Printed",
+          "costPerCm2": 0.000
+        },
+        "sanded": {
+          "label": "Sanded / Smoothed",
+          "costPerCm2": 0.006
+        },
+        "vapor-smooth": {
+          "label": "Vapor Smoothed",
+          "costPerCm2": 0.010
+        },
+        "painted": {
+          "label": "Painted",
+          "costPerCm2": 0.012
+        },
+        "dyed": {
+          "label": "Dyed",
+          "costPerCm2": 0.005
+        },
+        "polished": {
+          "label": "Polished",
+          "costPerCm2": 0.018
+        },
+        "electroplated": {
+          "label": "Electroplated",
+          "costPerCm2": 0.020
+        },
+        "custom": {
+          "label": "Custom",
+          "costPerCm2": 0.015
+        }
+      }
+    },
+    "sheet": {
+      "label": "Sheet Metal",
+      "description": "Flat metal sheet forming — laser cutting, bending, punching, welding",
+      "baseCostPerCm3": 0.30,
+      "setupFee": 60,
+      "hasTooling": false,
+      "toolingCost": null,
+      "defaultLeadTimeDays": {
+        "economy": 25,
+        "standard": 12,
+        "express": 6,
+        "rush": 3
+      },
+      "materials": {
+        "al_5052": {
+          "label": "Aluminium 5052",
+          "priceIndex": 1.0,
+          "density": 2.68
+        },
+        "al_6061": {
+          "label": "Aluminium 6061",
+          "priceIndex": 1.10,
+          "density": 2.70
+        },
+        "steel_1008": {
+          "label": "Steel 1008 (Cold Rolled)",
+          "priceIndex": 0.80,
+          "density": 7.87
+        },
+        "steel_galv": {
+          "label": "Galvanized Steel",
+          "priceIndex": 0.90,
+          "density": 7.85
+        },
+        "ss_304": {
+          "label": "Stainless Steel 304",
+          "priceIndex": 1.60,
+          "density": 8.00
+        },
+        "ss_316": {
+          "label": "Stainless Steel 316",
+          "priceIndex": 1.80,
+          "density": 8.00
+        },
+        "copper_c110": {
+          "label": "Copper C110",
+          "priceIndex": 2.00,
+          "density": 8.94
+        },
+        "brass_c260": {
+          "label": "Brass C260",
+          "priceIndex": 1.50,
+          "density": 8.53
+        },
+        "titanium_gr2": {
+          "label": "Titanium Grade 2",
+          "priceIndex": 3.50,
+          "density": 4.51
+        }
+      },
+      "surfaceFinishes": {
+        "as-cut": {
+          "label": "As Cut / Deburred",
+          "costPerCm2": 0.000
+        },
+        "bead-blast": {
+          "label": "Bead Blasted",
+          "costPerCm2": 0.005
+        },
+        "anodized": {
+          "label": "Anodized",
+          "costPerCm2": 0.012
+        },
+        "powder-coat": {
+          "label": "Powder Coated",
+          "costPerCm2": 0.010
+        },
+        "electroplate": {
+          "label": "Electroplated",
+          "costPerCm2": 0.015
+        },
+        "brushed": {
+          "label": "Brushed",
+          "costPerCm2": 0.008
+        },
+        "passivation": {
+          "label": "Passivation",
+          "costPerCm2": 0.006
+        },
+        "custom": {
+          "label": "Custom",
+          "costPerCm2": 0.015
+        }
+      }
+    },
+    "casting": {
+      "label": "Die Casting",
+      "description": "Molten metal forced into reusable steel moulds under high pressure",
+      "baseCostPerCm3": 0.20,
+      "setupFee": 250,
+      "hasTooling": true,
+      "tooling": {
+        "baseCost": 5000,
+        "costPerCm2SurfaceArea": 1.20,
+        "steelGrade": {
+          "h13_standard": {
+            "label": "H13 Steel (standard)",
+            "multiplier": 1.0
+          },
+          "h13_hardened": {
+            "label": "H13 Hardened (high-vol)",
+            "multiplier": 1.35
+          }
+        }
+      },
+      "defaultLeadTimeDays": {
+        "economy": 50,
+        "standard": 30,
+        "express": 18,
+        "rush": 10
+      },
+      "materials": {
+        "al_a380": {
+          "label": "Aluminium A380",
+          "priceIndex": 1.0,
+          "density": 2.71
+        },
+        "al_adc12": {
+          "label": "Aluminium ADC12",
+          "priceIndex": 1.05,
+          "density": 2.72
+        },
+        "al_a356": {
+          "label": "Aluminium A356",
+          "priceIndex": 1.10,
+          "density": 2.68
+        },
+        "zinc_zamak3": {
+          "label": "Zinc Zamak 3",
+          "priceIndex": 0.85,
+          "density": 6.60
+        },
+        "zinc_zamak5": {
+          "label": "Zinc Zamak 5",
+          "priceIndex": 0.90,
+          "density": 6.60
+        },
+        "magnesium_az91d": {
+          "label": "Magnesium AZ91D",
+          "priceIndex": 1.80,
+          "density": 1.81
+        },
+        "brass_c857": {
+          "label": "Brass C857",
+          "priceIndex": 1.60,
+          "density": 8.50
+        }
+      },
+      "surfaceFinishes": {
+        "as-cast": {
+          "label": "As Cast",
+          "costPerCm2": 0.000
+        },
+        "shot-blast": {
+          "label": "Shot Blasted",
+          "costPerCm2": 0.004
+        },
+        "tumbled": {
+          "label": "Tumbled / Vibratory",
+          "costPerCm2": 0.005
+        },
+        "powder-coat": {
+          "label": "Powder Coated",
+          "costPerCm2": 0.010
+        },
+        "anodized": {
+          "label": "Anodized",
+          "costPerCm2": 0.012
+        },
+        "electroplate": {
+          "label": "Electroplated",
+          "costPerCm2": 0.015
+        },
+        "painted": {
+          "label": "Painted",
+          "costPerCm2": 0.008
+        },
+        "polished": {
+          "label": "Polished",
+          "costPerCm2": 0.020
+        },
+        "custom": {
+          "label": "Custom",
+          "costPerCm2": 0.015
+        }
+      }
+    },
+    "vac_casting": {
+      "label": "Vacuum Casting",
+      "description": "Silicone mould + polyurethane casting for low-volume production (10–200 units)",
+      "baseCostPerCm3": 0.25,
+      "setupFee": 150,
+      "hasTooling": true,
+      "tooling": {
+        "baseCost": 250,
+        "costPerCm2SurfaceArea": 0.30,
+        "mouldLifeShots": 20,
+        "notes": "Silicone moulds typically last 15-25 shots before degradation"
+      },
+      "defaultLeadTimeDays": {
+        "economy": 20,
+        "standard": 10,
+        "express": 5,
+        "rush": 3
+      },
+      "materials": {
+        "pu_abs_like": {
+          "label": "PU Resin (ABS-Like)",
+          "priceIndex": 1.0,
+          "density": 1.15
+        },
+        "pu_pp_like": {
+          "label": "PU Resin (PP-Like)",
+          "priceIndex": 1.05,
+          "density": 1.05
+        },
+        "pu_pc_like": {
+          "label": "PU Resin (PC-Like Clear)",
+          "priceIndex": 1.20,
+          "density": 1.12
+        },
+        "pu_pa_like": {
+          "label": "PU Resin (Nylon-Like)",
+          "priceIndex": 1.15,
+          "density": 1.10
+        },
+        "pu_rubber_like": {
+          "label": "PU Resin (Rubber-Like)",
+          "priceIndex": 1.30,
+          "density": 1.08
+        },
+        "pu_hitemp": {
+          "label": "PU Resin (High-Temp)",
+          "priceIndex": 1.50,
+          "density": 1.15
+        },
+        "silicone_soft": {
+          "label": "Silicone (Soft 20-40A)",
+          "priceIndex": 1.60,
+          "density": 1.10
+        },
+        "silicone_hard": {
+          "label": "Silicone (Hard 50-70A)",
+          "priceIndex": 1.55,
+          "density": 1.12
+        }
+      },
+      "surfaceFinishes": {
+        "as-cast": {
+          "label": "As Cast",
+          "costPerCm2": 0.000
+        },
+        "sanded": {
+          "label": "Sanded",
+          "costPerCm2": 0.006
+        },
+        "painted": {
+          "label": "Painted",
+          "costPerCm2": 0.010
+        },
+        "clear-coat": {
+          "label": "Clear Coated",
+          "costPerCm2": 0.008
+        },
+        "textured": {
+          "label": "Textured",
+          "costPerCm2": 0.007
+        },
+        "custom": {
+          "label": "Custom",
+          "costPerCm2": 0.015
+        }
+      }
+    },
+    "stamping": {
+      "label": "Metal Stamping",
+      "description": "Sheet metal pressed/stamped into shape using progressive or single-hit dies",
+      "baseCostPerCm3": 0.15,
+      "setupFee": 120,
+      "hasTooling": true,
+      "tooling": {
+        "baseCost": 3000,
+        "costPerCm2SurfaceArea": 0.90,
+        "dieType": {
+          "single_stage": {
+            "label": "Single Stage Die",
+            "multiplier": 1.0
+          },
+          "progressive": {
+            "label": "Progressive Die",
+            "multiplier": 2.50
+          },
+          "compound": {
+            "label": "Compound Die",
+            "multiplier": 1.80
+          },
+          "transfer": {
+            "label": "Transfer Die",
+            "multiplier": 2.20
+          }
+        }
+      },
+      "defaultLeadTimeDays": {
+        "economy": 40,
+        "standard": 22,
+        "express": 12,
+        "rush": 7
+      },
+      "materials": {
+        "steel_cr": {
+          "label": "Cold Rolled Steel",
+          "priceIndex": 0.80,
+          "density": 7.87
+        },
+        "steel_galv": {
+          "label": "Galvanized Steel",
+          "priceIndex": 0.90,
+          "density": 7.85
+        },
+        "ss_301": {
+          "label": "Stainless Steel 301",
+          "priceIndex": 1.50,
+          "density": 7.88
+        },
+        "ss_304": {
+          "label": "Stainless Steel 304",
+          "priceIndex": 1.65,
+          "density": 8.00
+        },
+        "al_5052": {
+          "label": "Aluminium 5052",
+          "priceIndex": 1.10,
+          "density": 2.68
+        },
+        "copper_c110": {
+          "label": "Copper C110",
+          "priceIndex": 2.00,
+          "density": 8.94
+        },
+        "brass_c260": {
+          "label": "Brass C260 (Spring)",
+          "priceIndex": 1.50,
+          "density": 8.53
+        },
+        "phosphor_bronze": {
+          "label": "Phosphor Bronze",
+          "priceIndex": 1.80,
+          "density": 8.78
+        },
+        "beryllium_copper": {
+          "label": "Beryllium Copper",
+          "priceIndex": 3.50,
+          "density": 8.36
+        }
+      },
+      "surfaceFinishes": {
+        "as-stamped": {
+          "label": "As Stamped",
+          "costPerCm2": 0.000
+        },
+        "deburred": {
+          "label": "Deburred",
+          "costPerCm2": 0.003
+        },
+        "electroplate": {
+          "label": "Electroplated",
+          "costPerCm2": 0.015
+        },
+        "powder-coat": {
+          "label": "Powder Coated",
+          "costPerCm2": 0.010
+        },
+        "passivation": {
+          "label": "Passivation",
+          "costPerCm2": 0.006
+        },
+        "custom": {
+          "label": "Custom",
+          "costPerCm2": 0.015
+        }
+      }
+    },
+    "extrusion": {
+      "label": "Extrusion",
+      "description": "Material pushed through a die to create constant cross-section profiles",
+      "baseCostPerCm3": 0.15,
+      "setupFee": 200,
+      "hasTooling": true,
+      "tooling": {
+        "baseCost": 1200,
+        "costPerCm2SurfaceArea": 0.40,
+        "notes": "Die cost depends on profile complexity"
+      },
+      "defaultLeadTimeDays": {
+        "economy": 35,
+        "standard": 20,
+        "express": 10,
+        "rush": 5
+      },
+      "materials": {
+        "al_6063_t5": {
+          "label": "Aluminium 6063-T5",
+          "priceIndex": 1.0,
+          "density": 2.70
+        },
+        "al_6061_t6": {
+          "label": "Aluminium 6061-T6",
+          "priceIndex": 1.10,
+          "density": 2.70
+        },
+        "al_6005": {
+          "label": "Aluminium 6005",
+          "priceIndex": 1.05,
+          "density": 2.70
+        },
+        "abs_extruded": {
+          "label": "ABS",
+          "priceIndex": 0.65,
+          "density": 1.04
+        },
+        "pvc": {
+          "label": "PVC",
+          "priceIndex": 0.50,
+          "density": 1.40
+        },
+        "pc": {
+          "label": "Polycarbonate (PC)",
+          "priceIndex": 0.90,
+          "density": 1.20
+        },
+        "hdpe": {
+          "label": "HDPE",
+          "priceIndex": 0.45,
+          "density": 0.95
+        },
+        "pp": {
+          "label": "Polypropylene (PP)",
+          "priceIndex": 0.50,
+          "density": 0.90
+        },
+        "nylon_pa6": {
+          "label": "Nylon PA6",
+          "priceIndex": 0.85,
+          "density": 1.14
+        },
+        "silicone": {
+          "label": "Silicone Rubber",
+          "priceIndex": 1.80,
+          "density": 1.10
+        },
+        "epdm": {
+          "label": "EPDM Rubber",
+          "priceIndex": 1.20,
+          "density": 1.15
+        }
+      },
+      "surfaceFinishes": {
+        "as-extruded": {
+          "label": "As Extruded",
+          "costPerCm2": 0.000
+        },
+        "anodized": {
+          "label": "Anodized",
+          "costPerCm2": 0.012
+        },
+        "powder-coat": {
+          "label": "Powder Coated",
+          "costPerCm2": 0.010
+        },
+        "brushed": {
+          "label": "Brushed",
+          "costPerCm2": 0.008
+        },
+        "polished": {
+          "label": "Polished",
+          "costPerCm2": 0.020
+        },
+        "custom": {
+          "label": "Custom",
+          "costPerCm2": 0.015
+        }
+      }
+    },
+    "pcba": {
+      "label": "PCBA",
+      "description": "Printed Circuit Board Assembly — PCB fab + SMT component placement",
+      "baseCostPerCm3": 0.50,
+      "setupFee": 120,
+      "hasTooling": false,
+      "toolingCost": null,
+      "defaultLeadTimeDays": {
+        "economy": 21,
+        "standard": 10,
+        "express": 5,
+        "rush": 2
+      },
+      "materials": {
+        "fr4_standard": {
+          "label": "FR4 (Standard)",
+          "priceIndex": 1.0,
+          "density": 1.85
+        },
+        "fr4_highTg": {
+          "label": "FR4 High-Tg (TG170+)",
+          "priceIndex": 1.20,
+          "density": 1.85
+        },
+        "rogers": {
+          "label": "Rogers (High-Freq RF)",
+          "priceIndex": 3.50,
+          "density": 2.10
+        },
+        "aluminium_pcb": {
+          "label": "Aluminium Base (LED)",
+          "priceIndex": 1.50,
+          "density": 2.40
+        },
+        "flex_pi": {
+          "label": "Flex PCB (Polyimide)",
+          "priceIndex": 2.00,
+          "density": 1.42
+        },
+        "rigid_flex": {
+          "label": "Rigid-Flex PCB",
+          "priceIndex": 2.50,
+          "density": 1.60
+        },
+        "ceramic": {
+          "label": "Ceramic Substrate",
+          "priceIndex": 4.00,
+          "density": 3.70
+        }
+      },
+      "surfaceFinishes": {
+        "hasl": {
+          "label": "HASL (Lead-Free)",
+          "costPerCm2": 0.000
+        },
+        "enig": {
+          "label": "ENIG (Gold)",
+          "costPerCm2": 0.008
+        },
+        "osp": {
+          "label": "OSP",
+          "costPerCm2": 0.002
+        },
+        "immersion_tin": {
+          "label": "Immersion Tin",
+          "costPerCm2": 0.004
+        },
+        "hard_gold": {
+          "label": "Hard Gold (Edge)",
+          "costPerCm2": 0.025
+        },
+        "custom": {
+          "label": "Custom",
+          "costPerCm2": 0.015
+        }
+      }
+    }
+  },
+  "globalSettings": {
+    "toleranceMultiplier": {
+      "standard": 1.00,
+      "precision": 1.25,
+      "tight": 1.65
+    },
+    "leadTimeMultiplier": {
+      "economy": 0.85,
+      "standard": 1.00,
+      "express": 1.35,
+      "rush": 1.80
+    },
+    "quantityDiscountBreaks": [
+      {
+        "minQty": 1,
+        "multiplier": 1.00
+      },
+      {
+        "minQty": 10,
+        "multiplier": 0.95
+      },
+      {
+        "minQty": 50,
+        "multiplier": 0.90
+      },
+      {
+        "minQty": 100,
+        "multiplier": 0.85
+      },
+      {
+        "minQty": 500,
+        "multiplier": 0.78
+      },
+      {
+        "minQty": 1000,
+        "multiplier": 0.70
+      },
+      {
+        "minQty": 5000,
+        "multiplier": 0.62
+      },
+      {
+        "minQty": 10000,
+        "multiplier": 0.55
+      }
+    ],
+    "complexityMultiplier": [
+      {
+        "maxTriangles": 5000,
+        "multiplier": 1.00
+      },
+      {
+        "maxTriangles": 20000,
+        "multiplier": 1.05
+      },
+      {
+        "maxTriangles": 100000,
+        "multiplier": 1.12
+      },
+      {
+        "maxTriangles": 999999,
+        "multiplier": 1.20
+      }
+    ],
+    "dfmFee": 50,
+    "colorMatchingFee": 25,
+    "threadsFee": 15,
+    "customComplexityAdder": 1.05,
+    "currency": "USD",
+    "currencySymbol": "$"
+  }
+}

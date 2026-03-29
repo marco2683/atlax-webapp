@@ -1,0 +1,22 @@
+# Intermediates
+.tmp/
+*.log
+
+# Environment
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# Credentials
+credentials.json
+token.json
+
+# OS files
+.DS_Store
+Thumbs.db

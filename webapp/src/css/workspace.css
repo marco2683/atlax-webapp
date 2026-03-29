@@ -1,0 +1,1467 @@
+/* ============================================================
+   ATLAX — Workspace Dashboard Styles
+   Clean SaaS-style dashboard with dark theme continuity
+   ============================================================ */
+
+/* ── Variables (inherit from design-system.css via module import) ─ */
+
+/* ── Layout Shell ────────────────────────────────────────── */
+.ws {
+  display: flex;
+  min-height: 100vh;
+  background: #0a0c10;
+  color: #e2e8f0;
+  font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+.ws-sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: #0e1117;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+}
+
+.ws-sidebar__brand {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ws-sidebar__brand img {
+  height: 22px;
+  width: auto;
+}
+
+.ws-sidebar__brand-text {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  padding-left: 10px;
+}
+
+.ws-sidebar__brand-text span:first-child {
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.2;
+}
+
+.ws-sidebar__brand-text span:last-child {
+  font-size: 9px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.ws-sidebar__nav {
+  padding: 16px 12px;
+  flex: 1;
+}
+
+.ws-sidebar__section-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.25);
+  padding: 12px 12px 8px;
+}
+
+.ws-sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  border: 1px solid transparent;
+  margin-bottom: 2px;
+}
+
+.ws-sidebar__item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ws-sidebar__item--active {
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.15);
+}
+
+.ws-sidebar__item svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.ws-sidebar__item--active svg {
+  opacity: 1;
+}
+
+.ws-sidebar__item-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.ws-sidebar__footer {
+  padding: 16px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ws-sidebar__back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ws-sidebar__back:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Main Content ────────────────────────────────────────── */
+.ws-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ws-header {
+  padding: 24px 40px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  background: rgba(14, 17, 23, 0.5);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.ws-header__title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.ws-header__subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 2px;
+}
+
+.ws-header__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.ws-content {
+  flex: 1;
+  padding: 32px 40px;
+  overflow-y: auto;
+}
+
+/* ── Section Panel ───────────────────────────────────────── */
+.ws-panel {
+  display: none;
+}
+
+.ws-panel--active {
+  display: block;
+}
+
+/* ── Cards Grid ──────────────────────────────────────────── */
+.ws-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.ws-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.ws-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.ws-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.ws-card__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+.ws-card__title--editable {
+  cursor: pointer;
+  border-bottom: 1px dotted transparent;
+  transition: border-color 0.2s;
+}
+.ws-card__title--editable:hover {
+  border-bottom-color: rgba(96, 165, 250, 0.5);
+  color: #60a5fa;
+}
+
+.ws-card__date {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: 4px;
+}
+
+.ws-card__body {
+  margin-bottom: 16px;
+}
+
+.ws-card__supplier-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ws-card__pill {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.ws-card__pill--more {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.ws-card__actions {
+  display: flex;
+  gap: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 12px;
+}
+
+.ws-card__btn {
+  flex: 1;
+  padding: 7px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid;
+}
+
+.ws-card__btn--primary {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.25);
+  color: #60a5fa;
+}
+
+.ws-card__btn--primary:hover {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.ws-card__btn--danger {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.ws-card__btn--danger:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.ws-card__btn--ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ws-card__btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Expand/collapse button */
+.ws-card__expand-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.ws-card__expand-btn:hover {
+  color: #60a5fa;
+  border-color: rgba(96, 165, 250, 0.3);
+}
+.ws-card__expand-btn svg {
+  transition: transform 0.2s;
+}
+.ws-card__expand-btn--open svg {
+  transform: rotate(180deg);
+}
+
+/* Expanded detail panel */
+.ws-card__detail {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 12px 0 8px;
+  margin-top: 12px;
+}
+.ws-card__detail-header {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.ws-card__supplier-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  transition: background 0.15s;
+}
+.ws-card__supplier-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+.ws-card__supplier-name {
+  color: #fff;
+  font-weight: 500;
+  min-width: 140px;
+}
+.ws-card__supplier-detail {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+}
+.ws-card__supplier-score {
+  margin-left: auto;
+  background: rgba(96, 165, 250, 0.1);
+  color: #60a5fa;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* ── RFQ Table ───────────────────────────────────────────── */
+.ws-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ws-table th {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.3);
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ws-table td {
+  padding: 14px 16px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  vertical-align: middle;
+}
+
+.ws-table tr {
+  transition: background 0.15s;
+}
+
+.ws-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Status badges */
+.ws-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.ws-status--draft {
+  background: rgba(107, 114, 128, 0.15);
+  color: #9ca3af;
+}
+
+.ws-status--submitted,
+.ws-status--pending_supplier {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+}
+
+.ws-status--under_review {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+}
+
+.ws-status--quoted {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+}
+
+.ws-status--cancelled {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  text-decoration: line-through;
+}
+
+.ws-status__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ── File Vault ─────────────────────────────────────────── */
+.ws-file-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.ws-file-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  position: relative;
+}
+
+.ws-file-card:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.04);
+  transform: translateY(-2px);
+}
+
+.ws-file-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.ws-file-card__icon--cad {
+  background: rgba(139, 92, 246, 0.12);
+  color: #a78bfa;
+}
+
+.ws-file-card__icon--pdf {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+}
+
+.ws-file-card__icon--img {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+}
+
+.ws-file-card__icon--other {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.ws-file-card__name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.ws-file-card__meta {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Folder card variant */
+.ws-file-card--folder {
+  border-color: rgba(245, 158, 11, 0.12);
+  background: rgba(245, 158, 11, 0.03);
+}
+
+.ws-file-card--folder:hover {
+  border-color: rgba(245, 158, 11, 0.3);
+  background: rgba(245, 158, 11, 0.06);
+}
+
+.ws-file-card__icon--folder {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+}
+
+/* ── View Toggle ─────────────────────────────────────── */
+.ws-view-toggle {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ws-view-toggle:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.ws-view-toggle--active {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+/* ── Breadcrumb Navigation ──────────────────────────── */
+.ws-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  padding: 8px 0;
+}
+
+.ws-breadcrumb__link {
+  color: #60a5fa;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.ws-breadcrumb__link:hover {
+  color: #93bbfd;
+  text-decoration: underline;
+}
+
+.ws-breadcrumb__sep {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.ws-breadcrumb__current {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+}
+
+/* ── List View Container ────────────────────────────── */
+.ws-file-list-container {
+  width: 100%;
+}
+
+/* File table tweaks for list mode */
+.ws-file-table td:first-child,
+.ws-file-table th:first-child {
+  width: 40px;
+  text-align: center;
+}
+
+/* File row styles */
+.ws-file-row--folder {
+  background: rgba(245, 158, 11, 0.02);
+}
+
+.ws-file-row--folder:hover {
+  background: rgba(245, 158, 11, 0.05) !important;
+}
+
+.ws-file-row__name {
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+.ws-file-row__name--viewable {
+  color: #60a5fa;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.ws-file-row__name--viewable:hover {
+  color: #93bbfd;
+  text-decoration: underline;
+}
+
+/* Folder select dropdown inside table */
+.ws-folder-select {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 4px 8px;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  min-width: 100px;
+}
+
+.ws-folder-select:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.ws-folder-select:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.ws-folder-select option {
+  background: #1a1a2e;
+  color: #e2e8f0;
+}
+
+/* ── 3D Viewer Modal ────────────────────────────────────── */
+.ws-viewer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ws-viewer-modal {
+  width: 90vw;
+  height: 80vh;
+  max-width: 1200px;
+  background: #0e1117;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.ws-viewer-modal__header {
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ws-viewer-modal__header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.ws-viewer-modal__close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.ws-viewer-modal__close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ws-viewer-modal__canvas {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.ws-viewer-modal__canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ── Upload Zone ────────────────────────────────────────── */
+.ws-upload-zone {
+  border: 2px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 24px;
+}
+
+.ws-upload-zone:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.03);
+}
+
+/* ── File Toolbar ──────────────────────────────────────── */
+.ws-file-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.ws-file-toolbar__left,
+.ws-file-toolbar__right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ws-file-toolbar__divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 0 4px;
+}
+
+.ws-file-toolbar__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.ws-file-toolbar__btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.75);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.ws-file-toolbar__btn--accent {
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.ws-file-toolbar__btn--accent:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: #93bbfd;
+}
+
+.ws-file-toolbar__btn--danger {
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.ws-file-toolbar__btn--danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.ws-file-toolbar__count {
+  font-size: 11px;
+  font-weight: 600;
+  color: #60a5fa;
+  padding: 0 6px;
+}
+
+/* Inline folder name input */
+.ws-folder-inline-input {
+  height: 28px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-family: inherit;
+  border-radius: 6px;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.08);
+  color: #e2e8f0;
+  outline: none;
+  min-width: 140px;
+  transition: border-color 0.15s;
+}
+
+.ws-folder-inline-input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.ws-folder-inline-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── File Selection Checkboxes ─────────────────────────── */
+.ws-file-select {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: #3b82f6;
+  position: relative;
+  z-index: 2;
+}
+
+/* Grid card: checkbox top-left */
+.ws-file-card .ws-file-select {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.ws-file-card:hover .ws-file-select,
+.ws-file-card--selected .ws-file-select {
+  opacity: 1;
+}
+
+/* Selected state */
+.ws-file-card--selected {
+  border-color: rgba(59, 130, 246, 0.4) !important;
+  background: rgba(59, 130, 246, 0.06) !important;
+}
+
+.ws-file-row--selected {
+  background: rgba(59, 130, 246, 0.06) !important;
+}
+
+.ws-upload-zone.dragging {
+  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(59, 130, 246, 0.06);
+}
+
+.ws-upload-zone__icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.ws-upload-zone__text {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.ws-upload-zone__text strong {
+  color: #60a5fa;
+}
+
+/* ── Empty State ─────────────────────────────────────────── */
+.ws-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.ws-empty__icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.ws-empty__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 6px;
+}
+
+.ws-empty__desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.25);
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+/* ── Settings Section ────────────────────────────────────── */
+.ws-settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 640px;
+}
+
+.ws-settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ws-settings-field--full {
+  grid-column: 1 / -1;
+}
+
+.ws-settings-field label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.ws-settings-field input,
+.ws-settings-field select {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 11px 14px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.ws-settings-field input:focus,
+.ws-settings-field select:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+}
+
+.ws-settings-field select option {
+  background: #1a1a2e;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.ws-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid;
+}
+
+.ws-btn--primary {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #fff;
+}
+
+.ws-btn--primary:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.ws-btn--ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ws-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.ws-btn--danger {
+  background: transparent;
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.ws-btn--danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.ws-btn--sm {
+  padding: 6px 10px;
+  font-size: 11px;
+}
+
+/* ── Action Buttons Row (in table) ───────────────────────── */
+.ws-action-btns {
+  display: flex;
+  gap: 4px;
+}
+
+.ws-action-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ws-action-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.ws-action-btn--solicit:hover {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.ws-action-btn--cancel:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.ws-action-btn--view:hover {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+/* ── Drag & Drop States ──────────────────────────────── */
+.ws-file-card--dragging {
+  opacity: 0.4;
+  transform: scale(0.95);
+  border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+.ws-file-card--drag-over {
+  border-color: #60a5fa !important;
+  background: rgba(59, 130, 246, 0.12) !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25), inset 0 0 20px rgba(59, 130, 246, 0.06);
+  transform: scale(1.03);
+}
+
+.ws-file-card--drag-over .ws-file-card__icon--folder {
+  transform: scale(1.15);
+  transition: transform 0.15s ease;
+}
+
+/* ── File Preview Modal ──────────────────────────────── */
+.ws-preview-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.ws-preview-backdrop--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ws-preview-modal {
+  width: 92vw;
+  max-width: 1200px;
+  height: 82vh;
+  max-height: 800px;
+  background: #0e1117;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+  transform: scale(0.96) translateY(8px);
+  transition: transform 0.2s ease;
+}
+
+.ws-preview-backdrop--visible .ws-preview-modal {
+  transform: scale(1) translateY(0);
+}
+
+/* Header */
+.ws-preview-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.ws-preview-modal__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #e2e8f0;
+  min-width: 0;
+}
+
+.ws-preview-modal__title span:first-child {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.ws-preview-modal__title span:last-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ws-preview-modal__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.ws-preview-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ws-preview-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.ws-preview-btn#ws-preview-delete:hover {
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.3);
+  background: rgba(248, 113, 113, 0.08);
+}
+
+.ws-preview-close {
+  margin-left: 4px;
+}
+
+/* Body: viewer + sidebar */
+.ws-preview-modal__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.ws-preview-modal__viewer {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  background: #080a0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ws-preview-modal__viewer canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.ws-preview-modal__loading {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 13px;
+}
+
+.ws-preview-modal__sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.ws-preview-sidebar__section {
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.ws-preview-sidebar__section h4 {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.3);
+  margin: 0 0 12px 0;
+}
+
+/* Details rows */
+.ws-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 12px;
+}
+
+.ws-detail-label {
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 500;
+}
+
+.ws-detail-value {
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
+  text-align: right;
+}
+
+.ws-detail-row--hint {
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.ws-detail-row--hint span {
+  font-size: 10px;
+  color: rgba(96, 165, 250, 0.6);
+  font-style: italic;
+}
+
+/* Notes */
+.ws-preview-notes {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.ws-preview-notes:focus {
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.ws-preview-notes::placeholder {
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.ws-preview-notes-save {
+  margin-top: 8px;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ws-preview-notes-save:hover {
+  background: rgba(59, 130, 246, 0.25);
+}
+
+.ws-preview-notes-feedback {
+  font-size: 11px;
+  margin-left: 8px;
+}
+
+/* Image preview */
+.ws-preview-image-wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: auto;
+}
+
+.ws-preview-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+/* PDF iframe */
+.ws-preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #fff;
+}
+
+/* Generic file preview */
+.ws-preview-generic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 8px;
+  padding: 40px;
+}
+
+.ws-preview-generic__icon {
+  font-size: 56px;
+  opacity: 0.4;
+}
+
+.ws-preview-generic__name {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  word-break: break-all;
+}
+
+.ws-preview-generic__type {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.ws-preview-generic__dl {
+  margin-top: 12px;
+  padding: 8px 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 8px;
+  color: #60a5fa;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.ws-preview-generic__dl:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .ws-sidebar {
+    display: none;
+  }
+
+  .ws-content {
+    padding: 20px 16px;
+  }
+
+  .ws-header {
+    padding: 16px 20px;
+  }
+
+  .ws-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ws-settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ws-preview-modal__body {
+    flex-direction: column;
+  }
+
+  .ws-preview-modal__sidebar {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    max-height: 200px;
+  }
+}
+
+/* ── Hidden utility ─────────────────────────────────────── */
+.hidden {
+  display: none !important;
+}

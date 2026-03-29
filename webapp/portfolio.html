@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio - ATLAX</title>
+  <link rel="stylesheet" href="/src/css/advantage.css">
+  <link rel="stylesheet" href="/src/css/auth.css">
+  <style>
+    .portfolio-hero {
+      padding: 180px 5% 80px 5%;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: url('/assets/portfolio/factory-floor.png') center/cover no-repeat;
+    }
+
+    .portfolio-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.12) 0%, transparent 60%),
+                  linear-gradient(to bottom, rgba(10, 10, 15, 0.88) 0%, rgba(10, 10, 15, 0.94) 100%);
+      z-index: 0;
+    }
+
+    .portfolio-hero > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .portfolio-hero h1 {
+      font-size: 56px;
+      font-weight: 800;
+      color: var(--color-white);
+      margin-bottom: 24px;
+      letter-spacing: -1.5px;
+    }
+
+    .portfolio-hero p {
+      font-size: 20px;
+      color: var(--color-steel-400);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .portfolio-section {
+      padding: 80px 5%;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .portfolio-section-header {
+      margin-bottom: 40px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 24px;
+    }
+
+    .portfolio-section-header h2 {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--color-white);
+      margin-bottom: 12px;
+    }
+
+    .portfolio-section-header p {
+      color: var(--color-steel-400);
+      font-size: 16px;
+      max-width: 600px;
+      line-height: 1.5;
+    }
+
+    /* Masonry Layout */
+    .masonry-grid {
+      column-count: 3;
+      column-gap: 24px;
+    }
+
+    .masonry-item {
+      break-inside: avoid;
+      margin-bottom: 24px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--color-steel-800);
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .masonry-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+      border-color: rgba(14, 165, 233, 0.3);
+    }
+
+    .masonry-item img {
+      width: 100%;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .masonry-item:hover img {
+      transform: scale(1.02);
+    }
+
+    @media (max-width: 1024px) {
+      .masonry-grid { column-count: 2; }
+    }
+    @media (max-width: 640px) {
+      .masonry-grid { column-count: 1; }
+      .portfolio-hero h1 { font-size: 40px; }
+    }
+  </style>
+</head>
+
+<body class="marketing-page" style="background: var(--color-void);">
+  
+  <nav class="navbar" id="navbar"
+    style="position: fixed; width: 100%; top: 0; z-index: 100; transition: background 0.3s; padding: var(--space-4) var(--space-6); background: rgba(12,12,12,0.8); backdrop-filter: blur(20px);">
+    <div
+      style="display: flex; justify-content: space-between; align-items: center; max-width: 95%; margin: 0 auto; width: 100%;">
+      <div class="navbar__brand" style="display: flex; align-items: center; gap: 12px;">
+        <a href="/" aria-label="Home"><img src="/logos/atlax-logo-light.svg" alt="ATLAX" style="height: 32px; width: auto; object-fit: contain;" /></a>
+        <div style="display: flex; align-items: center; gap: 10px; border-left: 1px solid rgba(255,255,255,0.15); padding-left: 12px;">
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <div style="font-size: 11px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2;">Manufacturing</div>
+            <div style="font-size: 10px; font-weight: 400; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2;">Engine</div>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; gap: var(--space-6); align-items: center;">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="services.html" class="nav-link">Capabilities</a>
+        <a href="portfolio.html" class="nav-link" style="color: white; border-bottom: 2px solid var(--color-electric);">Portfolio</a>
+        <a href="about.html" class="nav-link">About Us</a>
+        <a href="/app.html" class="btn-marketing btn-marketing--primary" style="padding: 10px 24px; font-size: 13px;">Manufacturing Engine</a>
+        <a href="#" id="nav-login-btn" class="nav-link" style="font-weight: 500; color: var(--color-electric);">Log In</a>
+        <!-- Dynamic User Dropdown (Hidden initially) -->
+        <div id="nav-user-menu" class="nav-user-menu">
+          <div class="nav-avatar" id="nav-avatar">PR</div>
+          <div class="dropdown-content">
+            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter Platform</a>
+            <a href="#" class="dropdown-item">Profile Settings</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" id="nav-logout-btn" class="dropdown-item">Log Out</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="portfolio-hero">
+      <h1>Product Portfolio</h1>
+      <p>A selection of the products we’ve engineered, sourced, and manufactured for global brands. From concept to mass production.</p>
+    </section>
+
+    <section class="portfolio-section">
+      <div class="portfolio-section-header">
+        <h2>Consumer Products</h2>
+        <p>Advanced electronics, home goods, and innovative gadgets designed for global markets with strict quality specifications.</p>
+      </div>
+      <div class="masonry-grid">
+        <div class="masonry-item"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop" alt="Premium Headphones" /></div>
+        <div class="masonry-item"><img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=800&auto=format&fit=crop" alt="Smartwatch" /></div>
+        <div class="masonry-item"><img src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?q=80&w=800&auto=format&fit=crop" alt="Smart Home Device" /></div>
+        <div class="masonry-item"><img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?q=80&w=800&auto=format&fit=crop" alt="Mechanical Keyboard" /></div>
+        <div class="masonry-item"><img src="https://images.unsplash.com/photo-1606220838315-056192d5e927?q=80&w=800&auto=format&fit=crop" alt="Coffee Maker" /></div>
+        <div class="masonry-item"><img src="https://images.unsplash.com/photo-1583394838336-aced97838b38?q=80&w=800&auto=format&fit=crop" alt="Gaming Mouse" /></div>
+      </div>
+    </section>
+
+    <section class="portfolio-section">
+      <div class="portfolio-section-header">
+        <h2>Industrial & Tooling</h2>
+        <p>High-precision components, CNC machined parts, and robust industrial assemblies built for harsh environments.</p>
+      </div>
+      <div class="masonry-grid">
+        <div class="masonry-item"><img src="https://images.unsplash.com/photo-1565514666579-2476537afddf?q=80&w=800&auto=format&fit=crop" alt="CNC Machined Part" /></div>
+        <div class="masonry-item"><img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop" alt="Microchips" /></div>
+        <div class="masonry-item"><img src="https://images.unsplash.com/photo-1629864275069-d41cfa9788ba?q=80&w=800&auto=format&fit=crop" alt="Steel Tooling" /></div>
+        <div class="masonry-item"><img src="https://images.unsplash.com/photo-1580983554869-2f22b826be1e?q=80&w=800&auto=format&fit=crop" alt="Motor Assembly" /></div>
+      </div>
+    </section>
+
+    <section class="portfolio-section">
+      <div class="portfolio-section-header">
+        <h2>Softgoods & Bags</h2>
+        <p>Premium textiles, backpacks, and tactical gear featuring high-durability stitching and weatherproof materials.</p>
+      </div>
+      <div class="masonry-grid">
+        <div class="masonry-item"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=800&auto=format&fit=crop" alt="Backpack" /></div>
+        <div class="masonry-item"><img src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=800&auto=format&fit=crop" alt="Travel Bag" /></div>
+        <div class="masonry-item"><img src="https://images.unsplash.com/photo-1547949007-53504fb471cc?q=80&w=800&auto=format&fit=crop" alt="Duffel Bag" /></div>
+      </div>
+    </section>
+  </main>
+
+  <footer style="background: var(--color-steel-900); padding: 80px 0 40px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 80px;">
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 60px; max-width: 1600px; margin: 0 auto; text-align: left; padding: 0 5%;">
+      <div>
+        <div class="navbar__brand" style="margin-bottom: 24px;">
+          <a href="/" aria-label="Home"><img src="/logos/atlax-logo-light.svg" alt="ATLAX" style="height: 28px; width: auto; object-fit: contain;" /></a>
+        </div>
+        <p style="color: var(--color-steel-400); max-width: 320px; line-height: 1.6; font-size: 13px;">
+          Accelerating and de-risking product development through fast, cost-effective, and scalable manufacturing solutions.
+        </p>
+      </div>
+      <div>
+        <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Platform</h4>
+        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
+          <li><a href="app.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Supplier Engine</a></li>
+          <li><a href="portfolio.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Portfolio</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Company</h4>
+        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
+          <li><a href="about.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">About Us</a></li>
+          <li><a href="services.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Capabilities</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Group</h4>
+        <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+          <p style="color: var(--color-steel-400); font-size: 12px; margin-bottom: 12px;">ATLAX is part of</p>
+          <img src="https://images.squarespace-cdn.com/content/v1/64b51336a5924775f0a7860d/50ed5912-8c1c-43f1-b95c-9c9dc7560aa1/PP.png?format=1500w"
+            alt="Paniani Group Logo" style="height: 20px; opacity: 0.8; filter: grayscale(1) invert(1) brightness(2);" />
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── Authentication Modal (Login / Sign Up) ────────────────────────────────────────── -->
+  <div class="auth-modal hidden" id="auth-modal">
+    <div class="auth-modal-glass">
+      <button class="close-auth-modal" id="close-auth-modal">&times;</button>
+      <div class="auth-forms-container auth-state-login" id="auth-forms-container">
+        <!-- LOGIN FORM -->
+        <div class="auth-form-wrapper" id="form-login">
+          <div class="auth-header">
+            <h2>Welcome Back.</h2>
+            <p>Access the ATLAX Manufacturing Engine</p>
+          </div>
+          <form id="login-form" class="auth-form">
+            <div class="auth-input-group">
+              <label for="login-email">Email Address</label>
+              <input type="email" id="login-email" required placeholder="name@company.com">
+            </div>
+            <div class="auth-input-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" required placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+            </div>
+            <div id="login-error" class="auth-error-msg"></div>
+            <button type="submit" class="auth-btn" id="login-submit-btn">Log In</button>
+          </form>
+          <div class="auth-toggle-link">
+            No account yet? <a id="toggle-to-signup">Sign up for access</a>
+          </div>
+        </div>
+        <!-- SIGN UP FORM -->
+        <div class="auth-form-wrapper" id="form-signup" style="display: none;">
+          <div class="auth-header">
+            <h2>Request Access.</h2>
+            <p>Join the procurement intelligence platform</p>
+          </div>
+          <form id="signup-form" class="auth-form">
+            <div class="auth-input-group" style="display: flex; flex-direction: row; gap: 8px;">
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                <label for="signup-first">First Name</label>
+                <input type="text" id="signup-first" required placeholder="John">
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                <label for="signup-last">Last Name</label>
+                <input type="text" id="signup-last" required placeholder="Doe">
+              </div>
+            </div>
+            <div class="auth-input-group">
+              <label for="signup-company">Company</label>
+              <input type="text" id="signup-company" required placeholder="Acme Corp">
+            </div>
+            <div class="auth-input-group">
+              <label for="signup-email">Work Email</label>
+              <input type="email" id="signup-email" required placeholder="john@acmecorp.com">
+            </div>
+            <div class="auth-input-group">
+              <label for="signup-password">Password</label>
+              <input type="password" id="signup-password" required placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+            </div>
+            <div id="signup-error" class="auth-error-msg"></div>
+            <button type="submit" class="auth-btn" id="signup-submit-btn">Create Account</button>
+          </form>
+          <div class="auth-toggle-link">
+            Already have an account? <a id="toggle-to-login">Log In instead</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/marketing.js"></script>
+</body>
+</html>

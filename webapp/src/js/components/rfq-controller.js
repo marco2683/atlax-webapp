@@ -1,0 +1,873 @@
+/**
+ * rfq-controller.js  v5
+ * ────────────────────────────────────────────────────────
+ * Orchestrates the RFQ workflow:
+ *   - Detailed Part-by-Part mode with multi-part tabs
+ *   - Bulk Upload mode for entire project folders
+ *   - STEP/STP parsing via occt-import-js
+ *   - ISO thumbnail rendering in geometry results
+ *   - Multi-part quote accumulation in right panel
+ *   - Dynamic material/finish dropdowns driven by technology
+ * ────────────────────────────────────────────────────────
+ */
+
+import { analyzeFile, renderThumbnail } from './geometry-analyzer.js';
+import { calculateQuote, getMaterialsForTech, getFinishesForTech, techHasTooling } from './quote-engine.js';
+import { supabase } from '../utils/supabaseClient.js';
+
+// ── State ───────────────────────────────────────────────
+let partCount = 1;
+let currentMode = 'bulk'; // Default to 'bulk'
+const partState = new Map();
+
+// Accumulated quotes for the right panel
+const quotedParts = new Map(); // partIdx → { partName, quote, config }
+
+// Bulk upload file tracking
+let bulkFiles = []; // Array of actual File objects for upload
+
+function getPartState(idx) {
+  if (!partState.has(idx)) partState.set(idx, { analysis: null, thumbnailCleanup: null, files: [] });
+  return partState.get(idx);
+}
+
+// ── Dynamic Dropdown Population ─────────────────────────
+function populateMaterialDropdown(partIdx, techKey) {
+  const panel = document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`);
+  if (!panel) return;
+  const select = panel.querySelector('.rfq-material');
+  if (!select) return;
+
+  const materials = getMaterialsForTech(techKey);
+  select.innerHTML = materials.map(m =>
+    `<option value="${m.key}">${m.label}</option>`
+  ).join('');
+}
+
+function populateFinishDropdown(partIdx, techKey) {
+  const panel = document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`);
+  if (!panel) return;
+  const select = panel.querySelector('.rfq-finish');
+  if (!select) return;
+
+  const finishes = getFinishesForTech(techKey);
+  select.innerHTML = finishes.map(f =>
+    `<option value="${f.key}">${f.label}</option>`
+  ).join('');
+}
+
+// ── Panel HTML Template ─────────────────────────────────
+function createPartPanelHTML(partIdx) {
+  return `
+    <div class="rfq-part-panel" data-part="${partIdx}">
+      <div class="rfq-top-row">
+        <div class="rfq-upload-col">
+          <div class="rfq-engine__upload-zone" id="rfq-upload-zone-${partIdx}">
+            <input type="file" class="rfq-file-input" data-part="${partIdx}" multiple accept=".step,.stp,.stl,.obj,.3mf,.iges,.igs,.dxf,.pdf,.sldprt,.ipt,.x_t,.x_b,.3dxml,.catpart,.prt,.sat,.jt" hidden />
+            <div class="upload-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <div class="upload-text">
+              <h3>Drag & Drop or <span class="upload-link">Choose File</span></h3>
+              <p>Upload at least 1 CAD file.</p>
+            </div>
+            <div class="upload-formats"><p>STEP · STP · STL · OBJ · IGES · DXF · 3DXML · CATPART · PRT · 3MF</p></div>
+            <button class="upload-btn rfq-select-files-btn" data-part="${partIdx}">Select Files</button>
+            <div class="upload-file-list hidden" data-part="${partIdx}"></div>
+          </div>
+        </div>
+        <div class="rfq-fields-col">
+          <div class="rfq-fields-grid rfq-fields-grid--3x3">
+            <div class="rfq-field"><label>Part Name</label>
+              <input type="text" class="rfq-part-name" data-part="${partIdx}" placeholder="e.g. Housing Top..." />
+            </div>
+            <div class="rfq-field"><label>Process</label>
+              <select class="rfq-process" data-part="${partIdx}">
+                <option value="cnc">CNC Machining</option><option value="injection">Injection Moulding</option>
+                <option value="3dp">3D Printing</option><option value="sheet">Sheet Metal</option>
+                <option value="pcba">PCBA</option><option value="casting">Die Casting</option>
+                <option value="vac_casting">Vacuum Casting</option><option value="stamping">Metal Stamping</option>
+                <option value="extrusion">Extrusion</option>
+              </select>
+            </div>
+            <div class="rfq-field"><label>Material</label>
+              <select class="rfq-material" data-part="${partIdx}"></select>
+            </div>
+            <div class="rfq-field"><label>Quantity</label>
+              <input type="number" class="rfq-quantity" data-part="${partIdx}" value="1" min="1" />
+            </div>
+            <div class="rfq-field"><label>Lead Time</label>
+              <select class="rfq-lead-time" data-part="${partIdx}">
+                <option value="economy">Economy (30+d)</option><option value="standard" selected>Standard (15–20d)</option>
+                <option value="express">Express (7–10d)</option><option value="rush">Rush (3–5d)</option>
+              </select>
+            </div>
+            <div class="rfq-field"><label>Surface Finish</label>
+              <select class="rfq-finish" data-part="${partIdx}"></select>
+            </div>
+            <div class="rfq-field"><label>Tolerances</label>
+              <select class="rfq-tolerance" data-part="${partIdx}">
+                <option value="standard">Standard (±0.1mm)</option><option value="precision">Precision (±0.05mm)</option>
+                <option value="tight">Tight (±0.01mm)</option>
+              </select>
+            </div>
+            <div class="rfq-field"><label>Color</label>
+              <input type="text" class="rfq-color" data-part="${partIdx}" placeholder="White, RAL 7016..." />
+            </div>
+            <div class="rfq-field"><label>Threads & Inserts</label>
+              <input type="text" class="rfq-threads" data-part="${partIdx}" placeholder="M3×0.5, brass..." />
+            </div>
+          </div>
+          <div class="rfq-drawing-note">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>Have a 2D drawing? Upload it alongside the 3D file for a more thorough review of your tolerances, GD&T, and special requirements.</span>
+          </div>
+          <div class="rfq-custom-details"><label>Additional Notes & Requirements</label>
+            <textarea class="rfq-custom-notes" data-part="${partIdx}" rows="3" placeholder="Surface finish details, coating specs, heat treatments, certifications, special requirements..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="rfq-results hidden" data-part="${partIdx}">
+        <div class="rfq-results__header">
+          <h3>Geometry Analysis</h3>
+          <span class="rfq-results__status" data-part="${partIdx}">Analyzing...</span>
+        </div>
+        <div class="rfq-results__row">
+          <div class="rfq-results__thumbnail" data-part="${partIdx}"></div>
+          <div class="rfq-results__grid" data-part="${partIdx}">
+            <div class="rfq-stat"><span class="rfq-stat__label">Bounding Box</span><span class="rfq-stat__value" data-stat="bbox">—</span></div>
+            <div class="rfq-stat"><span class="rfq-stat__label">Volume</span><span class="rfq-stat__value" data-stat="volume">—</span></div>
+            <div class="rfq-stat"><span class="rfq-stat__label">Surface Area</span><span class="rfq-stat__value" data-stat="surface-area">—</span></div>
+            <div class="rfq-stat"><span class="rfq-stat__label">Est. Mass</span><span class="rfq-stat__value" data-stat="mass">—</span></div>
+            <div class="rfq-stat"><span class="rfq-stat__label">Triangles</span><span class="rfq-stat__value" data-stat="triangles">—</span></div>
+            <div class="rfq-stat"><span class="rfq-stat__label">Dimensions</span><span class="rfq-stat__value" data-stat="dimensions">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/**
+ * Initialize the RFQ controller.
+ */
+export function initRFQController() {
+  const tabList      = document.getElementById('rfq-tab-list');
+  const addBtn       = document.getElementById('rfq-add-part');
+  const panels       = document.getElementById('rfq-part-panels');
+  const submitBtn    = document.getElementById('rfq-submit-btn');
+  const modeSelector = document.getElementById('rfq-mode-selector');
+
+  // Bulk upload elements
+  const bulkPanel    = document.getElementById('rfq-bulk-panel');
+  const detailedPanel = document.getElementById('rfq-detailed-panel');
+  const bulkSelectBtn= document.getElementById('rfq-bulk-select-btn');
+  const bulkFileInput= document.getElementById('rfq-bulk-file-input');
+  const bulkFileList = document.getElementById('rfq-bulk-file-list');
+  const bulkUploadZone = document.getElementById('rfq-bulk-upload-zone');
+  const bulkSubmitBtn= document.getElementById('rfq-bulk-submit-btn');
+
+  // CTA cards
+  const ctaDetailed  = document.getElementById('rfq-cta-detailed');
+  const ctaBulk      = document.getElementById('rfq-cta-bulk');
+
+  if (!tabList || !panels) {
+    console.warn('[RFQ] Controller elements not found.');
+    return;
+  }
+
+  // Set initial visibility based on default 'bulk' mode
+  detailedPanel?.classList.add('hidden');
+  bulkPanel?.classList.remove('hidden');
+  ctaDetailed?.classList.add('hidden');
+  ctaBulk?.classList.remove('hidden');
+
+  // Wire up initial part (part 0) + populate dynamic dropdowns
+  wirePartPanel(0);
+  populateMaterialDropdown(0, 'cnc');
+  populateFinishDropdown(0, 'cnc');
+
+  // Wire the "clear all" button in the quote result panel
+  document.getElementById('rfq-clear-all-parts')?.addEventListener('click', () => {
+    quotedParts.clear();
+    renderQuoteResult();
+  });
+
+  // Wire checkout and request quote buttons
+  document.getElementById('rfq-checkout-btn')?.addEventListener('click', () => {
+    if (quotedParts.size === 0) return;
+    alert('Checkout initiated! Redirecting to payment...');
+  });
+  document.getElementById('rfq-request-formal-quote')?.addEventListener('click', () => {
+    if (quotedParts.size === 0) return;
+    alert('Formal quote request submitted! Our engineers will contact you within 24 hours.');
+  });
+
+  // ── Rich Text Editor Handlers ────────────────────────
+  const editorTools = document.querySelectorAll('.rfq-editor__tool');
+  editorTools.forEach(tool => {
+    tool.addEventListener('click', (e) => {
+      if (tool.classList.contains('rfq-editor__tool--color')) return;
+      e.preventDefault();
+      const command = tool.dataset.command;
+      document.execCommand(command, false, null);
+      document.getElementById('rfq-bulk-notes')?.focus();
+    });
+
+    const colorInput = tool.querySelector('.rfq-color-picker');
+    if (colorInput) {
+      colorInput.addEventListener('input', (e) => {
+        const command = tool.dataset.command;
+        const color = e.target.value;
+        document.execCommand(command, false, color);
+        const preview = tool.querySelector('.color-preview');
+        if (preview) preview.style.background = color;
+      });
+    }
+  });
+
+  const editorContent = document.getElementById('rfq-bulk-notes');
+  editorContent?.addEventListener('input', () => {});
+
+  // ── Mode Selector ─────────────────────────────────────
+  modeSelector?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.rfq-mode-btn');
+    if (!btn) return;
+    const mode = btn.dataset.mode;
+    if (mode === currentMode) return;
+
+    currentMode = mode;
+    modeSelector.querySelectorAll('.rfq-mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    if (mode === 'bulk') {
+      detailedPanel?.classList.add('hidden');
+      bulkPanel?.classList.remove('hidden');
+      ctaDetailed?.classList.add('hidden');
+      ctaBulk?.classList.remove('hidden');
+    } else {
+      detailedPanel?.classList.remove('hidden');
+      bulkPanel?.classList.add('hidden');
+      ctaDetailed?.classList.remove('hidden');
+      ctaBulk?.classList.add('hidden');
+    }
+
+    console.log('[RFQ] Mode switched to:', mode);
+  });
+
+  // ── Bulk Upload Handlers ──────────────────────────────
+  // Wire "Select Files" button to the normal file input (no webkitdirectory)
+  bulkSelectBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    bulkFileInput?.click();
+  });
+
+  // Wire "Select Folder" button to the folder-specific input
+  const bulkFolderBtn = document.getElementById('rfq-bulk-folder-btn');
+  const bulkFolderInput = document.getElementById('rfq-bulk-folder-input');
+  bulkFolderBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    bulkFolderInput?.click();
+  });
+
+  bulkUploadZone?.addEventListener('click', (e) => {
+    if (e.target === bulkUploadZone || e.target.closest('.upload-icon') || e.target.closest('.upload-text')) {
+      bulkFileInput?.click();
+    }
+  });
+
+  bulkUploadZone?.addEventListener('dragover', (e) => { e.preventDefault(); bulkUploadZone.classList.add('drag-over'); });
+  bulkUploadZone?.addEventListener('dragleave', () => bulkUploadZone.classList.remove('drag-over'));
+  bulkUploadZone?.addEventListener('drop', (e) => {
+    e.preventDefault(); bulkUploadZone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length > 0) appendBulkFiles(e.dataTransfer.files);
+  });
+
+  bulkFileInput?.addEventListener('change', () => {
+    if (bulkFileInput.files.length > 0) appendBulkFiles(bulkFileInput.files);
+  });
+
+  bulkFolderInput?.addEventListener('change', () => {
+    if (bulkFolderInput.files.length > 0) appendBulkFiles(bulkFolderInput.files);
+  });
+
+  bulkFileList?.addEventListener('click', (e) => {
+    const removeBtn = e.target.closest('.upload-file-item__remove');
+    if (removeBtn) {
+      const fileName = removeBtn.closest('.upload-file-item')?.querySelector('.upload-file-item__name')?.textContent?.replace('📄 ', '').trim();
+      removeBtn.closest('.upload-file-item').remove();
+      // Remove from tracked file array
+      bulkFiles = bulkFiles.filter(f => (f.webkitRelativePath || f.name) !== fileName);
+      if (bulkFileList.children.length === 0) bulkFileList.classList.add('hidden');
+    }
+  });
+
+  bulkSubmitBtn?.addEventListener('click', () => handleBulkSubmit());
+
+  // ── Add Part ──────────────────────────────────────────
+  addBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const idx = partCount++;
+
+    const tab = document.createElement('button');
+    tab.className = 'rfq-tab';
+    tab.dataset.part = idx;
+    tab.innerHTML = `Part ${idx + 1}<span class="rfq-tab__close" data-part="${idx}" title="Remove">✕</span>`;
+    tabList.insertBefore(tab, addBtn);
+
+    panels.insertAdjacentHTML('beforeend', createPartPanelHTML(idx));
+    wirePartPanel(idx);
+    populateMaterialDropdown(idx, 'cnc');
+    populateFinishDropdown(idx, 'cnc');
+    switchTab(idx);
+  });
+
+  // ── Tab Switching ─────────────────────────────────────
+  tabList.addEventListener('click', (e) => {
+    const closeBtn = e.target.closest('.rfq-tab__close');
+    if (closeBtn) { e.stopPropagation(); removeTab(parseInt(closeBtn.dataset.part)); return; }
+    const tab = e.target.closest('.rfq-tab');
+    if (tab) switchTab(parseInt(tab.dataset.part));
+  });
+
+  // ── Submit Quote (Calculate for current part) ─────────
+  submitBtn?.addEventListener('click', () => calculateAndDisplayQuote());
+
+  // Initialize result panel
+  renderQuoteResult();
+
+  console.log('[RFQ] Controller initialized (v5 — JSON config + multi-part quotes).');
+}
+
+function appendBulkFiles(fileList) {
+  const bulkFileListEl = document.getElementById('rfq-bulk-file-list');
+  if (!bulkFileListEl) return;
+
+  const files = Array.from(fileList);
+  bulkFileListEl.classList.remove('hidden');
+
+  files.forEach(file => {
+    // Track the actual File object for upload
+    bulkFiles.push(file);
+
+    const item = document.createElement('div');
+    item.className = 'upload-file-item';
+    const displayName = file.webkitRelativePath || file.name;
+    item.innerHTML = `
+      <span class="upload-file-item__name">📄 ${displayName}</span>
+      <span class="upload-file-item__size">${formatFileSize(file.size)}</span>
+      <button class="upload-file-item__remove" title="Remove">&times;</button>
+    `;
+    bulkFileListEl.appendChild(item);
+  });
+}
+
+/**
+ * Enable/disable the Calculate Instant Quote button
+ * based on whether any part has a valid file analysis.
+ */
+function updateSubmitButtonState() {
+  const submitBtn = document.getElementById('rfq-submit-btn');
+  if (!submitBtn) return;
+
+  let hasAnyAnalysis = false;
+  partState.forEach((ps) => {
+    if (ps.analysis) hasAnyAnalysis = true;
+  });
+
+  submitBtn.disabled = !hasAnyAnalysis;
+}
+
+function wirePartPanel(partIdx) {
+  const panel = document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`);
+  if (!panel) return;
+
+  const uploadZone = panel.querySelector('.rfq-engine__upload-zone');
+  const fileInput  = panel.querySelector('.rfq-file-input');
+  const selectBtn  = panel.querySelector('.rfq-select-files-btn');
+
+  // Wire process change → update materials + finishes dynamically
+  const processSelect = panel.querySelector('.rfq-process');
+  processSelect?.addEventListener('change', () => {
+    const techKey = processSelect.value;
+    populateMaterialDropdown(partIdx, techKey);
+    populateFinishDropdown(partIdx, techKey);
+  });
+
+  selectBtn?.addEventListener('click', (e) => { e.stopPropagation(); fileInput?.click(); });
+  uploadZone?.querySelector('.upload-link')?.addEventListener('click', (e) => { e.stopPropagation(); fileInput?.click(); });
+  fileInput?.addEventListener('change', () => { if (fileInput.files.length > 0) handleFiles(fileInput.files, partIdx); });
+
+  uploadZone?.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+  uploadZone?.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+  uploadZone?.addEventListener('drop', (e) => {
+    e.preventDefault(); uploadZone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files, partIdx);
+  });
+
+  uploadZone?.addEventListener('click', (e) => {
+    if (e.target === uploadZone || e.target.closest('.upload-icon') || e.target.closest('.upload-text')) fileInput?.click();
+  });
+
+  // Delegate file removal
+  panel.querySelector('.upload-file-list')?.addEventListener('click', (e) => {
+    const removeBtn = e.target.closest('.upload-file-item__remove');
+    if (removeBtn) {
+      removeBtn.closest('.upload-file-item').remove();
+      const list = panel.querySelector('.upload-file-list');
+      if (list && list.children.length === 0) {
+        list.classList.add('hidden');
+        panel.querySelector('.rfq-results')?.classList.add('hidden');
+        getPartState(partIdx).analysis = null;
+        updateSubmitButtonState();
+      }
+    }
+  });
+}
+
+function switchTab(partIdx) {
+  document.querySelectorAll('.rfq-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.rfq-tab[data-part="${partIdx}"]`)?.classList.add('active');
+  document.querySelectorAll('.rfq-part-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`)?.classList.add('active');
+}
+
+function removeTab(partIdx) {
+  const tabs = document.querySelectorAll('.rfq-tab');
+  if (tabs.length <= 1) return;
+  const ps = partState.get(partIdx);
+  if (ps?.thumbnailCleanup) ps.thumbnailCleanup();
+  partState.delete(partIdx);
+  // Also remove from quoted parts
+  quotedParts.delete(partIdx);
+  renderQuoteResult();
+  document.querySelector(`.rfq-tab[data-part="${partIdx}"]`)?.remove();
+  document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`)?.remove();
+  const remaining = document.querySelector('.rfq-tab');
+  if (remaining) switchTab(parseInt(remaining.dataset.part));
+}
+
+async function handleFiles(fileList, partIdx) {
+  const files = Array.from(fileList);
+  const panel = document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`);
+  if (!panel) return;
+
+  const fileListEl = panel.querySelector(`.upload-file-list[data-part="${partIdx}"]`);
+  const resultsEl  = panel.querySelector(`.rfq-results[data-part="${partIdx}"]`);
+  const statusEl   = panel.querySelector(`.rfq-results__status[data-part="${partIdx}"]`);
+  const state = getPartState(partIdx);
+
+  // Auto-rename tab
+  const tab = document.querySelector(`.rfq-tab[data-part="${partIdx}"]`);
+  if (tab && files[0]) {
+    const name = files[0].name.replace(/\.[^.]+$/, '');
+    const shortName = name.length > 14 ? name.slice(0, 14) + '…' : name;
+    const closeHTML = partIdx > 0 ? `<span class="rfq-tab__close" data-part="${partIdx}" title="Remove">✕</span>` : '';
+    tab.innerHTML = `${shortName}${closeHTML}`;
+  }
+
+  // Auto-fill Part Name
+  const partNameInput = panel.querySelector('.rfq-part-name');
+  if (partNameInput && !partNameInput.value && files[0]) {
+    partNameInput.value = files[0].name.replace(/\.[^.]+$/, '');
+  }
+
+  // Show file badges
+  if (fileListEl) {
+    fileListEl.innerHTML = '';
+    fileListEl.classList.remove('hidden');
+    files.forEach(file => {
+      const item = document.createElement('div');
+      item.className = 'upload-file-item';
+      item.innerHTML = `
+        <span class="upload-file-item__name">📄 ${file.name}</span>
+        <span class="upload-file-item__size">${formatFileSize(file.size)}</span>
+        <button class="upload-file-item__remove" title="Remove">&times;</button>
+      `;
+      fileListEl.appendChild(item);
+    });
+  }
+
+  // Find parseable 3D file (prioritize STEP)
+  const parseable = files.find(f =>
+    ['step', 'stp', 'stl', 'obj', 'iges', 'igs'].includes(f.name.split('.').pop().toLowerCase())
+  );
+
+  if (parseable) {
+    resultsEl?.classList.remove('hidden');
+    if (statusEl) { statusEl.textContent = 'Analyzing...'; statusEl.classList.remove('done'); }
+    panel.querySelectorAll('[data-stat]').forEach(el => el.textContent = '...');
+
+    try {
+      const analysis = await analyzeFile(parseable);
+      state.analysis = analysis;
+
+      const bb = analysis.boundingBox;
+      setStat(panel, 'bbox', `${bb.x}×${bb.y}×${bb.z}`);
+      setStat(panel, 'volume', `${analysis.volume} cm³`);
+      setStat(panel, 'surface-area', `${analysis.surfaceArea} cm²`);
+      setStat(panel, 'mass', `${analysis.mass} g`);
+      setStat(panel, 'triangles', analysis.triangleCount.toLocaleString());
+      setStat(panel, 'dimensions', `${bb.x}×${bb.y}×${bb.z} mm`);
+      if (statusEl) { statusEl.textContent = '✓ Complete'; statusEl.classList.add('done'); }
+
+      // Enable the Calculate button now that we have valid geometry
+      updateSubmitButtonState();
+
+      // Render ISO thumbnail
+      const thumbContainer = panel.querySelector(`.rfq-results__thumbnail[data-part="${partIdx}"]`);
+      if (thumbContainer && analysis.geometry) {
+        if (state.thumbnailCleanup) state.thumbnailCleanup();
+        state.thumbnailCleanup = renderThumbnail(analysis.geometry, thumbContainer, 120);
+      }
+    } catch (err) {
+      console.error('[RFQ] Analysis error:', err);
+      if (statusEl) { statusEl.textContent = `Error: ${err.message}`; statusEl.classList.add('done'); }
+    }
+  }
+}
+
+function calculateAndDisplayQuote() {
+  const activePanel = document.querySelector('.rfq-part-panel.active');
+  if (!activePanel) return;
+
+  const partIdx = parseInt(activePanel.dataset.part);
+  const state = getPartState(partIdx);
+
+  if (!state.analysis) {
+    alert('Please upload a parseable 3D file (STEP, STL, OBJ) first.');
+    return;
+  }
+
+  const config = {
+    process:   getField(activePanel, '.rfq-process'),
+    material:  getField(activePanel, '.rfq-material'),
+    finish:    getField(activePanel, '.rfq-finish'),
+    tolerance: getField(activePanel, '.rfq-tolerance'),
+    leadTime:  getField(activePanel, '.rfq-lead-time'),
+    quantity:  parseInt(getField(activePanel, '.rfq-quantity')) || 1,
+    dfm:       activePanel.querySelector('.rfq-dfm-check')?.checked || false,
+    color:     getField(activePanel, '.rfq-color'),
+    threads:   getField(activePanel, '.rfq-threads'),
+    customDetails: getField(activePanel, '.rfq-custom-notes'),
+    contactMe: document.getElementById('rfq-contact-me')?.checked || false,
+  };
+
+  const quote = calculateQuote(state.analysis, config);
+  const partName = getField(activePanel, '.rfq-part-name') || `Part ${partIdx + 1}`;
+
+  // Store/update in accumulated quotes
+  quotedParts.set(partIdx, { partName, quote, config });
+
+  // Re-render the result panel
+  renderQuoteResult();
+}
+
+/**
+ * Render the multi-part quote result panel on the right.
+ */
+function renderQuoteResult() {
+  const cardEl = document.getElementById('rfq-quote-result');
+  const headerEl = document.getElementById('rfq-quote-header');
+  const hintEl = document.getElementById('rfq-quote-empty-hint');
+  const breakdownEl = document.getElementById('rfq-quote-breakdown');
+  const actionsEl = document.getElementById('rfq-quote-actions');
+  if (!cardEl || !breakdownEl) return;
+
+  if (quotedParts.size === 0) {
+    // ── Empty state: dashed outline + hint ─────────────
+    cardEl.classList.add('rfq-quote-result--empty');
+    cardEl.classList.remove('rfq-quote-result--populated');
+    headerEl?.classList.add('hidden');
+    hintEl?.classList.remove('hidden');
+    breakdownEl.classList.add('hidden');
+    breakdownEl.innerHTML = '';
+    actionsEl?.classList.add('hidden');
+    return;
+  }
+
+  // ── Populated state: full card ─────────────────────
+  cardEl.classList.remove('rfq-quote-result--empty');
+  cardEl.classList.add('rfq-quote-result--populated');
+  headerEl?.classList.remove('hidden');
+  hintEl?.classList.add('hidden');
+  breakdownEl.classList.remove('hidden');
+
+  let grandTotal = 0;
+  let grandToolingTotal = 0;
+  let html = '';
+
+  quotedParts.forEach((entry, partIdx) => {
+    const { partName, quote } = entry;
+    grandTotal += quote.totalPrice;
+    grandToolingTotal += quote.toolingCost;
+
+    // Safety net: unit price + tooling > $3000
+    const unitPlusTooling = quote.unitPriceWithSetup + quote.toolingCost;
+    const isHighValue = unitPlusTooling > 3000;
+    const warningClass = isHighValue ? ' rfq-quote-part-card--warning' : '';
+
+    html += `
+      <div class="rfq-quote-part-card${warningClass}" data-quoted-part="${partIdx}">
+        <div class="rfq-quote-part-card__header">
+          <span class="rfq-quote-part-card__name" title="${partName}">${partName}</span>
+          <button class="rfq-quote-part-card__remove" data-remove-part="${partIdx}" title="Remove part">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="rfq-quote-part-card__details">
+          <div class="rfq-quote-detail-row">
+            <span class="rfq-quote-detail-label">Technology</span>
+            <span class="rfq-quote-detail-value">${quote.techLabel}</span>
+          </div>
+          <div class="rfq-quote-detail-row">
+            <span class="rfq-quote-detail-label">Material</span>
+            <span class="rfq-quote-detail-value">${quote.materialLabel}</span>
+          </div>
+          <div class="rfq-quote-detail-row">
+            <span class="rfq-quote-detail-label">Volume</span>
+            <span class="rfq-quote-detail-value">${quote.volume} cm³</span>
+          </div>
+          <div class="rfq-quote-detail-row">
+            <span class="rfq-quote-detail-label">Est. Weight</span>
+            <span class="rfq-quote-detail-value">${quote.formatted.estimatedWeight}</span>
+          </div>
+          ${quote.hasTooling ? `
+          <div class="rfq-quote-detail-row rfq-quote-detail-row--tooling">
+            <span class="rfq-quote-detail-label">Tooling <span class="rfq-badge rfq-badge--oneoff">ONE-OFF</span></span>
+            <span class="rfq-quote-detail-value rfq-quote-detail-value--accent">${quote.formatted.toolingCost}</span>
+          </div>` : ''}
+          <div class="rfq-quote-detail-row">
+            <span class="rfq-quote-detail-label">Setup Fee <span class="rfq-badge rfq-badge--setup">PER RUN</span></span>
+            <span class="rfq-quote-detail-value">$${quote.setupFee.toFixed(2)}</span>
+          </div>
+          <div class="rfq-quote-detail-row">
+            <span class="rfq-quote-detail-label">Unit Price</span>
+            <span class="rfq-quote-detail-value rfq-quote-detail-value--highlight">${quote.formatted.perUnit}</span>
+          </div>
+          ${quote.qtyDiscount > 0 ? `
+          <div class="rfq-quote-detail-row">
+            <span class="rfq-quote-detail-label">Volume Discount</span>
+            <span class="rfq-quote-detail-value rfq-quote-detail-value--discount">-${quote.qtyDiscount}%</span>
+          </div>` : ''}
+        </div>
+        <div class="rfq-quote-part-card__total">
+          <span>Subtotal (${quote.quantity} unit${quote.quantity > 1 ? 's' : ''})</span>
+          <span class="rfq-quote-part-card__price">${quote.formatted.totalPrice}</span>
+        </div>
+        ${isHighValue ? `
+        <div class="rfq-quote-part-card__warning-note">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>This estimate will need to be validated by one of our engineers</span>
+        </div>` : ''}
+      </div>
+    `;
+  });
+
+  // Grand total
+  html += `
+    <div class="rfq-quote-grand-total">
+      <div class="rfq-quote-grand-total__row">
+        <span>Grand Total</span>
+        <span class="rfq-quote-grand-total__price">$${grandTotal.toFixed(2)}</span>
+      </div>
+      ${grandToolingTotal > 0 ? `
+      <div class="rfq-quote-grand-total__note">
+        Includes $${grandToolingTotal.toFixed(2)} one-off tooling cost
+      </div>` : ''}
+    </div>
+  `;
+
+  breakdownEl.innerHTML = html;
+  actionsEl?.classList.remove('hidden');
+
+  // Wire up remove buttons for each part
+  breakdownEl.querySelectorAll('.rfq-quote-part-card__remove').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const idx = parseInt(btn.dataset.removePart);
+      quotedParts.delete(idx);
+      renderQuoteResult();
+    });
+  });
+}
+
+/**
+ * Handle Bulk Project Quote Request
+ * Uploads all files to Supabase Storage and creates an RFQ record.
+ */
+async function handleBulkSubmit() {
+  const projName = document.getElementById('rfq-bulk-project-name')?.value || 'Unnamed Project';
+  const service = document.getElementById('rfq-bulk-service')?.value;
+  const qty = document.getElementById('rfq-bulk-qty')?.value || '';
+  const timeline = document.getElementById('rfq-bulk-timeline')?.value || 'flexible';
+  const notes = document.getElementById('rfq-bulk-notes')?.innerHTML || '';
+  const contactMe = document.getElementById('rfq-bulk-contact')?.checked || false;
+
+  if (bulkFiles.length === 0) {
+    alert('Please select at least one file to upload before submitting.');
+    return;
+  }
+
+  const submitBtn = document.getElementById('rfq-bulk-submit-btn');
+  const bulkPanel = document.getElementById('rfq-bulk-panel');
+
+  // Show progress UI
+  const progressHTML = `
+    <div class="rfq-bulk-submit-progress" id="rfq-bulk-progress">
+      <div class="rfq-bulk-submit-progress__bar-wrap">
+        <div class="rfq-bulk-submit-progress__bar" id="rfq-bulk-progress-bar"></div>
+      </div>
+      <div class="rfq-bulk-submit-progress__text" id="rfq-bulk-progress-text">Preparing upload...</div>
+    </div>
+  `;
+  const progressContainer = document.createElement('div');
+  progressContainer.innerHTML = progressHTML;
+  bulkPanel?.appendChild(progressContainer);
+
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Uploading...'; }
+
+  try {
+    // 1. Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error('You must be logged in to submit a quote request.');
+    }
+
+    const rfqId = crypto.randomUUID();
+    const uploadedFiles = [];
+    const totalFiles = bulkFiles.length;
+    const progressBar = document.getElementById('rfq-bulk-progress-bar');
+    const progressText = document.getElementById('rfq-bulk-progress-text');
+
+    // 2. Upload each file to storage
+    for (let i = 0; i < totalFiles; i++) {
+      const file = bulkFiles[i];
+      const displayName = file.webkitRelativePath || file.name;
+      const storagePath = `rfq/${user.id}/${rfqId}/${displayName}`;
+
+      if (progressText) progressText.textContent = `Uploading ${i + 1}/${totalFiles}: ${displayName}`;
+      if (progressBar) progressBar.style.width = `${((i + 1) / totalFiles) * 90}%`;
+
+      const { data, error } = await supabase.storage
+        .from('rfq-uploads')
+        .upload(storagePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) {
+        console.error(`[RFQ] Upload error for ${displayName}:`, error);
+        // Try user-files bucket as fallback
+        const { data: fallbackData, error: fallbackError } = await supabase.storage
+          .from('user-files')
+          .upload(storagePath, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (fallbackError) {
+          console.error(`[RFQ] Fallback upload also failed for ${displayName}:`, fallbackError);
+          uploadedFiles.push({
+            name: displayName,
+            size: file.size,
+            type: file.type,
+            storage_path: null,
+            upload_error: error.message
+          });
+          continue;
+        }
+
+        uploadedFiles.push({
+          name: displayName,
+          size: file.size,
+          type: file.type,
+          storage_path: storagePath,
+          bucket: 'user-files'
+        });
+      } else {
+        uploadedFiles.push({
+          name: displayName,
+          size: file.size,
+          type: file.type,
+          storage_path: storagePath,
+          bucket: 'rfq-uploads'
+        });
+      }
+    }
+
+    if (progressText) progressText.textContent = 'Creating quote request...';
+    if (progressBar) progressBar.style.width = '95%';
+
+    // 3. Create rfq_history record
+    const rfqData = {
+      type: 'bulk',
+      project_name: projName,
+      service: service,
+      estimated_quantity: qty,
+      target_timeline: timeline,
+      notes: notes,
+      contact_requested: contactMe,
+      files: uploadedFiles,
+      file_count: uploadedFiles.length,
+      submitted_at: new Date().toISOString()
+    };
+
+    const { error: rfqError } = await supabase
+      .from('rfq_history')
+      .insert({
+        id: rfqId,
+        user_id: user.id,
+        rfq_data: rfqData,
+        status: 'under_review'
+      });
+
+    if (rfqError) {
+      console.error('[RFQ] Failed to create RFQ record:', rfqError);
+      throw new Error('Failed to save quote request: ' + rfqError.message);
+    }
+
+    if (progressBar) progressBar.style.width = '100%';
+
+    // 4. Show success
+    progressContainer.innerHTML = `
+      <div class="rfq-bulk-submit-success">
+        <div class="rfq-bulk-submit-success__icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+        <h3>Quote Request Submitted!</h3>
+        <p>${uploadedFiles.length} file${uploadedFiles.length > 1 ? 's' : ''} uploaded for "${projName}". Our engineers will review your project and get back to you within 24 hours.</p>
+      </div>
+    `;
+
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Request Project Quote'; }
+
+    // Reset bulk files tracking
+    bulkFiles = [];
+
+    console.log('[RFQ] Bulk submission complete:', rfqId);
+
+  } catch (err) {
+    console.error('[RFQ] Bulk submit error:', err);
+    if (progressContainer) progressContainer.remove();
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Request Project Quote'; }
+    alert(`Error submitting quote: ${err.message}`);
+  }
+}
+
+// ── Helpers ─────────────────────────────────────────────
+function setStat(panel, key, value) {
+  const el = panel.querySelector(`[data-stat="${key}"]`);
+  if (el) el.textContent = value;
+}
+function getField(panel, selector) {
+  const el = panel.querySelector(selector);
+  return el ? el.value : '';
+}
+function formatFileSize(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1048576).toFixed(1)} MB`;
+}

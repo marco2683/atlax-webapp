@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Advantage — PRD Manufacturing Engine</title>
+  <link rel="stylesheet" href="/src/css/design-system.css">
+  <link rel="stylesheet" href="/src/css/marketing.css">
+  <link rel="stylesheet" href="/src/css/advantage.css">
+</head>
+
+<body class="advantage-page">
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar"
+    style="position: fixed; width: 100%; top: 0; z-index: 1000; background: rgba(5, 6, 10, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); padding: var(--space-4) var(--space-6);">
+    <div
+      style="display: flex; justify-content: space-between; align-items: center; max-width: 95%; margin: 0 auto; width: 100%;">
+      <div class="navbar__brand">
+        <a href="index.html">
+          <img src="/paniani-logo-white.png" alt="PRD" style="height: 40px; width: auto; opacity: 0.9;">
+        </a>
+      </div>
+      <div style="display: flex; gap: var(--space-6); align-items: center;">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="services.html" class="nav-link">Capabilities</a>
+        <a href="portfolio.html" class="nav-link">Portfolio</a>
+        <a href="about.html" class="nav-link">About Us</a>
+        <a href="/app.html" class="btn-marketing btn-marketing--primary"
+          style="font-size: 12px; padding: 10px 20px; text-decoration: none;">Manufacturing Engine</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Organic Hero (Empty by default to allow matrix to center) -->
+    <section class="adv-hero"></section>
+
+    <!-- Constellation Matrix -->
+    <section class="adv-matrix-section" id="matrix-section">
+      <div class="adv-matrix-container" id="matrix-container">
+        <!-- SVG Canvas for Paths -->
+        <svg id="matrix-canvas" class="matrix-canvas"></svg>
+
+        <!-- Constellation Nodes (Positions managed by JS) -->
+        <div class="matrix-constellation" id="matrix-constellation">
+
+          <!-- Intent Nodes (Step 1) - 8 Total -->
+          <div class="node intent-node" data-id="wearable" data-type="intent">
+            <div class="node-icon"><img src="/assets/images/sensory/wearable_product.png" alt="Wearable Seal"></div>
+            <div class="node-label">Skin-like Wearable</div>
+          </div>
+          <div class="node intent-node" data-id="skin" data-type="intent">
+            <div class="node-icon"><img src="/assets/images/sensory/skin_product.png" alt="Skin Feel"></div>
+            <div class="node-label">Skin-like Feel</div>
+          </div>
+          <div class="node intent-node" data-id="bone" data-type="intent">
+            <div class="node-icon"><img src="/assets/images/sensory/bone_product.png" alt="Bone Density"></div>
+            <div class="node-label">Bone-like Density</div>
+          </div>
+          <div class="node intent-node" data-id="apple" data-type="intent">
+            <div class="node-icon"><img src="/assets/images/sensory/apple_product.png" alt="Apple Finish"></div>
+            <div class="node-label">Premium Matte Finish</div>
+          </div>
+          <div class="node intent-node" data-id="optical" data-type="intent">
+            <div class="node-icon"><img src="/assets/images/sensory/optical_product.png" alt="Optical Clarity"></div>
+            <div class="node-label">Glass-like Transparency</div>
+          </div>
+          <div class="node intent-node" data-id="acoustic" data-type="intent">
+            <div class="node-icon"><img src="/assets/images/sensory/acoustic_product.png" alt="Acoustic Dampening">
+            </div>
+            <div class="node-label">Acoustic Dampening</div>
+          </div>
+          <div class="node intent-node" data-id="thermal" data-type="intent">
+            <div class="node-icon"><img src="/assets/images/sensory/thermal_product.png" alt="Thermal Dissipation">
+            </div>
+            <div class="node-label">Thermal Inertia</div>
+          </div>
+          <div class="node intent-node" data-id="woven" data-type="intent">
+            <div class="node-icon"><img src="/assets/images/sensory/woven_product.png" alt="Woven Tactility"></div>
+            <div class="node-label">Woven Micro-Texture</div>
+          </div>
+
+          <!-- Formulation Nodes (Step 2) - 8 Total -->
+          <div class="node tech-node" data-id="tpu-soft" data-type="tech">
+            <div class="node-label">TPU + Soft Filler</div>
+            <div class="node-tag">Material</div>
+          </div>
+          <div class="node tech-node" data-id="ceramic-pa" data-type="tech">
+            <div class="node-label">Ceramic-filled PA</div>
+            <div class="node-tag">Material</div>
+          </div>
+          <div class="node tech-node" data-id="abs-mica" data-type="tech">
+            <div class="node-label">ABS + Mica Blending</div>
+            <div class="node-tag">Material</div>
+          </div>
+          <div class="node tech-node" data-id="optical-pc" data-type="tech">
+            <div class="node-label">Optical Grade PC</div>
+            <div class="node-tag">Material</div>
+          </div>
+          <div class="node tech-node" data-id="liquid-silicone" data-type="tech">
+            <div class="node-label">Liquid Silicone Rubber</div>
+            <div class="node-tag">Material</div>
+          </div>
+          <div class="node tech-node" data-id="highly-conductive-pa" data-type="tech">
+            <div class="node-label">Thermally Conductive PA</div>
+            <div class="node-tag">Material</div>
+          </div>
+          <div class="node tech-node" data-id="carbon-infused-pa" data-type="tech">
+            <div class="node-label">Carbon Fiber PA</div>
+            <div class="node-tag">Material</div>
+          </div>
+          <div class="node tech-node" data-id="high-density-epp" data-type="tech">
+            <div class="node-label">High-Density Foam</div>
+            <div class="node-tag">Material</div>
+          </div>
+
+          <!-- Process Nodes (Step 3) - 8 Total -->
+          <div class="node tech-node" data-id="overmold" data-type="tech">
+            <div class="node-label">2K Overmolding</div>
+            <div class="node-tag">Process</div>
+          </div>
+          <div class="node tech-node" data-id="multi-spray" data-type="tech">
+            <div class="node-label">Multi-layer PVD</div>
+            <div class="node-tag">Texture</div>
+          </div>
+          <div class="node tech-node" data-id="iml" data-type="tech">
+            <div class="node-label">In-Mold Labeling</div>
+            <div class="node-tag">Process</div>
+          </div>
+          <div class="node tech-node" data-id="diamond-turning" data-type="tech">
+            <div class="node-label">Nano-Diamond Turning</div>
+            <div class="node-tag">Process</div>
+          </div>
+          <div class="node tech-node" data-id="micro-edm" data-type="tech">
+            <div class="node-label">Micro-EDM Sparking</div>
+            <div class="node-tag">Texture</div>
+          </div>
+          <div class="node tech-node" data-id="five-axis-cnc" data-type="tech">
+            <div class="node-label">5-Axis Milling</div>
+            <div class="node-tag">Process</div>
+          </div>
+          <div class="node tech-node" data-id="ultrasonic-welding" data-type="tech">
+            <div class="node-label">Ultrasonic Welding</div>
+            <div class="node-tag">Process</div>
+          </div>
+          <div class="node tech-node" data-id="high-speed-im" data-type="tech">
+            <div class="node-label">High-Speed Injection</div>
+            <div class="node-tag">Process</div>
+          </div>
+
+          <!-- Output Nodes (Step 4) - 8 Total -->
+          <div class="node tech-node" data-id="production-im" data-type="tech">
+            <div class="node-label">Production IM</div>
+            <div class="node-tag">Technology</div>
+          </div>
+          <div class="node tech-node" data-id="precision-cnc" data-type="tech">
+            <div class="node-label">Precision CNC</div>
+            <div class="node-tag">Technology</div>
+          </div>
+          <div class="node tech-node" data-id="optical-injection" data-type="tech">
+            <div class="node-label">Optical Injection</div>
+            <div class="node-tag">Technology</div>
+          </div>
+          <div class="node tech-node" data-id="compression-molding" data-type="tech">
+            <div class="node-label">Compression Molding</div>
+            <div class="node-tag">Technology</div>
+          </div>
+          <div class="node tech-node" data-id="insert-molding" data-type="tech">
+            <div class="node-label">Insert Molding</div>
+            <div class="node-tag">Technology</div>
+          </div>
+          <div class="node tech-node" data-id="extrusion" data-type="tech">
+            <div class="node-label">Profile Extrusion</div>
+            <div class="node-tag">Technology</div>
+          </div>
+          <div class="node tech-node" data-id="lsr-molding" data-type="tech">
+            <div class="node-label">LSR Molding</div>
+            <div class="node-tag">Technology</div>
+          </div>
+          <div class="node tech-node" data-id="vacuum-casting" data-type="tech">
+            <div class="node-label">Vacuum Casting</div>
+            <div class="node-tag">Technology</div>
+          </div>
+
+        </div>
+
+        <!-- Intro Quote (Fades out on expand) -->
+        <div class="matrix-intro" id="matrix-intro">
+          <h2>To create the extraordinary, we must harmonise intent with reality.</h2>
+          <p>Explore the collision of materials, Technology, and craft.</p>
+          <a href="/app.html#product-builder" class="btn-marketing btn-marketing--primary" style="display: inline-flex; align-items: center; justify-content: center; margin-top: 30px; font-size: 14px; padding: 14px 30px; text-decoration: none;">ACCESS PRODUCT BUILDER ENGINE</a>
+        </div>
+      </div>
+      <button class="reset-map-btn" id="reset-map-btn">&larr; Reset View</button>
+
+
+    </section>
+
+    <!-- Transformation Overlay (Dual View) -->
+    <div id="matrix-overlay" class="matrix-overlay hidden">
+      <div class="overlay-glass transformation-view">
+        <button class="close-overlay" id="close-overlay">&times;</button>
+
+        <div class="transformation-header">
+          <h2 id="overlay-title">Transformation Logic</h2>
+          <div class="divider"></div>
+        </div>
+
+        <div class="transformation-compare">
+          <!-- Left: The Sensory Goal -->
+          <div class="compare-card">
+            <div class="compare-tag">Step 1: Sensory Goal</div>
+            <div class="compare-visual">
+              <img id="overlay-img-product" src="" alt="Product Goal">
+            </div>
+            <p id="overlay-desc" class="compare-text"></p>
+          </div>
+
+          <!-- Center: Arrow -->
+          <div class="transformation-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+
+          <!-- Right: The Manufacturing Reality -->
+          <div class="compare-card">
+            <div class="compare-tag">Step 2: Steel Finish</div>
+            <div class="compare-visual">
+              <img id="overlay-img-steel" src="" alt="Steel Reality">
+            </div>
+            <div class="compromise-box">
+              <strong>MOLD TRANSFORMATION</strong>
+              <p id="overlay-compromise"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tech Info Modal (Smaller version) -->
+    <div id="tech-modal" class="tech-modal hidden">
+      <div class="tech-modal-glass">
+        <button class="close-tech-modal" id="close-tech-modal">&times;</button>
+        <div class="tech-modal-content">
+          <div class="tech-modal-tag" id="tech-modal-tag">Material</div>
+          <h2 id="tech-modal-title">Technology Name</h2>
+          <div class="divider"></div>
+          <div class="tech-modal-visual">
+            <img id="tech-modal-img" src="" alt="Technology Visual">
+          </div>
+          <p id="tech-modal-desc">Detailed technical explanation goes here.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="/src/js/components/advantage-map.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATLAX - Strategic Product Realization</title>
+  <link rel="stylesheet" href="/src/css/advantage.css">
+  <link rel="stylesheet" href="/src/css/auth.css">
+</head>
+
+<body class="marketing-page">
+
+  <!-- ── Navbar ────────────────────────────────────────── -->
+  <nav class="navbar" id="navbar"
+    style="position: fixed; width: 100%; top: 0; z-index: 100; transition: background 0.3s; padding: var(--space-4) var(--space-6); background: rgba(12,12,12,0.8); backdrop-filter: blur(20px);">
+    <div
+      style="display: flex; justify-content: space-between; align-items: center; max-width: 95%; margin: 0 auto; width: 100%;">
+      <div class="navbar__brand" style="display: flex; align-items: center; gap: 12px;">
+        <a href="/" aria-label="Home"><img src="/logos/atlax-logo-light.svg" alt="ATLAX"
+            style="height: 32px; width: auto; object-fit: contain;" /></a>
+        <div
+          style="display: flex; align-items: center; gap: 10px; border-left: 1px solid rgba(255,255,255,0.15); padding-left: 12px;">
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <div
+              style="font-size: 11px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2;">
+              Manufacturing</div>
+            <div
+              style="font-size: 10px; font-weight: 400; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2;">
+              Engine</div>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; gap: var(--space-6); align-items: center;">
+        <a href="index.html" class="nav-link"
+          style="color: white; border-bottom: 2px solid var(--color-electric);">Home</a>
+        <a href="services.html" class="nav-link">Capabilities</a>
+        <a href="portfolio.html" class="nav-link">Portfolio</a>
+        <a href="about.html" class="nav-link">About Us</a>
+        <a href="/app.html" class="btn-marketing btn-marketing--primary"
+          style="padding: 10px 24px; font-size: 13px;">Manufacturing Engine</a>
+        <a href="#" id="nav-login-btn" class="nav-link" style="font-weight: 500; color: var(--color-electric);">Log
+          In</a>
+        <!-- Dynamic User Dropdown (Hidden initially) -->
+        <div id="nav-user-menu" class="nav-user-menu">
+          <div class="nav-avatar" id="nav-avatar">PR</div>
+          <div class="dropdown-content">
+            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter
+              Platform</a>
+            <a href="#" class="dropdown-item">Profile Settings</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" id="nav-logout-btn" class="dropdown-item">Log Out</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Hero Section (DARK) ────────────────────────────────── -->
+  <header class="m-hero" style="background: var(--color-void);">
+    <div class="m-hero__content m-fade-up">
+      <div class="m-hero__chip">Competitive by Design. Global by Execution.</div>
+      <br><br>
+      <h1 class="m-hero__title">Strategic Product Realization</h1>
+      <br><br>
+      <p class="m-hero__subtitle">
+        Western design wins users. Asian manufacturing wins margins. The setup for success for product dominance.
+        Strategic Supply Chain, Instant Quotes, Design and PLM services all in one platform.
+      </p>
+      <br><br>
+      <div class="m-hero__cta-group">
+        <a href="/app.html" class="btn-marketing btn-marketing--primary">Access Manufacturing Engine</a>
+        <a href="services.html" class="btn-marketing btn-marketing--secondary">Capabilities</a>
+      </div>
+    </div>
+
+    <div id="hero-merger" class="m-hero__merger-comp m-fade-up" style="transition-delay: 200ms; --bg-flag: url();">
+      <div class="m-merger-card m-merger-card--west">
+        <div class="m-merger-card__image" style="background-image: url('/assets/images/prd_western_design.png');"></div>
+        <div class="m-merger-card__content">
+          <div class="m-merger-card__tag">AUS &bull; USA</div>
+          <h4>Front-End Innovation</h4>
+          <p>Industrial Design, Mechanical & Electrical Engineering</p>
+          <p>Systems Architecture & Integration</p>
+        </div>
+      </div>
+
+      <div class="m-merger-card m-merger-card--east">
+        <div class="m-merger-card__image" style="background-image: url('/assets/images/prd_hero_factory.png');"></div>
+        <div class="m-merger-card__content">
+          <div class="m-merger-card__tag">CHINA (PRD)</div>
+          <h4>Manufacturing Engine</h4>
+          <p>Engineering for Manufacturing</p>
+          <p>High-Velocity Execution & Supply Chain</p>
+        </div>
+      </div>
+
+      <div class="m-merger-connection">
+        <div class="m-merger-pulse"></div>
+        <span>SEAMLESS<br>INTEGRATION</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SECTION: Precision Capabilities (LIGHT BENTO) -->
+  <section id="services" class="m-bento-section">
+    <div class="m-section-header m-fade-up" style="text-align: center; max-width: 800px; margin: 0 auto 80px auto;">
+      <h2 class="m-section-title" style="color: var(--color-void);">Precision Capabilities.</h2>
+      <p class="m-section-desc" style="color: #444;">From complex medical diagnostics to high-end consumer electronics.
+        We don't just design glossy renders; we build class-A surfaces ready for massive yield.</p>
+    </div>
+
+    <div class="m-bento-grid m-fade-up">
+      <!-- Card 1: Industrial Design (Large) -->
+      <div class="m-bento-card m-bento-card--large">
+        <div class="m-bento-image"
+          style="background-image: url('https://images.unsplash.com/photo-1595008382697-ae4cc8c57b7d?auto=format&fit=crop&w=800&q=80');">
+        </div>
+        <div class="m-bento-content">
+          <h3>Industrial Design</h3>
+          <p>Class-A surface modeling and ergonomic refinement for high-end handhelds.</p>
+        </div>
+      </div>
+
+      <!-- Card 2: Mechanical Design -->
+      <div class="m-bento-card">
+        <div class="m-bento-image"
+          style="background-image: url('https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?auto=format&fit=crop&w=800&q=80');">
+        </div>
+        <div class="m-bento-content">
+          <h3>Mechanical Design</h3>
+          <p>Complex internal assembly and structural engineering for durability.</p>
+        </div>
+      </div>
+
+      <!-- Card 3: Electronics & Software Design -->
+      <div class="m-bento-card">
+        <div class="m-bento-image"
+          style="background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80');">
+        </div>
+        <div class="m-bento-content">
+          <h3>Electronics & Software</h3>
+          <p>High-density PCB design and custom firmware orchestration.</p>
+        </div>
+      </div>
+
+      <!-- Card 4: Systems Integration (Wide) -->
+      <div class="m-bento-card m-bento-card--wide">
+        <div class="m-bento-image"
+          style="background-image: url('https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=800&q=80');">
+        </div>
+        <div class="m-bento-content">
+          <h3>Systems Integration</h3>
+          <p>End-to-end integration of complex mechatronic modules and optical systems in a single architecture.</p>
+        </div>
+      </div>
+
+      <!-- Card 5: Competitive Manufacturing -->
+      <div class="m-bento-card">
+        <div class="m-bento-image"
+          style="background-image: url('https://images.unsplash.com/photo-1565514020179-026b92b84bb6?auto=format&fit=crop&w=800&q=80');">
+        </div>
+        <div class="m-bento-content">
+          <h3>Mfg Execution</h3>
+          <p>High-Speed SMT & Robotic Assembly.</p>
+        </div>
+      </div>
+
+      <!-- Card 6: Sourcing & Supply Chain -->
+      <div class="m-bento-card">
+        <div class="m-bento-image"
+          style="background-image: url('https://images.unsplash.com/photo-1586528116311-ad8ed7c15b9c?auto=format&fit=crop&w=800&q=80');">
+        </div>
+        <div class="m-bento-content">
+          <h3>Supply Chain</h3>
+          <p>Vendor vetting and strategic risk mitigation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: Our Advantage (Constellation Map) -->
+  <section class="adv-matrix-section" id="advantage">
+    <div class="adv-matrix-container" id="matrix-container">
+      <!-- SVG Canvas for Paths -->
+      <svg id="matrix-canvas" class="matrix-canvas"></svg>
+
+      <!-- Constellation Nodes (Positions managed by JS) -->
+      <div class="matrix-constellation" id="matrix-constellation">
+
+        <!-- Intent Nodes (Step 1) - 8 Total -->
+        <div class="node intent-node" data-id="wearable" data-type="intent">
+          <div class="node-icon"><img src="/assets/images/sensory/wearable_product.png" alt="Wearable Seal"></div>
+          <div class="node-label">Skin-like Wearable</div>
+        </div>
+        <div class="node intent-node" data-id="skin" data-type="intent">
+          <div class="node-icon"><img src="/assets/images/sensory/skin_product.png" alt="Skin Feel"></div>
+          <div class="node-label">Skin-like Feel</div>
+        </div>
+        <div class="node intent-node" data-id="bone" data-type="intent">
+          <div class="node-icon"><img src="/assets/images/sensory/bone_product.png" alt="Bone Density"></div>
+          <div class="node-label">Bone-like Density</div>
+        </div>
+        <div class="node intent-node" data-id="apple" data-type="intent">
+          <div class="node-icon"><img src="/assets/images/sensory/apple_product.png" alt="Apple Finish"></div>
+          <div class="node-label">Premium Matte Finish</div>
+        </div>
+        <div class="node intent-node" data-id="optical" data-type="intent">
+          <div class="node-icon"><img src="/assets/images/sensory/optical_product.png" alt="Optical Clarity"></div>
+          <div class="node-label">Glass-like Transparency</div>
+        </div>
+        <div class="node intent-node" data-id="acoustic" data-type="intent">
+          <div class="node-icon"><img src="/assets/images/sensory/acoustic_product.png" alt="Acoustic Dampening"></div>
+          <div class="node-label">Acoustic Dampening</div>
+        </div>
+        <div class="node intent-node" data-id="thermal" data-type="intent">
+          <div class="node-icon"><img src="/assets/images/sensory/thermal_product.png" alt="Thermal Dissipation"></div>
+          <div class="node-label">Thermal Inertia</div>
+        </div>
+        <div class="node intent-node" data-id="woven" data-type="intent">
+          <div class="node-icon"><img src="/assets/images/sensory/woven_product.png" alt="Woven Tactility"></div>
+          <div class="node-label">Woven Micro-Texture</div>
+        </div>
+
+        <!-- Formulation Nodes (Step 2) - 8 Total -->
+        <div class="node tech-node" data-id="tpu-soft" data-type="tech">
+          <div class="node-label">TPU + Soft Filler</div>
+          <div class="node-tag">Material</div>
+        </div>
+        <div class="node tech-node" data-id="ceramic-pa" data-type="tech">
+          <div class="node-label">Ceramic-filled PA</div>
+          <div class="node-tag">Material</div>
+        </div>
+        <div class="node tech-node" data-id="abs-mica" data-type="tech">
+          <div class="node-label">ABS + Mica Blending</div>
+          <div class="node-tag">Material</div>
+        </div>
+        <div class="node tech-node" data-id="optical-pc" data-type="tech">
+          <div class="node-label">Optical Grade PC</div>
+          <div class="node-tag">Material</div>
+        </div>
+        <div class="node tech-node" data-id="liquid-silicone" data-type="tech">
+          <div class="node-label">Liquid Silicone Rubber</div>
+          <div class="node-tag">Material</div>
+        </div>
+        <div class="node tech-node" data-id="highly-conductive-pa" data-type="tech">
+          <div class="node-label">Thermally Conductive PA</div>
+          <div class="node-tag">Material</div>
+        </div>
+        <div class="node tech-node" data-id="carbon-infused-pa" data-type="tech">
+          <div class="node-label">Carbon Fiber PA</div>
+          <div class="node-tag">Material</div>
+        </div>
+        <div class="node tech-node" data-id="high-density-epp" data-type="tech">
+          <div class="node-label">High-Density Foam</div>
+          <div class="node-tag">Material</div>
+        </div>
+
+        <!-- Process Nodes (Step 3) - 8 Total -->
+        <div class="node tech-node" data-id="overmold" data-type="tech">
+          <div class="node-label">2K Overmolding</div>
+          <div class="node-tag">Process</div>
+        </div>
+        <div class="node tech-node" data-id="multi-spray" data-type="tech">
+          <div class="node-label">Multi-layer PVD</div>
+          <div class="node-tag">Texture</div>
+        </div>
+        <div class="node tech-node" data-id="iml" data-type="tech">
+          <div class="node-label">In-Mold Labeling</div>
+          <div class="node-tag">Process</div>
+        </div>
+        <div class="node tech-node" data-id="diamond-turning" data-type="tech">
+          <div class="node-label">Nano-Diamond Turning</div>
+          <div class="node-tag">Process</div>
+        </div>
+        <div class="node tech-node" data-id="micro-edm" data-type="tech">
+          <div class="node-label">Micro-EDM Sparking</div>
+          <div class="node-tag">Texture</div>
+        </div>
+        <div class="node tech-node" data-id="five-axis-cnc" data-type="tech">
+          <div class="node-label">5-Axis Milling</div>
+          <div class="node-tag">Process</div>
+        </div>
+        <div class="node tech-node" data-id="ultrasonic-welding" data-type="tech">
+          <div class="node-label">Ultrasonic Welding</div>
+          <div class="node-tag">Process</div>
+        </div>
+        <div class="node tech-node" data-id="high-speed-im" data-type="tech">
+          <div class="node-label">High-Speed Injection</div>
+          <div class="node-tag">Process</div>
+        </div>
+
+        <!-- Output Nodes (Step 4) - 8 Total -->
+        <div class="node tech-node" data-id="production-im" data-type="tech">
+          <div class="node-label">Production IM</div>
+          <div class="node-tag">Technology</div>
+        </div>
+        <div class="node tech-node" data-id="precision-cnc" data-type="tech">
+          <div class="node-label">Precision CNC</div>
+          <div class="node-tag">Technology</div>
+        </div>
+        <div class="node tech-node" data-id="optical-injection" data-type="tech">
+          <div class="node-label">Optical Injection</div>
+          <div class="node-tag">Technology</div>
+        </div>
+        <div class="node tech-node" data-id="compression-molding" data-type="tech">
+          <div class="node-label">Compression Molding</div>
+          <div class="node-tag">Technology</div>
+        </div>
+        <div class="node tech-node" data-id="insert-molding" data-type="tech">
+          <div class="node-label">Insert Molding</div>
+          <div class="node-tag">Technology</div>
+        </div>
+        <div class="node tech-node" data-id="extrusion" data-type="tech">
+          <div class="node-label">Profile Extrusion</div>
+          <div class="node-tag">Technology</div>
+        </div>
+        <div class="node tech-node" data-id="lsr-molding" data-type="tech">
+          <div class="node-label">LSR Molding</div>
+          <div class="node-tag">Technology</div>
+        </div>
+        <div class="node tech-node" data-id="vacuum-casting" data-type="tech">
+          <div class="node-label">Vacuum Casting</div>
+          <div class="node-tag">Technology</div>
+        </div>
+
+      </div>
+
+      <!-- Intro Quote (Fades out on expand) -->
+      <div class="matrix-intro" id="matrix-intro">
+        <h2>To create the extraordinary, we must harmonise intent with reality.</h2>
+        <p>Explore the collision of materials, Technology, and craft.</p>
+        <a href="/app.html#product-builder" class="btn-marketing btn-marketing--primary"
+          style="display: inline-flex; align-items: center; justify-content: center; margin-top: 30px; font-size: 14px; padding: 14px 30px; text-decoration: none; pointer-events: auto; position: relative; z-index: 100;">ACCESS
+          PRODUCT BUILDER</a>
+      </div>
+    </div>
+    <button class="reset-map-btn" id="reset-map-btn">&larr; Reset View</button>
+  </section>
+
+  <!-- Transformation Overlay (Dual View) -->
+  <div id="matrix-overlay" class="matrix-overlay hidden">
+    <div class="overlay-glass transformation-view">
+      <button class="close-overlay" id="close-overlay">&times;</button>
+
+      <div class="transformation-header">
+        <h2 id="overlay-title">Transformation Logic</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="transformation-compare">
+        <!-- Left: The Sensory Goal -->
+        <div class="compare-card">
+          <div class="compare-tag">Step 1: Sensory Goal</div>
+          <div class="compare-visual">
+            <img id="overlay-img-product" src="" alt="Product Goal">
+          </div>
+          <p id="overlay-desc" class="compare-text"></p>
+        </div>
+
+        <!-- Center: Arrow -->
+        <div class="transformation-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </div>
+
+        <!-- Right: The Manufacturing Reality -->
+        <div class="compare-card">
+          <div class="compare-tag">Step 2: Steel Finish</div>
+          <div class="compare-visual">
+            <img id="overlay-img-steel" src="" alt="Steel Reality">
+          </div>
+          <div class="compromise-box">
+            <strong>MOLD TRANSFORMATION</strong>
+            <p id="overlay-compromise"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tech Info Modal (Smaller version) -->
+  <div id="tech-modal" class="tech-modal hidden">
+    <div class="tech-modal-glass">
+      <button class="close-tech-modal" id="close-tech-modal">&times;</button>
+      <div class="tech-modal-content">
+        <div class="tech-modal-tag" id="tech-modal-tag">Material</div>
+        <h2 id="tech-modal-title">Technology Name</h2>
+        <div class="divider"></div>
+        <div class="tech-modal-visual">
+          <img id="tech-modal-img" src="" alt="Technology Visual">
+        </div>
+        <p id="tech-modal-desc">Detailed technical explanation goes here.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: One Stop Shop Timeline (DARK) -->
+  <section id="onestop" class="m-onestop-dark">
+    <div style="max-width: 1400px; margin: 0 auto; text-align: center; margin-bottom: 200px;" class="m-fade-up">
+      <h2 class="m-section-title" style="margin-bottom: 24px">One-Stop Shop</h2>
+      <p class="m-section-desc" style="max-width: 1200px; margin: 0 auto;">
+        From regulated medical devices and high-quality consumer electronics to complex industrial equipment and premium
+        home appliances. We guide your product from early ideation all the way to massive yield manufacturing.
+      </p>
+    </div>
+
+    <!-- The Timeline Animation -->
+    <div class="m-timeline-wrapper m-fade-up">
+      <div class="m-timeline-track">
+        <div class="m-timeline-progress"></div>
+      </div>
+
+      <div class="m-timeline-nodes">
+        <!-- Node 1: Ideation -->
+        <div class="m-timeline-step">
+          <div class="m-timeline-dot">
+            <div class="m-timeline-pulse m-pulse-1" style="--node-color: var(--color-neon-purple);"></div>
+          </div>
+          <div class="m-timeline-content m-tc-1">
+            <svg class="m-phase-icon" viewBox="0 0 24 24" fill="none" stroke="var(--color-neon-purple)" stroke-width="1"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18h6" />
+              <path d="M10 22h4" />
+              <path
+                d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14" />
+            </svg>
+            <h4>1. Product Ideation</h4>
+            <div class="m-timeline-tags">
+              <span style="--node-color: var(--color-neon-purple);">Industrial Design</span>
+              <span style="--node-color: var(--color-neon-purple);">UJM</span>
+              <span style="--node-color: var(--color-neon-purple);">UI/UX</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Node 2: Engineering -->
+        <div class="m-timeline-step m-timeline-step--alt">
+          <div class="m-timeline-dot">
+            <div class="m-timeline-pulse m-pulse-2" style="--node-color: var(--color-electric);"></div>
+          </div>
+          <div class="m-timeline-content m-tc-2">
+            <svg class="m-phase-icon" viewBox="0 0 24 24" fill="none" stroke="var(--color-electric)" stroke-width="1"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <h4>2. Precision Engineering</h4>
+            <div class="m-timeline-tags">
+              <span style="--node-color: var(--color-electric);">Mechanical</span>
+              <span style="--node-color: var(--color-electric);">Electrical</span>
+              <span style="--node-color: var(--color-electric);">Systems Arch</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Node 3: Manufacturing -->
+        <div class="m-timeline-step">
+          <div class="m-timeline-dot">
+            <div class="m-timeline-pulse m-pulse-3" style="--node-color: var(--color-neon-cyan);"></div>
+          </div>
+          <div class="m-timeline-content m-tc-3">
+            <svg class="m-phase-icon" viewBox="0 0 24 24" fill="none" stroke="var(--color-neon-cyan)" stroke-width="1"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+              <path d="M17 18h1" />
+              <path d="M12 18h1" />
+              <path d="M7 18h1" />
+            </svg>
+            <h4>3. Execution & Mfg</h4>
+            <div class="m-timeline-tags">
+              <span style="--node-color: var(--color-neon-cyan);">DFM</span>
+              <span style="--node-color: var(--color-neon-cyan);">Tooling</span>
+              <span style="--node-color: var(--color-neon-cyan);">Mass Production</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: Portfolio Preview (DARK) -->
+  <section id="portfolio" class="m-portfolio-preview">
+    <div class="m-section-header m-fade-up" style="text-align: center; max-width: 800px; margin: 0 auto 80px auto;">
+      <span class="m-section-chip">Our Work</span>
+      <h2 class="m-section-title" style="color: #fff;">Products We've Brought to Life</h2>
+      <p class="m-section-desc">From concept sketches to mass production — real products, engineered and manufactured
+        through our ecosystem.</p>
+    </div>
+
+    <div class="m-portfolio-trio m-fade-up">
+      <!-- Left: Rectangular -->
+      <div class="m-portfolio-card m-portfolio-rect">
+        <div class="m-portfolio-card-inner">
+          <img src="assets/portfolio/speaker.png" alt="Aura Smart Speaker" loading="lazy">
+          <div class="m-portfolio-card-overlay">
+            <span class="m-portfolio-tag">Consumer Electronics</span>
+            <h3>Aura Smart Speaker</h3>
+            <p>Precision-milled aluminum unibody with integrated acoustic engineering.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: Circle -->
+      <div class="m-portfolio-card m-portfolio-circle">
+        <div class="m-portfolio-card-inner">
+          <img src="assets/portfolio/medical.png" alt="Vanguard Vision Scanner" loading="lazy">
+          <div class="m-portfolio-card-overlay">
+            <span class="m-portfolio-tag">Medical Diagnostics</span>
+            <h3>Vanguard Vision</h3>
+            <p>ISO 13485 compliant optical scanner.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Rectangular -->
+      <div class="m-portfolio-card m-portfolio-rect">
+        <div class="m-portfolio-card-inner">
+          <img src="assets/portfolio/wearable.png" alt="Pulse Biometric Ring" loading="lazy">
+          <div class="m-portfolio-card-overlay">
+            <span class="m-portfolio-tag">Wearables</span>
+            <h3>Pulse Biometric Ring</h3>
+            <p>Titanium housing with overmolded sensor array and 5ATM water resistance.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="m-portfolio-cta m-fade-up">
+      <a href="portfolio.html" class="btn-marketing btn-marketing--secondary"
+        style="display: inline-flex; align-items: center; gap: 8px;">
+        View Full Portfolio
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14" />
+          <path d="m12 5 7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- SECTION: Locations (DARK) -->
+  <section id="locations" class="m-facilities">
+    <div class="m-section-header m-fade-up" style="text-align: center; max-width: 800px; margin: 0 auto 80px auto;">
+      <h2 class="m-section-title">Locations</h2>
+      <p class="m-section-desc">We operate where the magic happens. From our innovation hub down under, to the world's
+        factory floor of South-East Asia.</p>
+    </div>
+    <div class="m-facilities-grid m-fade-up">
+      <!-- AUS -->
+      <div class="m-facility-card">
+        <div class="m-facility-img"
+          style="background-image: url('https://images.unsplash.com/photo-1587293852726-70cdb56c2866?auto=format&fit=crop&w=800&q=80');">
+        </div>
+        <div class="m-facility-info">
+          <h3>Australia</h3>
+          <p style="margin-bottom: 12px; color: var(--color-electric);">Innovation & Strategy Hub</p>
+          <p style="font-size: 13px; color: var(--color-steel-300); line-height: 1.5;">Corner Carrington Rd & Thurston
+            St<br>Suite 10/1 Main St<br>Box Hill VIC 3128</p>
+        </div>
+      </div>
+      <!-- USA -->
+      <div class="m-facility-card">
+        <div class="m-facility-img"
+          style="background-image: url('https://images.unsplash.com/photo-1565610222536-ef125c59da2e?auto=format&fit=crop&w=800&q=80');">
+        </div>
+        <div class="m-facility-info">
+          <h3>USA</h3>
+          <p style="margin-bottom: 12px; color: var(--color-electric);">Client Success & Logistics</p>
+          <p style="font-size: 13px; color: var(--color-steel-300); line-height: 1.5;">500 Terry Francine Street<br>San
+            Francisco, CA 94158</p>
+        </div>
+      </div>
+      <!-- CHINA -->
+      <div class="m-facility-card">
+        <div class="m-facility-img"
+          style="background-image: url('https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=800&q=80');">
+        </div>
+        <div class="m-facility-info">
+          <h3>China</h3>
+          <p style="margin-bottom: 12px; color: var(--color-electric);">Manufacturing & Operations</p>
+          <p style="font-size: 13px; color: var(--color-steel-300); line-height: 1.5;">No 8 XiJing Road<br>Longhua
+            District, Shenzhen<br>Guangdong</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: Trusted By Marquee -->
+  <section class="m-marquee-section">
+    <div class="m-marquee-track">
+      <!-- Original Set -->
+      <img src="https://cdn.simpleicons.org/tesla/cbd5e1" class="m-marquee-logo" alt="Tesla">
+      <img src="https://cdn.simpleicons.org/apple/cbd5e1" class="m-marquee-logo" alt="Apple">
+      <img src="https://cdn.simpleicons.org/sony/cbd5e1" class="m-marquee-logo" alt="Sony">
+      <img src="https://cdn.simpleicons.org/dji/cbd5e1" class="m-marquee-logo" alt="DJI">
+      <img src="https://cdn.simpleicons.org/nvidia/cbd5e1" class="m-marquee-logo" alt="Nvidia">
+      <img src="https://cdn.simpleicons.org/samsung/cbd5e1" class="m-marquee-logo" alt="Samsung">
+      <img src="https://cdn.simpleicons.org/bosch/cbd5e1" class="m-marquee-logo" alt="Bosch">
+
+      <!-- Duplicated for seamless loop -->
+      <img src="https://cdn.simpleicons.org/tesla/cbd5e1" class="m-marquee-logo" alt="Tesla">
+      <img src="https://cdn.simpleicons.org/apple/cbd5e1" class="m-marquee-logo" alt="Apple">
+      <img src="https://cdn.simpleicons.org/sony/cbd5e1" class="m-marquee-logo" alt="Sony">
+      <img src="https://cdn.simpleicons.org/dji/cbd5e1" class="m-marquee-logo" alt="DJI">
+      <img src="https://cdn.simpleicons.org/nvidia/cbd5e1" class="m-marquee-logo" alt="Nvidia">
+      <img src="https://cdn.simpleicons.org/samsung/cbd5e1" class="m-marquee-logo" alt="Samsung">
+      <img src="https://cdn.simpleicons.org/bosch/cbd5e1" class="m-marquee-logo" alt="Bosch">
+    </div>
+  </section>
+
+  <!-- ── App CTA ───────────────────────────────────────── -->
+  <section class="m-app-cta" style="background: var(--color-void);">
+    <div class="m-app-cta__globe-hint"></div>
+    <div class="m-app-cta__inner m-fade-up">
+      <h2 class="m-section-title" style="font-size: 3rem;">Data-Driven Intelligence.</h2>
+      <p class="m-section-desc" style="margin-bottom: 40px;">
+        Stop guessing. We've built an interconnected 3D platform targeting the Pearl River Delta to map, vet, and
+        shortlist the most capable suppliers.
+      </p>
+      <a href="/app.html" class="btn-marketing btn-marketing--primary"
+        style="display: inline-flex; align-items: center; gap: 8px;">
+        Access Manufacturing Engine
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14" />
+          <path d="m12 5 7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <footer id="footer" class="m-footer"
+    style="padding: 100px var(--space-8); background: #080808; border-top: 1px solid rgba(255,255,255,0.05);">
+    <div
+      style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 60px; max-width: 1400px; margin: 0 auto; text-align: left;">
+      <div>
+        <div class="navbar__brand" style="margin-bottom: 24px;">
+          <a href="/" aria-label="Home"><img src="/logos/atlax-logo-light.png" alt="ATLAX"
+              style="height: 28px; width: auto; object-fit: contain;" /></a>
+        </div>
+        <p style="color: var(--color-steel-400); max-width: 320px; line-height: 1.6; font-size: 13px;">
+          Accelerating and de-risking product development through fast, cost-effective, and scalable manufacturing
+          solutions.
+        </p>
+      </div>
+      <div>
+        <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Platform</h4>
+        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
+          <li><a href="app.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Supplier
+              Engine</a></li>
+          <li><a href="portfolio.html"
+              style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Portfolio</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Company</h4>
+        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
+          <li><a href="about.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">About
+              Us</a></li>
+          <li><a href="services.html"
+              style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Capabilities</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color: white; margin-bottom: 24px; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">
+          Locations</h4>
+        <ul
+          style="list-style: none; display: flex; flex-direction: column; gap: 16px; font-size: 12px; color: var(--color-steel-400);">
+          <li><strong>Australia:</strong> Corner Carrington Rd & Thurston St, Suite 10/1 Main St, Box Hill VIC 3128</li>
+          <li><strong>China:</strong> No 8 XiJing Road, Longhua District, Shenzhen, Guangdong</li>
+          <li><strong>USA:</strong> 500 Terry Francine Street, San Francisco, CA 94158</li>
+        </ul>
+        <div style="margin-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
+          <p style="font-size: 11px; color: var(--color-steel-400); margin-bottom: 8px;">ATLAX is part of the Paniani
+            group.</p>
+          <img src="/paniani-logo-white.png" alt="Paniani Products" style="height: 16px; width: auto; opacity: 0.6;">
+        </div>
+      </div>
+    </div>
+    <div
+      style="margin-top: 80px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; color: var(--color-steel-500); font-size: 11px; letter-spacing: 1px;">
+      &copy; 2026 ATLAX. STRATEGIC SOURCING & COMPETITIVE MANUFACTURING.
+    </div>
+  </footer>
+
+  <!-- ── Authentication Modal (Login / Sign Up) ────────────────────────────────────────── -->
+  <div class="auth-modal hidden" id="auth-modal">
+    <div class="auth-modal-glass">
+      <button class="close-auth-modal" id="close-auth-modal">&times;</button>
+
+      <div class="auth-forms-container auth-state-login" id="auth-forms-container">
+
+        <!-- LOGIN FORM -->
+        <div class="auth-form-wrapper" id="form-login">
+          <div class="auth-header">
+            <h2>Welcome Back.</h2>
+            <p>Access the PRD Manufacturing Engine</p>
+          </div>
+          <form id="login-form" class="auth-form">
+            <div class="auth-input-group">
+              <label for="login-email">Email Address</label>
+              <input type="email" id="login-email" required placeholder="name@company.com">
+            </div>
+            <div class="auth-input-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" required
+                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+            </div>
+            <div id="login-error" class="auth-error-msg"></div>
+            <button type="submit" class="auth-btn" id="login-submit-btn">Log In</button>
+          </form>
+          <div class="auth-toggle-link">
+            No account yet? <a id="toggle-to-signup">Sign up for access</a>
+          </div>
+        </div>
+
+        <!-- SIGN UP FORM -->
+        <div class="auth-form-wrapper" id="form-signup" style="display: none;">
+          <div class="auth-header">
+            <h2>Request Access.</h2>
+            <p>Join the procurement intelligence platform</p>
+          </div>
+          <form id="signup-form" class="auth-form">
+            <div class="auth-input-group" style="display: flex; flex-direction: row; gap: 8px;">
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                <label for="signup-first">First Name</label>
+                <input type="text" id="signup-first" required placeholder="John">
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                <label for="signup-last">Last Name</label>
+                <input type="text" id="signup-last" required placeholder="Doe">
+              </div>
+            </div>
+            <div class="auth-input-group">
+              <label for="signup-company">Company</label>
+              <input type="text" id="signup-company" required placeholder="Acme Corp">
+            </div>
+            <div class="auth-input-group">
+              <label for="signup-email">Work Email</label>
+              <input type="email" id="signup-email" required placeholder="john@acmecorp.com">
+            </div>
+            <div class="auth-input-group">
+              <label for="signup-password">Password</label>
+              <input type="password" id="signup-password" required
+                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+            </div>
+            <div id="signup-error" class="auth-error-msg"></div>
+            <button type="submit" class="auth-btn" id="signup-submit-btn">Create Account</button>
+          </form>
+          <div class="auth-toggle-link">
+            Already have an account? <a id="toggle-to-login">Log In instead</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/marketing.js"></script>
+  <script type="module" src="/src/js/components/advantage-map.js"></script>
+</body>
+
+</html>
