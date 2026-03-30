@@ -8,6 +8,7 @@
   <title>ATLAX - About Us</title>
   <link rel="stylesheet" href="/src/css/advantage.css">
   <link rel="stylesheet" href="/src/css/auth.css">
+  <link rel="stylesheet" href="/src/css/responsive.css">
 </head>
 
 <body class="marketing-page" style="background: var(--color-void);">
@@ -26,7 +27,8 @@
           </div>
         </div>
       </div>
-      <div style="display: flex; gap: var(--space-6); align-items: center;">
+      <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
+      <div class="nav-links-container" style="display: flex; gap: var(--space-6); align-items: center;">
         <a href="index.html" class="nav-link">Home</a>
         <a href="services.html" class="nav-link">Capabilities</a>
         <a href="portfolio.html" class="nav-link">Portfolio</a>
@@ -189,6 +191,8 @@
         <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Platform</h4>
         <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
           <li><a href="app.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Supplier Engine</a></li>
+          <li><a href="app.html#rfq" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Instant RFQ</a></li>
+          <li><a href="app.html#designers" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Find Designers</a></li>
           <li><a href="portfolio.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Portfolio</a></li>
         </ul>
       </div>

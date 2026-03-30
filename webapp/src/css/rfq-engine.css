@@ -1506,7 +1506,128 @@
   border-color: rgba(59, 130, 246, 0.4);
 }
 
-/* ══ BULK SUBMIT PROGRESS ═════════════════════════════ */
+/* ── MOBILE RFQ OVERLAY ─────────────────────────────── */
+@media (max-width: 768px) {
+  /* Keep navbar above the RFQ overlay */
+  .navbar {
+    z-index: 350 !important;
+  }
+
+  /* Make RFQ engine a full-screen overlay below the navbar */
+  .rfq-engine {
+    position: fixed !important;
+    top: 56px !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    transform: none !important;
+    z-index: 300 !important;
+    background: var(--color-void, #0a0a0f) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(100vh - 56px) !important;
+    padding: 20px 16px 40px 16px !important;
+    flex-direction: column !important;
+    gap: var(--space-4) !important;
+    align-items: stretch !important;
+    pointer-events: auto !important;
+    animation: none !important;
+  }
+
+  /* Stack left and right panels vertically */
+  .rfq-engine__left,
+  .rfq-engine__right {
+    position: relative !important;
+    width: 100% !important;
+    left: 0 !important;
+    top: 0 !important;
+    max-width: 100% !important;
+    pointer-events: auto !important;
+  }
+
+  /* Right panel (quote estimate) — below the form */
+  .rfq-engine__right {
+    position: static !important;
+    width: 100% !important;
+    order: 2;
+  }
+
+  /* Card — no max-height clipping on mobile */
+  .rfq-engine__card {
+    max-height: none !important;
+    padding: var(--space-3) var(--space-3) !important;
+  }
+
+  /* Header row — stack vertically */
+  .rfq-engine__header-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  /* Mode selector — fit buttons on mobile */
+  .rfq-mode-selector {
+    width: 100%;
+    display: flex;
+  }
+
+  .rfq-mode-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 10px 8px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .rfq-mode-btn svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  /* Stack the Top Row (Upload + Fields) */
+  .rfq-top-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  /* Reduce upload zone size slightly */
+  .rfq-engine__upload-zone {
+    min-height: 180px;
+    padding: var(--space-4) var(--space-3);
+  }
+
+  /* Convert 3x3 fields grid to 1x1 */
+  .rfq-fields-grid--3x3 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Convert Results Grid */
+  .rfq-results__grid {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Bottom Row DFM toggles */
+  .rfq-bottom-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  /* Estimate panel — full width */
+  .rfq-estimate-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    position: static !important;
+  }
+}
+
+.rfq-bulk-submit-progress__text {
+  font-size: 11px;
+  color: var(--color-steel-300);
+}
+
 .rfq-bulk-submit-progress {
   display: flex;
   flex-direction: column;
@@ -1570,4 +1691,29 @@
   color: var(--color-steel-300);
   line-height: 1.5;
   max-width: 380px;
+}
+/* -------------------------------------------------------
+   RESPONSIVE DESIGN (TABLET & MOBILE)
+   ------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .rfq-engine {
+    width: 95%;
+    flex-direction: column;
+    max-height: 90vh;
+    overflow-y: auto;
+    gap: var(--space-4);
+    align-items: stretch;
+    top: 50%;
+  }
+
+  /* Make both columns take full width and stack vertically */
+  .rfq-engine__left,
+  .rfq-engine__right {
+    position: relative;
+    width: 100%;
+    left: 0;
+    max-width: 100%;
+    pointer-events: auto;
+  }
 }

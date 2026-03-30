@@ -1,0 +1,437 @@
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE OVERRIDES — MARKETING PAGES
+   Breakpoints: 768px (mobile), 1024px (tablet)
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Hamburger Toggle (hidden on desktop) ─────────────── */
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px 10px;
+  line-height: 1;
+  transition: background 0.2s;
+  order: 3; /* push to the right */
+}
+.mobile-menu-toggle:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE  (< 768px)
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── Marketing Navbar ─────────────────────────────────── */
+  .mobile-menu-toggle { display: block; }
+
+  /* The navbar wrapper becomes a row that wraps */
+  .navbar > div {
+    flex-wrap: wrap !important;
+    position: relative;
+  }
+
+  /* Links container: hidden by default, vertical dropdown on open */
+  .nav-links-container {
+    display: none !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0 !important;
+    width: 100%;
+    order: 4; /* below the brand + hamburger row */
+    background: rgba(10,10,15,0.97);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 16px 0;
+    margin-top: 12px;
+  }
+  .nav-links-container .nav-link,
+  .nav-links-container .btn-marketing {
+    width: 100%;
+    text-align: center;
+    padding: 14px 20px !important;
+    font-size: 15px !important;
+    border-bottom: none !important;
+  }
+  .nav-links-container .nav-link:hover {
+    background: rgba(255,255,255,0.04);
+  }
+  .nav-links-container .nav-user-menu {
+    margin-top: 8px;
+  }
+
+  /* Show links when hamburger toggled */
+  .navbar.menu-open .nav-links-container {
+    display: flex !important;
+  }
+
+  /* ── Hero Sections ────────────────────────────────────── */
+  .m-hero {
+    height: auto !important;
+    min-height: auto;
+    padding: 120px 24px 60px 24px;
+    grid-template-columns: 1fr !important;
+    justify-items: center;
+  }
+  .m-hero__content {
+    text-align: center !important;
+    align-items: center !important;
+    max-width: 100% !important;
+    width: 100%;
+    padding: 0;
+  }
+  .m-hero__title { font-size: 2.4rem !important; }
+  .m-hero__subtitle {
+    font-size: 1rem !important;
+    padding: 0;
+    text-align: center;
+    max-width: 100% !important;
+  }
+  .m-hero__cta-group {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    width: 100%;
+  }
+  .m-hero__cta-group a {
+    text-align: center;
+    justify-content: center;
+    display: flex;
+  }
+  .m-hero__chip {
+    font-size: 11px !important;
+    text-align: center;
+    margin-top: 85px !important;
+  }
+
+  /* ── Hero Merger Cards — HIDDEN on mobile ──────────────── */
+  .m-hero__merger-comp {
+    display: none !important;
+  }
+
+  /* ── Section Headers ──────────────────────────────────── */
+  .m-section-header {
+    padding: 0 20px;
+    text-align: center;
+    margin-bottom: 40px !important;
+  }
+  .m-section-title { font-size: 2rem !important; }
+  .m-section-desc { font-size: 0.9rem !important; }
+
+  /* ── Bento Grid ───────────────────────────────────────── */
+  .m-bento-grid {
+    grid-template-columns: 1fr !important;
+    padding: 0 20px !important;
+    gap: 20px !important;
+  }
+  .m-bento-card--large,
+  .m-bento-card--wide {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+  }
+  .m-bento-image { height: 200px !important; }
+
+  /* ── Advantage / Constellation Section ────────────────── */
+  .adv-matrix-section {
+    overflow: hidden;
+  }
+  /* Hide the canvas, intro, reset btn on mobile */
+  .matrix-canvas,
+  .matrix-intro,
+  .reset-map-btn {
+    display: none !important;
+  }
+  /* Turn the constellation into a horizontal swipe carousel */
+  .adv-matrix-container {
+    height: auto !important;
+    min-height: auto !important;
+    position: relative !important;
+    padding: 60px 0 40px 0 !important;
+  }
+  .matrix-constellation {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 16px;
+    padding: 0 20px 20px 20px;
+    position: relative !important;
+    width: auto !important;
+    height: auto !important;
+  }
+  .matrix-constellation .node {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    flex-shrink: 0;
+    scroll-snap-align: center;
+    width: 75vw;
+    min-height: 50vh;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 32px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    cursor: pointer;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .matrix-constellation .node:hover,
+  .matrix-constellation .node:active {
+    border-color: rgba(59,130,246,0.5);
+    background: rgba(59,130,246,0.08);
+  }
+  /* Override the node-icon container to prevent black-box clipping */
+  .matrix-constellation .node .node-icon {
+    width: 80px !important;
+    height: 80px !important;
+    aspect-ratio: auto !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .matrix-constellation .node .node-icon img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    opacity: 1 !important;
+  }
+  .matrix-constellation .node .node-label {
+    font-size: 16px;
+    color: var(--color-white);
+    font-weight: 600;
+  }
+  .matrix-constellation .node .node-tag {
+    font-size: 11px;
+    color: var(--color-steel-400);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  /* Hide tech nodes on mobile — only show intent nodes (step 1) */
+  .matrix-constellation .tech-node {
+    display: none !important;
+  }
+
+  /* ── Advantage Modals / Overlays ─────────────────────── */
+  .matrix-overlay {
+    padding: 16px !important;
+    align-items: flex-start !important;
+    overflow-y: auto !important;
+  }
+  .overlay-glass,
+  .transformation-view {
+    padding: 24px 20px !important;
+    max-width: 100% !important;
+    border-radius: 16px !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .close-overlay {
+    position: sticky !important;
+    top: 0 !important;
+    right: 0 !important;
+    float: right !important;
+    z-index: 10 !important;
+    font-size: 32px !important;
+    padding: 4px 8px !important;
+    background: rgba(0,0,0,0.5) !important;
+    border-radius: 8px !important;
+  }
+  .transformation-compare {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .transformation-arrow {
+    transform: rotate(90deg) !important;
+    margin: 0 auto !important;
+    width: 40px !important;
+    height: 40px !important;
+  }
+  .transformation-header h2 {
+    font-size: 22px !important;
+  }
+  .tech-modal-glass {
+    padding: 24px !important;
+    width: 92% !important;
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+  }
+  .close-tech-modal {
+    position: sticky !important;
+    top: 0;
+    float: right;
+    z-index: 10;
+    background: rgba(0,0,0,0.5) !important;
+    border-radius: 8px !important;
+    padding: 4px 8px !important;
+  }
+
+  /* ── Timeline (One Stop Shop) ─────────────────────────── */
+  .m-timeline-flow {
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 40px 20px !important;
+  }
+  .m-timeline-node {
+    width: 100% !important;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .m-timeline-connector {
+    width: 2px !important;
+    height: 30px !important;
+    transform: none !important;
+    margin: 0 auto !important;
+  }
+
+  /* ── Facilities Grid ──────────────────────────────────── */
+  .m-facilities-grid {
+    grid-template-columns: 1fr !important;
+    padding: 0 20px !important;
+  }
+
+  /* ── App CTA ──────────────────────────────────────────── */
+  .m-app-cta { padding: 40px 16px; }
+  .m-app-cta__inner {
+    width: 100% !important;
+    padding: 40px 20px !important;
+  }
+  .m-app-cta__inner h2 { font-size: 1.8rem !important; }
+
+  /* ── Footer ───────────────────────────────────────────── */
+  footer > div:first-child {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+    text-align: center !important;
+  }
+  footer > div:first-child > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  footer > div:first-child > div ul {
+    align-items: center !important;
+  }
+  footer > div:first-child > div p {
+    text-align: center !important;
+  }
+  footer form {
+    text-align: center;
+    width: 100%;
+  }
+  footer .btn-marketing { width: 100% !important; justify-content: center; display: flex; }
+  .m-footer {
+    padding: 60px 20px !important;
+  }
+
+  /* ── Product Modal ────────────────────────────────────── */
+  .product-modal-glass { padding: 20px !important; }
+  #product-modal > div > div:nth-child(4) {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Services Hero / Portfolio Hero ───────────────────── */
+  .services-hero h1,
+  .portfolio-hero h1 {
+    font-size: 2.2rem !important;
+  }
+  .services-hero p,
+  .portfolio-hero p {
+    font-size: 1rem !important;
+  }
+  .services-hero,
+  .portfolio-hero {
+    padding: 130px 5% 60px 5% !important;
+  }
+
+  /* Services page service blocks */
+  .service-block { padding: 60px 5% !important; }
+  .service-block__content h2 { font-size: 1.8rem !important; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   TABLET  (769px → 1024px)
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .m-hero__title { font-size: 3.5rem !important; }
+  .m-bento-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .m-bento-card--wide { grid-column: span 2 !important; }
+  .m-bento-card--large { grid-column: span 2 !important; grid-row: span 1 !important; }
+  /* Merger cards: scale down on tablet */
+  .m-hero__merger-comp {
+    transform: scale(0.7);
+    transform-origin: center top;
+    margin-top: -30px;
+    margin-bottom: -60px;
+  }
+  .m-facilities-grid { grid-template-columns: 1fr 1fr !important; }
+  footer > div:first-child { grid-template-columns: 1fr 1fr !important; }
+
+  /* Advantage: same carousel treatment on tablet */
+  .matrix-canvas,
+  .matrix-intro,
+  .reset-map-btn {
+    display: none !important;
+  }
+  .adv-matrix-container {
+    height: auto !important;
+    min-height: auto !important;
+    position: relative !important;
+    padding: 60px 0 40px 0 !important;
+  }
+  .matrix-constellation {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 20px;
+    padding: 0 40px 20px 40px;
+    position: relative !important;
+    width: auto !important;
+    height: auto !important;
+  }
+  .matrix-constellation .node {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    flex-shrink: 0;
+    scroll-snap-align: center;
+    width: 240px;
+    min-height: 130px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+  .matrix-constellation .node .node-icon img {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .matrix-constellation .tech-node {
+    display: none !important;
+  }
+}

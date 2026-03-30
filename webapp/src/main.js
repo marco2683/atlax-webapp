@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // window.location.href = '/index.html';
     // return;
   }
-  console.log('[PRD] Authenticated as:', user.email);
+  if (user) console.log('[PRD] Authenticated as:', user.email);
 
   window.scrollTo(0, 0); // Enforce top scroll on load
   // 1. Navigation (async — loads profile panel + auth state)
