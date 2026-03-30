@@ -49,8 +49,10 @@
 .adv-matrix-section {
   position: relative;
   width: 100vw;
-  height: 100vh;
-  display: block;
+  height: 120vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #05060a;
   color: #ffffff;
   background-image:

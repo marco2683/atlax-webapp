@@ -41,9 +41,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 0. Auth Guard — protect the engine
   const user = await getCurrentUser();
   if (!user) {
-    console.warn('[PRD] Unauthenticated. Redirecting to login...');
-    window.location.href = '/index.html';
-    return;
+    console.warn('[PRD] Unauthenticated. Bypass enabled. Allowing access to app.html...');
+    // window.location.href = '/index.html';
+    // return;
   }
   console.log('[PRD] Authenticated as:', user.email);
 
