@@ -1,0 +1,121 @@
+/* ============================================================
+   PRD — Global Light Theme Overrides
+   Activated via body.theme-light
+   ============================================================ */
+
+body.theme-light {
+  /* Core Backgrounds */
+  --color-void:          #f9fafb; /* Soft gray-white bg */
+  --color-midnight:      #ffffff;
+  --color-slate-900:     #f3f4f6;
+  --color-slate-800:     #e5e7eb;
+  --color-slate-700:     #d1d5db;
+  --color-slate-600:     #9ca3af;
+  --color-slate-500:     #6b7280;
+
+  /* Neutrals (Inverted for text) */
+  --color-steel-400:     #4b5563; /* Mid-dark gray */
+  --color-steel-300:     #374151; /* Darkish gray */
+  --color-cloud:         #1f2937; /* Very dark gray for body text */
+  --color-white:         #111827; /* Almost black for precise headings */
+
+  /* Glass Effects */
+  --glass-bg:            rgba(255, 255, 255, 0.75);
+  --glass-bg-solid:      rgba(255, 255, 255, 0.95);
+  --glass-border:        rgba(0, 0, 0, 0.08);
+  
+  /* Borders */
+  --border-subtle:       1px solid rgba(0, 0, 0, 0.04);
+  --border-dim:          1px solid rgba(0, 0, 0, 0.08);
+  --border-glass:        1px solid rgba(0, 0, 0, 0.12);
+
+  /* Shadows */
+  --shadow-sm:           0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md:           0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg:           0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl:           0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  /* Accent colors (Blues, Greens, etc. remain the same) */
+
+  color: var(--color-cloud);
+  background-color: var(--color-void);
+}
+
+/* Base Element Inverse Colors */
+body.theme-light h1, 
+body.theme-light h2, 
+body.theme-light h3, 
+body.theme-light h4, 
+body.theme-light h5, 
+body.theme-light h6 {
+  color: var(--color-white);
+}
+
+/* Navbar inversion */
+body.theme-light .navbar {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+body.theme-light .navbar__brand img {
+  filter: invert(1);
+}
+
+body.theme-light .navbar__brand div {
+  color: #111827 !important;
+  border-color: rgba(0,0,0,0.1) !important;
+}
+
+body.theme-light .navbar__brand div div {
+  color: #6b7280 !important;
+}
+
+body.theme-light .navbar__menu-item {
+  color: var(--color-steel-400);
+}
+
+body.theme-light .navbar__menu-item:hover,
+body.theme-light .navbar__menu-item--active {
+  color: var(--color-electric-dim);
+}
+
+body.theme-light .navbar__icon-btn,
+body.theme-light .navbar__workspace-link,
+body.theme-light .navbar__avatar {
+  color: var(--color-steel-300);
+  background: transparent;
+}
+
+body.theme-light .navbar__icon-btn:hover,
+body.theme-light .navbar__workspace-link:hover,
+body.theme-light .navbar__avatar:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--color-electric-dim);
+}
+
+/* Update Modal/Glass panel backgrounds to match light theme */
+body.theme-light .auth-modal-glass,
+body.theme-light .supplier-modal__body {
+  background: var(--glass-bg-solid);
+  border: var(--border-dim);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Modals inputs & buttons need to adapt */
+body.theme-light .auth-input-group input {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #111827;
+}
+
+body.theme-light .auth-input-group label {
+  color: #374151;
+}
+
+body.theme-light .auth-error-msg {
+  color: var(--color-coral);
+}
+
+/* ── Hero / Globe section stays dark in light mode ─────────
+   The globe WebGL viewer doesn't translate well to light bg,
+   so we lock the hero (suppliers view) to always be dark.
+   ─────────────────────────────────────────────────────────── */

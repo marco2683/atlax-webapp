@@ -7,6 +7,9 @@ import './css/components.css';
 import './css/layout.css';
 import './css/rfq-engine.css';
 import './css/profile.css';
+import './css/light-theme.css';
+import './css/designers-engine.css';
+import './css/product-builder.css';
 
 import { initGlobe } from './js/globe/globe-engine.js';
 import { initNavbar } from './js/components/navbar.js';
@@ -53,6 +56,34 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 2. 3D Globe
   const globe = initGlobe('globe-container', MOCK_SUPPLIERS);
+
+  // Initialize Theme Toggle
+  const themeToggle = document.getElementById('btn-theme-toggle');
+  const iconMoon = document.getElementById('icon-moon');
+  const iconSun = document.getElementById('icon-sun');
+  if (themeToggle) {
+    // Check saved preference
+    const isLightMode = localStorage.getItem('atlax-theme') === 'light';
+    if (isLightMode) {
+      document.body.classList.add('theme-light');
+      iconMoon.classList.add('hidden');
+      iconSun.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('theme-light');
+      const isLight = document.body.classList.contains('theme-light');
+      localStorage.setItem('atlax-theme', isLight ? 'light' : 'dark');
+      if (isLight) {
+        iconMoon.classList.add('hidden');
+        iconSun.classList.remove('hidden');
+      } else {
+        iconMoon.classList.remove('hidden');
+        iconSun.classList.add('hidden');
+      }
+      if (globe && globe.setGlobeTheme) globe.setGlobeTheme(isLight);
+    });
+  }
 
   // 2b. Restore shortlist from workspace (if navigating via "Open in Engine")
   try {
@@ -329,18 +360,35 @@ function updateStackedResultsOnly(globe) {
 function switchView(view, globe) {
   const rfqEngine = document.getElementById('rfq-engine');
   const rfqRight = document.getElementById('rfq-engine-right');
+  const designersEngine = document.getElementById('designers-engine');
+  const productBuilderEngine = document.getElementById('product-builder-engine');
+  const tariffEngine = document.getElementById('tariff-engine');
   const searchBar = document.getElementById('search-bar');
   const tagline = document.getElementById('search-tagline');
   const bottomResults = document.getElementById('bottom-results-container');
   const globeContainer = document.getElementById('globe-container');
   const heroOverlay = document.querySelector('.hero__overlay');
   const modeToggles = document.getElementById('search-mode-toggles');
+  const hero = document.getElementById('hero');
 
   console.log('[PRD] Switching to view:', view);
 
   // Reset defaults
   rfqEngine?.classList.add('hidden');
   rfqRight?.classList.add('hidden');
+  designersEngine?.classList.add('hidden');
+  productBuilderEngine?.classList.add('hidden');
+  tariffEngine?.classList.add('hidden');
+  hero?.classList.remove('hidden');
+  
+  // Clean up global nav states
+  document.querySelectorAll('.navbar__menu-item').forEach(item => {
+    item.classList.remove('navbar__menu-item--active');
+    if (item.dataset.view === view) {
+      item.classList.add('navbar__menu-item--active');
+    }
+  });
+
   if (searchBar) { searchBar.style.opacity = '1'; searchBar.style.pointerEvents = 'auto'; }
   if (tagline) tagline.style.opacity = '1';
   if (globeContainer) globeContainer.style.opacity = '1';
@@ -354,13 +402,42 @@ function switchView(view, globe) {
     if (tagline) tagline.style.opacity = '0';
     bottomResults?.classList.add('hidden');
 
-
     if (!appState._rfqInitialized) {
       import('./js/components/rfq-controller.js').then(m => {
         m.initRFQController();
         appState._rfqInitialized = true;
       });
     }
+  } else if (view === 'designers') {
+    appState.searchType = 'designers';
+    hero?.classList.add('hidden');
+    bottomResults?.classList.add('hidden');
+    designersEngine?.classList.remove('hidden');
+
+    if (!appState._designersInitialized) {
+      import('./js/components/designers-controller.js').then(m => {
+        m.initDesignersController();
+        appState._designersInitialized = true;
+      });
+    }
+  } else if (view === 'product-builder') {
+    appState.searchType = 'product-builder';
+    hero?.classList.add('hidden');
+    bottomResults?.classList.add('hidden');
+    productBuilderEngine?.classList.remove('hidden');
+
+    if (!appState._productBuilderInitialized) {
+      import('./js/components/product-builder-controller.js').then(m => {
+        m.initProductBuilder();
+        appState._productBuilderInitialized = true;
+      });
+    }
+  } else if (view === 'tariff') {
+    appState.searchType = 'tariff';
+    hero?.classList.add('hidden');
+    bottomResults?.classList.add('hidden');
+    tariffEngine?.classList.remove('hidden');
+
   } else if (view === 'suppliers') {
     appState.searchType = 'suppliers';
     if (appState.hasSearched) {

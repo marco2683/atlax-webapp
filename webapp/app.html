@@ -65,11 +65,11 @@
       <ul class="navbar__menu" id="navbar-menu">
         <li class="navbar__menu-item" data-view="home"><a href="index.html"
             style="color: inherit; text-decoration: none;">Home</a></li>
-        <li class="navbar__menu-item" data-view="suppliers"><a href="index.html"
-            style="color: inherit; text-decoration: none;">Designers</a></li>
         <li class="navbar__menu-item navbar__menu-item--active" data-view="suppliers">Suppliers</li>
         <li class="navbar__menu-item" data-view="rfq">Instant RFQ</li>
         <li class="navbar__menu-item" data-view="product-builder">Product Builder</li>
+        <li class="navbar__menu-item" data-view="designers">Find Designers</li>
+        <li class="navbar__menu-item" data-view="tariff">HS Tariff Optimizer</li>
       </ul>
 
       <div class="navbar__actions">
@@ -77,13 +77,23 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/></svg>
           Workspace
         </a>
-        <button class="navbar__icon-btn" id="btn-notifications" title="Notifications">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        <button class="navbar__icon-btn" id="btn-theme-toggle" title="Toggle Light/Dark Theme">
+          <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          <svg id="icon-sun" class="hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
           </svg>
         </button>
+        <button class="navbar__icon-btn" id="btn-notifications" title="Notifications">
         <button class="navbar__icon-btn" id="btn-settings" title="Settings">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
@@ -643,6 +653,34 @@
       </div><!-- /rfq-engine -->
 
     </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         FIND DESIGNERS ENGINE (v4 — Light Theme UI)
+         ═══════════════════════════════════════════════════ -->
+    <div class="designers-engine hidden" id="designers-engine">
+      <!-- Injected by designers-controller.js -->
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         PRODUCT BUILDER ENGINE
+         ═══════════════════════════════════════════════════ -->
+    <div class="pb-engine hidden" id="product-builder-engine">
+      <!-- Injected by product-builder-controller.js -->
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         HS TARIFF OPTIMIZER (v5 — Stub)
+         ═══════════════════════════════════════════════════ -->
+    <div class="tariff-engine hidden" id="tariff-engine" style="padding: 120px 40px; text-align: center;">
+      <h2 style="font-size: 2.5rem; color: var(--color-white); margin-bottom: 16px;">HS Tariff Optimizer</h2>
+      <p style="color: var(--color-steel-300); max-width: 600px; margin: 0 auto; line-height: 1.6;">
+        Our intelligent tariff optimizer reduces import duties by finding optimal HS codes 
+        and analyzing free trade agreements across different countries of origin.
+      </p>
+      <div style="margin-top: 40px; padding: 40px; border: var(--border-dim); border-radius: var(--radius-lg); display: inline-block; background: var(--glass-bg);">
+        <span style="display: inline-block; padding: 6px 12px; font-size: 13px; font-weight: bold; text-transform: uppercase; background: var(--color-amber-glow); color: #000; border-radius: 40px;">Coming Soon</span>
+      </div>
+    </div>
 
 
     <!-- ═══════════════════════════════════════════════════
