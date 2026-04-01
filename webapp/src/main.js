@@ -160,8 +160,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (e.key === 'Enter') handleSearch(globe);
   });
 
-  // 7. Supplier Carousel
+  // 7. Supplier Carousel & Grid
   initSupplierCarousel();
+  import('./js/components/supplier-grid.js').then(m => m.initSupplierGrid());
 
   // 9. Shortlist Event Listeners
   window.addEventListener('prd-open-supplier', (e) => {
@@ -349,7 +350,11 @@ function updateStackedResultsOnly(globe) {
 
   // 4. Render
   renderStackedResults(filteredResults, (techName, suppliers) => {
-    openSupplierCarousel(techName, suppliers);
+    if (suppliers.length > 1) {
+      import('./js/components/supplier-grid.js').then(m => m.openSupplierGrid(techName, suppliers));
+    } else {
+      openSupplierCarousel(techName, suppliers);
+    }
   }, { groupingMode, groupTitle, mainTech: matchingMainCat });
 
   // Update globe dots

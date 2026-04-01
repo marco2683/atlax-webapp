@@ -22,7 +22,6 @@ export function renderStackedResults(suppliers, onGroupClick, options = {}) {
   let groups = {};
 
   if (groupingMode === 'sub-categories' && mainTech) {
-    // Group by sub-categories of the main tech
     const subCategories = TECHNOLOGY_TAXONOMY[mainTech] || [];
     subCategories.forEach(sub => {
       const subNorm = sub.toLowerCase().replace(/moulding/g, 'molding');
@@ -32,7 +31,6 @@ export function renderStackedResults(suppliers, onGroupClick, options = {}) {
       });
       groups[sub] = matching;
     });
-    // Add "Other" for anything that didn't match a specific sub-category
     const other = suppliers.filter(s => !subCategories.some(sub => {
       const subNorm = sub.toLowerCase().replace(/moulding/g, 'molding');
       const sTechs = (s.technologies || []).map(t => t.toLowerCase().replace(/moulding/g, 'molding'));
@@ -41,11 +39,9 @@ export function renderStackedResults(suppliers, onGroupClick, options = {}) {
     if (other.length > 0) groups[`Other ${mainTech}`] = other;
 
   } else if (groupingMode === 'fixed-group') {
-    // All in one group
     groups[groupTitle] = suppliers;
 
   } else {
-    // Default: Group by techGroup
     suppliers.forEach(s => {
       const tech = s.techGroup || s.technologies?.[0] || 'Other';
       if (!groups[tech]) groups[tech] = [];
@@ -55,26 +51,35 @@ export function renderStackedResults(suppliers, onGroupClick, options = {}) {
 
   const groupNames = Object.keys(groups);
   
-  // 2. DOM Rendering
-  let wrapper = container.querySelector('.results-grid');
-  if (!wrapper) {
-    wrapper = document.createElement('div');
-    wrapper.className = 'results-grid';
-    container.appendChild(wrapper);
-  }
-  wrapper.innerHTML = '';
+  // 2. Clear container and rebuild
+  container.innerHTML = '';
+
+  // 3. "SEE ALL RESULTS" button — above the carousel
+  const headerLabel = mainTech || groupTitle || 'Search';
+  const seeAllBtn = document.createElement('button');
+  seeAllBtn.className = 'see-all-results-btn';
+  seeAllBtn.innerHTML = `SEE ALL RESULTS <span class="see-all-results-btn__count">${suppliers.length}</span>`;
+  seeAllBtn.addEventListener('click', () => {
+    // Open the grid modal with ALL suppliers under this search
+    import('./supplier-grid.js').then(m => {
+      m.openSupplierGrid(headerLabel, suppliers);
+    });
+  });
+  container.appendChild(seeAllBtn);
+
+  // 4. DOM Rendering — carousel wrapper
+  const wrapper = document.createElement('div');
+  wrapper.className = 'results-grid';
   
   groupNames.forEach((techName, i) => {
     const sups = groups[techName];
     const color = GROUP_COLORS[i % GROUP_COLORS.length];
     
-    // Create card element
     const card = document.createElement('div');
     card.className = 'stacked-group';
     card.style.setProperty('--group-color', color);
     card.style.animationDelay = `${i * 100}ms`;
 
-    // Render suppliers with Add (+) button
     const supplierLines = sups.slice(0, 4).map(s => `
       <div class="stacked-group__line">
         <button class="stacked-group__add-btn" data-id="${s.id || s.name}" title="Add to Shortlist">
@@ -96,13 +101,11 @@ export function renderStackedResults(suppliers, onGroupClick, options = {}) {
       </div>
     `;
 
-    // Add click listener for detail view (clicking header or card body, excluding buttons)
     card.addEventListener('click', (e) => {
       if (e.target.closest('.stacked-group__add-btn')) return;
       if (onGroupClick) onGroupClick(techName, sups);
     });
 
-    // Add event listeners for the + buttons
     card.querySelectorAll('.stacked-group__add-btn').forEach((btn, idx) => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -111,7 +114,6 @@ export function renderStackedResults(suppliers, onGroupClick, options = {}) {
           detail: { supplier, techName } 
         }));
         
-        // Visual feedback
         btn.innerHTML = '✓';
         btn.style.background = 'var(--color-emerald)';
         setTimeout(() => {
@@ -124,24 +126,23 @@ export function renderStackedResults(suppliers, onGroupClick, options = {}) {
     wrapper.appendChild(card);
   });
 
-  // 3. Add spacers for centering
+  // 5. Add spacers so first card sits at the left edge of the visible area
   const startSpacer = document.createElement('div');
   startSpacer.className = 'grid-spacer';
-  startSpacer.style.flex = '0 0 calc(50vw - 140px)'; // 140px is half of 280px card width
+  startSpacer.style.flex = '0 0 calc(15vw - 8px)';
   wrapper.prepend(startSpacer);
 
   const endSpacer = document.createElement('div');
   endSpacer.className = 'grid-spacer';
-  endSpacer.style.flex = '0 0 calc(50vw - 140px)';
+  endSpacer.style.flex = '0 0 calc(15vw - 8px)';
   wrapper.appendChild(endSpacer);
 
-  // Initial scroll position: offset slightly so first card is visible but not perfectly centered
+  container.appendChild(wrapper);
+
   requestAnimationFrame(() => {
-    // Offset by 160px moves the first card slightly to the left of center screen
-    wrapper.scrollLeft = 160; 
+    wrapper.scrollLeft = 0; 
   });
 
-  // Show container
   container.classList.remove('hidden');
 }
 
@@ -152,7 +153,6 @@ export function hideStackedResults() {
   const container = document.getElementById('bottom-results-container');
   if (container) {
     container.classList.add('hidden');
-    const wrapper = container.querySelector('.results-grid');
-    if (wrapper) wrapper.innerHTML = '';
+    container.innerHTML = '';
   }
 }

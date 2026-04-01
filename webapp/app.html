@@ -704,8 +704,8 @@
     <!-- ═══════════════════════════════════════════════════
          SUPPLIER DETAIL MODAL (large, tiered)
          ═══════════════════════════════════════════════════ -->
-    <div class="modal-backdrop hidden" id="supplier-backdrop"></div>
-    <div class="supplier-modal hidden" id="supplier-modal">
+    <div class="modal-backdrop hidden" id="supplier-backdrop" style="z-index: 1060;"></div>
+    <div class="supplier-modal hidden" id="supplier-modal" style="z-index: 1061;">
       <div class="supplier-modal__top-bar">
         <div class="supplier-modal__nav-row">
           <h2 id="supplier-modal-title">Suppliers</h2>
@@ -731,6 +731,26 @@
       </div>
       <!-- Banner + card content rendered by JS -->
       <div class="supplier-modal__body" id="supplier-modal-body"></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SUPPLIER GRID (MODAL)
+         ═══════════════════════════════════════════════════ -->
+    <div class="modal-backdrop hidden" id="supplier-grid-backdrop" style="z-index: 1050;"></div>
+    <div class="supplier-grid-modal hidden" id="supplier-grid-modal" style="z-index: 1051;">
+      <div class="supplier-grid__header">
+        <h2 id="supplier-grid-title">Sub-Category Suppliers</h2>
+        <button class="modal-close" id="supplier-grid-close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <div class="supplier-grid__body" id="supplier-grid-body">
+        <!-- Grid cards rendered by JS -->
+      </div>
     </div>
 
     <!-- Sprint 2 placeholder -->

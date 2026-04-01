@@ -10,6 +10,7 @@ import { CASTING_SUPPLIERS } from './Suppliers/casting.js';
 import { MOTORS_SUPPLIERS } from './Suppliers/motors.js';
 import { PROTOTYPING_SUPPLIERS } from './Suppliers/prototyping.js';
 import { DESIGN_SUPPLIERS } from './Suppliers/design.js';
+import { EXTRA_SUPPLIERS } from './Suppliers/extra.js';
 
 export const MOCK_SUPPLIERS = [
   ...MOLDING_SUPPLIERS,
@@ -20,4 +21,6 @@ export const MOCK_SUPPLIERS = [
   ...MOTORS_SUPPLIERS,
   ...PROTOTYPING_SUPPLIERS,
   ...DESIGN_SUPPLIERS,
+  ...EXTRA_SUPPLIERS,
 ];
+

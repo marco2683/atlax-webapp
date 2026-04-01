@@ -5,6 +5,7 @@ import { MOCK_ESTIMATOR_PRODUCTS } from '../data/mock-estimator.js';
 let shortlist = [];
 let selectedEstimatorProduct = null;
 let activeFilter = 'All Talent';
+let scenarioState = {}; // { 'Phase Name': { active: true, alloc: 1.0, offWorkers: [] } }
 
 /* ── CATEGORY FILTERS ─────────────────────────────────────── */
 const FILTER_CATEGORIES = {
@@ -21,9 +22,7 @@ export function initDesignersController() {
 
   container.innerHTML = `
     <div class="de-header m-fade-up">
-      <h1>Find Product Designers &amp; Engineers</h1>
-      <p>Connect with top-tier product development professionals to bring your hardware vision to life, or post your next contracting opportunity.</p>
-      
+      <h1>Find Designers &amp; Engineers or Post Your Job</h1>
       <div class="de-toggle-group" id="de-main-toggle">
         <button class="de-toggle-btn active" data-mode="hire">Hire Talent</button>
         <button class="de-toggle-btn" data-mode="work">Find Work</button>
@@ -80,26 +79,28 @@ function openModal(id) {
 /* ── HIRE VIEW ────────────────────────────────────────────── */
 function renderHireView(workspace) {
   workspace.innerHTML = `
-    <div class="de-hire-row">
+    <div class="de-estimator-top" id="de-estimator-container"></div>
+
+    <div class="de-scenario-planner" id="de-scenario-planner-container"></div>
+
+    <div class="de-hire-layout">
       <aside class="de-sidebar" id="de-sidebar-container"></aside>
 
-      <div class="de-main-centered">
+      <div class="de-main-content">
         <div class="de-toolbar">
           <div class="de-filters" id="de-filters">
             ${Object.keys(FILTER_CATEGORIES).map(cat =>
-              `<button class="de-filter-chip ${cat === activeFilter ? 'active' : ''}" data-filter="${cat}">${cat}</button>`
-            ).join('')}
+    `<button class="de-filter-chip ${cat === activeFilter ? 'active' : ''}" data-filter="${cat}">${cat}</button>`
+  ).join('')}
           </div>
           <button class="de-post-job-btn" id="de-post-job-trigger">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             Post a Job
           </button>
         </div>
-        <div class="de-grid" id="de-grid-container"></div>
+        <div class="de-grid-carousel" id="de-grid-container"></div>
       </div>
     </div>
-
-    <div class="de-estimator-card" id="de-estimator-container"></div>
   `;
 
   // Filter chips
@@ -117,6 +118,7 @@ function renderHireView(workspace) {
   updateSidebar();
   updateGrid();
   updateEstimator();
+  updateScenarioPlanner();
 }
 
 /* ── SIDEBAR ──────────────────────────────────────────────── */
@@ -162,7 +164,15 @@ function updateSidebar() {
           <span class="de-total-rate-label">Combined Rate</span>
           <span class="de-total-rate-value">$${totalRate}<span style="font-size:14px;font-weight:normal;color:var(--color-steel-400)">/hr</span></span>
         </div>
-        <button class="de-sidebar-contact-btn" id="de-contact-team-btn">
+        ${estimatorResult ? `
+          <div class="de-total-project-cost" style="margin-top: 12px; padding: 12px; background: rgba(59,130,246,0.1); border-radius: 8px; border: 1px solid rgba(59,130,246,0.2);">
+            <div style="font-size:11px; text-transform:uppercase; color:var(--color-electric); font-weight:bold; margin-bottom: 4px;">Est. Project Cost</div>
+            <div id="de-sidebar-total-cost" style="font-size:24px; font-weight:900; color:#fff;">
+              <!-- Handled in updateSidebar after render -->
+            </div>
+          </div>
+        ` : ''}
+        <button class="de-sidebar-contact-btn" id="de-contact-team-btn" style="margin-top:20px;">
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           Contact Team (${shortlist.length})
         </button>
@@ -176,12 +186,31 @@ function updateSidebar() {
       updateSidebar();
       updateGrid();
       updateEstimator();
+      updateScenarioPlanner();
     });
   });
 
   document.getElementById('de-contact-team-btn')?.addEventListener('click', () => {
     showContactTeamModal();
   });
+
+  // Calculate and inject total project cost dynamically based on current allocations
+  const costDiv = document.getElementById('de-sidebar-total-cost');
+  if (costDiv && estimatorResult) {
+    const totalProjectCost = estimatorResult.phases.reduce((sum, ph) => {
+      const state = scenarioState[ph.name] || { active: true, alloc: 1.0, offWorkers: [] };
+      if (!state.active || shortlist.length === 0) return sum;
+      let phaseRate = 0;
+      shortlist.forEach(member => {
+         if (!state.offWorkers.includes(member.name)) {
+            const val = parseFloat(member.rate.replace(/[^0-9.]/g, ''));
+            phaseRate += (isNaN(val) ? 0 : val);
+         }
+      });
+      return sum + (ph.hours * (phaseRate * state.alloc));
+    }, 0);
+    costDiv.textContent = '$' + Math.round(totalProjectCost).toLocaleString();
+  }
 }
 
 /* ── TALENT GRID ──────────────────────────────────────────── */
@@ -230,8 +259,8 @@ function updateGrid() {
           <button class="de-btn-view-profile" data-id="${d.id}">View Profile</button>
           <button class="de-btn-add-team ${isAdded ? 'added' : ''}" data-id="${d.id}">
             ${isAdded
-              ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Added`
-              : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add`}
+        ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Added`
+        : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add`}
           </button>
         </div>
       </div>
@@ -263,6 +292,7 @@ function updateGrid() {
       updateSidebar();
       updateGrid();
       updateEstimator();
+      updateScenarioPlanner();
     });
   });
 }
@@ -309,6 +339,11 @@ function showDesignerProfile(d) {
               <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
               ${d.availability}
             </span>
+            <div id="estimator-container">
+            </div>
+            
+            <div id="scenario-planner-container" class="de-scenario-planner">
+            </div>
           </div>
         </div>
         <div class="de-pm-stats">
@@ -376,8 +411,8 @@ function showDesignerProfile(d) {
       <div class="de-pm-footer">
         <button class="de-btn-add-team ${isAdded ? 'added' : ''} de-pm-team-btn" data-id="${d.id}">
           ${isAdded
-            ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Added to Team`
-            : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add to Team`}
+      ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Added to Team`
+      : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add to Team`}
         </button>
         <button class="de-pm-message-btn" data-id="${d.id}">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -632,7 +667,7 @@ function showPostJobModal() {
   });
 }
 
-/* ── ESTIMATOR ────────────────────────────────────────────── */
+/* ── ESTIMATOR (TOP ARROW) ────────────────────────────────── */
 let estimatorLoading = false;
 let estimatorResult = null;
 
@@ -640,96 +675,65 @@ function updateEstimator() {
   const container = document.getElementById('de-estimator-container');
   if (!container) return;
 
-  let totalRate = shortlist.reduce((sum, d) => {
-    const val = parseFloat(d.rate.replace(/[^0-9.]/g, ''));
-    return sum + (isNaN(val) ? 0 : val);
-  }, 0);
+  const searchHtml = `
+    <div class="de-estimator-search-wrapper">
+      <div class="de-estimator-search-bar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-steel-400)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="de-estimator-input" placeholder="e.g. bluetooth speaker, drone..." value="${estimatorResult ? estimatorResult.product : ''}" />
+        <button class="de-estimator-search-btn" id="de-estimator-go-btn">Estimate Timeline</button>
+      </div>
+    </div>
+  `;
 
-  const teamCount = shortlist.length;
-
-  // Loading state
   if (estimatorLoading) {
     container.innerHTML = `
-      <div class="de-estimator-inner">
-        <div class="de-estimator-search-section">
-          <h3 class="de-estimator-heading">Project Estimator</h3>
-          <p class="de-estimator-subtitle">Enter any product to get AI-powered NRE cost estimates based on your current team.</p>
+      <div class="de-estimator-top-inner">
+        ${searchHtml}
+        <div class="de-estimator-arrow loading">
+           <div class="de-estimator-spinner" style="width:20px;height:20px;border-width:2px;border-top-color:var(--color-electric);border-radius:50%;animation:de-spin 0.8s linear infinite;margin-right:10px;"></div>
+           <span style="font-size:13px;color:var(--color-steel-400);">AI is analysing development phases...</span>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:16px;">
-          <div class="de-estimator-spinner"></div>
-          <div style="font-size:14px;color:var(--color-steel-400);">Analysing manufacturing costs…</div>
-        </div>
-      </div>`;
+      </div>
+    `;
     return;
   }
 
-  // Result state
-  let resultHtml = '';
-  if (estimatorResult) {
-    const r = estimatorResult;
-    const teamCost = totalRate > 0 ? totalRate * r.totalHours : null;
-    const low = teamCost ? Math.round(teamCost * 0.7) : Math.round(r.estimatedNRE * 0.7);
-    const mid = teamCost || r.estimatedNRE;
-    const high = teamCost ? Math.round(teamCost * 1.3) : Math.round(r.estimatedNRE * 1.3);
-
-    resultHtml = `
-      <div class="de-estimator-result">
-        <div class="de-estimator-result-header">
-          <div class="de-estimator-result-product">${r.product}</div>
-          <div class="de-estimator-result-meta">${r.totalHours}h estimated · ${r.phases.length} development phases${teamCount > 0 ? ' · ' + teamCount + ' team members' : ''}</div>
+  let arrowHtml = '';
+  if (estimatorResult && estimatorResult.phases) {
+    const totalH = estimatorResult.phases.reduce((sum, p) => sum + p.hours, 0);
+    const phasesHtml = estimatorResult.phases.map((ph, index) => {
+      const pct = (ph.hours / totalH) * 100;
+      const isLast = index === estimatorResult.phases.length - 1;
+      const weeks = Math.ceil(ph.hours / 40);
+      return `
+        <div class="de-arrow-segment" style="width: ${pct}%;">
+          <div class="de-arrow-segment-name">${ph.name}</div>
+          <div class="de-arrow-segment-duration">${weeks} wk${weeks > 1 ? 's' : ''}</div>
+          ${!isLast ? '<div class="de-arrow-tick"></div>' : ''}
         </div>
+      `;
+    }).join('');
 
-        <div class="de-estimator-cost-display">
-          <div class="de-estimator-cost-range de-estimator-cost-low">
-            <div class="de-estimator-cost-label">Low (−30%)</div>
-            <div class="de-estimator-cost-value">$${low.toLocaleString()}</div>
-          </div>
-          <div class="de-estimator-cost-range de-estimator-cost-mid">
-            <div class="de-estimator-cost-label">Best Estimate</div>
-            <div class="de-estimator-cost-value">$${mid.toLocaleString()}</div>
-            ${teamCount === 0 ? '<div class="de-estimator-cost-note">Add team members for personalized rates</div>' : '<div class="de-estimator-cost-note">$' + totalRate + '/hr combined</div>'}
-          </div>
-          <div class="de-estimator-cost-range de-estimator-cost-high">
-            <div class="de-estimator-cost-label">High (+30%)</div>
-            <div class="de-estimator-cost-value">$${high.toLocaleString()}</div>
-          </div>
+    arrowHtml = `
+      <div class="de-estimator-arrow">
+        <div class="de-arrow-body">
+          ${phasesHtml}
         </div>
-
-        <div class="de-estimator-margin-bar">
-          <div class="de-estimator-margin-fill"></div>
-          <div class="de-estimator-margin-tick" style="left:15%;"></div>
-          <div class="de-estimator-margin-tick de-estimator-margin-tick-mid" style="left:50%;"></div>
-          <div class="de-estimator-margin-tick" style="left:85%;"></div>
-        </div>
-
-        <div class="de-estimator-phases">
-          ${r.phases.map(ph => {
-            const phCost = totalRate > 0 ? '$' + (totalRate * ph.hours).toLocaleString() : '—';
-            return '<div class="de-estimator-phase-item"><span class="de-estimator-phase-name">' + ph.name + '</span><span class="de-estimator-phase-hours">' + ph.hours + 'h</span><span class="de-estimator-phase-cost">' + phCost + '</span></div>';
-          }).join('')}
-        </div>
-
-        <div class="de-estimator-disclaimer">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span>This is an AI-generated rough estimate for budgeting purposes only. Actual costs vary based on design complexity, tooling, and materials. <strong>This is not a proposal.</strong></span>
-        </div>
-      </div>`;
+        <div class="de-arrow-head"></div>
+      </div>
+    `;
+  } else {
+    arrowHtml = `
+      <div class="de-estimator-arrow empty">
+        <span style="font-size:13px;color:var(--color-steel-400);">Enter a product to generate an estimated timeline</span>
+      </div>
+    `;
   }
 
   container.innerHTML = `
-    <div class="de-estimator-inner">
-      <div class="de-estimator-search-section">
-        <div>
-          <h3 class="de-estimator-heading">Project Estimator</h3>
-          <p class="de-estimator-subtitle">Enter any product to get an AI-powered NRE cost estimate with your current team's rates.</p>
-        </div>
-        <div class="de-estimator-search-bar">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-steel-400)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="de-estimator-input" placeholder="e.g. bluetooth speaker, drone, sneakers…" />
-          <button class="de-estimator-search-btn" id="de-estimator-go-btn">Estimate</button>
-        </div>
-      </div>
-      ${resultHtml}
+    <div class="de-estimator-top-inner">
+      ${searchHtml}
+      ${arrowHtml}
     </div>
   `;
 
@@ -742,17 +746,139 @@ function updateEstimator() {
   }
 }
 
+/* ── SCENARIO PLANNER ─────────────────────────────────────── */
+function updateScenarioPlanner() {
+  const container = document.getElementById('de-scenario-planner-container');
+  if (!container) return;
+
+  if (estimatorLoading) {
+    container.innerHTML = `<div class="de-scenario-empty"><div class="de-estimator-spinner" style="margin:auto;border-top-color:var(--color-electric)"></div></div>`;
+    return;
+  }
+
+  if (!estimatorResult) {
+    container.innerHTML = `
+      <div class="de-scenario-empty">
+         <span style="color:var(--color-steel-500); font-size:14px;">Generate an estimate above to unlock phase planning.</span>
+      </div>
+    `;
+    return;
+  }
+
+  const teamCount = shortlist.length;
+  let totalScenarioCost = 0;
+
+  const phasesHtml = estimatorResult.phases.map((ph, idx) => {
+    if (!scenarioState[ph.name]) {
+      scenarioState[ph.name] = { active: true, alloc: 1.0, offWorkers: [] };
+    }
+    const state = scenarioState[ph.name];
+
+    let phaseRate = 0;
+    let teamHtml = '';
+
+    if (teamCount > 0) {
+      const avatarsHtml = shortlist.map(member => {
+        const isOff = state.offWorkers.includes(member.name);
+        if (!isOff) {
+          const val = parseFloat(member.rate.replace(/[^0-9.]/g, ''));
+          phaseRate += (isNaN(val) ? 0 : val);
+        }
+        return `<div class="de-scenario-avatar ${isOff ? 'disabled' : ''}" 
+                      style="background-image: url('${member.avatar}')" 
+                      data-phase="${ph.name}" 
+                      data-member="${member.name}" 
+                      title="Toggle ${member.name} for this phase"></div>`;
+      }).join('');
+      teamHtml = `<div class="de-scenario-team">${avatarsHtml}</div>`;
+    }
+
+    const rateToUse = (teamCount > 0 && state.active) ? (phaseRate * state.alloc) : 0;
+    const phaseCost = state.active ? (ph.hours * rateToUse) : 0;
+    totalScenarioCost += phaseCost;
+
+    if (teamCount === 0) {
+      return `
+        <div class="de-scenario-item dashed">
+          <div class="de-scenario-item-title">${ph.name}</div>
+          <div class="de-scenario-body-empty">
+            Select team members to view costs
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="de-scenario-item ${state.active ? 'populated' : 'disabled'}">
+        <div class="de-scenario-item-header">
+           <label class="de-phase-toggle" title="Toggle entire phase">
+              <input type="checkbox" class="de-phase-checkbox" data-phase="${ph.name}" ${state.active ? 'checked' : ''}>
+              <span class="de-scenario-item-title">${ph.name} <span class="de-scenario-hours">· ${ph.hours}h</span></span>
+           </label>
+           <div class="de-scenario-cost">$ ${Math.round(phaseCost).toLocaleString()}</div>
+        </div>
+        ${teamHtml}
+        <div class="de-scenario-slider-group" style="${!state.active ? 'opacity:0.3; pointer-events:none;' : ''}">
+          <input type="range" class="de-scenario-slider" data-phase="${ph.name}" min="0" max="1" step="0.1" value="${state.alloc}" title="${Math.round(state.alloc * 100)}% effort" />
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <p class="de-scenario-section-title">Phase Spend Planner <span class="de-scenario-total-cost">Total: $ ${Math.round(totalScenarioCost).toLocaleString()}</span></p>
+    <div class="de-scenario-grid">
+      ${phasesHtml}
+    </div>
+  `;
+
+  container.querySelectorAll('.de-scenario-slider').forEach(slider => {
+    slider.addEventListener('input', e => {
+      const phase = e.target.dataset.phase;
+      scenarioState[phase].alloc = parseFloat(e.target.value);
+      updateScenarioPlanner();
+      updateSidebar();
+    });
+  });
+
+  container.querySelectorAll('.de-phase-checkbox').forEach(cb => {
+    cb.addEventListener('change', e => {
+      const phase = e.target.dataset.phase;
+      scenarioState[phase].active = e.target.checked;
+      updateScenarioPlanner();
+      updateSidebar();
+    });
+  });
+
+  container.querySelectorAll('.de-scenario-avatar').forEach(av => {
+    av.addEventListener('click', e => {
+      const phase = e.currentTarget.dataset.phase;
+      const mem = e.currentTarget.dataset.member;
+      const state = scenarioState[phase];
+      if (state.offWorkers.includes(mem)) {
+        state.offWorkers = state.offWorkers.filter(m => m !== mem);
+      } else {
+        state.offWorkers.push(mem);
+      }
+      updateScenarioPlanner();
+      updateSidebar();
+    });
+  });
+}
+
 async function runEstimatorAI(productName) {
   estimatorLoading = true;
   estimatorResult = null;
+  scenarioState = {}; // reset allocations
   updateEstimator();
+  updateScenarioPlanner();
 
   const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
   if (!GEMINI_API_KEY) { estimatorResult = getDefaultEstimate(productName); estimatorLoading = false; updateEstimator(); return; }
 
   const models = ['gemini-2.5-flash', 'gemini-2.0-flash'];
   const prompt = `You are a manufacturing cost estimator. For the product "${productName}", estimate NRE development phases and hours.
-Return ONLY valid JSON: {"product":"${productName}","totalHours":<number>,"estimatedNRE":<total dollar estimate at $85/hr>,"phases":[{"name":"<phase>","hours":<number>}]}
+Return ONLY valid JSON: {"product":"${productName}","totalHours":"[number]","estimatedNRE":"[total dollar estimate at $85/hr]","phases":[{"name":"[phase]","hours":"[number]"}]}
 Include 4-6 phases (Industrial Design, Mechanical Eng, Electronic Design, Firmware, Prototyping, Testing & Cert). Be realistic.`;
 
   const body = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 1024, responseMimeType: 'application/json' } };
@@ -773,13 +899,17 @@ Include 4-6 phases (Industrial Design, Mechanical Eng, Electronic Design, Firmwa
   estimatorResult = result || getDefaultEstimate(productName);
   estimatorLoading = false;
   updateEstimator();
+  updateScenarioPlanner();
+  updateSidebar();
 }
 
 function getDefaultEstimate(name) {
-  return { product: name, totalHours: 480, estimatedNRE: 40800, phases: [
-    { name: 'Industrial Design', hours: 80 }, { name: 'Mechanical Engineering', hours: 120 },
-    { name: 'Prototyping & Iteration', hours: 100 }, { name: 'Testing & Certification', hours: 80 }, { name: 'Production Ramp', hours: 100 }
-  ]};
+  return {
+    product: name, totalHours: 480, estimatedNRE: 40800, phases: [
+      { name: 'Industrial Design', hours: 80 }, { name: 'Mechanical Engineering', hours: 120 },
+      { name: 'Prototyping & Iteration', hours: 100 }, { name: 'Testing & Certification', hours: 80 }, { name: 'Production Ramp', hours: 100 }
+    ]
+  };
 }
 
 /* ── FIND WORK VIEW ───────────────────────────────────────── */

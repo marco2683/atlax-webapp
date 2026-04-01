@@ -114,6 +114,7 @@ export function initGlobe(containerId, suppliers = []) {
   // ── Controller API ─────────────────────────────────────
   let currentSuppliers = [];
   let activeStageFilter = null;
+  let shortlistedIds = new Set();
 
   /**
    * Stop globe rotation (called on search).
@@ -150,11 +151,15 @@ export function initGlobe(containerId, suppliers = []) {
       filtered = filtered.filter(s => s.stage === activeStageFilter);
     }
 
-    const points = filtered.map(s => ({
-      ...s,
-      color: '#3b82f6',
-      size: 0.35, // Increased from 0.18 for better visibility
-    }));
+    const points = filtered.map(s => {
+      const sid = String(s.id || s.name);
+      const isShortlisted = shortlistedIds.has(sid);
+      return {
+        ...s,
+        color: isShortlisted ? '#10b981' : '#3b82f6',
+        size: isShortlisted ? 0.55 : 0.35,
+      };
+    });
 
     globe.pointsData(points);
     
@@ -311,6 +316,15 @@ export function initGlobe(containerId, suppliers = []) {
     clearHighlight,
     updateShortlistNetwork: (sl) => {
       shortlistActive = sl && sl.length > 0;
+      // Update the set of shortlisted IDs so dots can be recolored
+      shortlistedIds.clear();
+      if (sl) {
+        sl.forEach(item => {
+          const sid = String(item.supplier?.id || item.supplier?.name || '');
+          if (sid) shortlistedIds.add(sid);
+        });
+      }
+      renderPoints(); // Re-render dots with green for shortlisted
       updateShortlistNetwork(sl);
     },
     setGlobeTheme: (isLight) => {
