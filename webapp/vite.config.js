@@ -14,7 +14,8 @@ export default defineConfig({
         app: resolve(__dirname, 'app.html'),
         portfolio: resolve(__dirname, 'portfolio.html'),
         services: resolve(__dirname, 'services.html'),
-        workspace: resolve(__dirname, 'workspace.html')
+        workspace: resolve(__dirname, 'workspace.html'),
+        admin: resolve(__dirname, 'admin.html')
       }
     }
   }

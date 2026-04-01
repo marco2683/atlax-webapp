@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/logo-mark.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATLAX Admin Panel</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/src/css/design-system.css">
+  <link rel="stylesheet" href="/src/css/layout.css">
+  <link rel="stylesheet" href="/src/css/components.css">
+  <link rel="stylesheet" href="/src/css/admin.css">
+</head>
+<body class="admin-body">
+  
+  <div id="admin-login-view" class="admin-login-container">
+    <div class="admin-login-box glass-panel">
+      <div class="admin-login-header">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="admin-logo"><circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="4"/><path d="M50 20 L80 80 L20 80 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/></svg>
+        <h1>ATLAX Admin</h1>
+        <p>Restricted Staff Access Only</p>
+      </div>
+      <form id="admin-login-form">
+        <div class="input-group">
+          <label>Employee ID / Email</label>
+          <input type="text" id="admin-email" placeholder="staff@atlax.com" required>
+        </div>
+        <div class="input-group">
+          <label>Secure Key</label>
+          <input type="password" id="admin-pwd" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Authenticate</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="admin-dashboard-view" class="admin-dashboard-layout hidden">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar glass-panel">
+      <div class="admin-brand">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="4"/><path d="M50 20 L80 80 L20 80 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/></svg>
+        <span>ATLAX Admin</span>
+      </div>
+      <nav class="admin-nav">
+        <button class="admin-nav-item active" data-tab="overview">Overview</button>
+        <button class="admin-nav-item" data-tab="suppliers">Suppliers CRM</button>
+        <button class="admin-nav-item" data-tab="designers">Talent Hub</button>
+        <button class="admin-nav-item" data-tab="rfqs">RFQ Tracker</button>
+      </nav>
+      <div class="admin-user-profile">
+        <div class="admin-avatar"></div>
+        <div class="admin-user-info">
+          <div class="admin-user-name">Systems Admin</div>
+          <button id="admin-logout-btn" style="background:transparent;border:none;color:var(--color-slate-400);cursor:pointer;font-size:11px;padding:0;text-align:left;">Log Out</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <header class="admin-header glass-panel">
+        <h2 id="admin-page-title">Platform Overview</h2>
+        <div class="admin-header-actions">
+           <button class="btn btn-secondary">Export Data</button>
+        </div>
+      </header>
+
+      <div class="admin-content-area" id="admin-content-routing">
+         <!-- Injected by JS -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Main scripts -->
+  <script type="module" src="/src/js/admin.js"></script>
+
+</body>
+</html>

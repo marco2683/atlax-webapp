@@ -737,7 +737,10 @@ body.theme-light .de-btn-add-team { background: rgba(0,0,0,0.03); }
 
 /* Grid Layouts */
 .de-grid-carousel {
-  display: flex;
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-auto-flow: column;
+  grid-auto-columns: 320px;
   gap: var(--space-6);
   overflow-x: auto;
   padding-bottom: var(--space-6);
@@ -762,7 +765,7 @@ body.theme-light .de-btn-add-team { background: rgba(0,0,0,0.03); }
 
 /* Designer Card */
 .de-designer-card {
-  flex: 0 0 320px;
+  width: 100%;
   scroll-snap-align: start;
   background: var(--color-midnight);
   border: var(--border-subtle);

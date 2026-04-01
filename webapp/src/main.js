@@ -57,33 +57,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 2. 3D Globe
   const globe = initGlobe('globe-container', MOCK_SUPPLIERS);
 
-  // Initialize Theme Toggle
-  const themeToggle = document.getElementById('btn-theme-toggle');
-  const iconMoon = document.getElementById('icon-moon');
-  const iconSun = document.getElementById('icon-sun');
-  if (themeToggle) {
-    // Check saved preference
-    const isLightMode = localStorage.getItem('atlax-theme') === 'light';
-    if (isLightMode) {
-      document.body.classList.add('theme-light');
-      iconMoon.classList.add('hidden');
-      iconSun.classList.remove('hidden');
-    }
-
-    themeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('theme-light');
-      const isLight = document.body.classList.contains('theme-light');
-      localStorage.setItem('atlax-theme', isLight ? 'light' : 'dark');
-      if (isLight) {
-        iconMoon.classList.add('hidden');
-        iconSun.classList.remove('hidden');
-      } else {
-        iconMoon.classList.remove('hidden');
-        iconSun.classList.add('hidden');
-      }
-      if (globe && globe.setGlobeTheme) globe.setGlobeTheme(isLight);
-    });
-  }
+  // Theme Toggle temporarily disabled (dark theme enforced)
+  // document.body.classList.remove('theme-light');
 
   // 2b. Restore shortlist from workspace (if navigating via "Open in Engine")
   try {

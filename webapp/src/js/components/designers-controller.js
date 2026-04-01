@@ -79,10 +79,6 @@ function openModal(id) {
 /* ── HIRE VIEW ────────────────────────────────────────────── */
 function renderHireView(workspace) {
   workspace.innerHTML = `
-    <div class="de-estimator-top" id="de-estimator-container"></div>
-
-    <div class="de-scenario-planner" id="de-scenario-planner-container"></div>
-
     <div class="de-hire-layout">
       <aside class="de-sidebar" id="de-sidebar-container"></aside>
 
@@ -101,6 +97,9 @@ function renderHireView(workspace) {
         <div class="de-grid-carousel" id="de-grid-container"></div>
       </div>
     </div>
+
+    <div class="de-estimator-top" id="de-estimator-container"></div>
+    <div class="de-scenario-planner" id="de-scenario-planner-container"></div>
   `;
 
   // Filter chips
@@ -256,7 +255,6 @@ function updateGrid() {
           </div>
         </div>
         <div class="de-card-actions">
-          <button class="de-btn-view-profile" data-id="${d.id}">View Profile</button>
           <button class="de-btn-add-team ${isAdded ? 'added' : ''}" data-id="${d.id}">
             ${isAdded
         ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Added`
@@ -267,11 +265,14 @@ function updateGrid() {
     `;
   }).join('');
 
-  // View Profile
-  container.querySelectorAll('.de-btn-view-profile').forEach(btn => {
-    btn.addEventListener('click', e => {
+  // View Profile (Entire Card Clickable)
+  container.querySelectorAll('.de-designer-card').forEach(card => {
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', e => {
+      // If they clicked the add-to-team button, don't open the profile
+      if (e.target.closest('.de-btn-add-team')) return;
       e.stopPropagation();
-      const designer = MOCK_DESIGNERS.find(d => d.id === btn.dataset.id);
+      const designer = MOCK_DESIGNERS.find(d => d.id === card.dataset.id);
       if (designer) showDesignerProfile(designer);
     });
   });
@@ -363,6 +364,25 @@ function showDesignerProfile(d) {
       </div>
 
       <div class="de-pm-body">
+        <!-- Contact Information -->
+        <section class="de-pm-section">
+          <h4 class="de-pm-section-title">Contact</h4>
+          <div class="de-pm-contact-info" style="display:flex;gap:12px;margin-bottom:12px;">
+            <div style="background:rgba(255,255,255,0.05);padding:10px 12px;border-radius:8px;flex:1;">
+              <div style="font-size:11px;color:var(--color-steel-400);text-transform:uppercase;margin-bottom:4px;">Email</div>
+              <div style="font-size:13px;color:#fff;">${d.email || d.name.toLowerCase().replace(' ', '.') + '@example.com'}</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05);padding:10px 12px;border-radius:8px;flex:1;">
+              <div style="font-size:11px;color:var(--color-steel-400);text-transform:uppercase;margin-bottom:4px;">Phone</div>
+              <div style="font-size:13px;color:#fff;">${d.phone || '+1 ' + Math.floor(100 + Math.random() * 900) + ' 555 ' + Math.floor(1000 + Math.random() * 9000)}</div>
+            </div>
+            <a href="mailto:${d.email || d.name.toLowerCase().replace(' ', '.') + '@example.com'}" class="de-pm-message-btn" style="flex:1; display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              Direct Email
+            </a>
+          </div>
+        </section>
+
         <!-- Bio -->
         <section class="de-pm-section">
           <h4 class="de-pm-section-title">About</h4>
