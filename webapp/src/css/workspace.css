@@ -1427,10 +1427,43 @@
   background: rgba(59, 130, 246, 0.1);
 }
 
+.ws-mobile-toggle {
+  display: none;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px 10px;
+  line-height: 1;
+  transition: background 0.2s;
+}
+.ws-mobile-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 /* ── Responsive ─────────────────────────────────────────── */
 @media (max-width: 768px) {
+  .ws-mobile-toggle {
+    display: block;
+  }
+
   .ws-sidebar {
-    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    z-index: 2000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+  }
+  
+  .sidebar-open .ws-sidebar {
+    transform: translateX(0);
   }
 
   .ws-content {

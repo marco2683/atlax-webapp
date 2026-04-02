@@ -1717,3 +1717,26 @@
     pointer-events: auto;
   }
 }
+
+@media (max-width: 768px) {
+  .rfq-top-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .rfq-fields-grid--3x3 {
+    grid-template-columns: 1fr;
+  }
+  
+  .rfq-bottom-row {
+    grid-template-columns: 1fr;
+  }
+
+  .rfq-engine__header-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .rfq-header-spacer {
+    display: none;
+  }
+}

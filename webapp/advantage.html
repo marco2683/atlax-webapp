@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/src/css/design-system.css">
   <link rel="stylesheet" href="/src/css/marketing.css">
   <link rel="stylesheet" href="/src/css/advantage.css">
+  <link rel="stylesheet" href="/src/css/responsive.css">
   <link rel="stylesheet" href="/src/css/contact-modal.css">
   <script defer src="/src/js/contact-modal.js"></script>
 </head>
@@ -24,7 +25,9 @@
           <img src="/paniani-logo-white.png" alt="PRD" style="height: 40px; width: auto; opacity: 0.9;">
         </a>
       </div>
-      <div style="display: flex; gap: var(--space-6); align-items: center;">
+      <button class="mobile-menu-toggle" aria-label="Toggle mobile menu"
+        onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
+      <div class="nav-links-container" style="display: flex; gap: var(--space-6); align-items: center;">
         <a href="index.html" class="nav-link">Home</a>
         <a href="services.html" class="nav-link">Capabilities</a>
         <a href="portfolio.html" class="nav-link">Portfolio</a>

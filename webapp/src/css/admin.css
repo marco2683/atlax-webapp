@@ -695,3 +695,59 @@
   background: var(--color-slate-800);
 }
 
+/* ── Mobile Sidebar Toggle ──────────────────────────────── */
+.admin-mobile-toggle {
+  display: none;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px 10px;
+  line-height: 1;
+  transition: background 0.2s;
+}
+
+.admin-mobile-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ── Responsive View ────────────────────────────────────── */
+@media (max-width: 768px) {
+  .admin-mobile-toggle {
+    display: block;
+  }
+
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    z-index: 2000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .sidebar-open .admin-sidebar {
+    transform: translateX(0);
+  }
+
+  .admin-main {
+    width: 100%;
+  }
+
+  .admin-header {
+    padding: 0 20px;
+  }
+
+  .admin-content-area {
+    padding: 20px;
+  }
+
+  .admin-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}

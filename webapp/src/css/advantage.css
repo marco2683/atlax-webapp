@@ -608,3 +608,14 @@
   line-height: 1.6;
   opacity: 0.9;
 }
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE / RESPONSIVE (ADVANTAGE MATRIX)
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .adv-matrix-container.is-expanded .intent-node.active-intent {
+    top: 15% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+  }
+}

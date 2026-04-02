@@ -78,9 +78,13 @@
     <main class="ws-main">
       <!-- Header -->
       <header class="ws-header">
-        <div>
-          <h1 class="ws-header__title" id="ws-header-title">Saved Shortlists</h1>
-          <p class="ws-header__subtitle" id="ws-header-subtitle">Your curated lists of manufacturing partners</p>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="ws-mobile-toggle" aria-label="Toggle sidebar" 
+            onclick="document.getElementById('ws-app').classList.toggle('sidebar-open')">☰</button>
+          <div>
+            <h1 class="ws-header__title" id="ws-header-title">Saved Shortlists</h1>
+            <p class="ws-header__subtitle" id="ws-header-subtitle">Your curated lists of manufacturing partners</p>
+          </div>
         </div>
         <div class="ws-header__actions" id="ws-header-actions">
           <!-- Dynamic buttons injected per tab -->
