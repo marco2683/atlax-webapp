@@ -1,3 +1,4 @@
+import { supabase } from './supabase.js';
 import { getCurrentUser } from './services/auth.js';
 import { saveShortlist } from './services/workspace.js';
 

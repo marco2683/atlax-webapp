@@ -1,5 +1,6 @@
 
 import { MOCK_DESIGNERS } from './data/mock-designers.js';
+import { supabase } from './supabase.js';
 
 /* ================================================================
    ATLAX Admin Panel — Full CRM with Add/Edit Forms
@@ -43,32 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const data = Object.fromEntries(fd.entries());
     
     try {
-      // First try the API for dev environment, fallback to static file if deployed
-      let result;
-      try {
-        const resp = await fetch('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-        if (resp.ok) {
-          result = await resp.json();
-        } else if (resp.status === 401) {
-          result = await resp.json(); // Explicit rejection
-        } else {
-          throw new Error('API failed'); 
-        }
-      } catch (err) {
-        // Fallback for static Netlify deployment
-        const staticResp = await fetch('/cms/staff.json?_t=' + Date.now());
-        if (!staticResp.ok) throw new Error('Could not fetch staff directory');
-        const staffMembers = await staticResp.json();
-        const user = staffMembers.find(s => 
-          (s.email || '').trim().toLowerCase() === (data.email || '').trim().toLowerCase() && 
-          s.password === data.password
-        );
-        result = user ? { success: true, user } : { success: false, error: 'Invalid credentials' };
-      }
+      const { data: staffMembers, error } = await supabase.from('staff').select('*');
+      if (error) throw error;
+      const user = staffMembers.find(s => 
+        (s.email || '').trim().toLowerCase() === (data.email || '').trim().toLowerCase() && 
+        s.password === data.password
+      );
+      const result = user ? { success: true, user } : { success: false, error: 'Invalid credentials' };
 
       if (result.success) {
         sessionStorage.setItem('atlax_admin_auth', 'true');
@@ -119,12 +101,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadCRMData() {
     try {
-      const resStaff = await fetch('/cms/staff.json?_t=' + Date.now());
-      if (resStaff.ok) loadedStaff = await resStaff.json();
-      else loadedStaff = [];
-      const res = await fetch('/cms/suppliers.json?_t=' + Date.now());
-      let rawData = await res.json();
-      loadedSuppliers = rawData.map(s => {
+      const { data: staffData } = await supabase.from('staff').select('*');
+      loadedStaff = staffData || [];
+
+      const { data: supData } = await supabase.from('suppliers').select('*');
+      loadedSuppliers = (supData || []).map(row => {
+        const s = { ...row.data, id: row.id, name: row.name, segment: row.segment, techGroup: row.tech_group };
         if (!s.techGroup && s.technologies && s.technologies.length > 0) {
           s.techGroup = s.technologies[0];
         }
@@ -132,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       TECH_GROUPS = [...new Set(loadedSuppliers.map(s => s.techGroup).filter(Boolean))].sort();
     } catch(err) {
-      console.error("Failed to fetch JSON", err);
+      console.error("Failed to fetch Supabase data", err);
       loadedSuppliers = [];
     }
   }
@@ -454,7 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.textContent = 'Deleting...';
         btn.style.pointerEvents = 'none';
         try {
-          const res = await fetch(`/api/suppliers?id=${btn.dataset.id}`, { method: 'DELETE' });
+          const { error } = await supabase.from('suppliers').delete().eq('id', btn.dataset.id);
           if (res.ok) {
             await loadCRMData();
             renderSuppliersTable();
@@ -2716,11 +2698,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       try {
-        await fetch('/api/staff', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+        await supabase.from('staff').upsert(payload);
         await loadCRMData();
         renderStaffTable();
         showCMSToast('Staff member saved successfully');

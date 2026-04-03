@@ -114,7 +114,6 @@ function crudPlugin() {
 }
 
 export default defineConfig({
-  plugins: [crudPlugin()],
   build: {
     rollupOptions: {
       input: {
