@@ -949,6 +949,7 @@ document.addEventListener('DOMContentLoaded', () => {
         address: fd.get('address'),
         addressZh: fd.get('addressZh'),
         segment: fd.get('segment'),
+        stage: fd.get('stage'),
         techGroup: fd.get('techGroup') === '__NEW__' ? fd.get('newTechGroup').trim() : fd.get('techGroup'),
         tags: fd.get('tags') ? fd.get('tags').split(',').map(s => s.trim()).filter(Boolean) : [],
         technologies: fd.get('technologies') ? fd.get('technologies').split(',').map(s => s.trim()).filter(Boolean) : [],
