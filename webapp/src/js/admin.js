@@ -246,9 +246,20 @@ document.addEventListener('DOMContentLoaded', () => {
           <span style="font-size:12px; color:var(--color-steel-400);">${s.nameZh || '—'}</span>
         </td>
         <td>${[s.city, s.country].filter(Boolean).join(', ')}</td>
-        <td>${s.segment || '—'}</td>
-        <td>${s.techGroup || '—'}</td>
-        <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${(s.technologies || []).join(', ')}">${(s.technologies || []).slice(0,2).join(', ') || '—'}</td>
+        <td>
+          <span class="tag-segment ${s.segment === 'TIER 1' ? 'tag-tier1' : s.segment === 'TIER 2' ? 'tag-tier2' : s.segment === 'OEM' ? 'tag-oem' : ''}">
+            ${s.segment || '—'}
+          </span>
+        </td>
+        <td>
+          <span class="tag-tech-group">
+            ${s.techGroup || '—'}
+          </span>
+        </td>
+        <td class="admin-tooltip-container">
+          <span class="admin-tooltip-label">${(s.technologies || []).slice(0,2).join(', ') || '—'}</span>
+          ${(s.technologies || []).length > 0 ? `<div class="admin-tooltip-box">${(s.technologies || []).join(', ')}</div>` : ''}
+        </td>
         <td>${s.factoryScore || '—'}</td>
         <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${(s.certifications || []).filter(c=>!c.match(/^\d{4}-\d{2}-\d{2}/)).join(', ')}">${(s.certifications || []).filter(c=>!c.match(/^\d{4}-\d{2}-\d{2}/)).slice(0,2).join(', ') || '—'}</td>
         <td>
@@ -257,10 +268,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="admin-toggle-slider"></span>
           </label>
         </td>
-        <td class="admin-table-actions">
+        <td class="admin-table-actions"><div class="admin-table-actions-wrapper">
           <button class="admin-action-btn admin-edit-supplier" data-id="${s.id || s.name}">Edit</button>
           <button class="admin-action-btn admin-delete-supplier" data-id="${s.id || s.name}" style="color:#ef4444;border-color:rgba(239,68,68,.2);">Delete</button>
-        </td>
+        </div></td>
       </tr>`).join('');
 
     const tableHTML = `
@@ -967,12 +978,19 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       try {
-        const res = await fetch('/api/suppliers', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        if (!res.ok) throw new Error('Save failed');
+        const dbPayload = {
+          id: payload.id,
+          name: payload.name,
+          segment: payload.segment,
+          tech_group: payload.techGroup || '',
+          data: (() => {
+             const clone = { ...payload };
+             delete clone.id; delete clone.name; delete clone.segment; delete clone.techGroup;
+             return clone;
+          })()
+        };
+        const { error } = await supabase.from('suppliers').upsert(dbPayload);
+        if (error) throw error;
         
         btn.textContent = '✓ Saved!';
         btn.style.background = '#10b981';
@@ -1013,10 +1031,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${d.rate}/hr</td>
         <td>${d.rating} ★ <span style="color:var(--color-steel-400)">(${d.reviews})</span></td>
         <td><span class="admin-badge active">${d.availability}</span></td>
-        <td class="admin-table-actions">
+        <td class="admin-table-actions"><div class="admin-table-actions-wrapper">
           <button class="admin-action-btn admin-edit-designer" data-id="${d.id}">Edit</button>
           <button class="admin-action-btn" style="color:#ef4444;border-color:rgba(239,68,68,.2);">Deactivate</button>
-        </td>
+        </div></td>
       </tr>`).join('');
 
     contentRouting.innerHTML = `
@@ -1319,8 +1337,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <table class="admin-table">
           <thead><tr><th>Project ID</th><th>Requester</th><th>Budget</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
-            <tr><td>PRJ-A8012</td><td>Sarah Connor (InnovateX)</td><td>$45,000</td><td><span class="admin-badge pending">Quoting</span></td><td class="admin-table-actions"><button class="admin-action-btn">Review</button></td></tr>
-            <tr><td>PRJ-B9921</td><td>John Doe (TechCorp)</td><td>$12,500</td><td><span class="admin-badge active">In Production</span></td><td class="admin-table-actions"><button class="admin-action-btn">Manage</button></td></tr>
+            <tr><td>PRJ-A8012</td><td>Sarah Connor (InnovateX)</td><td>$45,000</td><td><span class="admin-badge pending">Quoting</span></td><td class="admin-table-actions"><div class="admin-table-actions-wrapper"><button class="admin-action-btn">Review</button></div></td></tr>
+            <tr><td>PRJ-B9921</td><td>John Doe (TechCorp)</td><td>$12,500</td><td><span class="admin-badge active">In Production</span></td><td class="admin-table-actions"><div class="admin-table-actions-wrapper"><button class="admin-action-btn">Manage</button></div></td></tr>
           </tbody>
         </table>
       </div>`;
@@ -2601,10 +2619,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${s.name}</td>
                 <td>${s.email}</td>
                 <td><span class="tag-segment tag-tier1" style="background:rgba(59, 130, 246, 0.1);color:#3b82f6;">${s.role}</span></td>
-                <td class="admin-table-actions">
+                <td class="admin-table-actions"><div class="admin-table-actions-wrapper">
                   <button class="admin-action-btn edit" data-id="${s.id}" title="Edit Staff">✎</button>
                   <button class="admin-action-btn delete" data-id="${s.id}" title="Delete Staff">🗑</button>
-                </td>
+                </div></td>
               </tr>
             `).join('')}
             ${loadedStaff.length === 0 ? '<tr><td colspan="4" style="text-align:center;color:var(--color-steel-400);">No staff members found.</td></tr>' : ''}

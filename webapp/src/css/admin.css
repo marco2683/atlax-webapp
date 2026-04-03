@@ -325,6 +325,100 @@
 }
 
 /* Status Toggle Switch */
+.admin-theme-settings-wrapper {
+  padding: 0 16px;
+  position: relative;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   UI Fixes (Tiers, Tooltips, Lines)
+   ═══════════════════════════════════════════════════════════ */
+
+.admin-table-actions-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+/* Fix CSS line mismatch by not making td flex directly */
+.admin-table td.admin-table-actions {
+  display: table-cell;
+}
+
+/* User-side UI Tags for Admin Panel */
+.tag-segment {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid;
+}
+.tag-tier1 { background: rgba(31, 111, 235, 0.1); color: #58a6ff; border-color: rgba(31, 111, 235, 0.3); }
+.tag-tier2 { background: rgba(124, 58, 237, 0.1); color: #bc8cff; border-color: rgba(124, 58, 237, 0.3); }
+.tag-oem { background: rgba(63, 185, 80, 0.1); color: #7ee787; border-color: rgba(63, 185, 80, 0.3); }
+
+/* In Light Theme, adjust them slightly if necessary for visibility */
+body.theme-light .tag-tier1 { color: #1f6feb; border-color: #1f6feb; }
+body.theme-light .tag-tier2 { color: #7c3aed; border-color: #7c3aed; }
+body.theme-light .tag-oem { color: #2ea043; border-color: #2ea043; }
+
+/* Tech Group Pill Base */
+.tag-tech-group {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+body.theme-light .tag-tech-group {
+  color: #059669; /* Darker green for visibility */
+  border-color: #059669;
+}
+
+/* Instant Tooltip for Capabilities */
+.admin-tooltip-container {
+  position: relative;
+  max-width: 150px;
+  overflow: visible; /* we want the tooltip to pop out */
+  white-space: nowrap;
+  cursor: default;
+}
+.admin-tooltip-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.admin-tooltip-box {
+  display: none;
+  position: absolute;
+  top: 100%; left: 0;
+  z-index: 999;
+  background: var(--color-slate-900);
+  border: 1px solid var(--color-slate-700);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--color-white);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  white-space: normal;
+  min-width: 250px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+body.theme-light .admin-tooltip-box {
+  background: var(--color-white);
+  border: 1px solid var(--color-slate-300);
+  color: var(--color-slate-800);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.admin-tooltip-container:hover .admin-tooltip-box {
+  display: block;
+}
+
 .admin-toggle-switch {
   position: relative;
   display: inline-block;
