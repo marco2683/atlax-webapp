@@ -63,7 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const staticResp = await fetch('/cms/staff.json?_t=' + Date.now());
         if (!staticResp.ok) throw new Error('Could not fetch staff directory');
         const staffMembers = await staticResp.json();
-        const user = staffMembers.find(s => s.email === data.email && s.password === data.password);
+        const user = staffMembers.find(s => 
+          (s.email || '').trim().toLowerCase() === (data.email || '').trim().toLowerCase() && 
+          s.password === data.password
+        );
         result = user ? { success: true, user } : { success: false, error: 'Invalid credentials' };
       }
 

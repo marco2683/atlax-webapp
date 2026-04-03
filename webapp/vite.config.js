@@ -20,7 +20,10 @@ function crudPlugin() {
               try { raw = await fs.readFile(filePath, 'utf-8'); } catch(e) {}
               const staffMembers = JSON.parse(raw);
               const data = JSON.parse(body);
-              const user = staffMembers.find(s => s.email === data.email && s.password === data.password);
+              const user = staffMembers.find(s => 
+                (s.email || '').trim().toLowerCase() === (data.email || '').trim().toLowerCase() && 
+                s.password === data.password
+              );
               res.setHeader('Content-Type', 'application/json');
               if (user) {
                 res.end(JSON.stringify({ success: true, user: { name: user.name, email: user.email, role: user.role } }));
