@@ -104,8 +104,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const { data: staffData } = await supabase.from('staff').select('*');
       loadedStaff = staffData || [];
 
-      const { data: supData } = await supabase.from('suppliers').select('*');
-      loadedSuppliers = (supData || []).map(row => {
+      let allSupData = [];
+      let from = 0;
+      const size = 1000;
+      while(true) {
+          const { data, error } = await supabase.from('suppliers').select('*').range(from, from + size - 1);
+          if (error) break;
+          if (data) allSupData = allSupData.concat(data);
+          if (!data || data.length < size) break;
+          from += size;
+      }
+      loadedSuppliers = allSupData.map(row => {
         const s = { ...row.data, id: row.id, name: row.name, segment: row.segment, techGroup: row.tech_group };
         if (!s.techGroup && s.technologies && s.technologies.length > 0) {
           s.techGroup = s.technologies[0];

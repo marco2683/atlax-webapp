@@ -322,6 +322,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border: 1px solid;
+  white-space: nowrap;
 }
 .tag-tier1 { background: rgba(31, 111, 235, 0.1); color: #58a6ff; border-color: rgba(31, 111, 235, 0.3); }
 .tag-tier2 { background: rgba(124, 58, 237, 0.1); color: #bc8cff; border-color: rgba(124, 58, 237, 0.3); }
