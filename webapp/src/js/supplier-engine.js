@@ -58,6 +58,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         s.segment = 'TIER 1';
       }
       return s;
+    }).sort((a, b) => {
+        let nameA = (a.name || '').toLowerCase();
+        let nameB = (b.name || '').toLowerCase();
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
     }).filter(s => s.isActive !== false);
     filteredData = [...suppliersData];
     initTabularEngine();
@@ -90,7 +96,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     tagInput.addEventListener('input', applyFilters);
   }
   if(countryFilter) {
-    countryFilter.addEventListener('change', applyFilters);
+    countryFilter.addEventListener('change', () => {
+      rebuildTechGroupFilter();
+      applyFilters();
+    });
   }
   
   segmentPills.forEach(pill => {
@@ -383,6 +392,11 @@ function rebuildTechGroupFilter() {
   let validData = suppliersData;
   if (!showAllSegments) {
      validData = validData.filter(s => activeSegments.includes((s.segment || '').toUpperCase()));
+  }
+  
+  const selectedCountry = countryFilter?.value;
+  if (selectedCountry) {
+     validData = validData.filter(s => s.country === selectedCountry);
   }
 
   const activeTechGroups = [...new Set(validData.map(s => s.techGroup).filter(Boolean))].sort();

@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="/src/css/components.css">
   <link rel="stylesheet" href="/src/css/admin.css">
 </head>
-<body class="admin-body">
+<body class="admin-body theme-light">
   
   <div id="admin-login-view" class="admin-login-container">
     <div class="admin-login-box glass-panel">
@@ -52,6 +52,7 @@
         <button class="admin-nav-item" data-tab="designers">Talent Hub</button>
         <button class="admin-nav-item" data-tab="rfqs">RFQ Tracker</button>
         <button class="admin-nav-item" data-tab="website">Website Content</button>
+        <button class="admin-nav-item" data-tab="staff">Staff Accounts</button>
       </nav>
       <div class="admin-user-profile">
         <div class="admin-avatar"></div>
@@ -70,7 +71,10 @@
             onclick="document.getElementById('admin-dashboard-view').classList.toggle('sidebar-open')">☰</button>
           <h2 id="admin-page-title">Platform Overview</h2>
         </div>
-        <div class="admin-header-actions">
+        <div class="admin-header-actions" style="display: flex; gap: 12px; align-items: center;">
+           <button class="btn btn-secondary" id="admin-theme-toggle" style="padding: 10px; display: flex; align-items: center; justify-content: center;" title="Toggle Light/Dark Theme">
+             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="4.22" x2="19.78" y2="6.34"/></svg>
+           </button>
            <button class="btn btn-secondary">Export Data</button>
         </div>
       </header>

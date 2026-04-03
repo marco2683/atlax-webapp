@@ -1,0 +1,16 @@
+[
+  {
+    "id": "staff-1",
+    "name": "Super Admin",
+    "email": "admin@atlax.com",
+    "role": "Admin",
+    "password": "password123"
+  },
+  {
+    "id": "staff-1775255608685",
+    "name": "Janny Sun",
+    "email": "janny@manufacturingsource-partners.com",
+    "role": "Admin",
+    "password": "A1B2C3D4"
+  }
+]

@@ -10,7 +10,65 @@ function crudPlugin() {
     name: 'crud-plugin',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        if (req.url.startsWith('/api/suppliers') && (req.method === 'POST' || req.method === 'DELETE')) {
+        if (req.url.startsWith('/api/login') && req.method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk.toString(); });
+          req.on('end', async () => {
+            try {
+              const filePath = resolve(__dirname, 'public/cms/staff.json');
+              let raw = '[]';
+              try { raw = await fs.readFile(filePath, 'utf-8'); } catch(e) {}
+              const staffMembers = JSON.parse(raw);
+              const data = JSON.parse(body);
+              const user = staffMembers.find(s => s.email === data.email && s.password === data.password);
+              res.setHeader('Content-Type', 'application/json');
+              if (user) {
+                res.end(JSON.stringify({ success: true, user: { name: user.name, email: user.email, role: user.role } }));
+              } else {
+                res.statusCode = 401;
+                res.end(JSON.stringify({ success: false, error: 'Invalid credentials' }));
+              }
+            } catch(e) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: e.message }));
+            }
+          });
+        } else if (req.url.startsWith('/api/staff') && (req.method === 'POST' || req.method === 'DELETE')) {
+          let body = '';
+          req.on('data', chunk => { body += chunk.toString(); });
+          req.on('end', async () => {
+            try {
+              const filePath = resolve(__dirname, 'public/cms/staff.json');
+              let raw = '[]';
+              try { raw = await fs.readFile(filePath, 'utf-8'); } catch(e) {}
+              let staffMembers = JSON.parse(raw);
+
+              if (req.method === 'POST') {
+                const data = JSON.parse(body);
+                const idx = staffMembers.findIndex(s => String(s.id) === String(data.id));
+                if (idx > -1) {
+                  staffMembers[idx] = data; // Update
+                } else {
+                  if (!data.id) data.id = 'staff-' + Date.now();
+                  staffMembers.push(data); // Insert
+                }
+              } else if (req.method === 'DELETE') {
+                const urlObj = new URL(req.url, 'http://' + req.headers.host);
+                const idToRemove = urlObj.searchParams.get('id');
+                if (idToRemove) {
+                  staffMembers = staffMembers.filter(s => String(s.id) !== String(idToRemove));
+                }
+              }
+              
+              await fs.writeFile(filePath, JSON.stringify(staffMembers, null, 2));
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ success: true }));
+            } catch(e) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: e.message }));
+            }
+          });
+        } else if (req.url.startsWith('/api/suppliers') && (req.method === 'POST' || req.method === 'DELETE')) {
           let body = '';
           req.on('data', chunk => { body += chunk.toString(); });
           req.on('end', async () => {

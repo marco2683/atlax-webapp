@@ -20,10 +20,37 @@ document.addEventListener('DOMContentLoaded', () => {
   if (isAuth) showDashboard();
   else { loginView.classList.remove('hidden'); dashboardView.classList.add('hidden'); }
 
-  loginForm?.addEventListener('submit', e => {
+  loginForm?.addEventListener('submit', async e => {
     e.preventDefault();
-    sessionStorage.setItem('atlax_admin_auth', 'true');
-    showDashboard();
+    const btn = loginForm.querySelector('button[type="submit"]');
+    const ogText = btn.textContent;
+    btn.textContent = 'Authenticating...';
+    btn.style.pointerEvents = 'none';
+
+    const fd = new FormData(loginForm);
+    const data = Object.fromEntries(fd.entries());
+    
+    try {
+      const resp = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await resp.json();
+      if (result.success) {
+        sessionStorage.setItem('atlax_admin_auth', 'true');
+        sessionStorage.setItem('atlax_admin_user', JSON.stringify(result.user));
+        showDashboard();
+      } else {
+        alert(result.error || 'Authentication failed');
+      }
+    } catch(err) {
+      console.error(err);
+      alert('Network error during authentication');
+    } finally {
+      btn.textContent = ogText;
+      btn.style.pointerEvents = 'auto';
+    }
   });
 
   logoutBtn?.addEventListener('click', () => {
@@ -31,6 +58,21 @@ document.addEventListener('DOMContentLoaded', () => {
     dashboardView.classList.add('hidden');
     loginView.classList.remove('hidden');
   });
+
+  // ─── Theme Toggle ───────────────────────────────────────────
+  const themeToggle = document.getElementById('admin-theme-toggle');
+  if (themeToggle) {
+    if (localStorage.getItem('atlax_admin_theme') === 'dark') {
+      document.body.classList.remove('theme-light');
+    }
+    
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('theme-light');
+      localStorage.setItem('atlax_admin_theme', 
+        document.body.classList.contains('theme-light') ? 'light' : 'dark'
+      );
+    });
+  }
 
   function showDashboard() {
     loginView.classList.add('hidden');
@@ -40,9 +82,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let loadedSuppliers = [];
   let loadedDesigners = [...MOCK_DESIGNERS];
+  let loadedStaff = [];
 
   async function loadCRMData() {
     try {
+      const resStaff = await fetch('/cms/staff.json?_t=' + Date.now());
+      if (resStaff.ok) loadedStaff = await resStaff.json();
+      else loadedStaff = [];
       const res = await fetch('/cms/suppliers.json?_t=' + Date.now());
       let rawData = await res.json();
       loadedSuppliers = rawData.map(s => {
@@ -51,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return s;
       });
+      TECH_GROUPS = [...new Set(loadedSuppliers.map(s => s.techGroup).filter(Boolean))].sort();
     } catch(err) {
       console.error("Failed to fetch JSON", err);
       loadedSuppliers = [];
@@ -58,11 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ─── Available Tech Groups & Technologies ──────────────────
-  const TECH_GROUPS = [
-    'Injection Molding', 'CNC Machining', 'PCBA', 'Sheet Metal',
-    'Casting & Forging', 'Surface Finishing', 'Rapid Prototyping',
-    '3D Printing', 'Extrusion', 'Product Design', 'Motors & Drives'
-  ];
+  // This builds dynamically once loadedSuppliers is populated.
+  let TECH_GROUPS = [];
 
   const STAGES = ['prototyping', 'manufacturing', 'design', 'finishing'];
 
@@ -115,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (t === 'designers') { pageTitle.textContent = 'Talent Hub (Designers)';   renderDesignersTable(); }
         if (t === 'rfqs')      { pageTitle.textContent = 'RFQ \u0026 Project Tracker';    renderRFQs(); }
         if (t === 'website')   { pageTitle.textContent = 'Website Content Manager';  renderWebsiteContent(); }
+        if (t === 'staff')     { pageTitle.textContent = 'Staff Directory';  renderStaffTable(); }
       });
     });
   }
@@ -180,14 +225,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const rows = sorted.map(s => `
       <tr class="${s.isActive === false ? 'row-disabled' : ''}">
+        <td style="width:40px;"><input type="checkbox" class="admin-sup-row-select" data-id="${s.id || s.name}"></td>
         <td>
           <strong>${s.name}</strong><br>
           <span style="font-size:12px; color:var(--color-steel-400);">${s.nameZh || '—'}</span>
         </td>
-        <td>${s.city || ''}, ${s.country || ''}</td>
+        <td>${[s.city, s.country].filter(Boolean).join(', ')}</td>
         <td>${s.segment || '—'}</td>
         <td>${s.techGroup || '—'}</td>
+        <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${(s.technologies || []).join(', ')}">${(s.technologies || []).slice(0,2).join(', ') || '—'}</td>
         <td>${s.factoryScore || '—'}</td>
+        <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${(s.certifications || []).filter(c=>!c.match(/^\d{4}-\d{2}-\d{2}/)).join(', ')}">${(s.certifications || []).filter(c=>!c.match(/^\d{4}-\d{2}-\d{2}/)).slice(0,2).join(', ') || '—'}</td>
         <td>
           <label class="admin-toggle-switch">
             <input type="checkbox" class="admin-status-toggle" data-id="${s.id || s.name}" ${s.isActive !== false ? 'checked' : ''}>
@@ -203,11 +251,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const tableHTML = `
         <table class="admin-table">
           <thead><tr>
+            <th style="width:40px;"><input type="checkbox" id="admin-sup-select-all" title="Select all visible rows"></th>
             <th class="sortable" data-sort-key="name">Manufacturer Name ${sortArrow('name', supplierSort)}</th>
             <th class="sortable" data-sort-key="location_display">Location ${sortArrow('location_display', supplierSort)}</th>
             <th class="sortable" data-sort-key="segment">Tier ${sortArrow('segment', supplierSort)}</th>
             <th class="sortable" data-sort-key="techGroup">Tech Group ${sortArrow('techGroup', supplierSort)}</th>
+            <th>Specific Techs</th>
             <th class="sortable" data-sort-key="factoryScore">Factory Score ${sortArrow('factoryScore', supplierSort)}</th>
+            <th>Certifications</th>
             <th>Status</th>
             <th>Actions</th>
           </tr></thead>
@@ -220,23 +271,30 @@ document.addEventListener('DOMContentLoaded', () => {
       contentRouting.innerHTML = `
         <div style="margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;">
           <div style="display:flex;gap:12px;">
-            <input type="text" id="admin-filter-search" class="admin-input-filter" placeholder="Search suppliers..." value="${adminSupplierFilters.search}" style="width:240px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); color:white; padding:8px 12px; border-radius:4px;">
-            <select id="admin-filter-segment" class="admin-input-filter" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); color:white; padding:8px 12px; border-radius:4px;">
+            <input type="text" id="admin-filter-search" class="admin-input-filter" placeholder="Search suppliers..." value="${adminSupplierFilters.search}">
+            <select id="admin-filter-segment" class="admin-input-filter">
               <option value="">All Tiers...</option>
               <option value="TIER 1" ${adminSupplierFilters.segment === 'TIER 1' ? 'selected':''}>Tier 1</option>
               <option value="TIER 2" ${adminSupplierFilters.segment === 'TIER 2' ? 'selected':''}>Tier 2</option>
               <option value="OEM" ${adminSupplierFilters.segment === 'OEM' ? 'selected':''}>OEM</option>
             </select>
-            <select id="admin-filter-tech" class="admin-input-filter" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); color:white; padding:8px 12px; border-radius:4px;">
+            <select id="admin-filter-tech" class="admin-input-filter">
               <option value="">All Technologies...</option>
               ${[...new Set(loadedSuppliers.map(s=>s.techGroup).filter(Boolean))].map(t => `<option value="${t}" ${adminSupplierFilters.techGroup === t ? 'selected':''}>${t}</option>`).join('')}
             </select>
-            <select id="admin-filter-country" class="admin-input-filter" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); color:white; padding:8px 12px; border-radius:4px;">
+            <select id="admin-filter-country" class="admin-input-filter">
               <option value="">All Countries...</option>
               ${[...new Set(loadedSuppliers.map(s=>s.country).filter(Boolean))].map(c => `<option value="${c}" ${adminSupplierFilters.country === c ? 'selected':''}>${c}</option>`).join('')}
             </select>
           </div>
-          <button class="btn btn-primary" id="admin-add-supplier-btn">+ Add New Supplier</button>
+          <div style="display:flex;gap:12px;align-items:center;">
+             <div id="admin-bulk-actions" style="display:none; gap:8px; align-items:center;">
+               <span id="admin-bulk-count" style="font-size:var(--text-sm);font-weight:var(--weight-bold);color:var(--color-electric);margin-right:8px;">0 selected</span>
+               <button class="btn btn-secondary" id="admin-bulk-deactivate" style="padding: 8px 12px; font-size:12px;">Deactivate</button>
+               <button class="btn btn-secondary" id="admin-bulk-delete" style="color:#ef4444; border-color:rgba(239,68,68,0.2); padding: 8px 12px; font-size:12px;">Delete</button>
+             </div>
+             <button class="btn btn-primary" id="admin-add-supplier-btn">+ Add New Supplier</button>
+          </div>
         </div>
         <div class="admin-table-container" id="admin-sup-table-wrapper">
           ${tableHTML}
@@ -247,6 +305,91 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('admin-filter-segment')?.addEventListener('change', e => { adminSupplierFilters.segment = e.target.value; renderSuppliersTable(true); });
       document.getElementById('admin-filter-tech')?.addEventListener('change', e => { adminSupplierFilters.techGroup = e.target.value; renderSuppliersTable(true); });
       document.getElementById('admin-filter-country')?.addEventListener('change', e => { adminSupplierFilters.country = e.target.value; renderSuppliersTable(true); });
+
+      // Bulk Selection
+      const masterCheckbox = document.getElementById('admin-sup-select-all');
+      const rowCheckboxes = document.querySelectorAll('.admin-sup-row-select');
+      const bulkActions = document.getElementById('admin-bulk-actions');
+      const bulkCount = document.getElementById('admin-bulk-count');
+      
+      function updateBulkActions() {
+        if (!bulkActions || !bulkCount) return;
+        const selected = document.querySelectorAll('.admin-sup-row-select:checked');
+        const count = selected.length;
+        if (count > 0) {
+          bulkActions.style.display = 'flex';
+          bulkCount.textContent = `${count} selected`;
+        } else {
+          bulkActions.style.display = 'none';
+        }
+        if (masterCheckbox) {
+          masterCheckbox.checked = rowCheckboxes.length > 0 && count === rowCheckboxes.length;
+        }
+      }
+
+      if (masterCheckbox) {
+        masterCheckbox.addEventListener('change', (e) => {
+          rowCheckboxes.forEach(cb => cb.checked = e.target.checked);
+          updateBulkActions();
+        });
+      }
+
+      rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateBulkActions);
+      });
+
+      document.getElementById('admin-bulk-deactivate')?.addEventListener('click', async () => {
+        const selectedIds = Array.from(document.querySelectorAll('.admin-sup-row-select:checked')).map(cb => cb.dataset.id);
+        if (selectedIds.length === 0) return;
+        if (!confirm(`Deactivate ${selectedIds.length} suppliers? They won't appear in user lists.`)) return;
+        
+        let successCount = 0;
+        const btn = document.getElementById('admin-bulk-deactivate');
+        const ogText = btn.textContent;
+        btn.textContent = 'Deactivating...';
+        btn.style.pointerEvents = 'none';
+
+        for (const id of selectedIds) {
+          const sup = loadedSuppliers.find(s => String(s.id || s.name) === String(id));
+          if (!sup) continue;
+          sup.isActive = false;
+          try {
+            const res = await fetch('/api/suppliers', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(sup)
+            });
+            if (res.ok) successCount++;
+          } catch(e) { console.error(e); }
+        }
+
+        btn.textContent = ogText;
+        btn.style.pointerEvents = '';
+        await loadCRMData();
+        renderSuppliersTable();
+      });
+
+      document.getElementById('admin-bulk-delete')?.addEventListener('click', async () => {
+        const selectedIds = Array.from(document.querySelectorAll('.admin-sup-row-select:checked')).map(cb => cb.dataset.id);
+        if (selectedIds.length === 0) return;
+        if (!confirm(`Are you sure you want to permanently delete ${selectedIds.length} suppliers?`)) return;
+        
+        let successCount = 0;
+        const btn = document.getElementById('admin-bulk-delete');
+        btn.textContent = 'Deleting...';
+        btn.style.pointerEvents = 'none';
+        
+        for (const id of selectedIds) {
+          try {
+            const res = await fetch(`/api/suppliers?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+            if (res.ok) successCount++;
+          } catch(e) { console.error(e); }
+        }
+        
+        await loadCRMData();
+        renderSuppliersTable();
+        alert(`Successfully deleted ${successCount} out of ${selectedIds.length} suppliers.`);
+      });
     }
 
     // Sort header clicks
@@ -361,7 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="admin-field">
               <label>Supplier Tier <span class="req">*</span></label>
-              <select name="segment" required>
+              <select name="segment" id="admin-form-segment" required>
                 <option value="TIER 1" ${s.segment === 'TIER 1' ? 'selected' : ''}>Tier 1</option>
                 <option value="TIER 2" ${s.segment === 'TIER 2' ? 'selected' : ''}>Tier 2</option>
                 <option value="OEM" ${s.segment === 'OEM' ? 'selected' : ''}>OEM</option>
@@ -427,10 +570,11 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="admin-form-grid cols-2">
             <div class="admin-field">
               <label>Primary Tech Group <span class="req">*</span></label>
-              <select name="techGroup" required>
+              <select name="techGroup" id="admin-form-techgroup" required>
                 <option value="">Select…</option>
                 ${TECH_GROUPS.map(tg => `<option value="${tg}" ${s.techGroup === tg ? 'selected' : ''}>${tg}</option>`).join('')}
               </select>
+              <input type="text" id="admin-form-new-techgroup" name="newTechGroup" style="display:none; margin-top:8px; width:100%; box-sizing:border-box;" class="admin-input-filter" placeholder="e.g. Advanced Assembly">
             </div>
             <div class="admin-field">
               <label>Manufacturing Stage <span class="req">*</span></label>
@@ -679,6 +823,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Wire interactive bits
     wireFormDynamics();
+
+    // Tech Group Dynamics
+    const segmentSelect = document.getElementById('admin-form-segment');
+    const techGroupSelect = document.getElementById('admin-form-techgroup');
+    const newTechGroupInput = document.getElementById('admin-form-new-techgroup');
+    
+    function updateTechGroupOptions() {
+      if (!segmentSelect || !techGroupSelect) return;
+      const selectedTier = segmentSelect.value;
+      let validGroups = [...TECH_GROUPS];
+      
+      if (selectedTier) {
+        validGroups = [...new Set(loadedSuppliers
+          .filter(sup => (sup.segment || '').toUpperCase() === selectedTier)
+          .map(sup => sup.techGroup)
+          .filter(Boolean)
+        )].sort();
+      }
+
+      const currentSupTech = s.techGroup;
+      if (currentSupTech && !validGroups.includes(currentSupTech)) {
+        validGroups.push(currentSupTech);
+      }
+      
+      const isNewMode = techGroupSelect.value === '__NEW__';
+      const previouslySelected = isNewMode ? '__NEW__' : (techGroupSelect.value || currentSupTech);
+
+      techGroupSelect.innerHTML = '<option value="">Select...</option>';
+      validGroups.forEach(tg => {
+        const opt = document.createElement('option');
+        opt.value = tg;
+        opt.textContent = tg;
+        if (tg === previouslySelected) opt.selected = true;
+        techGroupSelect.appendChild(opt);
+      });
+
+      const newOpt = document.createElement('option');
+      newOpt.value = '__NEW__';
+      newOpt.textContent = '+ Add New Tech Group...';
+      newOpt.style.fontWeight = 'bold';
+      if (previouslySelected === '__NEW__') newOpt.selected = true;
+      techGroupSelect.appendChild(newOpt);
+
+      handleToggleNewTech();
+    }
+
+    function handleToggleNewTech() {
+      if (techGroupSelect.value === '__NEW__') {
+        newTechGroupInput.style.display = 'block';
+        newTechGroupInput.required = true;
+        techGroupSelect.required = false;
+      } else {
+        newTechGroupInput.style.display = 'none';
+        newTechGroupInput.required = false;
+        newTechGroupInput.value = '';
+        techGroupSelect.required = true;
+      }
+    }
+
+    segmentSelect?.addEventListener('change', updateTechGroupOptions);
+    techGroupSelect?.addEventListener('change', handleToggleNewTech);
+    updateTechGroupOptions();
+
     document.getElementById('admin-sup-back')?.addEventListener('click', () => { pageTitle.textContent = 'Suppliers CRM Directory'; renderSuppliersTable(); });
     document.getElementById('admin-sup-cancel')?.addEventListener('click', () => { pageTitle.textContent = 'Suppliers CRM Directory'; renderSuppliersTable(); });
     document.getElementById('admin-sup-score-range')?.addEventListener('input', e => {
@@ -707,7 +914,7 @@ document.addEventListener('DOMContentLoaded', () => {
         address: fd.get('address'),
         addressZh: fd.get('addressZh'),
         segment: fd.get('segment'),
-        techGroup: fd.get('techGroup'),
+        techGroup: fd.get('techGroup') === '__NEW__' ? fd.get('newTechGroup').trim() : fd.get('techGroup'),
         tags: fd.get('tags') ? fd.get('tags').split(',').map(s => s.trim()).filter(Boolean) : [],
         technologies: fd.get('technologies') ? fd.get('technologies').split(',').map(s => s.trim()).filter(Boolean) : [],
         certifications: fd.getAll('certifications'),
@@ -1109,6 +1316,13 @@ document.addEventListener('DOMContentLoaded', () => {
   //  S H A R E D   F O R M   U T I L I T I E S
   // ═══════════════════════════════════════════════════════════
   function wireFormDynamics() {
+    // Collapse all sections except the first two by default
+    document.querySelectorAll('.admin-form-section').forEach((section, idx) => {
+      if (idx > 1) {
+        section.classList.add('collapsed');
+      }
+    });
+
     // Accordion/collapsible logic
     document.querySelectorAll('.admin-form-section-title').forEach(title => {
       // Add accordion arrow if not present
@@ -2346,6 +2560,141 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
     reader.readAsDataURL(file);
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  S T A F F   T A B L E
+  // ═══════════════════════════════════════════════════════════
+  function renderStaffTable() {
+    contentRouting.innerHTML = `
+      <div class="admin-table-controls">
+        <button class="btn btn-primary" id="admin-staff-add">+ Add Staff Member</button>
+      </div>
+      <div class="admin-table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${loadedStaff.map(s => `
+              <tr>
+                <td>${s.name}</td>
+                <td>${s.email}</td>
+                <td><span class="tag-segment tag-tier1" style="background:rgba(59, 130, 246, 0.1);color:#3b82f6;">${s.role}</span></td>
+                <td class="admin-table-actions">
+                  <button class="admin-action-btn edit" data-id="${s.id}" title="Edit Staff">✎</button>
+                  <button class="admin-action-btn delete" data-id="${s.id}" title="Delete Staff">🗑</button>
+                </td>
+              </tr>
+            `).join('')}
+            ${loadedStaff.length === 0 ? '<tr><td colspan="4" style="text-align:center;color:var(--color-steel-400);">No staff members found.</td></tr>' : ''}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    document.getElementById('admin-staff-add')?.addEventListener('click', () => {
+      renderStaffForm(null);
+    });
+
+    contentRouting.querySelectorAll('.admin-action-btn.edit').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const id = e.currentTarget.dataset.id;
+        const staff = loadedStaff.find(s => s.id === id);
+        if (staff) renderStaffForm(staff);
+      });
+    });
+
+    contentRouting.querySelectorAll('.admin-action-btn.delete').forEach(btn => {
+      btn.addEventListener('click', async e => {
+        const id = e.currentTarget.dataset.id;
+        if (confirm('Are you sure you want to completely remove this staff account?')) {
+          try {
+            await fetch('/api/staff?id=' + id, { method: 'DELETE' });
+            await loadCRMData();
+            renderStaffTable();
+            showCMSToast('Staff member removed');
+          } catch(err) {
+            alert('Failed to delete staff member');
+          }
+        }
+      });
+    });
+  }
+
+  function renderStaffForm(existing) {
+    const s = existing || {};
+    contentRouting.innerHTML = `
+      <div class="admin-form-container">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+          <h3>${existing ? 'Edit Staff Account' : 'New Staff Account'}</h3>
+          <button class="btn btn-secondary" id="admin-staff-back">Back to Directory</button>
+        </div>
+        <form class="admin-form" id="admin-staff-form">
+          <input type="hidden" name="id" value="${s.id || ''}">
+          <div class="admin-form-section">
+            <div class="admin-form-grid cols-2">
+              <div class="admin-field">
+                <label>Full Name <span class="req">*</span></label>
+                <input type="text" name="name" value="${s.name || ''}" required placeholder="Sarah Jenkins">
+              </div>
+              <div class="admin-field">
+                <label>Email Address <span class="req">*</span></label>
+                <input type="email" name="email" value="${s.email || ''}" required placeholder="sarah@atlax.com">
+              </div>
+              <div class="admin-field">
+                <label>New Password ${existing ? '<span class="hint">(Leave blank to keep current)</span>' : '<span class="req">*</span>'}</label>
+                <input type="password" name="password" ${existing ? '' : 'required'} placeholder="Enter secure password">
+                <input type="hidden" name="old_password" value="${s.password || ''}">
+              </div>
+              <div class="admin-field">
+                <label>Role</label>
+                <select name="role" required class="admin-input-filter">
+                  <option value="Admin" ${s.role === 'Admin' ? 'selected' : ''}>Admin</option>
+                  <option value="Editor" ${s.role === 'Editor' ? 'selected' : ''}>Editor</option>
+                  <option value="Viewer" ${s.role === 'Viewer' ? 'selected' : ''}>Viewer</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="admin-form-actions">
+            <button type="submit" class="btn btn-primary">${existing ? 'Save Changes' : 'Create Staff'}</button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    document.getElementById('admin-staff-back')?.addEventListener('click', renderStaffTable);
+    
+    document.getElementById('admin-staff-form')?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const payload = {
+        id: fd.get('id') || 'staff-' + Date.now(),
+        name: fd.get('name'),
+        email: fd.get('email'),
+        role: fd.get('role'),
+        password: fd.get('password') || fd.get('old_password')
+      };
+
+      try {
+        await fetch('/api/staff', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        await loadCRMData();
+        renderStaffTable();
+        showCMSToast('Staff member saved successfully');
+      } catch(err) {
+        alert('Failed to save staff member');
+      }
+    });
   }
 
 });
