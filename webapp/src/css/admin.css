@@ -397,7 +397,9 @@ body.theme-light .tag-tech-group {
 .admin-tooltip-box {
   display: none;
   position: absolute;
-  top: 100%; left: 0;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
   z-index: 999;
   background: var(--color-slate-900);
   border: 1px solid var(--color-slate-700);
