@@ -17,8 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ─── Auth ──────────────────────────────────────────────────
   const isAuth = sessionStorage.getItem('atlax_admin_auth') === 'true';
-  if (isAuth) showDashboard();
-  else { loginView.classList.remove('hidden'); dashboardView.classList.add('hidden'); }
+  if (isAuth) {
+    showDashboard();
+  } else { 
+    document.body.classList.remove('theme-light'); // Force dark mode for login screen
+    loginView.classList.remove('hidden'); dashboardView.classList.add('hidden'); 
+  }
+
+  function applyThemePreference() {
+    if (localStorage.getItem('atlax_admin_theme') === 'dark') {
+      document.body.classList.remove('theme-light');
+    } else if (localStorage.getItem('atlax_admin_theme') === 'light' || !localStorage.getItem('atlax_admin_theme')) {
+      document.body.classList.add('theme-light');
+    }
+  }
 
   loginForm?.addEventListener('submit', async e => {
     e.preventDefault();
@@ -31,15 +43,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const data = Object.fromEntries(fd.entries());
     
     try {
-      const resp = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      const result = await resp.json();
+      // First try the API for dev environment, fallback to static file if deployed
+      let result;
+      try {
+        const resp = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (resp.ok) {
+          result = await resp.json();
+        } else if (resp.status === 401) {
+          result = await resp.json(); // Explicit rejection
+        } else {
+          throw new Error('API failed'); 
+        }
+      } catch (err) {
+        // Fallback for static Netlify deployment
+        const staticResp = await fetch('/cms/staff.json?_t=' + Date.now());
+        if (!staticResp.ok) throw new Error('Could not fetch staff directory');
+        const staffMembers = await staticResp.json();
+        const user = staffMembers.find(s => s.email === data.email && s.password === data.password);
+        result = user ? { success: true, user } : { success: false, error: 'Invalid credentials' };
+      }
+
       if (result.success) {
         sessionStorage.setItem('atlax_admin_auth', 'true');
         sessionStorage.setItem('atlax_admin_user', JSON.stringify(result.user));
+        applyThemePreference();
         showDashboard();
       } else {
         alert(result.error || 'Authentication failed');
@@ -48,13 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error(err);
       alert('Network error during authentication');
     } finally {
-      btn.textContent = ogText;
-      btn.style.pointerEvents = 'auto';
+        btn.textContent = ogText;
+        btn.style.pointerEvents = 'auto';
     }
   });
 
   logoutBtn?.addEventListener('click', () => {
     sessionStorage.removeItem('atlax_admin_auth');
+    document.body.classList.remove('theme-light'); // Revert to dark for login screen
     dashboardView.classList.add('hidden');
     loginView.classList.remove('hidden');
   });
@@ -62,9 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─── Theme Toggle ───────────────────────────────────────────
   const themeToggle = document.getElementById('admin-theme-toggle');
   if (themeToggle) {
-    if (localStorage.getItem('atlax_admin_theme') === 'dark') {
-      document.body.classList.remove('theme-light');
-    }
+    if (isAuth) applyThemePreference();
     
     themeToggle.addEventListener('click', () => {
       document.body.classList.toggle('theme-light');
