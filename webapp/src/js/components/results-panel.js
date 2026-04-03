@@ -43,9 +43,9 @@ export function renderStackedResults(suppliers, onGroupClick, options = {}) {
 
   } else {
     suppliers.forEach(s => {
-      const tech = s.techGroup || s.technologies?.[0] || 'Other';
-      if (!groups[tech]) groups[tech] = [];
-      groups[tech].push(s);
+      const g = s.country || 'Other';
+      if (!groups[g]) groups[g] = [];
+      groups[g].push(s);
     });
   }
 
@@ -65,7 +65,28 @@ export function renderStackedResults(suppliers, onGroupClick, options = {}) {
       m.openSupplierGrid(headerLabel, suppliers);
     });
   });
-  container.appendChild(seeAllBtn);
+  
+  const headerWrapper = document.createElement('div');
+  headerWrapper.style.display = 'flex';
+  headerWrapper.style.justifyContent = 'center';
+  headerWrapper.style.gap = '16px';
+  headerWrapper.style.width = '100%';
+  headerWrapper.style.marginBottom = '20px';
+  headerWrapper.style.pointerEvents = 'auto'; // allow click through container
+  
+  const clearBtn = document.createElement('button');
+  clearBtn.className = 'see-all-results-btn';
+  clearBtn.style.color = '#f87171';
+  clearBtn.style.borderColor = 'rgba(248,113,113,0.3)';
+  clearBtn.innerHTML = `CLEAR ALL <svg style="margin-left:6px; margin-bottom:-2px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+  clearBtn.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('prd-clear-results'));
+  });
+  
+  headerWrapper.appendChild(seeAllBtn);
+  headerWrapper.appendChild(clearBtn);
+  
+  container.appendChild(headerWrapper);
 
   // 4. DOM Rendering — carousel wrapper
   const wrapper = document.createElement('div');
@@ -80,8 +101,8 @@ export function renderStackedResults(suppliers, onGroupClick, options = {}) {
     card.style.setProperty('--group-color', color);
     card.style.animationDelay = `${i * 100}ms`;
 
-    const supplierLines = sups.slice(0, 4).map(s => `
-      <div class="stacked-group__line">
+    const supplierLines = sups.slice(0, 4).map((s, idx) => `
+      <div class="stacked-group__line" data-idx="${idx}" style="cursor: pointer;">
         <button class="stacked-group__add-btn" data-id="${s.id || s.name}" title="Add to Shortlist">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
@@ -103,6 +124,15 @@ export function renderStackedResults(suppliers, onGroupClick, options = {}) {
 
     card.addEventListener('click', (e) => {
       if (e.target.closest('.stacked-group__add-btn')) return;
+      
+      const line = e.target.closest('.stacked-group__line');
+      if (line) {
+        const idx = parseInt(line.dataset.idx, 10);
+        const supplier = sups[idx];
+        import('./supplier-carousel.js').then(m => m.openSupplierCarousel(techName, [supplier]));
+        return;
+      }
+      
       if (onGroupClick) onGroupClick(techName, sups);
     });
 
@@ -143,6 +173,7 @@ export function renderStackedResults(suppliers, onGroupClick, options = {}) {
     wrapper.scrollLeft = 0; 
   });
 
+  container.style.display = '';
   container.classList.remove('hidden');
 }
 

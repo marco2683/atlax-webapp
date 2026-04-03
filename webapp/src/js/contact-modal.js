@@ -29,23 +29,23 @@
           <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           hello@atlax.com
         </a>
-        <a href="tel:+61390001234" class="contact-info-chip">
+        <a href="tel:+610406238458" class="contact-info-chip">
           <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          +61 3 9000 1234
+          +61 0406238458
         </a>
-        <a href="https://wa.me/61390001234" target="_blank" class="contact-info-chip">
+        <a href="https://wa.me/610406238458" target="_blank" class="contact-info-chip">
           <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6A8.38 8.38 0 0 1 12.5 3h.5A8.48 8.48 0 0 1 21 11.5z"/></svg>
           WhatsApp
         </a>
         <a href="#" class="contact-info-chip">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
-          WeChat: ATLAX_Official
+          WeChat: +61 0406238458
         </a>
       </div>
 
       <!-- Form -->
       <div class="contact-modal-body">
-        <form id="atlax-contact-form">
+        <form id="atlax-contact-form" enctype="multipart/form-data">
           <div class="contact-form-grid">
             <div class="contact-field">
               <label>First Name <span class="cf-req">*</span></label>
@@ -97,7 +97,7 @@
                 <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                 <p><span>Click to upload</span> or drag files here</p>
                 <p class="cf-hint">PDF, CAD, Images — max 25 MB per file</p>
-                <input type="file" id="atlax-file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.step,.stp,.igs,.iges,.stl,.3mf,.obj,.dwg,.dxf,.png,.jpg,.jpeg,.webp,.zip,.rar">
+                <input type="file" id="atlax-file-input" name="attachment" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.step,.stp,.igs,.iges,.stl,.3mf,.obj,.dwg,.dxf,.png,.jpg,.jpeg,.webp,.zip,.rar">
               </div>
               <div class="contact-file-list" id="atlax-file-list"></div>
             </div>
@@ -215,20 +215,116 @@
     });
   }
 
-  // Form submission
-  form?.addEventListener('submit', e => {
+  // Form submission — uses hidden iframe instead of AJAX
+  // because FormSubmit's /ajax/ endpoint doesn't support file attachments.
+  // Standard form POST via hidden iframe = attachments work + no page redirect.
+  form?.addEventListener('submit', (e) => {
     e.preventDefault();
-    // Prototype: just show a success message
-    const body = document.querySelector('.contact-modal-body');
-    if (body) {
-      body.innerHTML = `
-        <div style="text-align:center; padding: 60px 20px;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <h3 style="color:#fff; margin:20px 0 8px 0; font-size:22px;">Inquiry Sent Successfully</h3>
-          <p style="color:rgba(255,255,255,0.5); font-size:14px; max-width:400px; margin:0 auto;">Thank you for reaching out. Our team will review your inquiry and get back to you within 24 hours.</p>
-          <button onclick="document.getElementById('atlax-contact-overlay').classList.remove('open'); document.body.style.overflow='';" style="margin-top:28px; padding:12px 28px; background:#3b82f6; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer; font-family:inherit;">Close</button>
-        </div>`;
+    
+    const submitBtn = form.querySelector('.contact-submit-btn');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
+
+    // Reconstruct the file input from the uploadedFiles array
+    // (the input was cleared after each selection for UX reasons)
+    if (fileInput && uploadedFiles && uploadedFiles.length > 0) {
+      const dataTransfer = new DataTransfer();
+      uploadedFiles.forEach(file => dataTransfer.items.add(file));
+      fileInput.files = dataTransfer.files;
     }
+
+    // Create hidden iframe to receive the form POST (avoids page redirect)
+    const iframeName = 'atlax-contact-iframe-' + Date.now();
+    const iframe = document.createElement('iframe');
+    iframe.name = iframeName;
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    // Inject hidden fields for FormSubmit config
+    const addHidden = (name, value) => {
+      let input = form.querySelector(`input[name="${name}"]`);
+      if (!input) {
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        form.appendChild(input);
+      }
+      input.value = value;
+    };
+    addHidden('_captcha', 'false');
+    addHidden('_template', 'table');
+    addHidden('_next', window.location.href); // FormSubmit redirects iframe here after submit
+
+    // Point the form at FormSubmit's standard endpoint (not /ajax/)
+    form.action = 'https://formsubmit.co/marco@panianiproducts.com';
+    form.method = 'POST';
+    form.enctype = 'multipart/form-data';
+    form.target = iframeName;
+
+    // Listen for iframe load = submission complete
+    iframe.addEventListener('load', () => {
+      // Clean up
+      setTimeout(() => iframe.remove(), 2000);
+
+      const body = document.querySelector('.contact-modal-body');
+      if (body) {
+        body.innerHTML = `
+          <div style="text-align:center; padding: 60px 20px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <h3 style="color:#fff; margin:20px 0 8px 0; font-size:22px;">Inquiry Sent Successfully</h3>
+            <p style="color:rgba(255,255,255,0.5); font-size:14px; max-width:400px; margin:0 auto;">Thank you for reaching out. Our team will review your inquiry and get back to you within 24 hours.</p>
+            <button onclick="document.getElementById('atlax-contact-overlay').classList.remove('open'); document.body.style.overflow='';" style="margin-top:28px; padding:12px 28px; background:#3b82f6; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer; font-family:inherit;">Close</button>
+          </div>`;
+      }
+    });
+
+    // Actually submit the form
+    form.submit();
+  });
+
+  // Footer forms AJAX submission
+  const footerForms = document.querySelectorAll('.atlax-footer-form');
+  footerForms.forEach(footerForm => {
+    footerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = footerForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn ? submitBtn.textContent : 'Send Message';
+      if (submitBtn) {
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+      }
+      
+      try {
+        const formData = new FormData(footerForm);
+        formData.append('_captcha', 'false');
+        formData.append('_template', 'table');
+        
+        const response = await fetch('https://formsubmit.co/ajax/marco@panianiproducts.com', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        footerForm.innerHTML = `
+          <div style="text-align:center; padding: 20px 0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" style="margin-bottom:12px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <h4 style="color:#fff; margin:0 0 8px 0; font-size:18px;">Message Sent</h4>
+            <p style="color:rgba(255,255,255,0.6); font-size:13px;">Thank you! We'll be in touch shortly.</p>
+          </div>
+        `;
+      } catch (error) {
+        console.error('Error submitting footer form:', error);
+        if (submitBtn) {
+          submitBtn.textContent = 'Error! Try Again';
+          submitBtn.disabled = false;
+          setTimeout(() => {
+            submitBtn.textContent = originalText;
+          }, 3000);
+        }
+      }
+    });
   });
 
 })();

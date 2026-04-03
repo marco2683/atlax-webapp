@@ -29,7 +29,9 @@
 @media (max-width: 768px) {
 
   /* ── Global mobile overflow fix ────────────────────────── */
-  html, body, body.marketing-page {
+  html,
+  body,
+  body.marketing-page {
     overflow-x: hidden !important;
     max-width: 100vw !important;
   }
@@ -97,7 +99,8 @@
     flex-wrap: wrap !important;
   }
 
-  .navbar__menu, .navbar__actions {
+  .navbar__menu,
+  .navbar__actions {
     display: none !important;
     width: 100%;
     flex-direction: column !important;

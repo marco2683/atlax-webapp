@@ -1,0 +1,369 @@
+/* ═══════════════════════════════════════════════════════════
+   SUPPLIER DIRECTORY & SELECTION SCREEN
+   ═══════════════════════════════════════════════════════════ */
+
+/* --- Supplier Selection Screen --- */
+.supplier-selection {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+.supplier-selection.hidden {
+  display: none !important;
+}
+
+.supplier-selection__container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  max-width: 1500px;
+  width: 90%;
+  padding: 60px;
+}
+
+.supplier-card {
+  background: rgba(20, 24, 32, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 60px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+}
+
+.supplier-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(94, 162, 255, 0.5);
+  box-shadow: 0 12px 32px rgba(94, 162, 255, 0.15);
+  background: rgba(24, 30, 42, 0.85);
+}
+
+.supplier-card__graphic {
+  height: 300px;
+  width: 100%;
+  border-radius: 16px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Mockup graphics using actual screenshot assets */
+.graphic-table {
+  background-image: url('/images/tabular-preview.png');
+  background-size: cover;
+  background-position: top center;
+  display: block;
+  padding: 0;
+  border-radius: 12px;
+}
+.graphic-table::before, .graphic-table::after { display: none; }
+
+.graphic-globe {
+  background-image: url('/images/globe-preview.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  width: 100%;
+  height: 100%;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+}
+
+.supplier-card h3 {
+  font-size: 36px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.supplier-card p {
+  font-size: 21px;
+  color: #8b949e;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.supplier-card .rfq-engine__submit-btn {
+  font-size: 18px;
+  padding: 16px 24px;
+}
+
+/* --- Tabular Engine Overlays --- */
+.supplier-tabular-engine {
+  position: absolute;
+  top: 80px; /* Below navbar */
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 80px);
+  z-index: 40;
+  padding: 8px 40px 24px 40px; /* Reduced top padding to pull title up */
+  display: flex;
+  flex-direction: column;
+  background: transparent; /* Keep starry background visible */
+}
+
+.supplier-tabular-engine.hidden {
+  display: none !important;
+}
+
+/* Base styles adopted from the design package */
+.tabular-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tabular-header {
+  background: transparent;
+  color: white;
+  padding: 4px 0 12px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.tabular-header h1 {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+.tabular-header p {
+  opacity: 0.9;
+  font-size: 13px;
+}
+
+.tabular-controls {
+  padding: 12px 0;
+  background: transparent;
+}
+
+.tabular-search {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.tabular-search input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px;
+  font-size: 15px;
+  background: rgba(13, 17, 23, 0.8);
+  color: #c9d1d9;
+  transition: all 0.2s;
+}
+.tabular-search input:focus {
+  outline: none;
+  border-color: #1f6feb;
+  background: rgba(22, 27, 34, 0.9);
+}
+
+.tabular-filters {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-group label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-group select {
+  padding: 8px 12px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px;
+  font-size: 12px;
+  background: rgba(13, 17, 23, 0.8);
+  color: #c9d1d9;
+  cursor: pointer;
+}
+.filter-group select:focus {
+  outline: none;
+  border-color: #1f6feb;
+}
+
+.segment-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.segment-pill {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(13, 17, 23, 0.6);
+  color: #8b949e;
+  transition: all 0.2s;
+}
+.segment-pill.active {
+  background: #1f6feb;
+  color: white;
+  border-color: #1f6feb;
+}
+
+.tabular-info {
+  padding: 12px 0;
+  background: transparent;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 12px;
+  color: #8b949e;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.tabular-table-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.tabular-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabular-table thead {
+  position: sticky;
+  top: 0;
+  background: transparent;
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+.tabular-table th {
+  padding: 20px 16px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+.tabular-table th:hover {
+  color: #c9d1d9;
+}
+.tabular-table th.sortable::after {
+  content: ' ⇅'; opacity: 0.2;
+}
+.tabular-table th.sort-asc::after {
+  content: ' ↑'; opacity: 0.8; color: #c9d1d9;
+}
+.tabular-table th.sort-desc::after {
+  content: ' ↓'; opacity: 0.8; color: #c9d1d9;
+}
+
+.tabular-table td {
+  padding: 18px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  font-size: 12px;
+  color: #c9d1d9;
+  letter-spacing: 0.3px;
+}
+
+.tabular-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.tabular-table tbody tr:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.blurred-name {
+  filter: blur(4px);
+  user-select: none;
+  opacity: 0.8;
+  display: inline-block;
+}
+
+/* Segment Tags inside table */
+.tag-segment {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid;
+}
+.tag-tier1 { background: rgba(31, 111, 235, 0.1); color: #58a6ff; border-color: rgba(31, 111, 235, 0.3); }
+.tag-tier2 { background: rgba(124, 58, 237, 0.1); color: #bc8cff; border-color: rgba(124, 58, 237, 0.3); }
+.tag-oem { background: rgba(63, 185, 80, 0.1); color: #7ee787; border-color: rgba(63, 185, 80, 0.3); }
+
+/* --- Top Right Toggle Pill --- */
+.view-toggle-pill {
+  position: absolute;
+  top: 96px;
+  right: 40px;
+  background: rgba(13, 17, 23, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 24px;
+  display: flex;
+  padding: 4px;
+  z-index: 60;
+}
+.view-toggle-pill.hidden {
+  display: none !important;
+}
+
+.view-toggle-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8b949e;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.view-toggle-btn.active {
+  background: #1f6feb;
+  color: white;
+}
+.view-toggle-btn:hover:not(.active) {
+  color: #c9d1d9;
+}
+
+.tabular-shortlist-btn:not(.added):hover { color: #f59e0b !important; transform: scale(1.1); }

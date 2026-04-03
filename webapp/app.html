@@ -43,6 +43,7 @@
     }
   </style>
   <link rel="stylesheet" href="/src/css/contact-modal.css">
+  <link rel="stylesheet" href="/src/css/supplier-engine.css">
   <script defer src="/src/js/contact-modal.js"></script>
 </head>
 
@@ -56,10 +57,15 @@
       <div class="navbar__brand" style="display: flex; align-items: center; gap: 12px;">
         <a href="/" aria-label="Home"><img src="/logos/atlax-logo-light.svg" alt="ATLAX"
             style="height: 24px; width: auto; object-fit: contain;" /></a>
-        <div style="display: flex; align-items: center; gap: 10px; border-left: 1px solid rgba(255,255,255,0.15); padding-left: 12px;">
+        <div
+          style="display: flex; align-items: center; gap: 10px; border-left: 1px solid rgba(255,255,255,0.15); padding-left: 12px;">
           <div style="display: flex; flex-direction: column; justify-content: center;">
-            <div style="font-size: 11px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2;">Manufacturing</div>
-            <div style="font-size: 10px; font-weight: 400; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2;">Engine</div>
+            <div
+              style="font-size: 11px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2;">
+              Manufacturing</div>
+            <div
+              style="font-size: 10px; font-weight: 400; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2;">
+              Engine</div>
           </div>
         </div>
       </div>
@@ -79,26 +85,32 @@
 
       <div class="navbar__actions">
         <a href="/workspace.html" class="navbar__workspace-link" id="btn-workspace" title="My Workspace">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="7" height="7" x="3" y="3" rx="1" />
+            <rect width="7" height="7" x="14" y="3" rx="1" />
+            <rect width="7" height="7" x="3" y="14" rx="1" />
+            <rect width="7" height="7" x="14" y="14" rx="1" />
+          </svg>
           Workspace
         </a>
         <!-- Theme Toggle temporarily removed (dark theme enforced) -->
         <button class="navbar__icon-btn" id="btn-notifications" title="Notifications">
-        <button class="navbar__icon-btn" id="btn-settings" title="Settings">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3" />
-            <path
-              d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-          </svg>
-        </button>
-        <div class="navbar__avatar" id="btn-login" title="Sign In">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
-        </div>
+          <button class="navbar__icon-btn" id="btn-settings" title="Settings">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+          </button>
+          <div class="navbar__avatar" id="btn-login" title="Sign In">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </div>
       </div>
     </nav>
 
@@ -107,6 +119,157 @@
          ═══════════════════════════════════════════════════ -->
     <section class="hero" id="hero">
       <div class="hero__globe-container" id="globe-container"></div>
+
+      <!-- SUPPLIER ENGINE TOGGLE -->
+      <div class="view-toggle-pill hidden" id="supplier-view-toggle">
+        <button class="view-toggle-btn active" data-view="table">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg> Tabular View
+        </button>
+        <button class="view-toggle-btn" data-view="globe">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg> Globe View
+        </button>
+      </div>
+
+      <!-- SUPPLIER SELECTION SCREEN -->
+      <div class="supplier-selection hidden" id="supplier-selection">
+        <div class="supplier-selection__container">
+          <div class="supplier-card" id="card-select-table">
+            <div class="supplier-card__graphic graphic-table"></div>
+            <div>
+              <h3>Supplier Directory</h3>
+              <p>Search, filter, and sort through our extensive database of 1,100+ vetted manufacturing partners using a
+                traditional tabular interface.</p>
+            </div>
+            <button class="rfq-engine__submit-btn rfq-engine__submit-btn--secondary"
+              style="width:100%; margin-top: auto;">Open Tabular View</button>
+          </div>
+          <div class="supplier-card" id="card-select-globe">
+            <div class="supplier-card__graphic">
+              <div class="graphic-globe"></div>
+            </div>
+            <div>
+              <h3>Supply Chain Insights</h3>
+              <p>Explore suppliers geographically through our interactive 3D globe. Best for mapping regional clusters
+                and discovering proximity-based networks.</p>
+            </div>
+            <button class="rfq-engine__submit-btn rfq-engine__submit-btn--secondary"
+              style="width:100%; margin-top: auto;">Open Globe View</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUPPLIER TABULAR ENGINE -->
+      <div class="supplier-tabular-engine hidden" id="supplier-tabular-engine">
+        <div class="tabular-container">
+          <div class="tabular-header">
+            <div>
+              <h1>Supplier Register</h1>
+              <p>Search and filter through 1,100+ approved suppliers across Tier 1, Tier 2, and OEM.</p>
+            </div>
+          </div>
+          <div class="tabular-controls">
+            <!-- Row 1: Search, Tags -->
+            <div class="tabular-filters" style="margin-bottom: 12px;">
+              <div class="filter-group" style="flex: 1;">
+                <label>Text Search</label>
+                <input type="text" id="tabular-search-input" placeholder="🔍 Search by name, keyword, or supplier ID..."
+                  autocomplete="off"
+                  style="padding: 10px 14px; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; font-size: 13px; background: rgba(13, 17, 23, 0.8); color: white; width: 100%; box-sizing: border-box;">
+              </div>
+              <div class="filter-group" style="flex: 1;">
+                <label>Tag Search</label>
+                <input type="text" id="tabular-tag-input" placeholder="🔍 Search by tags..." autocomplete="off"
+                  style="padding: 10px 14px; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; font-size: 13px; background: rgba(13, 17, 23, 0.8); color: white; width: 100%; box-sizing: border-box;">
+              </div>
+            </div>
+
+            <!-- Row 2: Tiers, Country, Tech Group, Certifications -->
+            <div class="tabular-filters" style="align-items: center;">
+              <div class="filter-group">
+                <label>Segment</label>
+                <div class="segment-pills" id="tabular-segment-pills">
+                  <div class="segment-pill active" data-segment="TIER 1">Tier 1</div>
+                  <div class="segment-pill" data-segment="TIER 2">Tier 2</div>
+                  <div class="segment-pill" data-segment="OEM">OEM</div>
+                  <div class="segment-pill" data-segment="ALL">ALL</div>
+                </div>
+              </div>
+              <div class="filter-group" style="min-width: 150px;">
+                <label>Country</label>
+                <select id="tabular-country-filter">
+                  <option value="">All Countries</option>
+                </select>
+              </div>
+              <div class="filter-group" style="min-width: 250px;">
+                <label>Tech Group</label>
+                <select id="tabular-techgroup-filter">
+                  <option value="">All Tech Groups</option>
+                </select>
+              </div>
+              <div class="filter-group" style="flex: 1;">
+                <label>Certifications</label>
+                <div class="segment-pills" id="tabular-cert-pills">
+                  <!-- Javascript will inject cert pills here -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tabular-info" id="tabular-results-info" style="display:flex; justify-content:space-between; align-items:center;">
+            <span id="tabular-results-count">Loading...</span>
+            <div id="tabular-shortlist-controls" style="display:none; gap: 14px; align-items:center; background: rgba(13, 17, 23, 0.8); padding: 6px 12px; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
+              <span id="tabular-shortlist-badge" style="background:rgba(16,185,129,0.1); color:#3ebd93; padding:4px 8px; border-radius:6px; font-weight:500; font-size:12px; border: 1px solid rgba(16,185,129,0.25);">0 Shortlisted</span>
+              <label style="display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer; color: #8b949e; user-select:none; margin:0; transition:color 0.2s;">
+                <input type="checkbox" id="tabular-shortlist-toggle" style="accent-color: #58a6ff; width:14px; height:14px; cursor:pointer; margin:0;"> View Shorts Only
+              </label>
+              <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.1);"></div>
+              <button id="tabular-shortlist-save" title="Save to Workspace" style="background:transparent; border:none; display:flex; align-items:center; gap:6px; font-size:12px; color:var(--color-steel-300); cursor:pointer; padding:0; transition:color 0.2s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='var(--color-steel-300)'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Save to Workspace
+              </button>
+              <button id="tabular-shortlist-export" title="Export as CSV" style="background:transparent; border:none; display:flex; align-items:center; gap:6px; font-size:12px; color:var(--color-steel-300); cursor:pointer; padding:0; transition:color 0.2s;" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='var(--color-steel-300)'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Export
+              </button>
+              <button id="tabular-shortlist-clear" title="Clear Shortlist" style="background:transparent; border:none; display:flex; align-items:center; gap:4px; font-size:12px; color:var(--color-steel-300); cursor:pointer; padding:0; transition:color 0.2s;" onmouseover="this.style.color='#f85149'" onmouseout="this.style.color='var(--color-steel-300)'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                Clear
+              </button>
+            </div>
+          </div>
+          <div class="tabular-table-scroll">
+            <table class="tabular-table" id="tabular-table">
+              <thead>
+                <tr>
+                  <th class="sortable" style="width: 250px;" data-column="name">Supplier</th>
+                  <th class="sortable" style="width: 80px;" data-column="country">Country</th>
+                  <th class="sortable" style="width: 90px;" data-column="segment">Segment</th>
+                  <th class="sortable" style="width: 170px;" data-column="techGroup">Tech Group</th>
+                  <th style="width: 165px;">Technologies</th>
+                  <th style="width: 28px; text-align:center; padding: 12px 2px;" title="Technical Capabilities (0-2 traffic light)"><span style="border-bottom:1px dotted #8b949e; cursor:help;">TC</span></th>
+                  <th style="width: 28px; text-align:center; padding: 12px 2px;" title="Ownership Ethos (0-2 traffic light)"><span style="border-bottom:1px dotted #8b949e; cursor:help;">OE</span></th>
+                  <th style="width: 28px; text-align:center; padding: 12px 2px;" title="Quality System (0-2 traffic light)"><span style="border-bottom:1px dotted #8b949e; cursor:help;">QS</span></th>
+                  <th style="width: 28px; text-align:center; padding: 12px 2px;" title="Verified Status (0-2 traffic light)"><span style="border-bottom:1px dotted #8b949e; cursor:help;">V</span></th>
+                  <th style="width: 65px;">Certs</th>
+                  <th style="width: 70px;">Docs</th>
+                  <th style="width: 40px;"></th>
+                </tr>
+              </thead>
+              <tbody id="tabular-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <div id="radial-results" class="radial-results hidden"></div>
       <div class="hero__overlay"></div>
       <!-- Shortlist Side Panel (Left) -->
@@ -115,21 +278,34 @@
           <h3>Shortlist</h3>
           <span class="shortlist-panel__count" id="shortlist-count">0</span>
           <button class="shortlist-panel__close" id="shortlist-close" title="Close shortlist">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
         <div class="shortlist-panel__items" id="shortlist-items">
           <!-- Items injected by JS -->
         </div>
-        <div class="shortlist-panel__footer" style="padding: 10px 12px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 6px;">
+        <div class="shortlist-panel__footer"
+          style="padding: 10px 12px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 6px;">
           <button class="shortlist-panel__save-btn" id="shortlist-save" title="Save this list to your workspace">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+              <polyline points="17 21 17 13 7 13 7 21" />
+              <polyline points="7 3 7 8 15 8" />
+            </svg>
             Save List
           </button>
-          <button class="shortlist-panel__save-btn" id="shortlist-email" title="Email this shortlist" style="background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5);">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          <button class="shortlist-panel__save-btn" id="shortlist-email" title="Email this shortlist"
+            style="background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <rect width="20" height="16" x="2" y="4" rx="2" />
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+            </svg>
             Email
           </button>
         </div>
@@ -141,14 +317,13 @@
         </div>
 
         <!-- Region Selector Chips (always visible) -->
-        <div class="region-row" id="region-row-hero" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px;">
-          <button class="region-chip" data-region="cn">🇨🇳 China</button>
-          <button class="region-chip" data-region="vn">🇻🇳 Vietnam</button>
-          <button class="region-chip" data-region="th">🇹🇭 Thailand</button>
-          <button class="region-chip" data-region="tw">🇹🇼 Taiwan</button>
-          <button class="region-chip" data-region="in">🇮🇳 India</button>
-          <button class="region-chip" data-region="us">🇺🇸 USA</button>
-          <button class="region-chip" data-region="au">🇦🇺 Australia</button>
+        <div class="region-row" id="region-row-hero"
+          style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 10px; margin-top:10px">
+          <button class="region-chip" data-stage="design">Design</button>
+          <button class="region-chip" data-stage="prototype">Prototyping</button>
+          <button class="region-chip" data-stage="low volume">Low Volume</button>
+          <button class="region-chip" data-stage="high volume">High Volume</button>
+          <button class="region-chip" data-stage="manufacturing">Contract Manufacturing</button>
         </div>
 
         <!-- Search Bar -->
@@ -426,8 +601,7 @@
                 <input type="file" id="rfq-bulk-file-input" multiple
                   accept=".step,.stp,.stl,.obj,.3mf,.iges,.dxf,.pdf,.sldprt,.ipt,.x_t,.x_b,.3dxml,.catpart,.prt,.sat,.jt,.xlsx,.xls,.csv,.doc,.docx,.jpg,.png,.bmp"
                   hidden />
-                <input type="file" id="rfq-bulk-folder-input" multiple webkitdirectory
-                  hidden />
+                <input type="file" id="rfq-bulk-folder-input" multiple webkitdirectory hidden />
                 <div class="upload-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="1.2">
@@ -446,8 +620,10 @@
                   </p>
                 </div>
                 <div class="rfq-bulk-btn-row">
-                  <button class="upload-btn" id="rfq-bulk-select-btn" style="padding: 10px 24px; font-size: 13px;">Select Files</button>
-                  <button class="upload-btn" id="rfq-bulk-folder-btn" style="padding: 10px 24px; font-size: 13px;">Select Folder</button>
+                  <button class="upload-btn" id="rfq-bulk-select-btn"
+                    style="padding: 10px 24px; font-size: 13px;">Select Files</button>
+                  <button class="upload-btn" id="rfq-bulk-folder-btn"
+                    style="padding: 10px 24px; font-size: 13px;">Select Folder</button>
                 </div>
                 <div class="upload-file-list hidden" id="rfq-bulk-file-list"></div>
               </div>
@@ -664,11 +840,14 @@
     <div class="tariff-engine hidden" id="tariff-engine" style="padding: 120px 40px; text-align: center;">
       <h2 style="font-size: 2.5rem; color: var(--color-white); margin-bottom: 16px;">HS Tariff Optimizer</h2>
       <p style="color: var(--color-steel-300); max-width: 600px; margin: 0 auto; line-height: 1.6;">
-        Our intelligent tariff optimizer reduces import duties by finding optimal HS codes 
+        Our intelligent tariff optimizer reduces import duties by finding optimal HS codes
         and analyzing free trade agreements across different countries of origin.
       </p>
-      <div style="margin-top: 40px; padding: 40px; border: var(--border-dim); border-radius: var(--radius-lg); display: inline-block; background: var(--glass-bg);">
-        <span style="display: inline-block; padding: 6px 12px; font-size: 13px; font-weight: bold; text-transform: uppercase; background: var(--color-amber-glow); color: #000; border-radius: 40px;">Coming Soon</span>
+      <div
+        style="margin-top: 40px; padding: 40px; border: var(--border-dim); border-radius: var(--radius-lg); display: inline-block; background: var(--glass-bg);">
+        <span
+          style="display: inline-block; padding: 6px 12px; font-size: 13px; font-weight: bold; text-transform: uppercase; background: var(--color-amber-glow); color: #000; border-radius: 40px;">Coming
+          Soon</span>
       </div>
     </div>
 
@@ -745,57 +924,37 @@
 
     <!-- Sprint 2 placeholder -->
     <!-- Footer -->
-    <footer class="m-footer"
-      style="padding: 60px var(--space-8); background: #080808; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 100px;">
-      <div
-        style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 40px; max-width: 1400px; margin: 0 auto; text-align: left;">
-        <div>
-          <div class="navbar__brand" style="margin-bottom: 20px;">
-            <a href="/" aria-label="Home"><img src="/logos/atlax-logo-light.svg" alt="ATLAX"
-                style="height: 22px; width: auto; object-fit: contain;" /></a>
+    <footer class="m-footer" style="padding: 40px var(--space-8); background: #080808; border-top: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 10;">
+      <div style="display: flex; gap: 40px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; justify-content: space-between;">
+        
+        <!-- Left: Branding & CTA -->
+        <div style="flex: 1; min-width: 300px; max-width: 400px; display: flex; flex-direction: column;">
+          <div class="navbar__brand" style="margin-bottom: 24px;">
+            <a href="/" aria-label="Home"><img src="/logos/atlax-logo-light.svg" alt="ATLAX" style="height: 22px;" /></a>
           </div>
-          <p
-            style="color: var(--color-steel-400); max-width: 300px; line-height: 1.6; font-size: 12px; margin-bottom: 24px;">
-            Strategic sourcing and competitive manufacturing solutions for hardware product companies.
+          <h4 style="color: var(--color-white); margin: 0 0 12px 0; font-weight: 600; font-size: 16px;">Transform Your Supply Chain</h4>
+          <p style="color: var(--color-steel-400); line-height: 1.6; font-size: 13px; margin: 0 0 24px 0;">
+            Engage ATLAX for end-to-end supply chain management, on-ground factory auditing, and strategic sourcing. Let our experts handle the complexity of global manufacturing.
           </p>
-          <div>
-            <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Platform</h4>
-            <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
-              <li><a href="app.html"
-                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Supplier Engine</a>
-              </li>
-              <li><a href="app.html#rfq"
-                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Instant RFQ</a></li>
-              <li><a href="app.html#designers"
-                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Find Designers</a></li>
-              <li><a href="portfolio.html"
-                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Portfolio</a></li>
-            </ul>
+          <div style="color: var(--color-steel-500); font-size: 11px; margin-top: auto;">
+            &copy; 2026 ATLAX. Part of <img src="https://images.squarespace-cdn.com/content/v1/64b51336a5924775f0a7860d/50ed5912-8c1c-43f1-b95c-9c9dc7560aa1/PP.png?format=1500w" alt="Paniani" style="height: 12px; opacity: 0.8; filter: grayscale(1) invert(1) brightness(2); margin-left: 4px; vertical-align: middle;" />
           </div>
-          <div>
-            <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Company</h4>
-            <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
-              <li><a href="about.html"
-                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">About Us</a></li>
-              <li><a href="services.html"
-                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Capabilities</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Group</h4>
-            <div
-              style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
-              <p style="color: var(--color-steel-400); font-size: 12px; margin-bottom: 12px;">ATLAX is part of</p>
-              <img
-                src="https://images.squarespace-cdn.com/content/v1/64b51336a5924775f0a7860d/50ed5912-8c1c-43f1-b95c-9c9dc7560aa1/PP.png?format=1500w"
-                alt="Paniani Group Logo"
-                style="height: 20px; opacity: 0.8; filter: grayscale(1) invert(1) brightness(2);" />
+        </div>
+
+        <!-- Right: Contact Form -->
+        <div style="flex: 1; min-width: 300px; max-width: 500px; background: rgba(255,255,255,0.02); padding: 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
+          <h4 style="color: var(--color-white); margin: 0 0 16px 0; font-weight: 600; font-size: 15px;">Contact Us</h4>
+          <form onsubmit="event.preventDefault(); alert('Message sent successfully!');" style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; gap: 12px;">
+              <input type="text" placeholder="Your Name" style="flex:1; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 13px;" required />
+              <input type="email" placeholder="Your Email" style="flex:1; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 13px;" required />
             </div>
-          </div>
-          <div
-            style="margin-top: 60px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; color: var(--color-steel-500); font-size: 10px; letter-spacing: 1px;">
-            &copy; 2026 ATLAX.
-          </div>
+            <textarea placeholder="How can we help you scale?" rows="2" style="padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 13px; resize: none;" required></textarea>
+            <button type="submit" class="btn btn--primary btn--sm" style="align-self: flex-start; margin-top: 4px;">Send Message</button>
+          </form>
+        </div>
+
+      </div>
     </footer>
   </div>
 
@@ -822,7 +981,32 @@
     </div>
   </div>
 
+  <!-- Tabular Save Modal -->
+  <div id="tabular-save-modal" class="modal-overlay hidden" style="z-index:9000; display:flex; justify-content:center; align-items:center; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); position:fixed; top:0; left:0; width:100vw; height:100vh;">
+    <div style="background:var(--color-slate-800); border:1px solid var(--color-slate-700); border-radius:12px; padding:24px; width:400px; max-width:90%; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+      <h3 style="color:#fff; margin-top:0; margin-bottom:16px; font-size:16px;">Save Shortlist to Workspace</h3>
+      <div style="margin-bottom:12px;">
+        <label style="display:block; font-size:12px; color:var(--color-steel-300); margin-bottom:4px;">Shortlist Name <span style="color:#f87171;">*</span></label>
+        <input type="text" id="ts-modal-name" style="width:100%; border-radius:6px; background:rgba(0,0,0,0.3); border:1px solid var(--color-slate-600); color:#fff; padding:8px;" placeholder="e.g. Q3 Vendor Candidates">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block; font-size:12px; color:var(--color-steel-300); margin-bottom:4px;">Project / Initiative</label>
+        <input type="text" id="ts-modal-project" style="width:100%; border-radius:6px; background:rgba(0,0,0,0.3); border:1px solid var(--color-slate-600); color:#fff; padding:8px;" placeholder="e.g. Project Apollo">
+      </div>
+      <div style="margin-bottom:20px;">
+        <label style="display:block; font-size:12px; color:var(--color-steel-300); margin-bottom:4px;">Comments / Notes</label>
+        <textarea id="ts-modal-comment" rows="3" style="width:100%; border-radius:6px; background:rgba(0,0,0,0.3); border:1px solid var(--color-slate-600); color:#fff; padding:8px;" placeholder="Add any private evaluation notes here..."></textarea>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:12px;">
+        <button id="ts-modal-cancel" style="background:transparent; border:1px solid var(--color-slate-600); color:#fff; padding:6px 16px; border-radius:6px; cursor:pointer;">Cancel</button>
+        <button id="ts-modal-confirm" style="background:var(--color-emerald); border:none; color:#0d1117; padding:6px 16px; border-radius:6px; cursor:pointer; font-weight:bold;">Save to Workspace</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="//unpkg.com/globe.gl"></script>
   <script type="module" src="/src/main.js"></script>
+  <script type="module" src="/src/js/supplier-engine.js"></script>
 </body>
 
 </html>

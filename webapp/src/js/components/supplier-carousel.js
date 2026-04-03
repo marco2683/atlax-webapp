@@ -4,25 +4,7 @@
    production capacity, trade, sustainability, sample sections
    ============================================================ */
 
-const BANNER_IMAGES = [
-  'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=800&q=80',
-  'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
-  'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80',
-  'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80',
-  'https://images.unsplash.com/photo-1563906267088-b029e7101114?w=800&q=80',
-  'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80',
-];
-
-const GALLERY_IMAGES = [
-  'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1563906267088-b029e7101114?w=300&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=300&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=300&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=300&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=300&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?w=300&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=300&h=200&fit=crop',
-];
+const DEFAULT_BANNER = 'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1200&q=80';
 
 let currentIndex = 0;
 let currentSuppliers = [];
@@ -101,33 +83,9 @@ function updateCounter() {
   if (el) el.textContent = `${currentIndex + 1} / ${currentSuppliers.length}`;
 }
 
-/* ── Helper: generate mock data from factoryScore ── */
-function mockMaterials(score) {
-  const base = ['Aluminum 6061', 'Stainless Steel 304', 'ABS', 'Polycarbonate'];
-  if (score >= 80) base.push('Titanium Grade 5', 'PEEK', 'Nylon PA66-GF');
-  if (score >= 90) base.push('Inconel 718', 'Carbon Fiber Composite', 'Medical-grade Silicone');
-  return base;
-}
+// Removed Mock Data Functions
 
-function mockFinishes(score) {
-  const base = ['Anodizing', 'Powder Coating', 'Sandblasting'];
-  if (score >= 75) base.push('Chrome Plating', 'Vapor Polishing', 'Painting (RAL)');
-  if (score >= 85) base.push('PVD Coating', 'Electroless Nickel', 'Passivation');
-  return base;
-}
-
-function mockPaymentTerms(score) {
-  if (score >= 90) return 'Net 60, T/T, L/C at Sight';
-  if (score >= 80) return 'Net 30, T/T 30/70';
-  return 'T/T 50/50, Escrow via ATLAX';
-}
-
-function mockIncoterms(score) {
-  const base = ['FOB', 'EXW'];
-  if (score >= 75) base.push('CIF', 'DAP');
-  if (score >= 85) base.push('DDP');
-  return base;
-}
+// Removed Mock trade data
 
 /* ── Main Render ── */
 function renderCurrentCard() {
@@ -145,10 +103,10 @@ function renderCurrentCard() {
     </div>
   `).join('');
 
-  const bannerUrl = s.bannerImage || BANNER_IMAGES[currentIndex % BANNER_IMAGES.length];
+  const bannerUrl = s.banner || s.bannerImage || DEFAULT_BANNER;
   const email = s.email || 'sales@' + s.name.toLowerCase().replace(/[^a-z]/g, '') + '.com';
-  const phone = s.phone || '+86 755 ' + Math.floor(10000000 + Math.random() * 90000000);
-  const wechat = s.wechat || s.name.replace(/\s/g, '_').toLowerCase();
+  const phone = s.phone || '';
+  const wechat = s.wechat || '';
   const isContactsLocked = currentTier === 'free';
   const isIntelLocked = currentTier === 'free' || currentTier === 'contacts';
 
@@ -164,359 +122,192 @@ function renderCurrentCard() {
         <span>Add to Shortlist</span>
       </button>`;
 
-  // Gallery images (shift per supplier)
-  const galleryShift = (currentIndex * 3) % GALLERY_IMAGES.length;
-  const galleryImgs = Array.from({ length: 6 }, (_, i) =>
-    GALLERY_IMAGES[(galleryShift + i) % GALLERY_IMAGES.length]
-  );
+  let productImgs = s.images?.product || [];
+  let facilityImgs = [...(s.images?.facility || []), ...(s.images?.equipment || [])];
+  
+  // Use s.url as primary, fallback to s.website
+  let websiteUrl = s.url || s.website;
 
-  // Materials & finishes
-  const materials = mockMaterials(score);
-  const finishes = mockFinishes(score);
+  const exportCountries = s.exportCountries || (s.factoryScore >= 75 ? Math.floor(5 + score / 8) : 2);
 
-  // Trade data
-  const payTerms = mockPaymentTerms(score);
-  const incoterms = mockIncoterms(score);
-  const exportCountries = Math.floor(5 + score / 8);
+  const mapUrl = `https://maps.google.com/?q=${encodeURIComponent((s.city || '') + ', ' + (s.country || ''))}`;
+  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent((s.city || '') + ', ' + (s.country || ''))}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+
+  const renderImageGrid = (imgs) => {
+    const gridItems = Array.from({length: 6}, (_, i) => {
+      if (i < imgs.length) {
+        return `<div style="background: url('${imgs[i]}') center/cover; aspect-ratio: 1; border-radius: 8px; width: 100%;"></div>`;
+      } else {
+        return `<div style="aspect-ratio: 1; border: 1px dashed rgba(255,255,255,0.15); border-radius: 8px; width: 100%;"></div>`;
+      }
+    });
+    return `<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 12px 0;">${gridItems.join('')}</div>`;
+  };
 
   body.innerHTML = `
-    <!-- Banner Image -->
-    <div class="sup-banner" style="background-image: url('${bannerUrl}');">
-      <div class="sup-banner__info">
-        <div>
-          <div class="sup-banner__name">${s.name}</div>
-          <div class="sup-banner__location">📍 ${s.city}, ${s.country}</div>
-          ${shortlistBtnHTML}
+    <!-- Hero Split 2:3 Banner, 1:3 Map -->
+    <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+      <div class="sup-banner" style="flex: 2; border-radius: 12px; margin-bottom: 0; background-image: url('${bannerUrl}');">
+        <div class="sup-banner__info">
+          <div>
+            <div class="sup-banner__name">${s.name}</div>
+            <div class="sup-banner__location">📍 ${s.city || ''}, ${s.country || ''}</div>
+            ${shortlistBtnHTML}
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- Classifier Row -->
-    <div style="display: flex; gap: 8px; padding: 12px 24px; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02);">
-      ${classifierHTML}
+      <a href="${mapUrl}" target="_blank" style="flex: 1; min-height: 200px; display: block; border-radius: 12px; overflow: hidden; position: relative;">
+        <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="${mapEmbedUrl}" style="pointer-events: none;"></iframe>
+      </a>
     </div>
 
     <div class="sup-content">
-      <!-- Section: Technologies & Capabilities -->
-      <div class="sup-section">
-        <div class="sup-section__title">Technologies & Capabilities</div>
-        <div class="sup-tech-list">
-          ${(s.technologies || []).map(t => `<span class="sup-tech-tag">${t}</span>`).join('')}
-        </div>
-        <p class="sup-desc">${s.description}</p>
+      <!-- Classifier Row -->
+      <div style="display: flex; gap: 8px; padding: 12px 24px; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02); margin: 0 -24px 20px -24px;">
+        ${classifierHTML}
       </div>
 
-      <!-- Section: Photo Gallery -->
       <div class="sup-section">
-        <div class="sup-section__title">📸 Photo Gallery</div>
-        <div class="sup-gallery">
-          ${galleryImgs.map(url => `<div class="sup-gallery__item" style="background-image: url('${url}')"></div>`).join('')}
+      <div class="sup-section__title" style="text-align: center;">🔬 Expertise & Core Technologies</div>
+      <div class="sup-materials-grid" style="grid-template-columns: 1fr;">
+        <div class="sup-materials-col">
+          <div class="sup-materials-col__tags" style="justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            ${(s.technologies || []).map(t => `<span class="sup-tech-tag" style="flex: 1 1 auto; text-align: center; margin: 0;">${t}</span>`).join('')}
+            ${(s.tags || []).map(t => `<span class="sup-tech-tag" style="flex: 1 1 auto; text-align: center; margin: 0;">${t}</span>`).join('')}
+          </div>
         </div>
       </div>
+      ${s.description ? `<p class="sup-desc" style="text-align: justify; line-height: 1.6; margin-top: 16px;">${s.description}</p>` : ''}
+    </div>
+
+    <!-- Section: Supplier Scorecard -->
+    <div class="sup-section" style="padding-top: 0;">
+      <div class="sup-section__title" style="text-align: center;">📊 Supplier Scorecard</div>
+      <div style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;">
+        <div style="flex: 1; min-width: 110px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 24px 16px; border-radius: 8px; text-align: center;">
+          <div style="font-size: 24px; font-weight: bold; color: ${s.factoryScore >= 80 ? '#10b981' : '#f59e0b'};">${s.factoryScore || '--'}</div>
+          <div style="font-size: 11px; color: var(--color-steel-400); text-transform: uppercase;">ATLAX Score</div>
+        </div>
+        <div style="flex: 1; min-width: 110px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 24px 16px; border-radius: 8px; text-align: center;">
+          <div style="font-size: 24px; font-weight: bold; color: #fff;">${s.yearEstablished || '--'}</div>
+          <div style="font-size: 11px; color: var(--color-steel-400); text-transform: uppercase;">Established</div>
+        </div>
+        <div style="flex: 1; min-width: 110px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 24px 16px; border-radius: 8px; text-align: center;">
+          <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">${s.certifications ? s.certifications.length : 0}</div>
+          <div style="font-size: 11px; color: var(--color-steel-400); text-transform: uppercase;">Active Certs</div>
+        </div>
+        <div style="flex: 1; min-width: 110px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 24px 16px; border-radius: 8px; text-align: center;">
+          <div style="font-size: 24px; font-weight: bold; color: #fff;">${exportCountries}</div>
+          <div style="font-size: 11px; color: var(--color-steel-400); text-transform: uppercase;">Export Mkts</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: Visuals (Products & Facilities) -->
+    ${productImgs.length > 0 || facilityImgs.length > 0 ? `
+    <div class="sup-section" style="padding-top: 0;">
+      ${productImgs.length > 0 ? `
+        <div class="sup-section__title">📦 Featured Products</div>
+        ${renderImageGrid(productImgs)}
+      ` : ''}
+      ${facilityImgs.length > 0 ? `
+        <div class="sup-section__title" style="margin-top: 16px;">🏭 Facilities & Equipment</div>
+        ${renderImageGrid(facilityImgs)}
+      ` : ''}
+    </div>
+    ` : ''}
+
+    <!-- INTEL GATE OVERLAY -->
+    ${isIntelLocked ? `
+    <div class="sup-intel-overlay">
+      <button class="sup-intel-overlay__btn" onclick="window.dispatchEvent(new CustomEvent('prd-open-tier-modal'))">
+        🔒 Upgrade to View Full Details
+      </button>
+    </div>
+    ` : ''}
+
+    <div class="sup-intel-gate ${isIntelLocked ? 'sup-intel-gate--locked' : ''}">
+
 
       <!-- Section: Video Walkthrough -->
+      ${s.videoWalkthrough ? `
       <div class="sup-section">
         <div class="sup-section__title">🎥 Video Walkthrough</div>
-        <div class="sup-video-embed">
-          <div class="sup-video-embed__overlay">
-            <div class="sup-video-embed__play">
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="white" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            </div>
-            <div class="sup-video-embed__label">Factory Tour — ${s.name}</div>
-          </div>
-          <img src="${bannerUrl}" alt="Video thumbnail" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.5;" />
+        <div class="sup-video-embed" style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+          <iframe style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;" 
+            src="${s.videoWalkthrough.includes('watch?v=') ? s.videoWalkthrough.replace('watch?v=', 'embed/') : s.videoWalkthrough}" 
+            allowfullscreen>
+          </iframe>
         </div>
       </div>
+      ` : ''}
 
-      <!-- Section: Facilities & Equipment -->
+      <!-- Section: Facilities & Equipment Info -->
       <div class="sup-section">
         <div class="sup-section__title">🏭 Facilities & Equipment</div>
         <div class="sup-facility-grid">
+          ${s.factoryArea ? `
           <div class="sup-facility-card">
             <div class="sup-facility-card__label">Factory Area</div>
-            <div class="sup-facility-card__value">${Math.floor(2000 + score * 120)} sqm</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Production Lines</div>
-            <div class="sup-facility-card__value">${Math.floor(3 + score / 15)} lines</div>
-          </div>
+            <div class="sup-facility-card__value">${s.factoryArea}</div>
+          </div>` : ''}
+          ${s.employees ? `
           <div class="sup-facility-card">
             <div class="sup-facility-card__label">Employees</div>
-            <div class="sup-facility-card__value">${Math.floor(50 + score * 5)}</div>
-          </div>
+            <div class="sup-facility-card__value">${s.employees}</div>
+          </div>` : ''}
+          ${s.yearEstablished ? `
           <div class="sup-facility-card">
-            <div class="sup-facility-card__label">QC Inspectors</div>
-            <div class="sup-facility-card__value">${Math.floor(3 + score / 20)}</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">R&D Engineers</div>
-            <div class="sup-facility-card__value">${Math.floor(2 + score / 12)}</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Lead Time</div>
-            <div class="sup-facility-card__value">${Math.max(7, 45 - Math.floor(score / 3))} days</div>
-          </div>
-        </div>
-        <div class="sup-equipment-row">
-          <span class="sup-equipment-tag">CNC centers: ${Math.floor(5 + score / 8)}</span>
-          <span class="sup-equipment-tag">CMM inspection</span>
-          <span class="sup-equipment-tag">Tooling in-house</span>
-          ${score >= 85 ? '<span class="sup-equipment-tag sup-equipment-tag--highlight">Cleanroom available</span>' : ''}
-          ${score >= 80 ? '<span class="sup-equipment-tag sup-equipment-tag--highlight">Automated assembly</span>' : ''}
-        </div>
-      </div>
-
-      <!-- Section: Material & Process Capabilities -->
-      <div class="sup-section">
-        <div class="sup-section__title">🔬 Material & Process Capabilities</div>
-        <div class="sup-materials-grid">
-          <div class="sup-materials-col">
-            <div class="sup-materials-col__heading">Materials</div>
-            <div class="sup-materials-col__tags">
-              ${materials.map(m => `<span class="sup-material-tag">${m}</span>`).join('')}
-            </div>
-          </div>
-          <div class="sup-materials-col">
-            <div class="sup-materials-col__heading">Surface Finishes</div>
-            <div class="sup-materials-col__tags">
-              ${finishes.map(f => `<span class="sup-material-tag">${f}</span>`).join('')}
-            </div>
-          </div>
-        </div>
-        <div class="sup-tolerance-row">
-          <div class="sup-tolerance-item">
-            <span class="sup-tolerance-item__label">Tolerance (CNC)</span>
-            <span class="sup-tolerance-item__value">±${score >= 85 ? '0.005' : score >= 70 ? '0.01' : '0.05'} mm</span>
-          </div>
-          <div class="sup-tolerance-item">
-            <span class="sup-tolerance-item__label">Min Wall Thickness</span>
-            <span class="sup-tolerance-item__value">${score >= 85 ? '0.3' : score >= 70 ? '0.5' : '0.8'} mm</span>
-          </div>
-          <div class="sup-tolerance-item">
-            <span class="sup-tolerance-item__label">Max Part Size</span>
-            <span class="sup-tolerance-item__value">${score >= 85 ? '1500×800×600' : '800×500×400'} mm</span>
-          </div>
-          <div class="sup-tolerance-item">
-            <span class="sup-tolerance-item__label">Surface Roughness</span>
-            <span class="sup-tolerance-item__value">Ra ${score >= 85 ? '0.4' : score >= 70 ? '0.8' : '1.6'} μm</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Production Capacity -->
-      <div class="sup-section">
-        <div class="sup-section__title">📊 Production Capacity</div>
-        <div class="sup-capacity-grid">
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Monthly Output</div>
-            <div class="sup-facility-card__value">${Math.floor(1000 + score * 50)} pcs</div>
-          </div>
+            <div class="sup-facility-card__label">Year Established</div>
+            <div class="sup-facility-card__value">${s.yearEstablished}</div>
+          </div>` : ''}
+          ${s.moq ? `
           <div class="sup-facility-card">
             <div class="sup-facility-card__label">Min Order Qty</div>
-            <div class="sup-facility-card__value">${score >= 85 ? '1 pc' : score >= 70 ? '10 pcs' : '50 pcs'}</div>
-          </div>
+            <div class="sup-facility-card__value">${s.moq}</div>
+          </div>` : ''}
+          ${s.leadTime ? `
           <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Sample Lead</div>
-            <div class="sup-facility-card__value">${Math.max(3, 15 - Math.floor(score / 10))} days</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Production Lead</div>
-            <div class="sup-facility-card__value">${Math.max(7, 45 - Math.floor(score / 3))} days</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Operating Hours</div>
-            <div class="sup-facility-card__value">${score >= 80 ? '24/7 (3 shifts)' : '16h (2 shifts)'}</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Capacity Utilization</div>
-            <div class="sup-facility-card__value">${Math.min(95, Math.floor(55 + score / 3))}%</div>
-          </div>
+            <div class="sup-facility-card__label">Lead Time</div>
+            <div class="sup-facility-card__value">${s.leadTime}</div>
+          </div>` : ''}
         </div>
       </div>
 
+      <!-- Section: Documents & Downloads -->
+      ${s.documents && s.documents.length > 0 ? `
+      <div class="sup-section">
+        <div class="sup-section__title">📄 Documents & Downloads</div>
+        <div class="sup-certs-row">
+          ${s.documents.map((doc, i) => `
+            <a href="${doc}" target="_blank" class="sup-cert-badge" style="text-decoration: none; cursor: pointer;">
+              <div class="sup-cert-badge__icon">⬇️</div>
+              <div class="sup-cert-badge__name">Document ${i + 1}</div>
+              <div class="sup-cert-badge__status sup-cert-badge__status--active">Download</div>
+            </a>
+          `).join('')}
+        </div>
+      </div>
+      ` : ''}
+      
       <!-- Section: Quality & Certifications -->
+      ${s.certifications && s.certifications.length > 0 ? `
       <div class="sup-section">
         <div class="sup-section__title">✅ Quality & Certifications</div>
         <div class="sup-certs-row">
+          ${s.certifications.map(c => `
           <div class="sup-cert-badge">
-            <div class="sup-cert-badge__icon">📋</div>
-            <div class="sup-cert-badge__name">ISO 9001</div>
+            <div class="sup-cert-badge__icon">🏆</div>
+            <div class="sup-cert-badge__name">${c}</div>
             <div class="sup-cert-badge__status sup-cert-badge__status--active">Verified</div>
           </div>
-          <div class="sup-cert-badge">
-            <div class="sup-cert-badge__icon">🌍</div>
-            <div class="sup-cert-badge__name">ISO 14001</div>
-            <div class="sup-cert-badge__status sup-cert-badge__status--active">Verified</div>
-          </div>
-          ${score >= 85 ? `<div class="sup-cert-badge">
-            <div class="sup-cert-badge__icon">🚗</div>
-            <div class="sup-cert-badge__name">IATF 16949</div>
-            <div class="sup-cert-badge__status sup-cert-badge__status--active">Verified</div>
-          </div>` : ''}
-          ${score >= 88 ? `<div class="sup-cert-badge">
-            <div class="sup-cert-badge__icon">🏥</div>
-            <div class="sup-cert-badge__name">ISO 13485</div>
-            <div class="sup-cert-badge__status sup-cert-badge__status--active">Verified</div>
-          </div>` : ''}
-          ${score >= 82 ? `<div class="sup-cert-badge">
-            <div class="sup-cert-badge__icon">⚡</div>
-            <div class="sup-cert-badge__name">UL Listed</div>
-            <div class="sup-cert-badge__status sup-cert-badge__status--pending">Pending</div>
-          </div>` : ''}
-        </div>
-        <div class="sup-quality-metrics">
-          <div class="sup-quality-metric">
-            <span class="sup-quality-metric__label">Defect Rate (PPM)</span>
-            <div class="sup-quality-metric__bar"><div class="sup-quality-metric__fill" style="width: ${Math.min(95, score)}%; background: ${score >= 85 ? '#10b981' : score >= 70 ? '#3b82f6' : '#f59e0b'};"></div></div>
-            <span class="sup-quality-metric__value">${Math.max(50, 1200 - score * 12)} PPM</span>
-          </div>
-          <div class="sup-quality-metric">
-            <span class="sup-quality-metric__label">On-Time Delivery</span>
-            <div class="sup-quality-metric__bar"><div class="sup-quality-metric__fill" style="width: ${Math.min(98, 60 + score / 3)}%; background: #10b981;"></div></div>
-            <span class="sup-quality-metric__value">${Math.min(98, Math.floor(60 + score / 3))}%</span>
-          </div>
-          <div class="sup-quality-metric">
-            <span class="sup-quality-metric__label">First Pass Yield</span>
-            <div class="sup-quality-metric__bar"><div class="sup-quality-metric__fill" style="width: ${Math.min(99, 70 + score / 4)}%; background: #3b82f6;"></div></div>
-            <span class="sup-quality-metric__value">${Math.min(99, Math.floor(70 + score / 4))}%</span>
-          </div>
+          `).join('')}
         </div>
       </div>
-
-      <!-- Section: Trade & Compliance -->
+      ` : ''}
+      
+      <!-- Section: Contact & Location -->
       <div class="sup-section">
-        <div class="sup-section__title">🌍 Trade & Compliance</div>
-        <div class="sup-facility-grid">
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Export Markets</div>
-            <div class="sup-facility-card__value">${exportCountries} countries</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Payment Terms</div>
-            <div class="sup-facility-card__value" style="font-size: 11px;">${payTerms}</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Incoterms</div>
-            <div class="sup-facility-card__value">${incoterms.join(', ')}</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Currency</div>
-            <div class="sup-facility-card__value">USD, EUR, CNY</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">NDA Available</div>
-            <div class="sup-facility-card__value" style="color: #10b981;">Yes — standard</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">IP Protection</div>
-            <div class="sup-facility-card__value">${score >= 80 ? 'Strong — tooling NDA + NCA' : 'Standard NDA'}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Sustainability & Social -->
-      <div class="sup-section">
-        <div class="sup-section__title">♻️ Sustainability & Social Responsibility</div>
-        <div class="sup-sustainability-grid">
-          <div class="sup-sustainability-item">
-            <span class="sup-sustainability-item__icon">${score >= 80 ? '✅' : '⬜'}</span>
-            <div>
-              <span class="sup-sustainability-item__label">ISO 14001 Environmental Management</span>
-              <span class="sup-sustainability-item__status">${score >= 80 ? 'Certified' : 'Not certified'}</span>
-            </div>
-          </div>
-          <div class="sup-sustainability-item">
-            <span class="sup-sustainability-item__icon">${score >= 85 ? '✅' : '⬜'}</span>
-            <div>
-              <span class="sup-sustainability-item__label">REACH / RoHS Compliance</span>
-              <span class="sup-sustainability-item__status">${score >= 85 ? 'Compliant' : 'Partial'}</span>
-            </div>
-          </div>
-          <div class="sup-sustainability-item">
-            <span class="sup-sustainability-item__icon">${score >= 75 ? '✅' : '⬜'}</span>
-            <div>
-              <span class="sup-sustainability-item__label">Social Audit (SA8000 / SEDEX)</span>
-              <span class="sup-sustainability-item__status">${score >= 75 ? 'Passed — last audit 2024' : 'Not audited'}</span>
-            </div>
-          </div>
-          <div class="sup-sustainability-item">
-            <span class="sup-sustainability-item__icon">${score >= 90 ? '✅' : '⬜'}</span>
-            <div>
-              <span class="sup-sustainability-item__label">Carbon Neutrality Program</span>
-              <span class="sup-sustainability-item__status">${score >= 90 ? 'Active program' : 'Not started'}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Sample & Prototyping -->
-      <div class="sup-section">
-        <div class="sup-section__title">🧪 Sample & Prototyping</div>
-        <div class="sup-facility-grid">
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Sample Policy</div>
-            <div class="sup-facility-card__value">${score >= 85 ? 'Free samples (≤3)' : 'Paid samples'}</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Sample Lead Time</div>
-            <div class="sup-facility-card__value">${Math.max(3, 15 - Math.floor(score / 10))} days</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Tooling Cost Range</div>
-            <div class="sup-facility-card__value">$${Math.floor(500 + (100 - score) * 30)}–$${Math.floor(3000 + (100 - score) * 80)}</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">T1 Sample Timeline</div>
-            <div class="sup-facility-card__value">${Math.max(10, 35 - Math.floor(score / 4))} days</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Design Support</div>
-            <div class="sup-facility-card__value">${score >= 80 ? 'DFM + mold flow analysis' : 'Basic DFM review'}</div>
-          </div>
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Iteration Rounds</div>
-            <div class="sup-facility-card__value">${score >= 85 ? '3 included' : '1 included'}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Supplier Qualification Summary -->
-      <div class="sup-section">
-        <div class="sup-section__title">📊 Supplier Qualification Summary</div>
-        <div class="sup-qualification-grid">
-          <div class="sup-qual-item">
-            <div class="sup-qual-item__header">
-              <span class="sup-qual-item__dot" style="background: ${score >= 80 ? '#10b981' : '#f59e0b'};"></span>
-              <span class="sup-qual-item__label">Factory Verified</span>
-            </div>
-            <span class="sup-qual-item__detail">${score >= 80 ? 'Confirmed manufacturer — owns production' : 'Verification in progress'}</span>
-          </div>
-          <div class="sup-qual-item">
-            <div class="sup-qual-item__header">
-              <span class="sup-qual-item__dot" style="background: #10b981;"></span>
-              <span class="sup-qual-item__label">Business License</span>
-            </div>
-            <span class="sup-qual-item__detail">Active — registration on file</span>
-          </div>
-          <div class="sup-qual-item">
-            <div class="sup-qual-item__header">
-              <span class="sup-qual-item__dot" style="background: ${score >= 75 ? '#10b981' : '#6b7280'};"></span>
-              <span class="sup-qual-item__label">Export Experience</span>
-            </div>
-            <span class="sup-qual-item__detail">${exportCountries} countries in last 12 months</span>
-          </div>
-          <div class="sup-qual-item">
-            <div class="sup-qual-item__header">
-              <span class="sup-qual-item__dot" style="background: ${score >= 70 ? '#10b981' : '#f59e0b'};"></span>
-              <span class="sup-qual-item__label">Financial Health</span>
-            </div>
-            <span class="sup-qual-item__detail">Revenue trend ${score >= 80 ? '↑ growing' : '→ stable'} — ${score >= 75 ? 'low' : 'moderate'} risk</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Contact & Location (locked for free tier) -->
-      <div class="sup-section ${isContactsLocked ? 'sup-section--locked' : ''}">
         <div class="sup-section__title">Contact & Location</div>
         <div class="sup-contact-grid">
           <div class="sup-contact-item">
@@ -531,66 +322,52 @@ function renderCurrentCard() {
             <span class="sup-contact-label">WeChat</span>
             <span class="sup-contact-value">${wechat}</span>
           </div>
-          <div class="sup-contact-item">
-            <span class="sup-contact-label">Response Time</span>
-            <span class="sup-contact-value">${s.responseTime || '< 24 hours'}</span>
-          </div>
-        </div>
-        <div style="margin-top: var(--space-4); border-radius: var(--radius-base); overflow: hidden; height: 160px; border: 1px solid rgba(255,255,255,0.1);">
-          <iframe 
-            width="100%" height="160" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
-            style="filter: invert(90%) hue-rotate(180deg) opacity(80%);"
-            src="https://maps.google.com/maps?q=${encodeURIComponent(s.city + ', ' + s.country)}&t=&z=11&ie=UTF8&iwloc=&output=embed">
-          </iframe>
         </div>
       </div>
 
-      <!-- Section: Intelligence Report (locked for free + contacts tier) -->
-      <div class="sup-section ${isIntelLocked ? 'sup-section--locked' : ''}">
-        <div class="sup-section__title">🔍 Intelligence Report</div>
-        <ul class="sup-intel-list">
-          <li class="sup-intel-item"><span class="sup-intel-icon">▸</span> <strong>Factory vs. Trader:</strong> Verified manufacturer — owns production lines, not a trading intermediary</li>
-          <li class="sup-intel-item"><span class="sup-intel-icon">▸</span> <strong>Satellite Imagery:</strong> Factory footprint confirmed — ${Math.floor(3000 + Math.random() * 12000)}sqm facility visible from 2024 imagery</li>
-          <li class="sup-intel-item"><span class="sup-intel-icon">▸</span> <strong>Corporate Registry:</strong> Registered capital ¥${Math.floor(500 + Math.random() * 5000)}M — ${Math.floor(3 + Math.random() * 15)} years in operation</li>
-          <li class="sup-intel-item"><span class="sup-intel-icon">▸</span> <strong>Export History:</strong> ${Math.floor(100 + Math.random() * 2000)} shipments to ${exportCountries} countries in last 12 months</li>
-          <li class="sup-intel-item"><span class="sup-intel-icon">▸</span> <strong>Quality Certifications:</strong> ISO 9001, ISO 14001${Math.random() > 0.5 ? ', IATF 16949' : ''}${Math.random() > 0.6 ? ', ISO 13485 (Medical)' : ''}</li>
-          <li class="sup-intel-item"><span class="sup-intel-icon">▸</span> <strong>Litigation Check:</strong> ${Math.random() > 0.3 ? 'No active disputes found' : '1 minor trade dispute (resolved 2023)'}</li>
-          <li class="sup-intel-item"><span class="sup-intel-icon">▸</span> <strong>Key Customers:</strong> Supplies to ${Math.floor(2 + Math.random() * 5)} Fortune 500 companies (names redacted)</li>
-          <li class="sup-intel-item"><span class="sup-intel-icon">▸</span> <strong>Financial Health:</strong> Revenue trend ${Math.random() > 0.4 ? '↑ growing' : '→ stable'} over 3 years — ${Math.random() > 0.3 ? 'low' : 'moderate'} risk</li>
-        </ul>
-        <div style="margin-top: var(--space-4);">
-          <div style="font-size: 10px; font-weight: var(--weight-semibold); color: var(--color-steel-400); text-transform: uppercase; letter-spacing: var(--tracking-wider); margin-bottom: var(--space-2);">📷 Facility Media</div>
-          <div style="display: flex; gap: var(--space-2); overflow-x: auto; padding-bottom: var(--space-2);" class="sup-intel-carousel">
-            ${galleryImgs.slice(0, 4).map(url => `<img src="${url}" style="height: 120px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;" />`).join('')}
-          </div>
+      <!-- Section: Official Website -->
+      ${websiteUrl ? `
+      <div class="sup-section">
+        <div class="sup-section__title" style="display:flex; justify-content:space-between; align-items:center;">
+          🌐 Official Website
+          <a href="${websiteUrl.startsWith('http') ? websiteUrl : 'https://' + websiteUrl}" target="_blank" style="font-size:11px; color:var(--color-amber); text-decoration:none; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:4px;">Open ↗</a>
+        </div>
+        <div class="sup-frame-window">
+          <iframe src="${websiteUrl.startsWith('http') ? websiteUrl : 'https://' + websiteUrl}" width="100%" height="100%" style="border:none;" sandbox="allow-same-origin allow-scripts"></iframe>
         </div>
       </div>
+      ` : ''}
 
-      <!-- RFQ Card -->
-      <div class="sup-rfq">
-        <div class="sup-rfq__title">📋 Send Request for Quotation</div>
-        <p class="sup-rfq__desc">Describe your product, upload drawings (CAD, 2D, 3D), and specify quantities. The supplier will respond within their estimated response time.</p>
-        <textarea class="sup-rfq__textarea" placeholder="Describe your product requirements, materials, quantities, target price..."></textarea>
-        <div class="sup-rfq__actions">
-          <button class="btn btn--primary btn--sm" id="modal-send-rfq">Send RFQ</button>
-          <button class="btn btn--secondary btn--sm" id="modal-attach-files">📎 Attach Files</button>
+    </div> <!-- CLOSING INTEL GATE -->
+    
+    <!-- RFQ Card (Always Visible) -->
+    <div class="sup-rfq">
+      <div class="sup-rfq__title">📋 Send an inquiry</div>
+      <p class="sup-rfq__desc">Describe your product, upload drawings, and specify quantities for a direct quote.</p>
+      <textarea class="sup-rfq__textarea" rows="5" placeholder="Product requirements, materials, quantities..."></textarea>
+      <div style="margin: 12px 0;">
+        <input type="email" placeholder="Your reply email" class="sup-rfq__textarea" style="height: auto; padding: 10px; margin-bottom: 8px;">
+        <div style="position: relative; width: 100%; border-radius: 6px; overflow: hidden;">
+          <label style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.2); cursor: pointer; color: var(--color-steel-400); font-size: 13px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+            Attach Drawings or Specs
+          </label>
+          <input type="file" id="modal-attach-files" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
         </div>
       </div>
-
-      <!-- ATLAX Consulting Card -->
-      <div class="sup-mjs">
-        <div class="sup-mjs__title">🌿 ATLAX Quality Consulting</div>
-        <p class="sup-mjs__desc">Let our on-ground team handle supplier management, factory audits, and quality control for this supplier directly on the factory floor.</p>
-        <ul class="sup-mjs__features">
-          <li class="sup-mjs__feature">On-site factory audit & video walkthrough</li>
-          <li class="sup-mjs__feature">First-article inspection (FAI) management</li>
-          <li class="sup-mjs__feature">RFQ negotiation & payment escrow</li>
-          <li class="sup-mjs__feature">Ongoing quality monitoring & defect tracking</li>
-          <li class="sup-mjs__feature">Logistics coordination & consolidation shipping</li>
-        </ul>
-        <button class="btn btn--success btn--sm" id="modal-engage-consulting">Engage ATLAX Consulting →</button>
+      <div class="sup-rfq__actions">
+        <button class="btn btn--primary" id="modal-send-rfq" style="width: 100%;">Submit Inquiry</button>
       </div>
     </div>
+    
+    <!-- ATLAX Consulting Card (Moved Inside Content Container) -->
+    <div class="sup-mjs" style="padding: 16px; margin-top: 20px;">
+      <div class="sup-mjs__title" style="margin-bottom: 4px; font-size: 14px;">🌿 ATLAX Quality Consulting</div>
+      <p class="sup-mjs__desc" style="margin-bottom: 12px; font-size: 13px;">Let our on-ground team handle supplier management and factory audits directly on the floor.</p>
+      <button class="btn btn--success btn--sm" style="width: 100%;" id="modal-engage-consulting">Engage ATLAX Consulting →</button>
+    </div>
+
+  </div> <!-- CLOSING SUP-CONTENT -->
   `;
 
   // Attach event listeners

@@ -16,7 +16,7 @@ import { initNavbar } from './js/components/navbar.js';
 import { initTierCards } from './js/components/tier-cards.js';
 import { renderStackedResults, hideStackedResults } from './js/components/results-panel.js';
 import { initSupplierCarousel, openSupplierCarousel } from './js/components/supplier-carousel.js';
-import { MOCK_SUPPLIERS } from './js/data/mock-suppliers.js';
+
 import { TECHNOLOGY_TAXONOMY } from './js/data/technologies.js';
 import { initAutocomplete } from './js/components/autocomplete.js';
 import { initTechModal } from './js/components/tech-modal.js';
@@ -30,7 +30,7 @@ const appState = {
   hasSearched: false,
   searchType: 'suppliers',
   mode: 'find-supplier',
-  regions: [],
+  stages: [],
   query: '',
   lastSearchResults: [], // Cache results to filter by region locally
   shortlist: [],
@@ -40,6 +40,14 @@ const appState = {
 // ── Boot Sequence ────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('[PRD] Booting PRD Dashboard...');
+  
+  appState.suppliersData = [];
+  try {
+    const res = await fetch('/cms/suppliers.json?_t=' + Date.now());
+    appState.suppliersData = await res.json();
+  } catch(err) {
+    console.error('Failed to load suppliers:', err);
+  }
   
   // 0. Auth Guard — protect the engine
   const user = await getCurrentUser();
@@ -55,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await initNavbar();
 
   // 2. 3D Globe
-  const globe = initGlobe('globe-container', MOCK_SUPPLIERS);
+  const globe = initGlobe('globe-container', appState.suppliersData);
 
   // Theme Toggle temporarily disabled (dark theme enforced)
   // document.body.classList.remove('theme-light');
@@ -94,17 +102,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 
-  // 5. Region chips (Relocated from filter-pills.js)
+  // 5. Stage chips (previously Region chips)
   document.querySelectorAll('.region-chip').forEach(chip => {
     chip.addEventListener('click', () => {
-      const region = chip.dataset.region;
-      const idx = appState.regions.indexOf(region);
+      const stage = chip.dataset.stage;
+      const idx = appState.stages.indexOf(stage);
 
       if (idx >= 0) {
-        appState.regions.splice(idx, 1);
+        appState.stages.splice(idx, 1);
         chip.classList.remove('region-chip--active');
       } else {
-        appState.regions.push(region);
+        appState.stages.push(stage);
         chip.classList.add('region-chip--active');
       }
       
@@ -124,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
   // 6. Autocomplete
-  initAutocomplete();
+  initAutocomplete(appState.suppliersData);
 
   // 7. Tech Modal
   initTechModal();
@@ -168,27 +176,62 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (panel) panel.classList.add('hidden');
   });
 
-  // Save shortlist to workspace
-  document.getElementById('shortlist-save')?.addEventListener('click', async () => {
+  document.getElementById('shortlist-save')?.addEventListener('click', () => {
     if (appState.shortlist.length === 0) return;
-    const name = prompt('Name this shortlist:', `Shortlist — ${new Date().toLocaleDateString()}`);
-    if (!name) return;
+    const saveModal = document.getElementById('tabular-save-modal');
+    if (!saveModal) return;
+    
+    document.getElementById('ts-modal-name').value = `Shortlist — ${new Date().toLocaleDateString()}`;
+    document.getElementById('ts-modal-project').value = '';
+    document.getElementById('ts-modal-comment').value = '';
+    // Store context that we are saving from the globe view
+    saveModal.dataset.source = 'globe';
+    saveModal.classList.remove('hidden');
+  });
 
-    const btn = document.getElementById('shortlist-save');
-    const originalHTML = btn.innerHTML;
-    btn.innerHTML = 'Saving...';
-    btn.style.pointerEvents = 'none';
+  const confirmBtnGlobe = document.getElementById('ts-modal-confirm');
+  confirmBtnGlobe?.addEventListener('click', async () => {
+    const saveModal = document.getElementById('tabular-save-modal');
+    if (saveModal.dataset.source !== 'globe') return;
 
-    const { error } = await saveShortlist(name, appState.shortlist, { query: appState.query });
+    const nameInput = document.getElementById('ts-modal-name');
+    const projectInput = document.getElementById('ts-modal-project');
+    const commentInput = document.getElementById('ts-modal-comment');
+
+    const name = nameInput.value.trim();
+    if (!name) {
+      nameInput.style.borderColor = '#f87171';
+      return;
+    }
+    nameInput.style.borderColor = 'var(--color-slate-600)';
+    
+    const meta = { 
+      source: 'globe',
+      query: appState.query,
+      project: projectInput.value.trim(),
+      comment: commentInput.value.trim()
+    };
+    
+    confirmBtnGlobe.textContent = 'Saving...';
+    confirmBtnGlobe.style.pointerEvents = 'none';
+
+    const { error } = await saveShortlist(name, appState.shortlist, meta);
     
     if (error) {
-      btn.innerHTML = '❌ Error';
-      btn.style.color = '#f87171';
-      setTimeout(() => { btn.innerHTML = originalHTML; btn.style.color = ''; btn.style.pointerEvents = ''; }, 2000);
+      confirmBtnGlobe.textContent = 'Failed';
+      confirmBtnGlobe.style.backgroundColor = '#f85149';
+      setTimeout(() => { 
+        confirmBtnGlobe.textContent = 'Save to Workspace'; 
+        confirmBtnGlobe.style.backgroundColor = 'var(--color-emerald)';
+        confirmBtnGlobe.style.pointerEvents = ''; 
+      }, 2000);
     } else {
-      btn.innerHTML = '✓ Saved!';
-      btn.style.color = '#34d399';
-      setTimeout(() => { btn.innerHTML = originalHTML; btn.style.color = ''; btn.style.pointerEvents = ''; }, 2000);
+      confirmBtnGlobe.textContent = 'Saved!';
+      setTimeout(() => { 
+        saveModal.classList.add('hidden'); 
+        confirmBtnGlobe.textContent = 'Save to Workspace'; 
+        confirmBtnGlobe.style.pointerEvents = ''; 
+      }, 1000);
     }
   });
 
@@ -244,93 +287,97 @@ function handleSearch(globe) {
 
   // Show bottom results container
   const bottomResults = document.getElementById('bottom-results-container');
-  if (bottomResults) bottomResults.classList.remove('hidden');
+  if (bottomResults) {
+      bottomResults.classList.remove('hidden');
+      bottomResults.style.display = '';
+  }
 
   appState.hasSearched = true;
 
   // Hide scroll hint
   document.getElementById('scroll-hint')?.style.setProperty('opacity', '0');
 
-  // Cache results for region filtering
-  appState.lastSearchResults = [...MOCK_SUPPLIERS];
+  window.addEventListener('prd-clear-results', () => {
+    appState.query = '';
+    appState.hasSearched = false;
+    appState.stages = [];
+    document.querySelectorAll('.region-chip').forEach(chip => chip.classList.remove('region-chip--active'));
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.value = '';
+    hideStackedResults();
+    globe.showSuppliers([]); // clear highlighted dots
+    globe.resumeRotation(); // optionally resume globe spin
+    const titleContainer = document.querySelector('.hero__title-container');
+    if (titleContainer) titleContainer.style.display = 'block';
+  });
 
-  // Render results
-  updateStackedResultsOnly(globe);
+  // Cache results for region filtering
+  // Fetch real data to cache if empty, else use state
+  if (appState.suppliersData && appState.suppliersData.length > 0) {
+    appState.lastSearchResults = appState.suppliersData;
+    updateStackedResultsOnly(globe);
+  } else {
+    fetch('/cms/suppliers.json?_t=' + Date.now()).then(r=>r.json()).then(data => {
+        appState.suppliersData = data;
+        appState.lastSearchResults = data;
+        updateStackedResultsOnly(globe);
+    }).catch(() => {
+        updateStackedResultsOnly(globe);
+    });
+  }
 }
 
 function updateStackedResultsOnly(globe) {
   let results = [...appState.lastSearchResults];
   const query = appState.query.toLowerCase();
 
-  // 1. Filter by region first (if any)
-  if (appState.regions.length > 0) {
-    const regionMap = {
-      cn: 'China', vn: 'Vietnam', th: 'Thailand',
-      tw: 'Taiwan', in: 'India', us: 'USA', au: 'Australia',
-    };
-    const allowed = appState.regions.map(r => regionMap[r]);
-    results = results.filter(s => allowed.includes(s.country));
+  // 1. Filter by stage first (if any)
+  if (appState.stages.length > 0) {
+    results = results.filter(s => {
+      return appState.stages.some(st => {
+        const stageMatch = st.toLowerCase();
+        
+        // Custom attribute overrides for the new buttons
+        if (stageMatch === 'low volume') {
+          return (s.scoreLowVolume && s.scoreLowVolume > 0);
+        }
+        if (stageMatch === 'high volume') {
+          return (s.scoreHighVolume && s.scoreHighVolume > 0);
+        }
+        if (stageMatch === 'manufacturing') {
+          return `${s.techGroup} ${(s.technologies || []).join(' ')}`.toLowerCase().includes('manufactur') || 
+                 `${s.techGroup} ${(s.technologies || []).join(' ')}`.toLowerCase().includes('cm');
+        }
+        if (stageMatch === 'prototype') {
+          return `${s.techGroup} ${(s.technologies || []).join(' ')}`.toLowerCase().includes('prototyp');
+        }
+        
+        // Fallback text search
+        const textToSearch = `${s.stage || ''} ${s.segment || ''} ${(s.technologies || []).join(' ')}`.toLowerCase();
+        return textToSearch.includes(stageMatch);
+      });
+    });
   }
 
-  // 2. Identify search context (MainCategory vs SubCategory)
-  let matchingMainCat = null;
-  let matchingSubCat = null;
+  // 2. Filter by Search Query
+  let filteredResults = results;
+  let groupTitle = appState.query || 'Results';
   
-  // Normalize query for matching ('molding' -> 'moulding')
-  const normQuery = query.replace(/molding/g, 'moulding');
-
-  // Check main categories
-  for (const mainCat in TECHNOLOGY_TAXONOMY) {
-    if (mainCat.toLowerCase() === normQuery) {
-      matchingMainCat = mainCat;
-      break;
-    }
-    // Check sub categories
-    const subCategories = TECHNOLOGY_TAXONOMY[mainCat];
-    const subIdx = subCategories.findIndex(sub => sub.toLowerCase() === normQuery);
-    if (subIdx !== -1) {
-      matchingSubCat = subCategories[subIdx];
-      break;
-    }
-  }
-
-  // 3. Filter and Group
-  let filteredResults = [];
-  let groupingMode = 'default'; // 'sub-categories' or 'fixed-group'
-  let groupTitle = matchingSubCat || matchingMainCat || appState.query;
-
-  if (matchingMainCat) {
-    // If searching for main category, get all suppliers that match this category ANYWHERE
-    filteredResults = results.filter(s => {
-      const sTechs = (s.technologies || []).map(t => t.toLowerCase().replace(/molding/g, 'moulding'));
-      const sGroup = (s.techGroup || '').toLowerCase().replace(/molding/g, 'moulding');
-      return sGroup === normQuery || sTechs.includes(normQuery);
-    });
-    groupingMode = 'sub-categories';
-  } else if (matchingSubCat) {
-    // If searching for sub-category, only show suppliers with that specific tag
-    filteredResults = results.filter(s => {
-      const sTechs = (s.technologies || []).map(t => t.toLowerCase().replace(/molding/g, 'moulding'));
-      return sTechs.includes(normQuery);
-    });
-    groupingMode = 'fixed-group';
-  } else {
-    // General text search fallback
+  if (query) {
     filteredResults = results.filter(s => {
       const text = `${s.name} ${s.techGroup} ${(s.technologies || []).join(' ')}`.toLowerCase();
       return text.includes(query);
     });
-    groupingMode = 'default';
   }
 
-  // 4. Render
+  // 3. Render
   renderStackedResults(filteredResults, (techName, suppliers) => {
     if (suppliers.length > 1) {
       import('./js/components/supplier-grid.js').then(m => m.openSupplierGrid(techName, suppliers));
     } else {
       openSupplierCarousel(techName, suppliers);
     }
-  }, { groupingMode, groupTitle, mainTech: matchingMainCat });
+  }, { groupingMode: 'default', groupTitle });
 
   // Update globe dots
   globe.showSuppliers(filteredResults);
@@ -351,6 +398,9 @@ function switchView(view, globe) {
   const modeToggles = document.getElementById('search-mode-toggles');
   const hero = document.getElementById('hero');
 
+  const selectionScreen = document.getElementById('supplier-selection');
+  const tabularEngine = document.getElementById('supplier-tabular-engine');
+
   console.log('[PRD] Switching to view:', view);
 
   // Reset defaults
@@ -360,7 +410,9 @@ function switchView(view, globe) {
   productBuilderEngine?.classList.add('hidden');
   tariffEngine?.classList.add('hidden');
   hero?.classList.remove('hidden');
-  
+  tabularEngine?.classList.add('hidden');
+  selectionScreen?.classList.add('hidden');
+
   // Clean up global nav states
   document.querySelectorAll('.navbar__menu-item').forEach(item => {
     item.classList.remove('navbar__menu-item--active');
@@ -420,6 +472,8 @@ function switchView(view, globe) {
 
   } else if (view === 'suppliers') {
     appState.searchType = 'suppliers';
+    selectionScreen?.classList.remove('hidden');
+    
     if (appState.hasSearched) {
       bottomResults?.classList.remove('hidden');
       updateStackedResultsOnly(globe);

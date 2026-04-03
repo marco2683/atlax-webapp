@@ -216,13 +216,24 @@ function renderGridCards(suppliers) {
     return;
   }
 
+  const DEFAULT_BANNER = 'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1200&q=80';
+  
   suppliers.forEach((s, index) => {
-    const base = index % POOL_IMAGES.length;
-    const images = [
-      s.bannerImage || POOL_IMAGES[base],
-      POOL_IMAGES[(base + 1) % POOL_IMAGES.length],
-      POOL_IMAGES[(base + 2) % POOL_IMAGES.length]
-    ];
+    let images = [];
+    if (s.banner) images.push(s.banner);
+    else if (s.bannerImage) images.push(s.bannerImage);
+    
+    if (s.images) {
+      if (s.images.product) images.push(...s.images.product);
+      if (s.images.facility) images.push(...s.images.facility);
+      if (s.images.equipment) images.push(...s.images.equipment);
+    }
+    
+    if (images.length === 0) images.push(DEFAULT_BANNER);
+    
+    // limit grid preview to 3 or 4 images to stay clean
+    images = images.slice(0, 4);
+
     const techTags = (s.technologies || []).slice(0, 3).map(t => `<span class="sgrid-tag">${t}</span>`).join('');
 
     let scoreColor = '#6b7280';

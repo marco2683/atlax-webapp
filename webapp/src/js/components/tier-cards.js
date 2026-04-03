@@ -108,3 +108,5 @@ export function openTierModal() {
   backdrop?.classList.remove('hidden');
   modal?.classList.remove('hidden');
 }
+
+window.addEventListener('prd-open-tier-modal', openTierModal);

@@ -1,6 +1,4 @@
-import { ALL_TECHNOLOGIES, TECHNOLOGY_TAXONOMY } from '../data/technologies.js';
-
-export function initAutocomplete() {
+export function initAutocomplete(suppliersData = []) {
   const input = document.getElementById('search-input');
   const searchBar = document.getElementById('search-bar');
   const submitBtn = document.getElementById('search-submit');
@@ -28,22 +26,26 @@ export function initAutocomplete() {
       return;
     }
 
-    const matches = ALL_TECHNOLOGIES.filter(t => t.toLowerCase().includes(val)).slice(0, 10);
+    // Extract live searchable terms from data (names, groups, technologies)
+    const terms = new Set();
+    (suppliersData || []).forEach(s => {
+      if (s.name) terms.add(s.name);
+      if (s.group) terms.add(s.group);
+      if (s.techGroup) terms.add(s.techGroup);
+      if (Array.isArray(s.technologies)) {
+        s.technologies.forEach(t => terms.add(t));
+      }
+    });
+    
+    const activeTerms = [...terms].filter(Boolean);
+    const matches = activeTerms.filter(t => t.toLowerCase().includes(val)).slice(0, 10);
     
     if (matches.length > 0) {
       dropdown.classList.remove('hidden');
       matches.forEach(m => {
         const item = document.createElement('div');
         item.className = 'search-autocomplete__item';
-        
-        // Check if it's a sub-category and find parent
-        let parentCategory = null;
-        for (const [parent, subs] of Object.entries(TECHNOLOGY_TAXONOMY)) {
-          if (subs.includes(m)) parentCategory = parent;
-        }
-
-        const label = parentCategory ? `${m} <span style="color:var(--color-steel-400); font-size:11px; margin-left:8px; opacity: 0.6;">in ${parentCategory}</span>` : `<strong>${m}</strong>`;
-        item.innerHTML = label;
+        item.innerHTML = `<strong>${m}</strong>`;
         
         item.addEventListener('click', () => {
           input.value = m;

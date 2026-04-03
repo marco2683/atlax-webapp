@@ -1,0 +1,370 @@
+{
+  "version": 2,
+  "lastUpdated": "2026-04-03T01:20:00Z",
+  "pages": {
+    "portfolio": {
+      "hero": {
+        "title": "Product Portfolio",
+        "subtitle": "A selection of the products we've engineered, sourced, and manufactured for global brands. From concept to mass production.",
+        "backgroundImage": "/assets/portfolio/factory-floor.png"
+      },
+      "sections": [
+        {
+          "id": "consumer-products",
+          "title": "Consumer Products",
+          "description": "Advanced electronics, home goods, and innovative gadgets designed for global markets with strict quality specifications.",
+          "items": [
+            {
+              "id": "cp-1",
+              "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop",
+              "alt": "Premium Headphones",
+              "title": "Premium Headphones",
+              "description": "Noise-cancelling over-ear headphones with precision-milled aluminum frame and memory-foam cushions. Designed for audiophile-grade sound reproduction.",
+              "tags": ["Audio", "Consumer Electronics", "CNC Machining"]
+            },
+            {
+              "id": "cp-2",
+              "image": "https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=800&auto=format&fit=crop",
+              "alt": "Smartwatch",
+              "title": "Smartwatch",
+              "description": "Titanium-encased smartwatch with ceramic bezel and sapphire crystal display. IP68 rated with optical heart rate sensor array.",
+              "tags": ["Wearables", "Consumer Electronics", "Injection Moulding"]
+            },
+            {
+              "id": "cp-3",
+              "image": "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?q=80&w=800&auto=format&fit=crop",
+              "alt": "Smart Home Device",
+              "title": "Smart Home Hub",
+              "description": "Voice-controlled home automation hub with far-field microphone array and 360° speaker. Soft-touch silicone exterior with weighted base.",
+              "tags": ["IoT", "Smart Home", "Overmoulding"]
+            },
+            {
+              "id": "cp-4",
+              "image": "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?q=80&w=800&auto=format&fit=crop",
+              "alt": "Mechanical Keyboard",
+              "title": "Mechanical Keyboard",
+              "description": "Custom mechanical keyboard with anodized aluminum chassis and hot-swappable switches. PBT double-shot keycaps with RGB backlighting.",
+              "tags": ["Peripherals", "Consumer Electronics", "CNC Machining"]
+            },
+            {
+              "id": "cp-5",
+              "image": "https://images.unsplash.com/photo-1606220838315-056192d5e927?q=80&w=800&auto=format&fit=crop",
+              "alt": "Coffee Maker",
+              "title": "Precision Coffee Maker",
+              "description": "Temperature-controlled pour-over coffee system with stainless steel thermal carafe and borosilicate glass brew chamber.",
+              "tags": ["Kitchen Appliance", "Sheet Metal", "Glass Forming"]
+            },
+            {
+              "id": "cp-6",
+              "image": "https://images.unsplash.com/photo-1583394838336-aced97838b38?q=80&w=800&auto=format&fit=crop",
+              "alt": "Gaming Mouse",
+              "title": "Gaming Mouse",
+              "description": "Ergonomic gaming mouse with honeycomb shell design for ultra-lightweight performance. PTFE feet and paracord cable.",
+              "tags": ["Peripherals", "Gaming", "Injection Moulding"]
+            }
+          ]
+        },
+        {
+          "id": "industrial-tooling",
+          "title": "Industrial & Tooling",
+          "description": "High-precision components, CNC machined parts, and robust industrial assemblies built for harsh environments.",
+          "items": [
+            {
+              "id": "it-1",
+              "image": "/assets/images/manufacturing/IMG_2879.JPG",
+              "alt": "CNC Machined Part",
+              "title": "CNC Machined Component",
+              "description": "Multi-axis CNC machined aerospace component in 7075-T6 aluminum. Tolerances held to ±0.02mm across all critical features.",
+              "tags": ["CNC Machining", "Aerospace", "Aluminum"]
+            },
+            {
+              "id": "it-2",
+              "image": "/assets/images/manufacturing/IMG_1924.JPG",
+              "alt": "Microchips",
+              "title": "PCBA Assembly",
+              "description": "Multi-layer PCB assembly with BGA components and conformal coating. IPC Class 3 workmanship standards.",
+              "tags": ["PCBA", "Electronics", "SMT"]
+            },
+            {
+              "id": "it-3",
+              "image": "/assets/images/manufacturing/IMG_4367.JPG",
+              "alt": "Steel Tooling",
+              "title": "Steel Tooling & Moulds",
+              "description": "P20 steel injection mould with hot runner system. 500K+ shot life with mirror polish cavity finish.",
+              "tags": ["Tooling", "Injection Moulding", "Steel"]
+            },
+            {
+              "id": "it-4",
+              "image": "/assets/images/manufacturing/IMG_4388.JPG",
+              "alt": "Motor Assembly",
+              "title": "Motor Assembly Line",
+              "description": "Automated BLDC motor assembly with dynamic balancing and end-of-line testing. 100% inspection protocol.",
+              "tags": ["Motors", "Assembly", "Automation"]
+            },
+            {
+              "id": "it-5",
+              "image": "/assets/images/manufacturing/20180629_161409.jpg",
+              "alt": "Industrial Assembly",
+              "title": "Industrial Sub-Assembly",
+              "description": "Complex multi-part industrial sub-assembly with precision press-fit components and torque-controlled fastening.",
+              "tags": ["Assembly", "Industrial", "QC"]
+            },
+            {
+              "id": "it-6",
+              "image": "/assets/images/manufacturing/20181224_134542_HDR.jpg",
+              "alt": "Manufacturing Facility",
+              "title": "Manufacturing Floor",
+              "description": "ISO 14644 Class 7 cleanroom manufacturing environment for sensitive electronic assemblies and medical devices.",
+              "tags": ["Facility", "Cleanroom", "ISO"]
+            }
+          ]
+        },
+        {
+          "id": "softgoods-bags",
+          "title": "Softgoods & Bags",
+          "description": "Premium textiles, backpacks, and tactical gear featuring high-durability stitching and weatherproof materials.",
+          "items": [
+            {
+              "id": "sb-1",
+              "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=800&auto=format&fit=crop",
+              "alt": "Backpack",
+              "title": "Technical Backpack",
+              "description": "1000D Cordura ballistic nylon backpack with YKK AquaGuard zippers and EVA-molded back panel for ventilation.",
+              "tags": ["Softgoods", "Bags", "Textiles"]
+            },
+            {
+              "id": "sb-2",
+              "image": "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=800&auto=format&fit=crop",
+              "alt": "Travel Bag",
+              "title": "Travel Duffel",
+              "description": "Weatherproof travel duffel with RF-welded seams and reinforced stress points. Removable shoulder strap system.",
+              "tags": ["Softgoods", "Travel", "RF Welding"]
+            },
+            {
+              "id": "sb-3",
+              "image": "https://images.unsplash.com/photo-1547949007-53504fb471cc?q=80&w=800&auto=format&fit=crop",
+              "alt": "Duffel Bag",
+              "title": "Gym Duffel",
+              "description": "Ventilated compartment gym duffel with antimicrobial lining and shoe pocket. Lightweight ripstop construction.",
+              "tags": ["Softgoods", "Bags", "Sportswear"]
+            }
+          ]
+        }
+      ]
+    },
+    "home": {
+      "hero": {
+        "chip": "Competitive by Design. Global by Execution.",
+        "title": "Strategic Product Realization",
+        "subtitle": "Product Design | Strategic Sourcing | Competitive Manufacturing",
+        "description": "Western design wins users. Asian manufacturing wins margins. We setup your project for success. Vetted and managed Supply Chain, Instant Quotes, Design and PLM services all in one platform.",
+        "ctaPrimary": "Access Manufacturing Engine",
+        "ctaSecondary": "Capabilities"
+      },
+      "mergerCards": {
+        "west": {
+          "image": "/assets/images/prd_western_design.png",
+          "tag": "AUS • USA",
+          "title": "Front-End Innovation",
+          "line1": "Industrial Design, Mechanical & Electrical Engineering",
+          "line2": "Systems Architecture & Integration"
+        },
+        "east": {
+          "image": "/assets/images/prd_hero_factory.png",
+          "tag": "CHINA (PRD)",
+          "title": "Manufacturing Engine",
+          "line1": "Engineering for Manufacturing",
+          "line2": "High-Velocity Execution & Supply Chain"
+        }
+      },
+      "capabilities": {
+        "sectionTitle": "Core Capabilities.",
+        "sectionDescription": "Your trusted partner in tooling, molding, and contract manufacturing. We uphold respect, transparency, and equality in every collaboration.",
+        "cards": [
+          {
+            "id": "cap-1",
+            "image": "/assets/images/manufacturing/20161202_165041.jpg",
+            "title": "Mold Manufacturing",
+            "description": "With over 15 years of international mold making experience, our team delivers precise, reliable molds that keep your production running smoothly."
+          },
+          {
+            "id": "cap-2",
+            "image": "/assets/images/manufacturing/IMG_1518.JPG",
+            "title": "Plastic Injection",
+            "description": "High-precision molding for medical and high-performance applications."
+          },
+          {
+            "id": "cap-3",
+            "image": "/assets/images/manufacturing/IMG_5367.JPG",
+            "title": "Contract Mfg",
+            "description": "Flexible, efficient, one-stop manufacturing for a complete end-to-end service."
+          },
+          {
+            "id": "cap-4",
+            "image": "/assets/images/manufacturing/IMG_4365.JPG",
+            "title": "Medical Solutions",
+            "description": "Certified cleanroom production complying with ISO 13485 for rigorous regulatory requirements and high-end diagnostics."
+          },
+          {
+            "id": "cap-5",
+            "image": "/assets/images/manufacturing/IMG_1903.JPG",
+            "title": "Engineering",
+            "description": "Advanced DFM checking and tooling architecture."
+          },
+          {
+            "id": "cap-6",
+            "image": "/assets/images/manufacturing/smt.jpg",
+            "title": "PCBA Development",
+            "description": "High-density circuit board design and custom firmware orchestration."
+          }
+        ]
+      },
+      "oneStopShop": {
+        "sectionTitle": "One-Stop Shop",
+        "sectionDescription": "From regulated medical devices and high-quality consumer electronics to complex industrial equipment and premium home appliances. We guide your product from early ideation all the way to massive yield manufacturing."
+      },
+      "portfolioPreview": {
+        "sectionChip": "Our Work",
+        "sectionTitle": "Products We've Brought to Life",
+        "sectionDescription": "From concept sketches to mass production — real products, engineered and manufactured through our ecosystem."
+      },
+      "locations": {
+        "sectionTitle": "Facilities & Hubs",
+        "sectionDescription": "We operate where the magic happens. From our innovation hub down under, to the world's factory floor of South-East Asia.",
+        "cards": [
+          {
+            "id": "loc-aus",
+            "image": "/assets/images/location_exterior_1.png",
+            "country": "Australia",
+            "label": "Innovation & Strategy Hub",
+            "address": "Corner Carrington Rd & Thurston St\nSuite 10/1 Main St\nBox Hill VIC 3128"
+          },
+          {
+            "id": "loc-usa",
+            "image": "/assets/images/location_exterior_2.png",
+            "country": "USA",
+            "label": "Client Success & Logistics",
+            "address": "500 Terry Francine Street\nSan Francisco, CA 94158"
+          },
+          {
+            "id": "loc-china",
+            "image": "/assets/images/china-facility.png",
+            "country": "China",
+            "label": "Manufacturing & Operations",
+            "address": "No 8 XiJing Road\nLonghua District, Shenzhen\nGuangdong"
+          }
+        ]
+      },
+      "dataCta": {
+        "title": "Data-Driven Intelligence.",
+        "description": "Stop guessing. We've built an interconnected 3D platform targeting the Pearl River Delta to map, vet, and shortlist the most capable suppliers."
+      }
+    },
+    "services": {
+      "hero": {
+        "title": "Bringing Products to Life",
+        "description": "At ATLAX, we bridge strategic sourcing, deep engineering expertise, and quality surveillance into one seamless process. With on-the-ground capability across Asia, we help hardware brands scale confidently."
+      },
+      "blocks": [
+        {
+          "id": "svc-sourcing",
+          "title": "Strategic Sourcing",
+          "description": "We find, qualify, and manage the right factory partners, ensuring your production stays agile, transparent, and highly competitive globally.",
+          "image": "/assets/strategic-sourcing-map.jpg",
+          "listHeading": "What We Do",
+          "listItems": [
+            { "bold": "Trusted Partners:", "text": "Access our deeply vetted network of tier-1 and tier-2 vendors spanning electronics, plastics, to soft-goods." },
+            { "bold": "Country-of-Origin Diversification:", "text": "Expand beyond a single region to mitigate tariff risk." },
+            { "bold": "Factory Qualification:", "text": "Rigorous facility auditing for IP protection, compliance, and scalability." },
+            { "bold": "Market Benchmarking:", "text": "Multi-vendor comparisons to guarantee you are receiving authentic market-rate COGS." }
+          ],
+          "resultTitle": "The Result",
+          "resultText": "A resilient, aggressively optimized supply chain that protects your margins no matter the macroeconomic environment."
+        },
+        {
+          "id": "svc-engineering",
+          "title": "Product Engineering & DFM",
+          "description": "We bridge the gap between design intent and production reality. Our leadership works directly beside your industrial design team to validate builds and optimize for scale.",
+          "image": "/assets/images/manufacturing/20181224_134641.jpg",
+          "listHeading": "What We Do",
+          "listItems": [
+            { "bold": "Design for Manufacturing (DFM):", "text": "Translating aesthetic CAD into moldable, assemble-able geometry to minimize tooling costs." },
+            { "bold": "Validation Builds:", "text": "Strict gateway management spanning EVT, DVT, to PVT." },
+            { "bold": "Value Engineering:", "text": "Rapid prototyping iteration to find the perfect equilibrium between quality, feel, and unit cost." },
+            { "bold": "Compliance Coordination:", "text": "Turnkey handling for CE, FCC, RoHS, and other regulatory testing." }
+          ],
+          "resultTitle": "The Result",
+          "resultText": "De-risked tooling capital and defect-free first production runs that are delivered fully certified and on schedule."
+        },
+        {
+          "id": "svc-quality",
+          "title": "Quality Deploy",
+          "description": "Our Quality Assurance programs stretch far beyond end-of-line inspection; they are engineered natively into the manufacturing pipeline to systematically prevent defects before tooling is even cut.",
+          "image": "/assets/images/manufacturing/IMG_2094.JPG",
+          "listHeading": "What We Do",
+          "listItems": [
+            { "bold": "SKU-Specific QA Plans:", "text": "Defining precise, measurable acceptance standards (AQLs) customized for each product." },
+            { "bold": "Third-Party QC Inspections:", "text": "On-site surveillance including Incoming Quality (IQC), In-Process (IPQC), and Outgoing (OQC)." },
+            { "bold": "Root-Cause Resolution:", "text": "Immediate Corrective Action tracing (CAPA) working alongside factory floors to permanently eliminate defect vectors." },
+            { "bold": "Continuous Feedback:", "text": "Translating fault data from Pilot Runs into mandatory design tweaks for Mass Production." }
+          ],
+          "resultTitle": "The Result",
+          "resultText": "A militant, data-driven quality ecosystem that protects your brand's reputation by ensuring uniform excellence in every shipment."
+        }
+      ]
+    },
+    "about": {
+      "hero": {
+        "chip": "Our History & Mission",
+        "title": "Engineering the Unfair Advantage.",
+        "description": "What started as an industrial design and engineering consultancy has evolved into an end-to-end strategic product realization firm. We bridge the gap between premium western product design and high-velocity Asian manufacturing."
+      },
+      "mediaGrid": {
+        "image1": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&q=80",
+        "image2": "https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?auto=format&fit=crop&w=600&q=80"
+      },
+      "methodology": {
+        "sectionTitle": "Execution at the Speed of Thought",
+        "sectionDescription": "We save our clients time and capital by doing just enough, just in time. By combining common-sense engineering with deeply integrated supply chains, we transform the strictly linear waterfall into rapid, de-risked parallel loops."
+      },
+      "team": {
+        "sectionTitle": "Leadership Team",
+        "sectionDescription": "Our leadership combines decades of experience navigating the complexities of Asian supply chains and Western boardroom expectations.",
+        "members": [
+          {
+            "id": "team-1",
+            "photo": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&h=400&q=80",
+            "name": "Placeholder Name",
+            "role": "CEO",
+            "description": "20+ years of hardware strategy and strategic sourcing execution.",
+            "accentColor": "var(--color-electric)"
+          },
+          {
+            "id": "team-2",
+            "photo": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&h=400&q=80",
+            "name": "Placeholder Name",
+            "role": "Head of Engineering",
+            "description": "Mechatronics expert turning complex concepts into manufacturable units.",
+            "accentColor": "var(--color-neon-purple)"
+          },
+          {
+            "id": "team-3",
+            "photo": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&h=400&q=80",
+            "name": "Placeholder Name",
+            "role": "Lead ID",
+            "description": "Designing award-winning class-A surfaces for consumer products.",
+            "accentColor": "var(--color-neon-cyan)"
+          },
+          {
+            "id": "team-4",
+            "photo": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&h=400&q=80",
+            "name": "Placeholder Name",
+            "role": "Supply Chain Director",
+            "description": "Navigating raw material procurement and multi-tier vendor risk.",
+            "accentColor": "var(--color-amber)"
+          }
+        ]
+      }
+    }
+  }
+}
