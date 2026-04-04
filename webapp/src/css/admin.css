@@ -1439,3 +1439,150 @@ tr.row-disabled td {
     font-size: 12px;
   }
 }
+
+/* Customer CRM Modal Styles */
+.admin-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.admin-modal-content {
+  background: var(--color-slate-900);
+  border: 1px solid var(--color-slate-800);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 600px;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+body.theme-light .admin-modal-content {
+  background: var(--color-white);
+  border: 1px solid var(--color-slate-200);
+  color: var(--color-slate-900);
+}
+.admin-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-slate-800);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+body.theme-light .admin-modal-header {
+  border-bottom: 1px solid var(--color-slate-200);
+}
+.admin-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+.admin-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: var(--color-steel-400);
+  cursor: pointer;
+  line-height: 1;
+}
+.admin-modal-body {
+  padding: 24px;
+}
+.admin-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--color-slate-800);
+  display: flex;
+  background: rgba(0,0,0,0.2);
+}
+body.theme-light .admin-modal-footer {
+  border-top: 1px solid var(--color-slate-200);
+  background: rgba(0,0,0,0.02);
+}
+
+
+/* Extracted Form styles for Modals */
+.admin-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.admin-form-group label {
+  font-weight: 600;
+  font-size: 14px;
+}
+.admin-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-slate-700);
+  background: var(--color-slate-900);
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  box-sizing: border-box; /* To prevent overflow from padding */
+}
+body.theme-light .admin-input {
+  background: var(--color-white);
+  border: 1px solid var(--color-slate-300);
+  color: var(--color-slate-900);
+}
+.admin-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+/* Customer CRM Toolbar Styles */
+.admin-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.admin-toolbar-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--color-slate-700);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  width: 320px;
+}
+
+body.theme-light .admin-toolbar-search {
+  background: var(--color-white);
+  border: 1px solid var(--color-slate-300);
+}
+
+.admin-toolbar-search svg {
+  color: var(--color-slate-400);
+}
+
+.admin-toolbar-search input {
+  background: transparent;
+  border: none;
+  color: #fff;
+  width: 100%;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+}
+
+.admin-toolbar-search input::placeholder {
+  color: var(--color-slate-500);
+}
+
+body.theme-light .admin-toolbar-search input {
+  color: var(--color-slate-900);
+}
+
+body.theme-light .admin-toolbar-search input::placeholder {
+  color: var(--color-slate-400);
+}

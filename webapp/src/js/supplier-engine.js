@@ -82,8 +82,34 @@ document.addEventListener('DOMContentLoaded', async () => {
   enterBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      if (salesFunnel) salesFunnel.classList.add('hidden');
-      openTabularView();
+      
+      // Zero-Trust Authorization Logic
+      const tier = btn.dataset.tier || 'basic';
+      sessionStorage.setItem('atlax_tier', tier);
+      console.log(`[Auth] Logged in as: ${tier.toUpperCase()}`);
+
+      if (tier === 'basic') {
+        // Enforce Basic Restrictions by physically removing DOM nodes
+        const suppliersMenu = document.querySelector('.navbar__menu-item[data-view="suppliers"]');
+        const builderMenu = document.querySelector('.navbar__menu-item[data-view="product-builder"]');
+        const tariffMenu = document.querySelector('.navbar__menu-item[data-view="tariff"]');
+        // Extra nodes to remove from DOM completely so they cannot be accessed
+        if (suppliersMenu) suppliersMenu.remove();
+        if (builderMenu) builderMenu.remove();
+        if (tariffMenu) tariffMenu.remove();
+
+        // Boot Basic users straight into RFQ
+        if (salesFunnel) salesFunnel.classList.add('hidden');
+        if (window.switchView) {
+          window.switchView('rfq'); 
+        } else {
+          openTabularView(); // Safe fallback
+        }
+      } else {
+        // Professional / Enterprise get full entry
+        if (salesFunnel) salesFunnel.classList.add('hidden');
+        openTabularView();
+      }
     });
   });
 

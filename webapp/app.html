@@ -142,6 +142,7 @@
 
       <!-- SUPPLIER SELECTION SCREEN -->
       <div class="sales-funnel-page hidden" id="sales-funnel">
+        <div class="sales-grid-bg"></div>
         <div class="sales-funnel__content">
           
           <!-- Hero Section -->
@@ -153,22 +154,22 @@
           <!-- Value / Pain Points Section -->
           <section class="sales-value-props">
             <div class="sales-value-item">
-              <div class="sales-value-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <div class="sales-value-image">
+                <img src="/images/showcase-1.png" alt="Rigorous Verification" onerror="this.style.display='none'">
               </div>
               <h3>Rigorous Verification</h3>
               <p>Say goodbye to unverified brokers. Every supplier on ATLAX undergoes strict on-site audits, ISO compliance checks, and capability verification.</p>
             </div>
             <div class="sales-value-item">
-              <div class="sales-value-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+              <div class="sales-value-image">
+                <img src="/images/showcase-4.png" alt="Instant Quoting" onerror="this.style.display='none'">
               </div>
               <h3>Instant Quoting</h3>
               <p>Stop waiting weeks for RFQs. Upload CAD files for instant, AI-driven part-by-part cost breakdowns based on live material data.</p>
             </div>
             <div class="sales-value-item">
-              <div class="sales-value-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              <div class="sales-value-image">
+                <img src="/images/showcase-5.png" alt="End-to-End Management" onerror="this.style.display='none'">
               </div>
               <h3>End-to-End Management</h3>
               <p>From industrial designers to global freight, manage your entire hardware development lifecycle in one unified workspace.</p>
@@ -176,20 +177,29 @@
           </section>
 
           <!-- Showcase Section (Using User's Screenshots) -->
-          <section class="sales-showcase">
+          <section class="sales-showcase" style="overflow: hidden; width: 100vw; margin-left: calc(-50vw + 50%);">
             <h2 class="sales-section-title">Built for Scale and Precision</h2>
-            <div class="sales-gallery">
-              <div class="sales-gallery-col">
-                <img src="/images/showcase-1.png" alt="Platform UI" class="sales-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-2.png" alt="Platform UI" class="sales-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-5.png" alt="Platform UI" class="sales-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-7.png" alt="Platform UI" class="sales-img" onerror="this.src='/images/placeholder-ui.png'">
-              </div>
-              <div class="sales-gallery-col" style="margin-top: 60px;">
-                <img src="/images/showcase-3.png" alt="Platform UI" class="sales-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-4.png" alt="Platform UI" class="sales-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-6.png" alt="Platform UI" class="sales-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-8.png" alt="Platform UI" class="sales-img" onerror="this.src='/images/placeholder-ui.png'">
+            <div class="sales-marquee-container">
+              <div class="sales-marquee-track">
+                <!-- Group 1 -->
+                <img src="/images/showcase-1.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-2.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-3.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-4.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-5.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-6.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-7.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-8.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                
+                <!-- Group 2 (Duplicate for infinite scroll) -->
+                <img src="/images/showcase-1.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-2.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-3.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-4.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-5.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-6.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-7.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-8.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
               </div>
             </div>
           </section>
@@ -208,32 +218,34 @@
                 <div class="pricing-card-header">
                   <h3>Basic</h3>
                   <div class="price">Free</div>
-                  <p>Essential tools for sourcing.</p>
+                  <p>Essential tools for designers & quoting.</p>
                 </div>
                 <ul class="pricing-features">
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Access to Tier-1 Suppliers</li>
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Instant RFQ & Bulk Upload</li>
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Designer 'Find Work' Board</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Instant RFQ Quoting Engine</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Bulk Upload Capabilities</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Find Design Work Board</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Offer Development Work</li>
+                  <li style="color: rgba(255,255,255,0.3);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> No Global Supplier Access</li>
                 </ul>
-                <button class="pricing-btn pricing-btn--secondary btn-enter-platform">Get Started Free</button>
+                <button class="pricing-btn pricing-btn--secondary btn-enter-platform" data-tier="basic">Start Building Free</button>
               </div>
 
               <!-- Professional -->
               <div class="pricing-card popular">
                 <div class="pricing-glow"></div>
-                <div class="popular-badge">Most Popular</div>
+                <div class="popular-badge">Premium Toolkit</div>
                 <div class="pricing-card-header">
                   <h3>Professional</h3>
                   <div class="price">$49<span>/mo</span></div>
-                  <p>Full suite for hardware creators.</p>
+                  <p>Full lifecycle supply chain.</p>
                 </div>
                 <ul class="pricing-features">
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> All 1,100+ Tier 1, 2 & OEM Suppliers</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Full All-Supplier Access</li>
                   <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Platform Product Builder</li>
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> HS Tariff Optimizer Tool</li>
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Advanced Quoting Features</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> HS Tariff Optimizer</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Everything in Basic</li>
                 </ul>
-                <button class="pricing-btn pricing-btn--primary btn-enter-platform">Start Premium Trial</button>
+                <button class="pricing-btn pricing-btn--primary btn-enter-platform" data-tier="professional">Start Professional Trial</button>
               </div>
 
               <!-- Enterprise -->
@@ -241,14 +253,14 @@
                 <div class="pricing-card-header">
                   <h3>Enterprise</h3>
                   <div class="price" style="font-size: 32px; padding-top: 5px; padding-bottom: 5px;">Custom</div>
-                  <p>Managed supply chain. Designed for scale.</p>
+                  <p>Dedicated on-ground management.</p>
                 </div>
                 <ul class="pricing-features">
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Dedicated ATLAX Account Management</li>
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Logistics & Compliance Processing</li>
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Negotiated Supply Chain Terms</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Turnkey Managed Supply Chain</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> ATLAX Team on the Ground</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Negotiated T&Cs based on requirements</li>
                 </ul>
-                <button class="pricing-btn pricing-btn--secondary btn-enter-platform">Book Consultation</button>
+                <button class="pricing-btn pricing-btn--secondary btn-enter-platform" data-tier="enterprise">Book Consultation</button>
               </div>
 
             </div>

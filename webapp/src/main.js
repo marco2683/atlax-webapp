@@ -385,6 +385,13 @@ function updateStackedResultsOnly(globe) {
 
 // ── View Switching Logic ────────────────────────────────
 function switchView(view, globe) {
+  // ZERO-TRUST AUTHORIZATION GUARD
+  const sysTier = sessionStorage.getItem('atlax_tier') || 'basic';
+  const restrictedViews = ['suppliers', 'product-builder', 'tariff'];
+  if (sysTier === 'basic' && restrictedViews.includes(view)) {
+    console.warn(`[Auth] Blocked restricted view attempt: ${view} on ${sysTier} tier.`);
+    return;
+  }
   const rfqEngine = document.getElementById('rfq-engine');
   const rfqRight = document.getElementById('rfq-engine-right');
   const designersEngine = document.getElementById('designers-engine');
