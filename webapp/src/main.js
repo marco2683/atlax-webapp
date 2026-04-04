@@ -428,6 +428,11 @@ function switchView(view, globe) {
     }
   });
 
+  const supplierViewToggle = document.getElementById('supplier-view-toggle');
+  if (supplierViewToggle && view !== 'suppliers') {
+    supplierViewToggle.classList.add('hidden');
+  }
+
   if (searchBar) { searchBar.style.opacity = '1'; searchBar.style.pointerEvents = 'auto'; }
   if (tagline) tagline.style.opacity = '1';
   if (globeContainer) globeContainer.style.opacity = '1';

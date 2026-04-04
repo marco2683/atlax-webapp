@@ -60,7 +60,9 @@
   padding: var(--space-4) var(--space-5);
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6), 0 0 40px rgba(59, 130, 246, 0.1);
   pointer-events: auto;
-  max-height: 80vh;
+  height: 720px !important;
+  max-height: calc(100vh - 120px) !important;
+  /* Lock to consistent height for both panels to resolve tab-switching shifts */
   /* Taller card */
   overflow-y: auto;
   scrollbar-width: thin;
@@ -1283,6 +1285,7 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-xl);
   padding: var(--space-3) var(--space-5);
+  height: 72px !important; /* Lock height to prevent layout shifts */
   pointer-events: auto;
   display: flex;
   align-items: center;
