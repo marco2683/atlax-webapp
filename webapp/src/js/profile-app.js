@@ -111,13 +111,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || 'Failed to initialize checkout');
-        document.getElementById('btn-upgrade').textContent = 'Upgrade to Pro';
+        alert('Checkout API Error: ' + JSON.stringify(data));
+        btn.textContent = originalText;
+        btn.disabled = false;
       }
     } catch (err) {
-      console.error(err);
-      alert('Network error initializing checkout.');
-      document.getElementById('btn-upgrade').textContent = 'Upgrade to Pro';
+      alert('Network/Fetch Error: ' + err.message);
+      btn.textContent = 'Upgrade to Professional';
+      btn.disabled = false;
     }
   });
 

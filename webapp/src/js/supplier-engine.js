@@ -116,12 +116,12 @@ document.addEventListener('DOMContentLoaded', async () => {
           if (data.url) {
             window.location.href = data.url;
           } else {
-            console.error("Stripe Error:", data);
+            alert("Checkout Error: " + JSON.stringify(data));
             btn.textContent = originalText;
             btn.disabled = false;
           }
         } catch(e) {
-          console.error(e);
+          alert("Network/Fetch Error: " + e.message);
           btn.textContent = originalText;
           btn.disabled = false;
         }
