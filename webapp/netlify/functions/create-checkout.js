@@ -42,7 +42,7 @@ export const handler = async (event) => {
     console.error('Checkout error:', err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to create stripe checkout session' })
+      body: JSON.stringify({ error: 'Failed to create stripe checkout session', details: err.message })
     };
   }
 };
