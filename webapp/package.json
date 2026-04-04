@@ -15,6 +15,7 @@
     "@supabase/supabase-js": "^2.100.1",
     "globe.gl": "^2.45.1",
     "occt-import-js": "^0.0.23",
+    "stripe": "^22.0.0",
     "three": "^0.183.2"
   }
 }

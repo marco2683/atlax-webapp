@@ -80,35 +80,53 @@ document.addEventListener('DOMContentLoaded', async () => {
   const enterBtns = document.querySelectorAll('.btn-enter-platform');
   
   enterBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', async (e) => {
       e.preventDefault();
       
-      // Zero-Trust Authorization Logic
-      const tier = btn.dataset.tier || 'basic';
-      sessionStorage.setItem('atlax_tier', tier);
-      console.log(`[Auth] Logged in as: ${tier.toUpperCase()}`);
-
-      if (tier === 'basic') {
-        // Enforce Basic Restrictions by physically removing DOM nodes
-        const suppliersMenu = document.querySelector('.navbar__menu-item[data-view="suppliers"]');
-        const builderMenu = document.querySelector('.navbar__menu-item[data-view="product-builder"]');
-        const tariffMenu = document.querySelector('.navbar__menu-item[data-view="tariff"]');
-        // Extra nodes to remove from DOM completely so they cannot be accessed
-        if (suppliersMenu) suppliersMenu.remove();
-        if (builderMenu) builderMenu.remove();
-        if (tariffMenu) tariffMenu.remove();
-
-        // Boot Basic users straight into RFQ
-        if (salesFunnel) salesFunnel.classList.add('hidden');
-        if (window.switchView) {
-          window.switchView('rfq'); 
+      // Check if user is actually authenticated
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        // Enforce Authentication
+        const authModal = document.getElementById('auth-modal');
+        if (authModal) {
+          authModal.classList.remove('hidden');
+          // Switch to signup view
+          const btnSignupToggle = document.getElementById('toggle-to-signup');
+          if (btnSignupToggle) btnSignupToggle.click();
         } else {
-          openTabularView(); // Safe fallback
+          window.location.href = '/index.html';
+        }
+        return;
+      }
+      
+      // If they are logged in but somehow see this, let check if they clicked Pro
+      const tier = btn.dataset.tier || 'basic';
+      if (tier === 'professional') {
+        const originalText = btn.textContent;
+        btn.textContent = 'Loading Stripe...';
+        btn.disabled = true;
+        try {
+          const response = await fetch('/.netlify/functions/create-checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: session.user.id })
+          });
+          const data = await response.json();
+          if (data.url) {
+            window.location.href = data.url;
+          } else {
+            console.error("Stripe Error:", data);
+            btn.textContent = originalText;
+            btn.disabled = false;
+          }
+        } catch(e) {
+          console.error(e);
+          btn.textContent = originalText;
+          btn.disabled = false;
         }
       } else {
-        // Professional / Enterprise get full entry
-        if (salesFunnel) salesFunnel.classList.add('hidden');
-        openTabularView();
+        window.location.reload();
       }
     });
   });
