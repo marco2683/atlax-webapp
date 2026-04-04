@@ -477,6 +477,7 @@
 
 .sales-value-item {
   text-align: center;
+  text-align: center;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255,255,255,0.08);
   padding: 40px;
@@ -618,6 +619,7 @@
 }
 
 .pricing-grid {
+  padding-top: 24px;
   padding-top: 64px;
   margin-top: 32px;
   padding-top: 24px;
@@ -779,6 +781,7 @@
 
 @media (max-width: 900px) {
   .pricing-grid {
+  padding-top: 24px;
   padding-top: 64px;
   margin-top: 32px;
   padding-top: 24px;
@@ -853,6 +856,7 @@
 }
 
 .sales-value-item {
+  text-align: center;
   text-align: center;
   background: var(--surface-2);
   border: 1px solid var(--border-color);
@@ -939,6 +943,7 @@
 }
 
 .pricing-grid {
+  padding-top: 24px;
   padding-top: 64px;
   margin-top: 32px;
   padding-top: 24px;

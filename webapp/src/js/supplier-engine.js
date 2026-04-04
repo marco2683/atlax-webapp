@@ -32,20 +32,39 @@ document.addEventListener('DOMContentLoaded', async () => {
   segmentPills = document.querySelectorAll('#tabular-segment-pills .segment-pill');
   resultsInfo = document.getElementById('tabular-results-info');
 
-  // Hide the globe elements initially to show selection screen
-  const searchBar = document.getElementById('search-bar');
-  const tagline = document.getElementById('search-tagline');
-  const regionRow = document.getElementById('region-row-hero');
-  
-  if (globeContainer) {
-    globeContainer.style.transition = 'opacity 0.6s ease';
-    globeContainer.style.opacity = '0.2';
+  let userTier = sessionStorage.getItem('atlax_tier') || 'basic';
+  if (authUser) {
+    const { data: profile } = await supabase.from('profiles').select('tier').eq('id', authUser.id).single();
+    if (profile && profile.tier) userTier = profile.tier;
   }
-  if (searchBar) searchBar.style.display = 'none';
-  if (tagline) tagline.style.display = 'none';
-  if (regionRow) regionRow.style.display = 'none';
   
-  selectionScreen.classList.remove('hidden');
+  // Sync to session storage for synchronous auth guards across the app
+  sessionStorage.setItem('atlax_tier', userTier);
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const justSubscribed = urlParams.get('success') === 'true';
+
+  const tierCheck = String(userTier).toLowerCase().trim();
+  const isProAccess = ['professional', 'pro', 'enterprise'].includes(tierCheck);
+
+  if (isProAccess || justSubscribed) {
+    openGlobeView();
+  } else {
+    // Hide the globe elements initially to show selection screen
+    const searchBar = document.getElementById('search-bar');
+    const tagline = document.getElementById('search-tagline');
+    const regionRow = document.getElementById('region-row-hero');
+    
+    if (globeContainer) {
+      globeContainer.style.transition = 'opacity 0.6s ease';
+      globeContainer.style.opacity = '0.2';
+    }
+    if (searchBar) searchBar.style.display = 'none';
+    if (tagline) tagline.style.display = 'none';
+    if (regionRow) regionRow.style.display = 'none';
+    
+    selectionScreen.classList.remove('hidden');
+  }
 
   // Load unified data
   try {
@@ -102,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       // If they are logged in but somehow see this, let check if they clicked Pro
       const tier = btn.dataset.tier || 'basic';
-      if (tier === 'professional') {
+      if (tier === 'professional' || tier === 'enterprise') {
         const originalText = btn.textContent;
         btn.textContent = 'Loading Stripe...';
         btn.disabled = true;
@@ -126,7 +145,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           btn.disabled = false;
         }
       } else {
-        window.location.reload();
+        openGlobeView();
       }
     });
   });

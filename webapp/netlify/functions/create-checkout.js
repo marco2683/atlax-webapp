@@ -7,13 +7,22 @@ export const handler = async (event) => {
   }
 
   try {
-    const { userId } = JSON.parse(event.body);
+    const { userId, planType } = JSON.parse(event.body);
 
     if (!userId) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Missing userId' }) };
     }
 
-    const planId = process.env.STRIPE_PRO_PRICE_ID;
+    let planId = process.env.STRIPE_PRO_PRICE_ID;
+    let assignedRole = 'professional'; // default
+
+    if (planType === 'designer') {
+      planId = process.env.STRIPE_DESIGNER_PRICE_ID || process.env.STRIPE_PRO_PRICE_ID; // Fallback
+      assignedRole = 'designer';
+    } else if (planType === 'entrepreneur') {
+      planId = process.env.STRIPE_ENTREPRENEUR_PRICE_ID || process.env.STRIPE_PRO_PRICE_ID; // Fallback
+      assignedRole = 'entrepreneur';
+    }
     
     if (!planId) {
       console.error('Missing STRIPE_PRO_PRICE_ID in environment variables');
@@ -28,11 +37,14 @@ export const handler = async (event) => {
       line_items: [{ price: planId, quantity: 1 }],
       mode: 'subscription',
       client_reference_id: userId,
+      metadata: {
+        planType: assignedRole
+      },
       success_url: `${origin}/app.html?success=true`,
       cancel_url: `${origin}/app.html?canceled=true`,
     });
     
-    console.log(`[Stripe Checkout] Created session ${session.id} for user ${userId}`);
+    console.log(`[Stripe Checkout] Created session ${session.id} for user ${userId} [type: ${assignedRole}]`);
 
     return {
       statusCode: 200,

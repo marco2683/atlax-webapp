@@ -33,19 +33,31 @@ export const handler = async (event) => {
       console.log(`[Stripe Webhook] Received payment for user ${userId}`);
 
       if (userId) {
+        const planType = session.metadata?.planType || 'professional';
+        
+        // Define updates dynamically based on planType
+        const updates = { stripe_customer_id: session.customer };
+        if (planType === 'designer') {
+          updates.account_role = 'designer';
+          updates.role_tier = 'active';
+        } else if (planType === 'entrepreneur') {
+          updates.account_role = 'entrepreneur';
+          updates.role_tier = 'active';
+        } else {
+          // Assume default professional tier access
+          updates.tier = 'professional';
+        }
+
         const { error } = await supabase
           .from('profiles')
-          .update({ 
-            tier: 'professional', 
-            stripe_customer_id: session.customer 
-          })
+          .update(updates)
           .eq('id', userId);
           
         if (error) {
           console.error("Failed to update user tier in Supabase:", error);
           throw error;
         }
-        console.log(`[Stripe Webhook] Granted professional tier to ${userId} and mapped customer ${session.customer}`);
+        console.log(`[Stripe Webhook] Set ${planType} access for user ${userId} / cust ${session.customer}`);
       }
     }
 
