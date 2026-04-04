@@ -124,7 +124,8 @@ export default defineConfig({
         portfolio: resolve(__dirname, 'portfolio.html'),
         services: resolve(__dirname, 'services.html'),
         workspace: resolve(__dirname, 'workspace.html'),
-        admin: resolve(__dirname, 'admin.html')
+        admin: resolve(__dirname, 'admin.html'),
+        profile: resolve(__dirname, 'profile.html')
       }
     }
   }
