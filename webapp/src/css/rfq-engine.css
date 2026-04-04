@@ -3,9 +3,9 @@
    ═══════════════════════════════════════════════════════ */
 .rfq-engine {
   position: absolute;
-  top: 53%;
+  top: 110px; /* ~100px for nav + 10px margin */
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   width: 980px;
   max-width: 95vw;
   display: flex;
@@ -20,12 +20,12 @@
 @keyframes rfqSlideUp {
   from {
     opacity: 0;
-    transform: translate(-50%, -42%);
+    transform: translate(-50%, 20px);
   }
 
   to {
     opacity: 1;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, 0);
   }
 }
 
@@ -48,6 +48,7 @@
   width: 420px;
   flex-shrink: 0;
   z-index: 101;
+  height: calc(100vh - 132px); /* Matches left pane: card (100vh-220px) + gap (16px) + CTA (72px) */
 }
 
 /* ══ PRIMARY CARD ═══════════════════════════════════════ */
@@ -60,8 +61,8 @@
   padding: var(--space-4) var(--space-5);
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6), 0 0 40px rgba(59, 130, 246, 0.1);
   pointer-events: auto;
-  height: 720px !important;
-  max-height: calc(100vh - 120px) !important;
+  height: calc(100vh - 220px) !important;
+  max-height: none !important;
   /* Lock to consistent height for both panels to resolve tab-switching shifts */
   /* Taller card */
   overflow-y: auto;

@@ -429,8 +429,12 @@ function switchView(view, globe) {
   });
 
   const supplierViewToggle = document.getElementById('supplier-view-toggle');
-  if (supplierViewToggle && view !== 'suppliers') {
-    supplierViewToggle.classList.add('hidden');
+  if (supplierViewToggle) {
+    if (view !== 'suppliers') {
+      supplierViewToggle.classList.add('hidden');
+    } else {
+      supplierViewToggle.classList.remove('hidden');
+    }
   }
 
   if (searchBar) { searchBar.style.opacity = '1'; searchBar.style.pointerEvents = 'auto'; }
