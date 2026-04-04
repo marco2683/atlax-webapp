@@ -12,7 +12,7 @@ let selectionScreen, tabularEngine, globeContainer, viewToggle;
 let searchInput, tableBody, techGroupFilter, tagInput, certPillContainer, countryFilter, segmentPills, resultsInfo;
 
 document.addEventListener('DOMContentLoaded', async () => {
-  selectionScreen = document.getElementById('supplier-selection');
+  selectionScreen = document.getElementById('sales-funnel');
   tabularEngine = document.getElementById('supplier-tabular-engine');
   globeContainer = document.getElementById('globe-container');
   viewToggle = document.getElementById('supplier-view-toggle');
@@ -75,69 +75,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ── Event Listeners ──
 
-  // --- CAROUSEL LOGIC ---
-  const carouselTrack = document.getElementById('onboarding-carousel');
-  const slides = carouselTrack?.querySelectorAll('.carousel-slide');
-  const dots = document.querySelectorAll('.carousel-dot');
-  const titleEl = document.getElementById('carousel-title');
-  const descEl = document.getElementById('carousel-desc');
-  const textArea = document.querySelector('.carousel-text-area');
+  // --- SALES FUNNEL LOGIC ---
+  const salesFunnel = document.getElementById('sales-funnel');
+  const enterBtns = document.querySelectorAll('.btn-enter-platform');
   
-  if (slides && slides.length > 0) {
-    let currentSlide = 0;
-    let carouselInterval;
-    
-    function updateSlide(index) {
-      if (index === currentSlide) return;
-      
-      // Fade text out
-      textArea.classList.add('fading');
-      
-      setTimeout(() => {
-        // change active slide
-        slides[currentSlide].classList.remove('active');
-        dots[currentSlide].classList.remove('active');
-        
-        currentSlide = index;
-        
-        slides[currentSlide].classList.add('active');
-        dots[currentSlide].classList.add('active');
-        
-        // update text
-        const newTitle = slides[currentSlide].getAttribute('data-title');
-        const newDesc = slides[currentSlide].getAttribute('data-desc');
-        titleEl.textContent = newTitle;
-        descEl.textContent = newDesc;
-        
-        // fade back in
-        textArea.classList.remove('fading');
-      }, 400); // matches CSS transition
-    }
-    
-    function nextSlide() {
-      let next = currentSlide + 1;
-      if (next >= slides.length) next = 0;
-      updateSlide(next);
-    }
-    
-    // Auto loop
-    carouselInterval = setInterval(nextSlide, 4500);
-    
-    // Dot clicks
-    dots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        clearInterval(carouselInterval);
-        const idx = parseInt(dot.getAttribute('data-index'), 10);
-        updateSlide(idx);
-        carouselInterval = setInterval(nextSlide, 4500);
-      });
-    });
-    
-    // Enter button triggers tabular view by default
-    document.getElementById('btn-enter-platform')?.addEventListener('click', () => {
+  enterBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (salesFunnel) salesFunnel.classList.add('hidden');
       openTabularView();
     });
-  }
+  });
 
   document.querySelectorAll('.view-toggle-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
