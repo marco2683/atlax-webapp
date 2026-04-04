@@ -29,8 +29,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const isPro = profile.tier === 'professional';
     document.getElementById('billing-tier-name').textContent = isPro ? 'Professional Tier' : 'Basic Tier';
     const badge = document.getElementById('billing-tier-badge');
+    const desc = document.getElementById('billing-tier-desc');
+    const upgradeBtn = document.getElementById('btn-upgrade');
+    
     badge.textContent = isPro ? 'PRO' : 'BASIC';
-    if (isPro) badge.classList.add('professional');
+    if (isPro) {
+      badge.classList.add('professional');
+      desc.textContent = "You have full, unrestricted access to the ATLAX Professional platform.";
+      desc.style.color = "var(--color-electric)";
+      upgradeBtn.style.display = 'none'; // Hide upgrade button if already pro
+    } else {
+      desc.textContent = "You currently have restricted platform access.";
+    }
   }
 
   // Tab switching logic
