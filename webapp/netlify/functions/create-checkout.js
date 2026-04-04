@@ -31,7 +31,7 @@ export const handler = async (event) => {
 
     // CREATE REAL STRIPE CHECKOUT
     // This requires STRIPE_SECRET_KEY in the Netlify environment variables
-    const origin = event.headers.origin || 'https://atlax.netlify.app';
+    const origin = event.headers.origin || 'https://www.atlasdt.com';
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{ price: planId, quantity: 1 }],
@@ -59,3 +59,5 @@ export const handler = async (event) => {
     };
   }
 };
+
+

@@ -3,7 +3,7 @@ import { MOCK_DESIGNERS } from './data/mock-designers.js';
 import { supabase } from './supabase.js';
 
 /* ================================================================
-   ATLAX Admin Panel — Full CRM with Add/Edit Forms
+   Atlas DT Admin Panel — Full CRM with Add/Edit Forms
    ================================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const navItems = document.querySelectorAll('.admin-nav-item');
 
   // ─── Auth ──────────────────────────────────────────────────
-  const isAuth = sessionStorage.getItem('atlax_admin_auth') === 'true';
+  const isAuth = sessionStorage.getItem('atlasdt_admin_auth') === 'true';
   if (isAuth) {
     showDashboard();
   } else { 
@@ -26,9 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function applyThemePreference() {
-    if (localStorage.getItem('atlax_admin_theme') === 'dark') {
+    if (localStorage.getItem('atlasdt_admin_theme') === 'dark') {
       document.body.classList.remove('theme-light');
-    } else if (localStorage.getItem('atlax_admin_theme') === 'light' || !localStorage.getItem('atlax_admin_theme')) {
+    } else if (localStorage.getItem('atlasdt_admin_theme') === 'light' || !localStorage.getItem('atlasdt_admin_theme')) {
       document.body.classList.add('theme-light');
     }
   }
@@ -53,8 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const result = user ? { success: true, user } : { success: false, error: 'Invalid credentials' };
 
       if (result.success) {
-        sessionStorage.setItem('atlax_admin_auth', 'true');
-        sessionStorage.setItem('atlax_admin_user', JSON.stringify(result.user));
+        sessionStorage.setItem('atlasdt_admin_auth', 'true');
+        sessionStorage.setItem('atlasdt_admin_user', JSON.stringify(result.user));
         applyThemePreference();
         showDashboard();
       } else {
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   logoutBtn?.addEventListener('click', () => {
-    sessionStorage.removeItem('atlax_admin_auth');
+    sessionStorage.removeItem('atlasdt_admin_auth');
     document.body.classList.remove('theme-light'); // Revert to dark for login screen
     dashboardView.classList.add('hidden');
     loginView.classList.remove('hidden');
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     themeToggle.addEventListener('click', () => {
       document.body.classList.toggle('theme-light');
-      localStorage.setItem('atlax_admin_theme', 
+      localStorage.setItem('atlasdt_admin_theme', 
         document.body.classList.contains('theme-light') ? 'light' : 'dark'
       );
     });
@@ -1424,7 +1424,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ═══════════════════════════════════════════════════════════
   //  W E B S I T E   C O N T E N T   M A N A G E R
   // ═══════════════════════════════════════════════════════════
-  const CMS_LS_KEY = 'atlax_cms_content';
+  const CMS_LS_KEY = 'atlasdt_cms_content';
   let cmsData = null;
   let cmsDraft = null; // working copy
   let cmsActivePage = 'portfolio';
@@ -2864,7 +2864,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
               <div class="admin-field">
                 <label>Email Address <span class="req">*</span></label>
-                <input type="email" name="email" value="${s.email || ''}" required placeholder="sarah@atlax.com">
+                <input type="email" name="email" value="${s.email || ''}" required placeholder="sarah@atlasdt.com">
               </div>
               <div class="admin-field">
                 <label>New Password ${existing ? '<span class="hint">(Leave blank to keep current)</span>' : '<span class="req">*</span>'}</label>
@@ -2913,3 +2913,4 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+

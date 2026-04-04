@@ -34,7 +34,7 @@ export const handler = async (event) => {
       };
     }
 
-    const origin = event.headers.origin || 'https://atlax.netlify.app';
+    const origin = event.headers.origin || 'https://www.atlasdt.com';
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
       return_url: `${origin}/profile.html`,
@@ -53,3 +53,5 @@ export const handler = async (event) => {
     };
   }
 };
+
+

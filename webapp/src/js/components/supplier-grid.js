@@ -77,7 +77,7 @@ export function openSupplierGrid(techName, suppliers) {
   const body = document.getElementById('supplier-grid-body');
 
   if (!modal || !body) {
-    console.warn('[ATLAX] Supplier grid modal not found in DOM');
+    console.warn('[Atlas DT] Supplier grid modal not found in DOM');
     openSupplierCarousel(techName, suppliers);
     return;
   }
@@ -367,3 +367,4 @@ export function closeSupplierGrid() {
   document.getElementById('supplier-grid-backdrop')?.classList.add('hidden');
   document.getElementById('supplier-grid-modal')?.classList.add('hidden');
 }
+

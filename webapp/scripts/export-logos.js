@@ -19,7 +19,7 @@ body {
   padding: 40px; 
   display: inline-block;
 }
-.atlax-logo {
+.atlasdt-logo {
   font-family: 'Outfit', sans-serif;
   font-weight: 800;
   font-size: 80px;
@@ -29,7 +29,7 @@ body {
   align-items: baseline;
   text-decoration: none;
 }
-.atlax-logo-dark { color: #000; }
+.atlasdt-logo-dark { color: #000; }
 .accent-x {
   color: #0ea5e9;
   margin-left: 2px;
@@ -46,7 +46,7 @@ body {
 
 function getHtml(includeCom, isDark) {
   const comText = includeCom ? `<span class="dot-com">.com</span>` : '';
-  const darkClass = isDark ? ' atlax-logo-dark' : '';
+  const darkClass = isDark ? ' atlasdt-logo-dark' : '';
   
   return `
     <html>
@@ -55,7 +55,7 @@ function getHtml(includeCom, isDark) {
       </head>
       <body>
         <div id="logo-container">
-          <div class="atlax-logo${darkClass}">
+          <div class="atlasdt-logo${darkClass}">
             ATLA<span class="accent-x">X</span>${comText}
           </div>
         </div>
@@ -93,8 +93,8 @@ async function exportLogos() {
 
   for (let sc of scales) {
     // Light versions (White text, Blue X)
-    await snap(`atlax-logo-light${sc.postfix}.png`, false, false, sc.s);
-    await snap(`atlax-logo-com-light${sc.postfix}.png`, true, false, sc.s);
+    await snap(`atlasdt-logo-light${sc.postfix}.png`, false, false, sc.s);
+    await snap(`atlasdt-logo-com-light${sc.postfix}.png`, true, false, sc.s);
   }
 
   await browser.close();
@@ -102,3 +102,4 @@ async function exportLogos() {
 }
 
 exportLogos().catch(console.error);
+

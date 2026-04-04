@@ -186,7 +186,7 @@ function renderCurrentCard() {
       <div style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;">
         <div style="flex: 1; min-width: 110px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 24px 16px; border-radius: 8px; text-align: center;">
           <div style="font-size: 24px; font-weight: bold; color: ${s.factoryScore >= 80 ? '#10b981' : '#f59e0b'};">${s.factoryScore || '--'}</div>
-          <div style="font-size: 11px; color: var(--color-steel-400); text-transform: uppercase;">ATLAX Score</div>
+          <div style="font-size: 11px; color: var(--color-steel-400); text-transform: uppercase;">Atlas DT Score</div>
         </div>
         <div style="flex: 1; min-width: 110px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 24px 16px; border-radius: 8px; text-align: center;">
           <div style="font-size: 24px; font-weight: bold; color: #fff;">${s.yearEstablished || '--'}</div>
@@ -360,11 +360,11 @@ function renderCurrentCard() {
       </div>
     </div>
     
-    <!-- ATLAX Consulting Card (Moved Inside Content Container) -->
+    <!-- Atlas DT Consulting Card (Moved Inside Content Container) -->
     <div class="sup-mjs" style="padding: 16px; margin-top: 20px;">
-      <div class="sup-mjs__title" style="margin-bottom: 4px; font-size: 14px;">🌿 ATLAX Quality Consulting</div>
+      <div class="sup-mjs__title" style="margin-bottom: 4px; font-size: 14px;">🌿 Atlas DT Quality Consulting</div>
       <p class="sup-mjs__desc" style="margin-bottom: 12px; font-size: 13px;">Let our on-ground team handle supplier management and factory audits directly on the floor.</p>
-      <button class="btn btn--success btn--sm" style="width: 100%;" id="modal-engage-consulting">Engage ATLAX Consulting →</button>
+      <button class="btn btn--success btn--sm" style="width: 100%;" id="modal-engage-consulting">Engage Atlas DT Consulting →</button>
     </div>
 
   </div> <!-- CLOSING SUP-CONTENT -->
@@ -386,9 +386,9 @@ function renderCurrentCard() {
     });
   }
 
-  body.querySelector('#modal-send-rfq')?.addEventListener('click', () => console.log('[ATLAX] RFQ submitted for:', s.name));
-  body.querySelector('#modal-attach-files')?.addEventListener('click', () => console.log('[ATLAX] Upload drawings'));
-  body.querySelector('#modal-engage-consulting')?.addEventListener('click', () => console.log('[ATLAX] Consulting engaged for:', s.name));
+  body.querySelector('#modal-send-rfq')?.addEventListener('click', () => console.log('[Atlas DT] RFQ submitted for:', s.name));
+  body.querySelector('#modal-attach-files')?.addEventListener('click', () => console.log('[Atlas DT] Upload drawings'));
+  body.querySelector('#modal-engage-consulting')?.addEventListener('click', () => console.log('[Atlas DT] Consulting engaged for:', s.name));
 
   body.querySelectorAll('.sup-section--locked').forEach(el => {
     el.addEventListener('click', () => {
@@ -397,3 +397,4 @@ function renderCurrentCard() {
     });
   });
 }
+

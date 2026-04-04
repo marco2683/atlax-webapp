@@ -32,14 +32,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   segmentPills = document.querySelectorAll('#tabular-segment-pills .segment-pill');
   resultsInfo = document.getElementById('tabular-results-info');
 
-  let userTier = sessionStorage.getItem('atlax_tier') || 'basic';
+  let userTier = sessionStorage.getItem('atlasdt_tier') || 'basic';
   if (authUser) {
     const { data: profile } = await supabase.from('profiles').select('tier').eq('id', authUser.id).single();
     if (profile && profile.tier) userTier = profile.tier;
   }
   
   // Sync to session storage for synchronous auth guards across the app
-  sessionStorage.setItem('atlax_tier', userTier);
+  sessionStorage.setItem('atlasdt_tier', userTier);
 
   const urlParams = new URLSearchParams(window.location.search);
   const justSubscribed = urlParams.get('success') === 'true';
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", "atlax-shortlist.csv");
+    link.setAttribute("download", "atlasdt-shortlist.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -725,4 +725,5 @@ function renderTable(data) {
     tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 40px; color: #8b949e;">No suppliers found matching the criteria.</td></tr>`;
   }
 }
+
 

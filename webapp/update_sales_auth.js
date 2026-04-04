@@ -15,7 +15,7 @@ const replacement = `// --- SALES FUNNEL LOGIC ---
       
       // Zero-Trust Authorization Logic
       const tier = btn.dataset.tier || 'basic';
-      sessionStorage.setItem('atlax_tier', tier);
+      sessionStorage.setItem('atlasdt_tier', tier);
       console.log(\`[Auth] Logged in as: \${tier.toUpperCase()}\`);
 
       if (tier === 'basic') {
@@ -53,3 +53,4 @@ if (content.match(regex)) {
 
 // Ensure window.switchView is available if main.js defines it, otherwise simulate it
 // Let's also check main.js to make sure the tab logic works.
+

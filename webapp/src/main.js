@@ -386,7 +386,7 @@ function updateStackedResultsOnly(globe) {
 // ── View Switching Logic ────────────────────────────────
 function switchView(view, globe) {
   // ZERO-TRUST AUTHORIZATION GUARD
-  const sysTier = sessionStorage.getItem('atlax_tier') || 'basic';
+  const sysTier = sessionStorage.getItem('atlasdt_tier') || 'basic';
   const restrictedViews = ['suppliers', 'product-builder', 'tariff'];
   if (sysTier === 'basic' && restrictedViews.includes(view)) {
     console.warn(`[Auth] Blocked restricted view attempt: ${view} on ${sysTier} tier.`);
@@ -524,3 +524,4 @@ function animateEntrance() {
     });
   });
 }
+

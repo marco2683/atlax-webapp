@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loginBtn.innerText = 'Success!';
         const { data: profile } = await supabase.from('profiles').select('tier').eq('id', data.user.id).single();
         if (profile && profile.tier) {
-          sessionStorage.setItem('atlax_tier', profile.tier);
+          sessionStorage.setItem('atlasdt_tier', profile.tier);
         }
         window.location.reload();
       }
@@ -113,3 +113,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+

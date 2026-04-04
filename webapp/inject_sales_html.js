@@ -11,7 +11,7 @@ const replacement = `<div class="sales-funnel-page hidden" id="sales-funnel">
           <!-- Hero Section -->
           <section class="sales-hero">
             <h1 class="sales-hero__title">The Operating System for Global Manufacturing</h1>
-            <p class="sales-hero__subtitle">Find, vet, and collaborate with world-class manufacturing partners. Remove friction from your supply chain with ATLAX.</p>
+            <p class="sales-hero__subtitle">Find, vet, and collaborate with world-class manufacturing partners. Remove friction from your supply chain with Atlas DT.</p>
           </section>
 
           <!-- Value / Pain Points Section -->
@@ -21,7 +21,7 @@ const replacement = `<div class="sales-funnel-page hidden" id="sales-funnel">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               </div>
               <h3>Rigorous Verification</h3>
-              <p>Say goodbye to unverified brokers. Every supplier on ATLAX undergoes strict on-site audits, ISO compliance checks, and capability verification.</p>
+              <p>Say goodbye to unverified brokers. Every supplier on Atlas DT undergoes strict on-site audits, ISO compliance checks, and capability verification.</p>
             </div>
             <div class="sales-value-item">
               <div class="sales-value-icon">
@@ -138,3 +138,4 @@ content = content.replace(regex, replacement);
 fs.writeFileSync(htmlPath, content, 'utf8');
 
 console.log('Sales funnel HTML injected');
+

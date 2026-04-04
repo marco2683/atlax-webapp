@@ -86,7 +86,7 @@ const replacement = `<section class="sales-showcase" style="overflow: hidden; wi
                 </div>
                 <ul class="pricing-features">
                   <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Turnkey Managed Supply Chain</li>
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> ATLAX Team on the Ground</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Atlas DT Team on the Ground</li>
                   <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Negotiated T&Cs based on requirements</li>
                 </ul>
                 <button class="pricing-btn pricing-btn--secondary btn-enter-platform" data-tier="enterprise">Book Consultation</button>
@@ -107,3 +107,4 @@ if (content.match(funnelRegex) && !content.includes('class="sales-grid-bg"')) {
 
 fs.writeFileSync(htmlPath, content, 'utf8');
 console.log('HTML updated');
+

@@ -1,5 +1,5 @@
 /**
- * ATLAX Manufacturing AI — Gemini-Powered Product Technology Hierarchy
+ * Atlas DT Manufacturing AI — Gemini-Powered Product Technology Hierarchy
  *
  * Calls the Gemini 1.5 Flash API with a highly engineered manufacturing
  * prompt to generate a product-specific technology hierarchy in the exact
@@ -210,3 +210,4 @@ function getFallbackHierarchy(productName) {
     ],
   };
 }
+

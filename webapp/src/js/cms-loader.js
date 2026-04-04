@@ -6,7 +6,7 @@
   'use strict';
 
   const CMS_URL = '/cms/site-content.json';
-  const LS_KEY = 'atlax_cms_content';
+  const LS_KEY = 'atlasdt_cms_content';
 
   /**
    * Load CMS data — prefers localStorage (draft/published),
@@ -346,3 +346,4 @@
   // Expose for admin panel usage
   window.__CMS_LOADER = { loadCMSData, patchPage, LS_KEY, CMS_URL };
 })();
+

@@ -1,5 +1,5 @@
 /* ============================================================
-   ATLAX — Workspace Controller
+   Atlas DT — Workspace Controller
    Manages the dashboard tabs, data rendering, and user actions
    ============================================================ */
 
@@ -1299,3 +1299,4 @@ async function loadSettings() {
     });
   }
 }
+

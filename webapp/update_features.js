@@ -10,7 +10,7 @@ const replacement = `<section class="sales-value-props">
                 <img src="/images/showcase-1.png" alt="Rigorous Verification" onerror="this.style.display='none'">
               </div>
               <h3>Rigorous Verification</h3>
-              <p>Say goodbye to unverified brokers. Every supplier on ATLAX undergoes strict on-site audits, ISO compliance checks, and capability verification.</p>
+              <p>Say goodbye to unverified brokers. Every supplier on Atlas DT undergoes strict on-site audits, ISO compliance checks, and capability verification.</p>
             </div>
             <div class="sales-value-item">
               <div class="sales-value-image">
@@ -78,3 +78,4 @@ if (cssContent.match(h3Regex)) {
 
 fs.writeFileSync(cssPath, cssContent, 'utf8');
 console.log('Value props updated with thumbnails and larger titles');
+

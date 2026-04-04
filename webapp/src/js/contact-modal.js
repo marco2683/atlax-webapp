@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════
-   ATLAX — Global Contact Modal (Auto-Inject)
+   Atlas DT — Global Contact Modal (Auto-Inject)
    ═══════════════════════════════════════════════════
    Include this script on any page to automatically:
    1. Inject a "Contact Us" link into the navbar
@@ -12,7 +12,7 @@
 
   // ─── 1. Inject Modal HTML ────────────────────────────
   const modalHTML = `
-  <div class="contact-modal-overlay" id="atlax-contact-overlay">
+  <div class="contact-modal-overlay" id="atlasdt-contact-overlay">
     <div class="contact-modal-panel">
 
       <div class="contact-modal-header">
@@ -20,14 +20,14 @@
           <h2>Get In Touch</h2>
           <p>We'd love to hear about your project</p>
         </div>
-        <button class="contact-modal-close" id="atlax-contact-close">&times;</button>
+        <button class="contact-modal-close" id="atlasdt-contact-close">&times;</button>
       </div>
 
       <!-- Contact Info -->
       <div class="contact-info-strip">
-        <a href="mailto:hello@atlax.com" class="contact-info-chip">
+        <a href="mailto:hello@atlasdt.com" class="contact-info-chip">
           <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          hello@atlax.com
+          hello@atlasdt.com
         </a>
         <a href="tel:+610406238458" class="contact-info-chip">
           <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
@@ -45,7 +45,7 @@
 
       <!-- Form -->
       <div class="contact-modal-body">
-        <form id="atlax-contact-form" enctype="multipart/form-data">
+        <form id="atlasdt-contact-form" enctype="multipart/form-data">
           <div class="contact-form-grid">
             <div class="contact-field">
               <label>First Name <span class="cf-req">*</span></label>
@@ -93,13 +93,13 @@
             </div>
             <div class="contact-field full">
               <label>Attach Files</label>
-              <div class="contact-file-zone" id="atlax-file-zone">
+              <div class="contact-file-zone" id="atlasdt-file-zone">
                 <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                 <p><span>Click to upload</span> or drag files here</p>
                 <p class="cf-hint">PDF, CAD, Images — max 25 MB per file</p>
-                <input type="file" id="atlax-file-input" name="attachment" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.step,.stp,.igs,.iges,.stl,.3mf,.obj,.dwg,.dxf,.png,.jpg,.jpeg,.webp,.zip,.rar">
+                <input type="file" id="atlasdt-file-input" name="attachment" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.step,.stp,.igs,.iges,.stl,.3mf,.obj,.dwg,.dxf,.png,.jpg,.jpeg,.webp,.zip,.rar">
               </div>
-              <div class="contact-file-list" id="atlax-file-list"></div>
+              <div class="contact-file-list" id="atlasdt-file-list"></div>
             </div>
           </div>
 
@@ -127,7 +127,7 @@
     const contactLink = document.createElement('a');
     contactLink.href = '#';
     contactLink.className = 'nav-link nav-contact-trigger';
-    contactLink.id = 'atlax-contact-nav-trigger';
+    contactLink.id = 'atlasdt-contact-nav-trigger';
     contactLink.textContent = 'Contact Us';
 
     if (loginLink) {
@@ -144,7 +144,7 @@
   if (navbarActions) {
     const contactBtn = document.createElement('button');
     contactBtn.className = 'nav-contact-trigger';
-    contactBtn.id = 'atlax-contact-nav-trigger-app';
+    contactBtn.id = 'atlasdt-contact-nav-trigger-app';
     contactBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Contact Us`;
     // Insert before the avatar/login button
     const avatar = navbarActions.querySelector('.navbar__avatar');
@@ -157,11 +157,11 @@
 
 
   // ─── 3. Wire Logic ───────────────────────────────────
-  const overlay = document.getElementById('atlax-contact-overlay');
-  const closeBtn = document.getElementById('atlax-contact-close');
-  const form = document.getElementById('atlax-contact-form');
-  const fileInput = document.getElementById('atlax-file-input');
-  const fileList = document.getElementById('atlax-file-list');
+  const overlay = document.getElementById('atlasdt-contact-overlay');
+  const closeBtn = document.getElementById('atlasdt-contact-close');
+  const form = document.getElementById('atlasdt-contact-form');
+  const fileInput = document.getElementById('atlasdt-file-input');
+  const fileList = document.getElementById('atlasdt-file-list');
 
   function openContact(e) {
     if (e) e.preventDefault();
@@ -176,7 +176,7 @@
 
   // Trigger from any "Contact Us" element
   document.addEventListener('click', e => {
-    if (e.target.closest('#atlax-contact-nav-trigger') || e.target.closest('#atlax-contact-nav-trigger-app')) {
+    if (e.target.closest('#atlasdt-contact-nav-trigger') || e.target.closest('#atlasdt-contact-nav-trigger-app')) {
       openContact(e);
     }
   });
@@ -235,7 +235,7 @@
     }
 
     // Create hidden iframe to receive the form POST (avoids page redirect)
-    const iframeName = 'atlax-contact-iframe-' + Date.now();
+    const iframeName = 'atlasdt-contact-iframe-' + Date.now();
     const iframe = document.createElement('iframe');
     iframe.name = iframeName;
     iframe.style.display = 'none';
@@ -274,7 +274,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             <h3 style="color:#fff; margin:20px 0 8px 0; font-size:22px;">Inquiry Sent Successfully</h3>
             <p style="color:rgba(255,255,255,0.5); font-size:14px; max-width:400px; margin:0 auto;">Thank you for reaching out. Our team will review your inquiry and get back to you within 24 hours.</p>
-            <button onclick="document.getElementById('atlax-contact-overlay').classList.remove('open'); document.body.style.overflow='';" style="margin-top:28px; padding:12px 28px; background:#3b82f6; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer; font-family:inherit;">Close</button>
+            <button onclick="document.getElementById('atlasdt-contact-overlay').classList.remove('open'); document.body.style.overflow='';" style="margin-top:28px; padding:12px 28px; background:#3b82f6; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer; font-family:inherit;">Close</button>
           </div>`;
       }
     });
@@ -284,7 +284,7 @@
   });
 
   // Footer forms AJAX submission
-  const footerForms = document.querySelectorAll('.atlax-footer-form');
+  const footerForms = document.querySelectorAll('.atlasdt-footer-form');
   footerForms.forEach(footerForm => {
     footerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -328,3 +328,4 @@
   });
 
 })();
+

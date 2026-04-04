@@ -667,7 +667,7 @@ body.theme-light .de-btn-add-team { background: rgba(0,0,0,0.03); }
 }
 .de-phase:last-child { border-right: none; }
 
-/* Phase Colors matching ATLAX palette */
+/* Phase Colors matching Atlas DT palette */
 .de-phase-0 { background: #60a5fa; }
 .de-phase-1 { background: #3b82f6; }
 .de-phase-2 { background: var(--color-electric); }
@@ -2252,3 +2252,4 @@ body.theme-light .de-review-card {
     grid-template-columns: 1fr;
   }
 }
+

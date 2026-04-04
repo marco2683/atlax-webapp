@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 631.2 187.74">
+  <defs>
+    <style>
+      .cls-1 {
+        font-family: Metropolis-Light, Metropolis;
+        font-size: 30px;
+        font-weight: 300;
+      }
+
+      .cls-2 {
+        font-size: 88.45px;
+      }
+
+      .cls-2, .cls-3 {
+        font-family: Rostex-Oblique, Rostex;
+        font-style: oblique;
+      }
+
+      .cls-3 {
+        fill: #02518c;
+        font-size: 100px;
+      }
+
+      .cls-4 {
+        fill: #fff;
+        stroke: #231f20;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2px;
+      }
+
+      .cls-5 {
+        letter-spacing: 0em;
+      }
+
+      .cls-6 {
+        letter-spacing: -.03em;
+      }
+
+      .cls-7 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-8 {
+        letter-spacing: -.2em;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <text class="cls-1" transform="translate(54.31 179.55) scale(1.5 1)"><tspan x="0" y="0">DESIGN &amp; TECHNOLOGY</tspan></text>
+    <line class="cls-4" x1="417.85" y1="136.97" x2="4.54" y2="136.97"/>
+    <text class="cls-2" transform="translate(0 126.97)"><tspan class="cls-8" x="0" y="0">A</tspan><tspan class="cls-7" x="76.06" y="0">t</tspan><tspan x="152.13" y="0">l</tspan><tspan class="cls-6" x="229.69" y="0">a</tspan><tspan class="cls-5" x="320.61" y="0">s</tspan></text>
+    <text class="cls-3" transform="translate(413.04 136.97) scale(.9 1.5)"><tspan x="0" y="0">DX</tspan></text>
+  </g>
+</svg>

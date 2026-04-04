@@ -21,8 +21,8 @@ const newLoginLogic = `try {
       const result = user ? { success: true, user } : { success: false, error: 'Invalid credentials' };
 
       if (result.success) {
-        sessionStorage.setItem('atlax_admin_auth', 'true');
-        sessionStorage.setItem('atlax_admin_user', JSON.stringify(result.user));
+        sessionStorage.setItem('atlasdt_admin_auth', 'true');
+        sessionStorage.setItem('atlasdt_admin_user', JSON.stringify(result.user));
         applyThemePreference();
         showDashboard();
       } else {
@@ -113,3 +113,4 @@ content = content.replace(fullStaffSaveRegex, newStaffSave);
 
 fs.writeFileSync(adminPath, content, 'utf8');
 console.log('admin.js refactored with Supabase integration');
+
