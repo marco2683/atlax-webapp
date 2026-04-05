@@ -353,5 +353,13 @@ a.nav-link.nav-contact-trigger:hover {
   .contact-info-strip {
     flex-direction: column;
   }
-}
 
+  /* Center the Contact Us nav link */
+  .nav-contact-trigger,
+  a.nav-link.nav-contact-trigger {
+    width: 100% !important;
+    text-align: center !important;
+    display: block !important;
+    padding: 14px 20px !important;
+  }
+}

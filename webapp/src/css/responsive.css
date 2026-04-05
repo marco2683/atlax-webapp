@@ -36,6 +36,37 @@
     max-width: 100vw !important;
   }
 
+  /* ══════════════════════════════════════════════════════════
+     GLOBAL DECLUTTER — hide paragraphs, keep headlines & CTAs
+     ══════════════════════════════════════════════════════════ */
+
+  /* Section descriptions under titles */
+  .m-section-desc {
+    display: none !important;
+  }
+
+  /* Bento card descriptions */
+  .m-bento-card p,
+  .m-bento-card--large p,
+  .m-bento-card--wide p {
+    display: none !important;
+  }
+
+  /* Timeline node descriptions */
+  .m-timeline-node p {
+    display: none !important;
+  }
+
+  /* Facilities card descriptions */
+  .m-facilities-card p {
+    display: none !important;
+  }
+
+  /* CTA section subtitle */
+  .m-app-cta__inner p {
+    display: none !important;
+  }
+
   /* ── Marketing Navbar ─────────────────────────────────── */
   .mobile-menu-toggle {
     display: block;
@@ -137,7 +168,7 @@
   .m-hero {
     height: auto !important;
     min-height: auto;
-    padding: 80px 20px 40px 20px;
+    padding: 100px 20px 60px 20px;
     grid-template-columns: 1fr !important;
     justify-items: center;
     overflow-x: hidden;
@@ -149,7 +180,7 @@
     max-width: 100% !important;
     width: 100%;
     padding: 0;
-    gap: 12px !important;
+    gap: 28px !important;
   }
 
   /* Kill the br spacers inside hero on mobile */
@@ -160,6 +191,7 @@
   .m-hero__title {
     font-size: 2.4rem !important;
     line-height: 1.1 !important;
+    margin-bottom: 8px !important;
   }
 
   .m-hero__content h2 {
@@ -169,19 +201,15 @@
   }
 
   .m-hero__subtitle {
-    font-size: 0.9rem !important;
-    padding: 0;
-    text-align: center;
-    max-width: 100% !important;
-    margin: 0 !important;
+    display: none !important;
   }
 
   .m-hero__cta-group {
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
     align-items: stretch;
     width: 100%;
-    margin-top: 8px !important;
+    margin-top: 16px !important;
   }
 
   .m-hero__cta-group a {
@@ -215,10 +243,6 @@
     font-size: 2rem !important;
   }
 
-  .m-section-desc {
-    font-size: 0.9rem !important;
-  }
-
   /* ── Bento Grid ───────────────────────────────────────── */
   .m-bento-grid {
     grid-template-columns: 1fr !important;
@@ -234,6 +258,129 @@
 
   .m-bento-image {
     height: 200px !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     ABOUT PAGE — Mobile Overrides
+     ══════════════════════════════════════════════════════════ */
+
+  /* About Hero — inline-styled header */
+  body.marketing-page > header {
+    padding: 120px 20px 40px 20px !important;
+  }
+
+  body.marketing-page > header h1 {
+    font-size: 2.2rem !important;
+    line-height: 1.1 !important;
+    letter-spacing: -1px !important;
+  }
+
+  body.marketing-page > header p {
+    display: none !important;
+  }
+
+  body.marketing-page > header .m-hero__chip {
+    display: none !important;
+  }
+
+  /* About Media Grid: stack vertically */
+  [data-cms-id="about-media"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Video placeholder */
+  [data-cms-id="about-media"] > div:first-child {
+    min-height: 200px !important;
+    aspect-ratio: 16/9 !important;
+    border-radius: 16px !important;
+  }
+
+  /* Side images column: stack horizontally on mobile */
+  [data-cms-id="about-media"] > div:last-child {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    flex-direction: row !important;
+  }
+
+  [data-cms-id="about-media"] > div:last-child > div {
+    min-height: 140px !important;
+    border-radius: 16px !important;
+  }
+
+  /* Reduce section bottom margin */
+  body.marketing-page > section:first-of-type {
+    margin-bottom: 60px !important;
+  }
+
+  /* About Section: reduce padding */
+  body.marketing-page > section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* About Team Section */
+  #team {
+    padding: 60px 20px !important;
+  }
+
+  #team > div:first-child h2 {
+    font-size: 2rem !important;
+  }
+
+  #team > div:first-child p {
+    display: none !important;
+  }
+
+  #team > div:last-child {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  #team [data-cms-id="team-member"] p {
+    display: none !important;
+  }
+
+  /* Agile Loops Section */
+  .m-agile-dark {
+    padding: 60px 20px !important;
+  }
+
+  .m-agile-dark .m-section-desc,
+  .m-agile-dark p {
+    display: none !important;
+  }
+
+  .m-loop-graphic-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .m-agile-circles {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 24px !important;
+  }
+
+  .m-agile-loop {
+    width: 180px !important;
+    height: 180px !important;
+  }
+
+  .m-loop-arrow {
+    transform: rotate(90deg) !important;
+    font-size: 20px !important;
+  }
+
+  .m-chevron-path {
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .m-loop-value {
+    display: none !important;
   }
 
   /* ── Advantage / Constellation Section ────────────────── */
@@ -436,7 +583,104 @@
     font-size: 1.8rem !important;
   }
 
-  /* ── Footer ───────────────────────────────────────────── */
+  /* ══════════════════════════════════════════════════════════
+     SERVICES PAGE — Mobile Overrides
+     ══════════════════════════════════════════════════════════ */
+
+  /* Services Hero / Portfolio Hero — centred and compact */
+  .services-hero h1,
+  .portfolio-hero h1 {
+    font-size: 2.2rem !important;
+  }
+
+  .services-hero p,
+  .portfolio-hero p {
+    display: none !important;
+  }
+
+  .services-hero,
+  .portfolio-hero {
+    padding: 130px 5% 60px 5% !important;
+  }
+
+  /* Services page service blocks */
+  .service-block {
+    padding: 40px 20px !important;
+  }
+
+  .service-block__content h2 {
+    font-size: 1.8rem !important;
+    text-align: center !important;
+  }
+
+  /* Hide block-level descriptions, keep just the headline */
+  .service-block__content > p {
+    display: none !important;
+  }
+
+  /* Service lists: show only the bold label, hide trailing description */
+  .service-list li {
+    font-size: 0 !important;
+    line-height: 0 !important;
+    margin-bottom: 10px !important;
+    color: transparent !important;
+  }
+
+  .service-list li strong {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    color: var(--color-white) !important;
+    display: block !important;
+  }
+
+  .service-list li::before {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* The Result boxes — keep headline, hide paragraph */
+  .service-result p {
+    display: none !important;
+  }
+
+  /* Marquee carousel on mobile */
+  .sales-marquee-img {
+    width: 280px !important;
+    height: 170px !important;
+    max-width: 280px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .sales-marquee-track {
+    gap: 16px !important;
+  }
+
+  /* Center the intro text for manufacturing engine section */
+  .service-block > div[style*="text-align: center"] p {
+    display: none !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     PORTFOLIO PAGE — Mobile Overrides
+     ══════════════════════════════════════════════════════════ */
+
+  .portfolio-section-header p {
+    display: none !important;
+  }
+
+  .portfolio-section {
+    padding: 40px 20px !important;
+  }
+
+  .portfolio-section-header h2 {
+    font-size: 1.6rem !important;
+    text-align: center !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     FOOTER — Mobile Overrides
+     ══════════════════════════════════════════════════════════ */
+
   footer>div:first-child {
     grid-template-columns: 1fr !important;
     gap: 32px !important;
@@ -462,6 +706,11 @@
     width: 100%;
   }
 
+  /* Footer form: stack paired input rows */
+  footer form div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
   footer .btn-marketing {
     width: 100% !important;
     justify-content: center;
@@ -472,6 +721,11 @@
     padding: 60px 20px !important;
   }
 
+  /* Footer brand description — hide on mobile */
+  footer .navbar__brand + p {
+    display: none !important;
+  }
+
   /* ── Product Modal ────────────────────────────────────── */
   .product-modal-glass {
     padding: 20px !important;
@@ -479,31 +733,6 @@
 
   #product-modal>div>div:nth-child(4) {
     grid-template-columns: 1fr !important;
-  }
-
-  /* ── Services Hero / Portfolio Hero ───────────────────── */
-  .services-hero h1,
-  .portfolio-hero h1 {
-    font-size: 2.2rem !important;
-  }
-
-  .services-hero p,
-  .portfolio-hero p {
-    font-size: 1rem !important;
-  }
-
-  .services-hero,
-  .portfolio-hero {
-    padding: 130px 5% 60px 5% !important;
-  }
-
-  /* Services page service blocks */
-  .service-block {
-    padding: 60px 5% !important;
-  }
-
-  .service-block__content h2 {
-    font-size: 1.8rem !important;
   }
 }
 
