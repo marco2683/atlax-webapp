@@ -103,7 +103,14 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadCRMData() {
     try {
       const { data: staffData } = await supabase.from('staff').select('*');
-      const { data: customerData } = await supabase.from('profiles').select('*');
+      
+      let customerData = [];
+      try {
+        const _res = await fetch('/.netlify/functions/admin-profiles');
+        if (_res.ok) customerData = await _res.json();
+      } catch (e) {
+        console.error('Failed to run bypass RLS for profiles:', e);
+      }
       loadedCustomers = customerData || [];
       loadedStaff = staffData || [];
 

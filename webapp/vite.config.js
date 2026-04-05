@@ -105,6 +105,30 @@ function crudPlugin() {
               res.end(JSON.stringify({ error: e.message }));
             }
           });
+        } else if (req.url.startsWith('/.netlify/functions/admin-profiles') && req.method === 'GET') {
+          // Setup Supabase with Service Role to bypass RLS for Admin
+          import('dotenv').then(dotenv => dotenv.config()).catch(() => {});
+          import('@supabase/supabase-js').then(async ({ createClient }) => {
+            const supabaseUrl = process.env.VITE_SUPABASE_URL;
+            const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+            
+            if (!supabaseUrl || !supabaseKey) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: "Missing Supabase env vars" }));
+              return;
+            }
+
+            const supabase = createClient(supabaseUrl, supabaseKey);
+            try {
+              const { data, error } = await supabase.from('profiles').select('*');
+              if (error) throw error;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify(data));
+            } catch (error) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: error.message }));
+            }
+          });
         } else {
           next();
         }
