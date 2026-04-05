@@ -138,6 +138,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         pip1.classList.remove('active');
         pip2.classList.add('active');
+        
+        const stepLabel = document.getElementById('step-text-label');
+        if (stepLabel) stepLabel.innerHTML = 'Step 2 of 2: Payment';
       }
     }, 1000);
   });
@@ -164,6 +167,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     step1Container.classList.add('active');
     pip2.classList.remove('active');
     pip1.classList.add('active');
+    
+    const stepLabel = document.getElementById('step-text-label');
+    if (stepLabel) stepLabel.innerHTML = 'Step 1 of 2';
   });
 
 });

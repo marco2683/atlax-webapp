@@ -1533,21 +1533,20 @@
     z-index: 350 !important;
   }
 
-  /* Make RFQ engine a full-screen overlay below the navbar */
+  /* Make RFQ engine a normal relative block to restore native page scrolling */
   .rfq-engine {
-    position: fixed !important;
-    top: 56px !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
     width: 100% !important;
     max-width: 100% !important;
     transform: none !important;
     z-index: 300 !important;
-    background: var(--color-void, #0a0a0f) !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
-    max-height: calc(100vh - 56px) !important;
+    background: transparent !important;
+    overflow: visible !important;
+    max-height: none !important;
     padding: 20px 16px 40px 16px !important;
     flex-direction: column !important;
     gap: var(--space-4) !important;
@@ -1574,10 +1573,18 @@
     order: 2;
   }
 
-  /* Card — no max-height clipping on mobile */
+  /* Card — no max-height clipping on mobile, auto height */
   .rfq-engine__card {
+    height: auto !important;
     max-height: none !important;
     padding: var(--space-3) var(--space-3) !important;
+  }
+
+  /* Ensure CTA Card accommodates height if buttons warp */
+  .rfq-cta-card {
+    height: auto !important;
+    padding: var(--space-3) !important;
+    flex-wrap: wrap; /* allow wrapping if very narrow */
   }
 
   /* Header row — stack vertically */
@@ -1720,11 +1727,14 @@
   .rfq-engine {
     width: 95%;
     flex-direction: column;
-    max-height: 90vh;
-    overflow-y: auto;
+    max-height: none;
+    overflow-y: visible;
     gap: var(--space-4);
     align-items: stretch;
-    top: 50%;
+    top: auto;
+    position: relative;
+    transform: none;
+    left: auto;
   }
 
   /* Make both columns take full width and stack vertically */

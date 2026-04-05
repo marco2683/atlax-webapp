@@ -345,6 +345,10 @@ input:focus {
   }
   .checkout-sidebar {
     flex: none;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    box-sizing: border-box;
     padding: 30px 20px;
     border-right: none;
     border-bottom: 1px solid var(--border-light);
@@ -361,12 +365,27 @@ input:focus {
   }
   /* Horizontal scrollable tier cards on mobile */
   .tier-selector {
+    display: flex;
     flex-direction: row;
+    flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     gap: 12px;
-    padding-bottom: 8px;
+    padding-bottom: 12px;
     scroll-snap-type: x mandatory;
+    width: 100%;
+  }
+  
+  .tier-selector::-webkit-scrollbar {
+    height: 6px;
+  }
+  .tier-selector::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+  .tier-selector::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
   }
   .tier-card {
     flex-shrink: 0;
@@ -401,5 +420,21 @@ input:focus {
   }
   .input-row .input-group {
     margin-bottom: 20px;
+  }
+  
+  .card-element {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .card-extras {
+    width: 100%;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .card-extras input {
+    width: 100% !important;
   }
 }

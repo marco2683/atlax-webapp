@@ -734,6 +734,479 @@
   #product-modal>div>div:nth-child(4) {
     grid-template-columns: 1fr !important;
   }
+
+  /* ══════════════════════════════════════════════════════════
+     APP (MANUFACTURING ENGINE) — Mobile Overrides
+     ══════════════════════════════════════════════════════════ */
+
+  /* ── App Navbar: clean mobile tab strip ──────────────── */
+  body.app-page .navbar {
+    padding: 6px 10px !important;
+    height: auto !important;
+    flex-wrap: wrap !important;
+    gap: 0 !important;
+  }
+
+  /* Hide desktop action icons (bell, gear, avatar, contact) on mobile */
+  body.app-page .navbar__actions {
+    display: none !important;
+  }
+
+  /* Hamburger not needed — using tab strip instead */
+  body.app-page .mobile-menu-toggle {
+    display: none !important;
+  }
+
+  /* Menu: scrollable horizontal tab strip below brand */
+  body.app-page .navbar__menu {
+    order: 3 !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none !important;
+    white-space: nowrap !important;
+    gap: 8px !important;
+    padding: 6px 0 4px !important;
+    margin: 0 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    flex-basis: 100% !important;
+  }
+
+  body.app-page .navbar__menu::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  body.app-page .navbar__menu-item {
+    display: inline-block !important;
+    font-size: 11px !important;
+    padding: 6px 12px !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    width: auto !important;
+    text-align: center !important;
+  }
+
+  body.app-page .navbar__brand {
+    gap: 6px !important;
+  }
+
+  body.app-page .navbar__brand img {
+    height: 18px !important;
+  }
+
+  /* ── Skip the Funnel on Mobile for App Page ────────────────── */
+  body.app-page #sales-funnel {
+    display: none !important;
+  }
+
+  /* ── Hero: hide globe, compact search ────────────────── */
+  body.app-page .hero {
+    height: auto !important;
+    min-height: auto !important;
+    padding-bottom: 20px !important;
+    overflow: visible !important;
+  }
+
+  body.app-page .hero__globe-container {
+    display: none !important;
+  }
+
+  body.app-page .hero__overlay {
+    display: none !important;
+  }
+
+  body.app-page .hero__content {
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  body.app-page .hero__title-container {
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    padding: 40px 16px 16px !important;
+    max-width: 100% !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  body.app-page .search-area__tagline h1 {
+    font-size: 20px !important;
+  }
+
+  body.app-page .search-area__tagline p {
+    font-size: 14px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    margin-bottom: 12px !important;
+  }
+
+  body.app-page .search-bar {
+    max-width: 100% !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    display: flex !important;
+    margin-bottom: 16px !important;
+  }
+
+  body.app-page .search-bar__submit span {
+    display: none !important;
+  }
+
+  /* Region chips — wrap tighter */
+  body.app-page .region-row {
+    gap: 4px !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: flex !important;
+  }
+  body.app-page .region-chip {
+    font-size: 10px !important;
+    padding: 3px 8px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Selector flow (segment/material/process chips) — scroll */
+  body.app-page .selector-flow {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start !important;
+    gap: 6px !important;
+    padding: 0 4px 4px !important;
+  }
+
+  /* ── View Toggle Pill — hide on mobile (default to tabular) ── */
+  body.app-page .view-toggle-pill {
+    display: none !important;
+  }
+
+  /* ── Bottom Results Container — compact on mobile ──── */
+  body.app-page .bottom-results-container {
+    padding: 8px 12px 12px !important;
+  }
+
+  body.app-page .results-grid {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  body.app-page .results-grid > div {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* ── Shortlist Panel — bottom sheet ──────────────────── */
+  body.app-page .shortlist-panel {
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 55vh !important;
+    max-height: 55vh !important;
+    border-radius: 20px 20px 0 0 !important;
+    position: fixed !important;
+    z-index: 200 !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* ── Supplier Grid Modal — full-screen on mobile ────── */
+  body.app-page .supplier-grid-modal {
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Filter rows inside grid modal — stack vertically */
+  body.app-page .supplier-grid-modal__filters {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  /* Table inside grid modal — horizontal scroll */
+  body.app-page .supplier-grid-modal__table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.app-page .supplier-grid-modal__table-wrap table {
+    min-width: 800px !important;
+  }
+
+  /* ── Supplier Detail Modal — full-screen on mobile ─── */
+  body.app-page .supplier-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 100vh !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+  }
+
+  body.app-page .supplier-modal__inner {
+    padding: 20px 16px !important;
+  }
+
+  /* Image grid in supplier modal — single column */
+  body.app-page .supplier-modal__images {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* ── Pricing Modal — full width ─────────────────────── */
+  body.app-page .pricing-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+  }
+
+  body.app-page .pricing-modal__grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Product Builder — compact on mobile ──────────── */
+  body.app-page .pb-layout {
+    padding: 0 12px !important;
+  }
+
+  body.app-page .pb-hero {
+    padding: 20px 0 12px !important;
+    gap: 10px !important;
+  }
+
+  body.app-page .pb-title {
+    font-size: 1.4rem !important;
+  }
+
+  body.app-page .pb-chips {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start !important;
+    padding-bottom: 4px !important;
+  }
+
+  body.app-page .pb-chip {
+    flex-shrink: 0 !important;
+  }
+
+  body.app-page .pb-org-grid {
+    gap: 8px !important;
+  }
+
+  body.app-page .pb-card,
+  body.app-page .pb-card--root,
+  body.app-page .pb-card--1,
+  body.app-page .pb-card--2,
+  body.app-page .pb-cots-cloud {
+    width: 150px !important;
+  }
+
+  body.app-page .pb-tagline-stage {
+    min-height: 180px !important;
+    padding: 24px 16px 40px !important;
+  }
+
+  body.app-page .pb-tagline-msg {
+    font-size: 1.2rem !important;
+  }
+
+  body.app-page .pb-action-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  body.app-page .pb-action-btns {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  body.app-page .pb-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  body.app-page .pb-sc-inner {
+    padding: 0 12px !important;
+  }
+
+  body.app-page .pb-sc-footer {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  body.app-page .pb-sc-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* ── Designer Marketplace — compact cards ──────────── */
+  body.app-page .de-tabs {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 4px !important;
+    padding-bottom: 2px !important;
+  }
+
+  body.app-page .de-tab {
+    flex-shrink: 0 !important;
+    font-size: 12px !important;
+    padding: 8px 14px !important;
+  }
+
+  body.app-page .de-grid-carousel {
+    grid-template-columns: 1fr !important;
+    grid-auto-flow: row !important;
+    gap: 16px !important;
+  }
+
+  body.app-page .de-work-layout {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  body.app-page .de-work-sidebar {
+    position: relative !important;
+    top: 0 !important;
+    order: -1;
+  }
+
+  body.app-page .de-estimator-top-inner {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding: 16px !important;
+  }
+
+  body.app-page .de-estimator-search-wrapper {
+    flex: none !important;
+    width: 100% !important;
+  }
+
+  body.app-page .de-scenario-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  body.app-page .de-scenario-item {
+    border-right: none !important;
+    padding-right: 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 16px !important;
+  }
+
+  /* Designer profile modal — full screen */
+  body.app-page .de-profile-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+  }
+
+  body.app-page .de-pm-header {
+    flex-direction: column !important;
+    padding: 80px 16px 16px !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  body.app-page .de-pm-portfolio-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Post Job / Proposal modals — full screen */
+  body.app-page .de-post-job-modal,
+  body.app-page .de-proposal-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+  }
+
+  body.app-page .de-form-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── HS Tariff Optimizer — simplified ──────────────── */
+  body.app-page .tariff-engine {
+    padding: 16px !important;
+  }
+
+  body.app-page .tariff-engine__header {
+    flex-direction: column !important;
+    gap: 8px !important;
+    text-align: center !important;
+  }
+
+  body.app-page .tariff-engine__form {
+    flex-direction: column !important;
+  }
+
+  body.app-page .tariff-engine__results {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.app-page .tariff-engine__results table {
+    min-width: 600px !important;
+  }
+
+  /* ── Pricing FAB — tighter on mobile ──────────────── */
+  body.app-page .pricing-fab {
+    bottom: 10px !important;
+    right: 10px !important;
+    padding: 8px 12px !important;
+    font-size: 11px !important;
+  }
+
+  /* ── Scroll Hint — reposition ─────────────────────── */
+  body.app-page .hero__scroll-hint {
+    display: none !important;
+  }
+
+  /* ── Radial Charts — hide on mobile (too dense) ───── */
+  body.app-page .radial-group {
+    display: none !important;
+  }
+
+  /* ── Contact Modal — full width on mobile ─────────── */
+  body.app-page #contact-modal > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════

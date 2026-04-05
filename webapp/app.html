@@ -41,6 +41,14 @@
       position: relative !important;
       z-index: 100 !important;
     }
+
+    /* Mobile override for hero — inline !important needs inline override */
+    @media (max-width: 768px) {
+      .hero {
+        height: auto !important;
+        min-height: auto !important;
+      }
+    }
   </style>
   <link rel="stylesheet" href="/src/css/contact-modal.css">
   <link rel="stylesheet" href="/src/css/supplier-engine.css">
@@ -49,7 +57,7 @@
   <link rel="stylesheet" href="/src/css/auth.css">
 </head>
 
-<body>
+<body class="app-page">
   <!-- Hide navbar when funnel overlay is visible (stacking context fix) -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {

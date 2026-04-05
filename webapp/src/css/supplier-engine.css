@@ -1284,16 +1284,31 @@
 
   /* ── Value Prop Cards: force stack ──────────────────────── */
 
-  /* All inline flex rows → column on mobile */
-  .sales-funnel__content > section > div[style*="display: flex"] {
+  /* All inline flex containers inside funnel section → column */
+  .sales-funnel__content div[style*="display: flex"][style*="align-items: center"][style*="gap: 48px"] {
     flex-direction: column !important;
     gap: 24px !important;
     padding: 24px 20px !important;
   }
 
   /* Undo row-reverse on entrepreneur card */
-  .sales-funnel__content > section > div[style*="row-reverse"] {
+  .sales-funnel__content div[style*="row-reverse"] {
     flex-direction: column !important;
+  }
+
+  /* Force ALL flex:1 children to full-width (image + text containers) */
+  .sales-funnel__content div[style*="flex: 1"] {
+    flex: none !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* Images inside funnel cards: full-width block */
+  .sales-funnel__content section img {
+    width: 100% !important;
+    max-height: 220px !important;
+    object-fit: cover !important;
+    border-radius: 12px !important;
   }
 
   /* Value card headings */
@@ -1313,6 +1328,12 @@
   /* Professional Engine: inner flex → column */
   .sales-funnel__content > section > div > div[style*="display: flex"][style*="align-items: stretch"] {
     flex-direction: column !important;
+  }
+
+  /* Professional Engine: inner flex:1 children → full width */
+  .sales-funnel__content > section > div > div[style*="display: flex"] > div[style*="flex: 1"] {
+    flex: none !important;
+    width: 100% !important;
   }
 
   /* Professional Engine: text content */
