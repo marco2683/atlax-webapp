@@ -166,21 +166,27 @@
 
   /* ── Hero Sections ────────────────────────────────────── */
   .m-hero {
-    height: auto !important;
-    min-height: auto;
-    padding: 100px 20px 60px 20px;
+    height: 100svh !important;
+    min-height: 100svh !important;
+    padding: 100px 20px 40px 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
     grid-template-columns: 1fr !important;
     justify-items: center;
-    overflow-x: hidden;
+    overflow: hidden !important;
   }
 
   .m-hero__content {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-evenly !important;
+    height: 100% !important;
     text-align: center !important;
     align-items: center !important;
     max-width: 100% !important;
     width: 100%;
-    padding: 0;
-    gap: 28px !important;
+    padding: 0 0 4vh 0 !important;
+    gap: 0 !important;
   }
 
   /* Kill the br spacers inside hero on mobile */
@@ -189,9 +195,9 @@
   }
 
   .m-hero__title {
-    font-size: 2.4rem !important;
+    font-size: 2.5rem !important;
     line-height: 1.1 !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 12px !important;
   }
 
   .m-hero__content h2 {
@@ -205,11 +211,12 @@
   }
 
   .m-hero__cta-group {
+    display: flex !important;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
     align-items: stretch;
     width: 100%;
-    margin-top: 16px !important;
+    margin: 0 !important;
   }
 
   .m-hero__cta-group a {
