@@ -73,9 +73,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Load unified data
   try {
-    const res = await fetch('/cms/suppliers.json?_t=' + Date.now());
-    const rawData = await res.json();
-    suppliersData = rawData.map(s => {
+    let allSupData = [];
+    let from = 0;
+    const size = 1000;
+    while(true) {
+        const { data, error } = await supabase.from('suppliers').select('*').range(from, from + size - 1);
+        if (error) break;
+        if (data) allSupData = allSupData.concat(data);
+        if (!data || data.length < size) break;
+        from += size;
+    }
+
+    suppliersData = allSupData.map(row => {
+      const s = { ...row.data, id: row.id, name: row.name, segment: row.segment, techGroup: row.tech_group };
+      if (row.isActive !== undefined) s.isActive = row.isActive;
       if (!s.techGroup && s.technologies && s.technologies.length > 0) {
         s.techGroup = s.technologies[0];
       }
@@ -90,6 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (nameA > nameB) return 1;
         return 0;
     }).filter(s => s.isActive !== false);
+    
     filteredData = [...suppliersData];
     initTabularEngine();
   } catch (err) {

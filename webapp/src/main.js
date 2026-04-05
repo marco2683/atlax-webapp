@@ -25,6 +25,7 @@ import { initTechModal } from './js/components/tech-modal.js';
 import { renderShortlist } from './js/components/shortlist.js';
 import { getCurrentUser } from './js/services/auth.js';
 import { saveShortlist } from './js/services/workspace.js';
+import { supabase } from './js/supabase.js';
 
 // ── App State ────────────────────────────────────────────
 const appState = {
@@ -44,8 +45,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   appState.suppliersData = [];
   try {
-    const res = await fetch('/cms/suppliers.json?_t=' + Date.now());
-    appState.suppliersData = await res.json();
+    let allSupData = [];
+    let from = 0;
+    const size = 1000;
+    while(true) {
+        const { data, error } = await supabase.from('suppliers').select('*').range(from, from + size - 1);
+        if (error) break;
+        if (data) allSupData = allSupData.concat(data);
+        if (!data || data.length < size) break;
+        from += size;
+    }
+    
+    appState.suppliersData = allSupData.map(row => {
+      const s = { ...row.data, id: row.id, name: row.name, segment: row.segment, techGroup: row.tech_group };
+      if (row.isActive !== undefined) s.isActive = row.isActive;
+      return s;
+    }).filter(s => s.isActive !== false);
   } catch(err) {
     console.error('Failed to load suppliers:', err);
   }
@@ -318,13 +333,12 @@ function handleSearch(globe) {
     appState.lastSearchResults = appState.suppliersData;
     updateStackedResultsOnly(globe);
   } else {
-    fetch('/cms/suppliers.json?_t=' + Date.now()).then(r=>r.json()).then(data => {
-        appState.suppliersData = data;
-        appState.lastSearchResults = data;
-        updateStackedResultsOnly(globe);
-    }).catch(() => {
-        updateStackedResultsOnly(globe);
-    });
+    // If it comes here, use an empty array or existing because we already fetched on boot
+    appState.lastSearchResults = appState.suppliersData || [];
+    updateStackedResultsOnly(globe);
+    
+    // Kept to maintain line counts roughly
+    // .then(data => ...)
   }
 }
 
