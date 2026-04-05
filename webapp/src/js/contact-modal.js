@@ -7,7 +7,10 @@
    3. Wire open/close and form submission logic
    ═══════════════════════════════════════════════════ */
 
-(function () {
+import { supabase } from './utils/supabaseClient.js';
+import { signUpUser } from './services/auth.js';
+
+(async function () {
   'use strict';
 
   // ─── 1. Inject Modal HTML ────────────────────────────
@@ -163,6 +166,46 @@
   const fileInput = document.getElementById('atlasdt-file-input');
   const fileList = document.getElementById('atlasdt-file-list');
 
+  // --- Check Auth and Pre-fill ---
+  let isLoggedIn = false;
+  let userSession = null;
+  let userProfile = null;
+
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      isLoggedIn = true;
+      userSession = session;
+      const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+      userProfile = profile;
+    }
+  } catch(e) { console.error('Auth error in contact modal', e); }
+
+  function applyPreFill(targetForm) {
+    if (!isLoggedIn || !userProfile || !targetForm) return;
+    
+    // Attempt to fill name
+    const fnameInput = targetForm.querySelector('input[name="firstName"]');
+    const lnameInput = targetForm.querySelector('input[name="lastName"]');
+    const emailInput = targetForm.querySelector('input[name="email"]');
+    const companyInput = targetForm.querySelector('input[name="company"]');
+    // For footer forms which have "name"
+    const nameInput = targetForm.querySelector('input[name="name"]');
+
+    if (fnameInput) { fnameInput.value = userProfile.first_name || ''; fnameInput.readOnly = true; fnameInput.style.opacity = '0.6'; }
+    if (lnameInput) { lnameInput.value = userProfile.last_name || ''; lnameInput.readOnly = true; lnameInput.style.opacity = '0.6'; }
+    if (nameInput) { nameInput.value = `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim(); nameInput.readOnly = true; nameInput.style.opacity = '0.6'; }
+    if (emailInput) { emailInput.value = userSession.user.email || ''; emailInput.readOnly = true; emailInput.style.opacity = '0.6'; }
+    if (companyInput) { companyInput.value = userProfile.company || ''; companyInput.readOnly = true; companyInput.style.opacity = '0.6'; }
+  }
+
+  // Pre-fill modal form
+  if (form) applyPreFill(form);
+  
+  // Pre-fill footer forms
+  const footerForms = document.querySelectorAll('.atlasdt-footer-form');
+  footerForms.forEach(applyPreFill);
+
   function openContact(e) {
     if (e) e.preventDefault();
     overlay.classList.add('open');
@@ -218,13 +261,39 @@
   // Form submission — uses hidden iframe instead of AJAX
   // because FormSubmit's /ajax/ endpoint doesn't support file attachments.
   // Standard form POST via hidden iframe = attachments work + no page redirect.
-  form?.addEventListener('submit', (e) => {
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const submitBtn = form.querySelector('.contact-submit-btn');
     const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Sending...';
+    submitBtn.textContent = 'Verifying...';
     submitBtn.disabled = true;
+
+    const email = form.querySelector('input[name="email"]')?.value;
+    const fname = form.querySelector('input[name="firstName"]')?.value;
+    const lname = form.querySelector('input[name="lastName"]')?.value;
+    const company = form.querySelector('input[name="company"]')?.value;
+
+    if (!isLoggedIn && email) {
+      // Auto sign-up to check existence and register
+      const randomPwd = Math.random().toString(36).slice(-10) + "A1!";
+      const { data, error } = await signUpUser(email, randomPwd, { first_name: fname, last_name: lname, company: company });
+      if (error && error.message.toLowerCase().includes('already registered')) {
+        alert('You already have an account associated with this email. Please log in first.');
+        closeContact();
+        const authModal = document.getElementById('auth-modal');
+        if (authModal) {
+            authModal.classList.remove('hidden');
+        } else {
+            window.location.href = '/index.html'; // Fallback
+        }
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+    }
+
+    submitBtn.textContent = 'Sending...';
 
     // Reconstruct the file input from the uploadedFiles array
     // (the input was cleared after each selection for UX reasons)
@@ -257,7 +326,7 @@
     addHidden('_next', window.location.href); // FormSubmit redirects iframe here after submit
 
     // Point the form at FormSubmit's standard endpoint (not /ajax/)
-    form.action = 'https://formsubmit.co/marco@panianiproducts.com';
+    form.action = 'https://formsubmit.co/info@atlasdt.com';
     form.method = 'POST';
     form.enctype = 'multipart/form-data';
     form.target = iframeName;
@@ -284,23 +353,50 @@
   });
 
   // Footer forms AJAX submission
-  const footerForms = document.querySelectorAll('.atlasdt-footer-form');
   footerForms.forEach(footerForm => {
     footerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const submitBtn = footerForm.querySelector('button[type="submit"]');
       const originalText = submitBtn ? submitBtn.textContent : 'Send Message';
       if (submitBtn) {
-        submitBtn.textContent = 'Sending...';
+        submitBtn.textContent = 'Verifying...';
         submitBtn.disabled = true;
       }
+
+      const email = footerForm.querySelector('input[name="email"]')?.value;
+      const fullName = footerForm.querySelector('input[name="name"]')?.value || '';
+      const company = footerForm.querySelector('input[name="company"]')?.value || '';
+      const nameParts = fullName.split(' ');
+      const fname = nameParts[0] || '';
+      const lname = nameParts.slice(1).join(' ') || '';
+
+      if (!isLoggedIn && email) {
+        const randomPwd = Math.random().toString(36).slice(-10) + "A1!";
+        const { data, error } = await signUpUser(email, randomPwd, { first_name: fname, last_name: lname, company: company });
+        if (error && error.message.toLowerCase().includes('already registered')) {
+          alert('You already have an account associated with this email. Please log in first.');
+          const authModal = document.getElementById('auth-modal');
+          if (authModal) {
+              authModal.classList.remove('hidden');
+          } else {
+              window.location.href = '/index.html';
+          }
+          if (submitBtn) {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+          }
+          return;
+        }
+      }
+
+      if (submitBtn) submitBtn.textContent = 'Sending...';
       
       try {
         const formData = new FormData(footerForm);
         formData.append('_captcha', 'false');
         formData.append('_template', 'table');
         
-        const response = await fetch('https://formsubmit.co/ajax/marco@panianiproducts.com', {
+        const response = await fetch('https://formsubmit.co/ajax/info@atlasdt.com', {
           method: 'POST',
           body: formData
         });

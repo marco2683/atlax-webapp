@@ -44,7 +44,7 @@
   </style>
   <link rel="stylesheet" href="/src/css/contact-modal.css">
   <link rel="stylesheet" href="/src/css/supplier-engine.css">
-  <script defer src="/src/js/contact-modal.js"></script>
+  <script type="module" src="/src/js/contact-modal.js"></script>
   <link rel="stylesheet" href="/src/css/auth.css">
   <link rel="stylesheet" href="/src/css/auth.css">
 </head>
@@ -113,11 +113,13 @@
           </svg>
         </a>
         <!-- Dynamic User Dropdown -->
-        <a href="#" id="nav-login-btn" class="nav-link" style="font-weight: 500; color: var(--color-electric); display: none;">Log In</a>
+        <a href="#" id="nav-login-btn" class="nav-link"
+          style="font-weight: 500; color: var(--color-electric); display: none;">Log In</a>
         <div id="nav-user-menu" class="nav-user-menu">
           <div class="nav-avatar" id="nav-avatar">?</div>
           <div class="dropdown-content" style="right: 20px;">
-            <a href="/profile.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Profile Settings</a>
+            <a href="/profile.html" class="dropdown-item"
+              style="color: var(--color-electric); font-weight: bold;">Profile Settings</a>
             <div class="dropdown-divider"></div>
             <a href="#" id="nav-logout-btn" class="dropdown-item">Log Out</a>
           </div>
@@ -153,70 +155,107 @@
 
       <!-- SUPPLIER SELECTION SCREEN -->
       <div class="sales-funnel-page hidden" id="sales-funnel">
-        <div class="sales-funnel__header" style="position: absolute; top: 0; left: 0; width: 100%; padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 20;">
-          <a href="/index.html" class="sales-funnel__back" style="color: #fff; text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; opacity: 0.8; background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 20px; backdrop-filter: blur(4px); transition: all 0.2s;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <div class="sales-funnel__header"
+          style="position: absolute; top: 0; left: 0; width: 100%; padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 20;">
+          <a href="/index.html" class="sales-funnel__back"
+            style="color: #fff; text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; opacity: 0.8; background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 20px; backdrop-filter: blur(4px); transition: all 0.2s;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
             Back to Home
           </a>
         </div>
         <div class="sales-grid-bg"></div>
         <div class="sales-funnel__content">
 
-          
+
           <!-- Hero Section -->
           <section class="sales-hero" style="margin-top: 40px; text-align: center;">
-            <h1 class="sales-hero__title" style="font-size: 48px; max-width: 800px; margin: 0 auto 16px;">The Global <span style="background: linear-gradient(135deg, #ffffff 0%, #8892b0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">Manufacturing Engine</span></h1>
-            <p class="sales-hero__subtitle" style="font-size: 18px; color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto;">Connect with world-class manufacturers, hire global talent, and manage your entire supply chain lifecycle in one workspace.</p>
+            <h1 class="sales-hero__title" style="font-size: 48px; max-width: 800px; margin: 0 auto 16px;">The Global
+              <span
+                style="background: linear-gradient(135deg, #ffffff 0%, #8892b0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">Manufacturing
+                Engine</span>
+            </h1>
+            <p class="sales-hero__subtitle"
+              style="font-size: 18px; color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto;">Connect with
+              world-class manufacturers, hire global talent, and manage your entire supply chain lifecycle in one
+              workspace.</p>
           </section>
 
 
-          <!-- 5-Grid Values Area -->
-          <section class="sales-value-props" style="display: flex; flex-wrap: wrap; gap: 20px; max-width: 1600px; margin: 40px auto 80px; align-items: stretch; padding: 0 20px;">
-            
-            <!-- Item: Designer (Purple accent) -->
-            <div class="sales-value-item" style="border: 1px solid rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.05); padding: 24px; text-align: left; border-radius: 12px; display: flex; flex-direction: column; flex: 1; min-width: 250px;">
-              <h3 style="color: #c4b5fd; font-size: 20px; margin-bottom: 12px;">Designers Engine</h3>
-              <p style="font-size: 14px; line-height: 1.5; color: rgba(255,255,255,0.7); flex: 1; margin-bottom: 20px;">Showcase your CAD skills globally. Join the job board and bid securely on hardware projects.</p>
-              <img src="/images/showcase-6.png" style="width: 100%; border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.2);" onerror="this.style.display='none'">
+          <!-- Value Props — Deep-Dive Row Layout -->
+          <section style="max-width: 1100px; margin: 40px auto 80px; display: flex; flex-direction: column; gap: 48px; padding: 0 20px;">
+
+            <!-- Designer Row (image left, text right) -->
+            <div style="display: flex; align-items: center; gap: 48px; background: rgba(139, 92, 246, 0.04); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 16px; padding: 40px; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
+                 onmouseover="this.style.borderColor='rgba(139,92,246,0.5)'; this.style.transform='translateY(-4px)'"
+                 onmouseout="this.style.borderColor='rgba(139,92,246,0.25)'; this.style.transform='none'">
+              <div style="flex: 1; min-width: 0;">
+                <img src="/images/showcase-6.png" alt="Designers Engine"
+                  style="width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 12px; border: 1px solid rgba(139,92,246,0.2); box-shadow: 0 16px 40px rgba(0,0,0,0.4);"
+                  onerror="this.style.display='none'">
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <h3 style="font-size: 26px; color: #c4b5fd; margin: 0 0 12px; font-weight: 700;">Designers Engine</h3>
+                <h4 style="font-size: 18px; margin-bottom: 12px; color: #fff; font-weight: 600;">Global Job Board</h4>
+                <p style="font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.7; margin-bottom: 24px;">Showcase your CAD skills globally. Join the job board and bid securely on hardware projects. Build your public portfolio, find projects that match your expertise, and get paid through secure escrow.</p>
+                <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px;">
+                  <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Public Designer Profile &amp; Portfolio</li>
+                  <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Bid on Global Hardware Projects</li>
+                  <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Secure Milestone Escrow Payments</li>
+                </ul>
+              </div>
             </div>
 
-            <!-- Item: Entrepreneur (Orange accent) -->
-            <div class="sales-value-item" style="border: 1px solid rgba(249, 115, 22, 0.4); background: rgba(249, 115, 22, 0.05); padding: 24px; text-align: left; border-radius: 12px; display: flex; flex-direction: column; flex: 1; min-width: 250px;">
-              <h3 style="color: #fdba74; font-size: 20px; margin-bottom: 12px;">Entrepreneurs Engine</h3>
-              <p style="font-size: 14px; line-height: 1.5; color: rgba(255,255,255,0.7); flex: 1; margin-bottom: 20px;">Post projects, hire verified experts, and manage team NDAs.</p>
-              <img src="/images/showcase-4.png" style="width: 100%; border-radius: 8px; border: 1px solid rgba(249, 115, 22, 0.2);" onerror="this.style.display='none'">
+            <!-- Entrepreneur Row (text left, image right — reversed) -->
+            <div style="display: flex; align-items: center; gap: 48px; flex-direction: row-reverse; background: rgba(249, 115, 22, 0.04); border: 1px solid rgba(249, 115, 22, 0.25); border-radius: 16px; padding: 40px; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
+                 onmouseover="this.style.borderColor='rgba(249,115,22,0.5)'; this.style.transform='translateY(-4px)'"
+                 onmouseout="this.style.borderColor='rgba(249,115,22,0.25)'; this.style.transform='none'">
+              <div style="flex: 1; min-width: 0;">
+                <img src="/images/showcase-7.png" alt="Entrepreneurs Engine"
+                  style="width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 12px; border: 1px solid rgba(249,115,22,0.2); box-shadow: 0 16px 40px rgba(0,0,0,0.4);"
+                  onerror="this.style.display='none'">
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <h3 style="font-size: 26px; color: #fdba74; margin: 0 0 12px; font-weight: 700;">Entrepreneurs Engine</h3>
+                <h4 style="font-size: 18px; margin-bottom: 12px; color: #fff; font-weight: 600;">Hire Hardware Experts</h4>
+                <p style="font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.7; margin-bottom: 24px;">Post projects, hire verified industrial designers and engineers, and manage team NDAs. Build your dream product team with secure contracts and milestone-based collaboration.</p>
+                <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px;">
+                  <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdba74" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Post Unlimited Job RFQs</li>
+                  <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdba74" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Hire from the Designer Network</li>
+                  <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdba74" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Generate NDAs &amp; Secure Contracts</li>
+                </ul>
+              </div>
             </div>
 
-            <!-- Professional Teal BUNDLE -->
-            <div class="sales-value-item-bundle" style="border: 1px solid rgba(20, 184, 166, 0.4); background: rgba(20, 184, 166, 0.05); padding: 24px; border-radius: 12px; display: flex; flex-direction: column; flex: 3; min-width: 600px;">
-              <h3 style="color: #5eead4; font-size: 18px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">Professional Engine (Engineers, Procurement, Managers)</h3>
-              
-              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; flex: 1;">
-                
-                <div style="display: flex; flex-direction: column;">
-                  <img src="/images/showcase-2.png" alt="Instant Quoting" style="width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1);">
-                  <h4 style="font-size: 15px; margin-bottom: 8px; color: #fff;">Instant Quoting</h4>
-                  <p style="font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.4;">AI-driven part-by-part cost breakdowns.</p>
+            <!-- Professional Engine — full-width with image grid -->
+            <div style="position: relative;">
+              <div style="display: flex; align-items: stretch; gap: 0; background: linear-gradient(180deg, rgba(20,184,166,0.06) 0%, rgba(13,17,23,0) 100%); border: 1px solid rgba(20,184,166,0.35); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 60px rgba(20,184,166,0.06); transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
+                   onmouseover="this.style.borderColor='rgba(20,184,166,0.6)'; this.style.transform='translateY(-4px)'"
+                   onmouseout="this.style.borderColor='rgba(20,184,166,0.35)'; this.style.transform='none'">
+
+                <!-- Left: Text Content -->
+                <div style="flex: 1; padding: 48px 40px; display: flex; flex-direction: column; justify-content: center;">
+                  <h3 style="font-size: 28px; color: #5eead4; margin: 0 0 8px; font-weight: 700;">Professional Engine</h3>
+                  <p style="font-size: 14px; color: rgba(94,234,212,0.6); margin-bottom: 20px;">Engineers, Procurement, Managers</p>
+                  <p style="font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.7; margin-bottom: 28px;">The complete manufacturing toolkit for scaling companies. Get AI-driven instant quotes, access 1,100+ vetted suppliers, manage global freight and production phases, and optimize HS tariff codes — all in one platform.</p>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Instant Quoting Engine</div>
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> 1,100+ Supplier Network</div>
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> End-to-End Supply Chain</div>
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> HS Tariff Optimizer</div>
+                  </div>
                 </div>
 
-                <div style="display: flex; flex-direction: column;">
-                  <img src="/images/showcase-5.png" alt="Global Supply Chain" style="width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1);">
-                  <h4 style="font-size: 15px; margin-bottom: 8px; color: #fff;">Global Supply Chain</h4>
-                  <p style="font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.4;">Access 1,100+ vetted manufacturers.</p>
+                <!-- Right: 2×2 Image Grid -->
+                <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; min-height: 340px;">
+                  <img src="/images/showcase-2.png" alt="Instant Quoting" style="width: 100%; height: 100%; object-fit: cover;">
+                  <img src="/images/showcase-4.png" alt="Global Supply Chain" style="width: 100%; height: 100%; object-fit: cover;">
+                  <img src="/images/showcase-7.png" alt="End-to-End Control" style="width: 100%; height: 100%; object-fit: cover;">
+                  <img src="/images/showcase-8.png" alt="HS Tariff Optimizer" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
-
-                <div style="display: flex; flex-direction: column;">
-                  <img src="/images/showcase-7.png" alt="End-to-End Control" style="width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1);">
-                  <h4 style="font-size: 15px; margin-bottom: 8px; color: #fff;">End-to-End Control</h4>
-                  <p style="font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.4;">Manage global freight & production phases.</p>
-                </div>
-
-                <div style="display: flex; flex-direction: column;">
-                  <img src="/images/showcase-8.png" alt="HS Tariff Optimizer" style="width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1);">
-                  <h4 style="font-size: 15px; margin-bottom: 8px; color: #fff;">HS Tariff Optimizer</h4>
-                  <p style="font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.4;">AI codes compliance and import/export savings.</p>
-                </div>
-
               </div>
             </div>
 
@@ -231,71 +270,116 @@
             <div class="deep-dive-row">
               <div class="deep-dive-text">
                 <h2>AI-Driven Instant RFQs</h2>
-                <p>Upload your 3D CAD files and our custom geometry engines instantly identify mass, volume, and complexity. Within seconds, get high-accuracy cost breakdowns driven by real-time raw material databases and machine learning models based on millions of past manufactured parts.</p>
+                <p>Upload your 3D CAD files and our custom geometry engines instantly identify mass, volume, and
+                  complexity. Within seconds, get high-accuracy cost breakdowns driven by real-time raw material
+                  databases and machine learning models based on millions of past manufactured parts.</p>
                 <ul class="deep-dive-list">
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Part-by-part transparent breakdown</li>
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> DFM (Design for Manufacturing) insights</li>
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Supports STEP, IGES, SolidWorks, and more</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> Part-by-part transparent breakdown</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> DFM (Design for Manufacturing) insights</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> Supports STEP, IGES, SolidWorks, and more</li>
                 </ul>
               </div>
               <div class="deep-dive-img">
-                <img src="/images/showcase-1.png" alt="Instant RFQ Engine" style="width: 100%; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);">
+                <img src="/images/showcase-1.png" alt="Instant RFQ Engine"
+                  style="width: 100%; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);">
               </div>
             </div>
 
             <div class="deep-dive-row reverse">
               <div class="deep-dive-text">
                 <h2>Direct Access to the World's Best Factories</h2>
-                <p>Say goodbye to brokers and black-box trading companies. Atlas DT connects you directly with a highly curated network of over 1,100 verified Tier 1, Tier 2, and OEM manufacturers across the globe. Each facility undergoes strenuous on-site quality and capability audits by our specialized ground teams.</p>
+                <p>Say goodbye to brokers and black-box trading companies. Atlas DT connects you directly with a highly
+                  curated network of over 1,100 verified Tier 1, Tier 2, and OEM manufacturers across the globe. Each
+                  facility undergoes strenuous on-site quality and capability audits by our specialized ground teams.
+                </p>
                 <ul class="deep-dive-list">
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Verified ISO certifications and capabilities</li>
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Direct messaging and collaboration board</li>
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Complete transparency on facility locations</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> Verified ISO certifications and capabilities</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> Direct messaging and collaboration board</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> Complete transparency on facility locations</li>
                 </ul>
               </div>
               <div class="deep-dive-img">
-                <img src="/images/showcase-3.png" alt="Supplier Verification" style="width: 100%; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);">
+                <img src="/images/showcase-3.png" alt="Supplier Verification"
+                  style="width: 100%; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);">
               </div>
             </div>
-            
+
             <div class="deep-dive-row">
               <div class="deep-dive-text">
                 <h2>Hire Top Engineering Talent</h2>
-                <p>Need extra hands to prepare your designs for mass production? Access our Global Designer Network to find pre-vetted industrial designers and engineers. Seamlessly augment your team, collaborate on CAD, and transition concepts to reality inside a single unified workspace.</p>
+                <p>Need extra hands to prepare your designs for mass production? Access our Global Designer Network to
+                  find pre-vetted industrial designers and engineers. Seamlessly augment your team, collaborate on CAD,
+                  and transition concepts to reality inside a single unified workspace.</p>
                 <ul class="deep-dive-list">
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Hire per project or dedicated scope</li>
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Expert engineering and DFM optimizations</li>
-                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Secure escrow and milestone payments</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> Hire per project or dedicated scope</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> Expert engineering and DFM optimizations</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> Secure escrow and milestone payments</li>
                 </ul>
               </div>
               <div class="deep-dive-img">
-                <img src="/images/showcase-6.png" alt="Designer Network" style="width: 100%; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);">
+                <img src="/images/showcase-6.png" alt="Designer Network"
+                  style="width: 100%; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);">
               </div>
             </div>
           </section>
 
           <!-- Showcase Section (Using User's Screenshots) -->
-          <section class="sales-showcase" style="overflow: hidden; width: 100vw; margin-left: calc(-50vw + 50%); margin-top: 20px; margin-bottom: 80px;">
+          <section class="sales-showcase"
+            style="overflow: hidden; width: 100vw; margin-left: calc(-50vw + 50%); margin-top: 20px; margin-bottom: 80px;">
             <div class="sales-marquee-container">
               <div class="sales-marquee-track">
                 <!-- Group 1 -->
-                <img src="/images/showcase-1.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-2.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-3.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-4.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-5.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-6.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-7.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-8.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-1.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-2.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-3.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-4.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-5.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-6.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-7.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-8.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
                 <!-- Group 2 -->
-                <img src="/images/showcase-1.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-2.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-3.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-4.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-5.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-6.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-7.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-                <img src="/images/showcase-8.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-1.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-2.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-3.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-4.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-5.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-6.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-7.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
+                <img src="/images/showcase-8.png" alt="Platform UI" class="sales-marquee-img"
+                  onerror="this.src='/images/placeholder-ui.png'">
               </div>
             </div>
           </section>
@@ -307,89 +391,150 @@
               <p class="sales-section-subtitle">Find your exact role in the manufacturing engine.</p>
             </div>
 
-            <div class="pricing-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; align-items: stretch;">
-              
-              
-              <!-- Tier 0: Free -->
-              <div class="pricing-card" style="border-top: 4px solid #94a3b8; display: flex; flex-direction: column; background: #0E1117; border-radius: 12px; padding: 24px;">
-                <div class="pricing-card-header" style="margin-bottom: 24px;">
-                  <h3 style="font-size: 20px; color: #fff; margin-bottom: 8px;">Free</h3>
-                  <div class="price" style="font-size: 36px; font-weight: bold; color: #fff; margin-bottom: 8px;">$0<span style="font-size: 16px; color: rgba(255,255,255,0.5); font-weight: normal;">/mo</span></div>
-                  <p style="font-size: 14px; color: rgba(255,255,255,0.7);">Get started with quotation insights and marketplace viewing.</p>
+            <!-- ═══ ROW 1: Designer & Entrepreneur — deep-dive-row style ═══ -->
+            <div style="display: flex; flex-direction: column; gap: 48px; max-width: 1100px; margin: 0 auto;">
+
+              <!-- Designer Row (image left, text right) -->
+              <div style="display: flex; align-items: center; gap: 48px; background: rgba(139, 92, 246, 0.04); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 16px; padding: 40px; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
+                   onmouseover="this.style.borderColor='rgba(139,92,246,0.5)'; this.style.transform='translateY(-4px)'"
+                   onmouseout="this.style.borderColor='rgba(139,92,246,0.25)'; this.style.transform='none'">
+                <div style="flex: 1; min-width: 0;">
+                  <img src="/images/showcase-6.png" alt="Designer Engine"
+                    style="width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 12px; border: 1px solid rgba(139,92,246,0.2); box-shadow: 0 16px 40px rgba(0,0,0,0.4);"
+                    onerror="this.style.display='none'">
                 </div>
-                <ul class="pricing-features" style="list-style: none; padding: 0; margin-bottom: 32px; flex: 1; display: flex; flex-direction: column; gap: 12px;">
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                    <h3 style="font-size: 26px; color: #c4b5fd; margin: 0; font-weight: 700;">Designer</h3>
+                    <span style="font-size: 13px; color: rgba(196,181,253,0.7); background: rgba(139,92,246,0.15); padding: 3px 10px; border-radius: 20px; font-weight: 500;">Marketplace Role</span>
+                  </div>
+                  <div style="font-size: 40px; font-weight: 800; color: #fff; margin-bottom: 6px; letter-spacing: -1px;">$29<span style="font-size: 16px; color: rgba(255,255,255,0.4); font-weight: 400;">/mo</span></div>
+                  <p style="font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.6; margin-bottom: 24px;">Freelancers and industrial design engineers. Showcase your CAD skills globally, join the job board, and bid securely on hardware projects.</p>
+                  <ul style="list-style: none; padding: 0; margin: 0 0 28px 0; display: flex; flex-direction: column; gap: 14px;">
+                    <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Public Designer Profile</li>
+                    <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Access Job &amp; Bid Boards</li>
+                    <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Bid on Global Projects</li>
+                    <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Escrow Setup &amp; Protection</li>
+                  </ul>
+                  <button style="padding: 14px 32px; background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.4); color: #c4b5fd; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
+                    onmouseover="this.style.background='rgba(139,92,246,0.25)'; this.style.borderColor='rgba(139,92,246,0.6)'"
+                    onmouseout="this.style.background='rgba(139,92,246,0.15)'; this.style.borderColor='rgba(139,92,246,0.4)'"
+                    onclick="window.location.href='/signup.html?tier=designer'">Become a Designer</button>
+                </div>
+              </div>
+
+              <!-- Entrepreneur Row (text left, image right — reversed) -->
+              <div style="display: flex; align-items: center; gap: 48px; flex-direction: row-reverse; background: rgba(249, 115, 22, 0.04); border: 1px solid rgba(249, 115, 22, 0.25); border-radius: 16px; padding: 40px; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
+                   onmouseover="this.style.borderColor='rgba(249,115,22,0.5)'; this.style.transform='translateY(-4px)'"
+                   onmouseout="this.style.borderColor='rgba(249,115,22,0.25)'; this.style.transform='none'">
+                <div style="flex: 1; min-width: 0;">
+                  <img src="/images/showcase-7.png" alt="Entrepreneur Engine"
+                    style="width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 12px; border: 1px solid rgba(249,115,22,0.2); box-shadow: 0 16px 40px rgba(0,0,0,0.4);"
+                    onerror="this.style.display='none'">
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                    <h3 style="font-size: 26px; color: #fdba74; margin: 0; font-weight: 700;">Entrepreneur</h3>
+                    <span style="font-size: 13px; color: rgba(253,186,116,0.7); background: rgba(249,115,22,0.15); padding: 3px 10px; border-radius: 20px; font-weight: 500;">Marketplace Role</span>
+                  </div>
+                  <div style="font-size: 40px; font-weight: 800; color: #fff; margin-bottom: 6px; letter-spacing: -1px;">$59<span style="font-size: 16px; color: rgba(255,255,255,0.4); font-weight: 400;">/mo</span></div>
+                  <p style="font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.6; margin-bottom: 24px;">Makers and independent product creators. Post projects, hire verified experts, and manage team NDAs with secure milestone payments.</p>
+                  <ul style="list-style: none; padding: 0; margin: 0 0 28px 0; display: flex; flex-direction: column; gap: 14px;">
+                    <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdba74" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> <b>All Designer basics included</b></li>
+                    <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdba74" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Hire Dedicated Designers</li>
+                    <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdba74" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Generate NDAs Safely</li>
+                    <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdba74" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> 50 Instant RFQ / mo</li>
+                  </ul>
+                  <button style="padding: 14px 32px; background: rgba(249,115,22,0.15); border: 1px solid rgba(249,115,22,0.4); color: #fdba74; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
+                    onmouseover="this.style.background='rgba(249,115,22,0.25)'; this.style.borderColor='rgba(249,115,22,0.6)'"
+                    onmouseout="this.style.background='rgba(249,115,22,0.15)'; this.style.borderColor='rgba(249,115,22,0.4)'"
+                    onclick="window.location.href='/signup.html?tier=entrepreneur'">Join as Entrepreneur</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ═══ ROW 2: Professional — full-width hero card ═══ -->
+            <div style="max-width: 1100px; margin: 48px auto 0; position: relative;">
+              <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: linear-gradient(90deg, #3c6bff, #5ea2ff); color: #fff; padding: 6px 20px; border-radius: 20px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; box-shadow: 0 4px 16px rgba(94,162,255,0.4); z-index: 2;">RECOMMENDED</div>
+              <div style="display: flex; align-items: stretch; gap: 0; background: linear-gradient(180deg, rgba(43,90,255,0.06) 0%, rgba(13,17,23,0) 100%); border: 1px solid rgba(94,162,255,0.4); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 80px rgba(43,90,255,0.08); transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
+                   onmouseover="this.style.borderColor='rgba(94,162,255,0.7)'; this.style.transform='translateY(-4px)'"
+                   onmouseout="this.style.borderColor='rgba(94,162,255,0.4)'; this.style.transform='none'">
+
+                <!-- Left: Text Content -->
+                <div style="flex: 1; padding: 48px 40px; display: flex; flex-direction: column; justify-content: center;">
+                  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                    <h3 style="font-size: 30px; color: #fff; margin: 0; font-weight: 700;">Professional</h3>
+                    <span style="font-size: 13px; color: rgba(94,162,255,0.9); background: rgba(43,90,255,0.15); padding: 3px 10px; border-radius: 20px; font-weight: 500;">Platform SaaS</span>
+                  </div>
+                  <div style="font-size: 48px; font-weight: 800; color: #fff; margin-bottom: 6px; letter-spacing: -1px;">$199<span style="font-size: 16px; color: rgba(255,255,255,0.4); font-weight: 400;">/mo</span></div>
+                  <p style="font-size: 16px; color: rgba(255,255,255,0.6); line-height: 1.6; margin-bottom: 28px; max-width: 500px;">For scaling companies needing robust, global supply chains. Full access to the manufacturing engine — unlimited RFQs, 1,100+ suppliers, and expert consulting.</p>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 32px;">
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5ea2ff" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> <b>Includes Entrepreneur</b></div>
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Unlimited Instant RFQs</div>
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> 1,100+ Supplier Network</div>
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Direct Factory Messaging</div>
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> 5h/mo Expert Consulting</div>
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.9);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Managed On-Ground Staff</div>
+                  </div>
+                  <button style="padding: 16px 40px; background: linear-gradient(135deg, #3c6bff, #5ea2ff); border: none; color: #fff; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 8px 24px rgba(43,90,255,0.3); width: fit-content;"
+                    onmouseover="this.style.filter='brightness(1.1)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 32px rgba(43,90,255,0.4)'"
+                    onmouseout="this.style.filter='brightness(1)'; this.style.transform='none'; this.style.boxShadow='0 8px 24px rgba(43,90,255,0.3)'"
+                    onclick="window.location.href='/signup.html?tier=professional'">Upgrade to Professional</button>
+                </div>
+
+                <!-- Right: Image Grid -->
+                <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; min-height: 380px;">
+                  <img src="/images/showcase-2.png" alt="Instant Quoting" style="width: 100%; height: 100%; object-fit: cover;">
+                  <img src="/images/showcase-4.png" alt="Supply Chain" style="width: 100%; height: 100%; object-fit: cover;">
+                  <img src="/images/showcase-3.png" alt="Supplier Engine" style="width: 100%; height: 100%; object-fit: cover;">
+                  <img src="/images/showcase-8.png" alt="Tariff Optimizer" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+              </div>
+            </div>
+
+            <!-- ═══ ROW 3: Free & Enterprise — compact row ═══ -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1100px; margin: 48px auto 0;">
+
+              <!-- Free Tier -->
+              <div style="border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.02); border-radius: 16px; padding: 32px; display: flex; flex-direction: column; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
+                   onmouseover="this.style.borderColor='rgba(255,255,255,0.2)'; this.style.transform='translateY(-4px)'"
+                   onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
+                <div style="margin-bottom: 24px;">
+                  <h3 style="font-size: 22px; color: #fff; margin-bottom: 8px; font-weight: 700;">Free</h3>
+                  <div style="font-size: 36px; font-weight: 800; color: #fff; margin-bottom: 6px; letter-spacing: -1px;">$0<span style="font-size: 16px; color: rgba(255,255,255,0.4); font-weight: 400;">/mo</span></div>
+                  <p style="font-size: 14px; color: rgba(255,255,255,0.6);">Get started with quotation insights and marketplace viewing.</p>
+                </div>
+                <ul style="list-style: none; padding: 0; margin: 0 0 28px 0; flex: 1; display: flex; flex-direction: column; gap: 12px;">
                   <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Instant RFQ access</li>
                   <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> View Designer Hub</li>
                   <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> View Entrepreneur Hub</li>
                 </ul>
-                <button class="pricing-btn" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #ccc; border-radius: 8px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'" onclick="window.location.href='/signup.html?tier=free'">Get Started Free</button>
+                <button style="width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #ccc; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
+                  onmouseover="this.style.background='rgba(255,255,255,0.1)'"
+                  onmouseout="this.style.background='rgba(255,255,255,0.05)'"
+                  onclick="window.location.href='/signup.html?tier=free'">Get Started Free</button>
               </div>
 
-              <!-- Tier 1: Designer -->
-              <div class="pricing-card" style="border-top: 4px solid #a78bfa; display: flex; flex-direction: column; background: #0E1117; border-radius: 12px; padding: 24px;">
-                <div class="pricing-card-header" style="margin-bottom: 24px;">
-                  <h3 style="font-size: 20px; color: #fff; margin-bottom: 8px;">Designer</h3>
-                  <div class="price" style="font-size: 36px; font-weight: bold; color: #fff; margin-bottom: 8px;">$29<span style="font-size: 16px; color: rgba(255,255,255,0.5); font-weight: normal;">/mo</span></div>
-                  <p style="font-size: 14px; color: rgba(255,255,255,0.7);">Freelancers and industrial design engineers.</p>
+              <!-- Enterprise Tier -->
+              <div style="border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.02); border-radius: 16px; padding: 32px; display: flex; flex-direction: column; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
+                   onmouseover="this.style.borderColor='rgba(255,255,255,0.2)'; this.style.transform='translateY(-4px)'"
+                   onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
+                <div style="margin-bottom: 24px;">
+                  <h3 style="font-size: 22px; color: #fff; margin-bottom: 8px; font-weight: 700;">Enterprise</h3>
+                  <div style="font-size: 36px; font-weight: 800; color: #fff; margin-bottom: 6px; letter-spacing: -1px;">Custom</div>
+                  <p style="font-size: 14px; color: rgba(255,255,255,0.6);">Global corporations operating fully integrated supply chains.</p>
                 </div>
-                <ul class="pricing-features" style="list-style: none; padding: 0; margin-bottom: 32px; flex: 1; display: flex; flex-direction: column; gap: 12px;">
-                  <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Public Designer Profile</li>
-                  <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Access Job/Bid Boards</li>
-                  <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Bid on Global Projects</li>
-                  <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Escrow Setup & Protection</li>
-                </ul>
-                <button class="pricing-btn" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 8px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" onclick="window.location.href='/signup.html?tier=designer'">Become a Designer</button>
-              </div>
-
-              <!-- Tier 2: Entrepreneur -->
-              <div class="pricing-card" style="border-top: 4px solid #fdba74; display: flex; flex-direction: column; background: #0E1117; border-radius: 12px; padding: 24px;">
-                <div class="pricing-card-header" style="margin-bottom: 24px;">
-                  <h3 style="font-size: 20px; color: #fff; margin-bottom: 8px;">Entrepreneur</h3>
-                  <div class="price" style="font-size: 36px; font-weight: bold; color: #fff; margin-bottom: 8px;">$59<span style="font-size: 16px; color: rgba(255,255,255,0.5); font-weight: normal;">/mo</span></div>
-                  <p style="font-size: 14px; color: rgba(255,255,255,0.7);">Makers and independent product creators.</p>
-                </div>
-                <ul class="pricing-features" style="list-style: none; padding: 0; margin-bottom: 32px; flex: 1; display: flex; flex-direction: column; gap: 12px;">
-                  <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdba74" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> <b>All designer basics</b></li>
-                  <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Hire Dedicated Designers</li>
-                  <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Generate NDAs safely</li>
-                  <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> 50 Instant RFQ / mo</li>
-                </ul>
-                <button class="pricing-btn" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 8px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" onclick="window.location.href='/signup.html?tier=entrepreneur'">Join as Entrepreneur</button>
-              </div>
-
-              <!-- Tier 3: Professional -->
-              <div class="pricing-card" style="transform: scale(1.05); border-color: #5ea2ff; position: relative; border-top: 4px solid #5ea2ff; display: flex; flex-direction: column; background: #0E1117; border-radius: 12px; padding: 24px; box-shadow: 0 10px 30px rgba(94, 162, 255, 0.1);">
-                <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #5ea2ff; color: #000; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold;">RECOMMENDED</div>
-                <div class="pricing-card-header" style="margin-bottom: 24px;">
-                  <h3 style="font-size: 20px; color: #fff; margin-bottom: 8px;">Professional</h3>
-                  <div class="price" style="font-size: 36px; font-weight: bold; color: #fff; margin-bottom: 8px;">$199<span style="font-size: 16px; color: rgba(255,255,255,0.5); font-weight: normal;">/mo</span></div>
-                  <p style="font-size: 14px; color: rgba(255,255,255,0.7);">Scaling companies needing robust supply chains.</p>
-                </div>
-                <ul class="pricing-features" style="list-style: none; padding: 0; margin-bottom: 32px; flex: 1; display: flex; flex-direction: column; gap: 12px;">
-                  <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5ea2ff" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> <b>Includes Entrepreneur tools</b></li>
-                  <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Unlimited Instant RFQs</li>
-                  <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Access 1,100+ Supplier Net</li>
-                  <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Direct Factory Messaging</li>
-                  <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> 5h/mo Expert Consulting</li>
-                  <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Managed on-ground staff limits</li>
-                </ul>
-                <button class="pricing-btn" style="width: 100%; padding: 12px; background: #5ea2ff; border: none; color: #0e1117; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'" onclick="window.location.href='/signup.html?tier=professional'">Upgrade to Pro</button>
-              </div>
-
-              <!-- Tier 4: Enterprise -->
-              <div class="pricing-card" style="border-top: 4px solid #fff; display: flex; flex-direction: column; background: #0E1117; border-radius: 12px; padding: 24px;">
-                <div class="pricing-card-header" style="margin-bottom: 24px;">
-                  <h3 style="font-size: 20px; color: #fff; margin-bottom: 8px;">Enterprise</h3>
-                  <div class="price" style="font-size: 32px; font-weight: bold; color: #fff; margin-bottom: 8px; padding-top: 4px;">Custom</div>
-                  <p style="font-size: 14px; color: rgba(255,255,255,0.7);">Global corporations operating fully integrated supply.</p>
-                </div>
-                <ul class="pricing-features" style="list-style: none; padding: 0; margin-bottom: 32px; flex: 1; display: flex; flex-direction: column; gap: 12px;">
+                <ul style="list-style: none; padding: 0; margin: 0 0 28px 0; flex: 1; display: flex; flex-direction: column; gap: 12px;">
                   <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> <b>Includes Pro tools</b></li>
                   <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Dedicated Supply Manager</li>
                   <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> On-site factory audits</li>
                   <li style="display: flex; gap: 8px; font-size: 14px; color: #eee;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> Custom ERP Integration</li>
                 </ul>
-                <button class="pricing-btn" style="width: 100%; padding: 12px; background: transparent; border: 1px solid #5ea2ff; color: #5ea2ff; border-radius: 8px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(94,162,255,0.1)'" onmouseout="this.style.background='transparent'" onclick="window.location.href='/signup.html?tier=enterprise'">Contact Sales</button>
+                <button style="width: 100%; padding: 14px; background: transparent; border: 1px solid rgba(94,162,255,0.5); color: #5ea2ff; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
+                  onmouseover="this.style.background='rgba(94,162,255,0.1)'; this.style.borderColor='rgba(94,162,255,0.7)'"
+                  onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(94,162,255,0.5)'"
+                  onclick="window.location.href='/signup.html?tier=enterprise'">Contact Sales</button>
               </div>
 
             </div>
@@ -705,7 +850,7 @@
                   <!-- ── Top Row: Upload (left) + 9 Fields (right) ── -->
                   <div class="rfq-top-row">
                     <!-- LEFT: Upload Zone -->
-                    
+
                     <div class="rfq-upload-col">
                       <!-- 3D Files Dropzone -->
                       <div class="rfq-engine__upload-zone" id="rfq-upload-zone-0" style="min-height: 220px;">
@@ -727,17 +872,19 @@
                         <button class="upload-btn rfq-select-files-btn" data-part="0">Select 3D Files</button>
                         <div class="upload-file-list hidden" data-part="0"></div>
                         <div class="upload-formats">
-                          <p style="font-size: 9.5px;">STEP · STP · SLDPRT · STL · DXF · IGES · IGS · IPT · X_T · X_B · 3DXML · CATPART · PRT · SAT · 3MF · JT</p>
+                          <p style="font-size: 9.5px;">STEP · STP · SLDPRT · STL · DXF · IGES · IGS · IPT · X_T · X_B ·
+                            3DXML · CATPART · PRT · SAT · 3MF · JT</p>
                         </div>
                       </div>
 
                       <!-- 2D / Supporting Docs Dropzone -->
-                      <div class="rfq-engine__upload-zone" id="rfq-upload-zone-2d-0" style="min-height: 140px; margin-top: 12px; background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.08);">
+                      <div class="rfq-engine__upload-zone" id="rfq-upload-zone-2d-0"
+                        style="min-height: 140px; margin-top: 12px; background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.08);">
                         <input type="file" class="rfq-file-input-2d" data-part="0" multiple
-                          accept=".pdf,.dwg,.dxf,.png,.jpg,.jpeg,.doc,.docx"
-                          hidden />
+                          accept=".pdf,.dwg,.dxf,.png,.jpg,.jpeg,.doc,.docx" hidden />
                         <div class="upload-icon" style="color: var(--color-steel-400); margin-bottom: -6px;">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                             <polyline points="14 2 14 8 20 8"></polyline>
                             <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -747,7 +894,8 @@
                         </div>
                         <div class="upload-text">
                           <h3 style="font-size: 12px; color: var(--color-steel-300);">2D Drawings & Supporting Docs</h3>
-                          <p style="font-size: 10px; margin-top: 2px;">Drag & Drop or <span class="upload-link">Choose Files</span></p>
+                          <p style="font-size: 10px; margin-top: 2px;">Drag & Drop or <span class="upload-link">Choose
+                              Files</span></p>
                         </div>
                         <div class="upload-file-list hidden" id="upload-file-list-2d-0"></div>
                         <div class="upload-formats" style="margin-top: 4px;">
@@ -859,9 +1007,13 @@
                   </div>
 
                   <!-- ── Geometry Analysis Placeholder (visible BEFORE upload) ── -->
-                  <div class="rfq-results-placeholder" data-part="0" style="border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: var(--radius-lg); margin-top: 16px; min-height: 120px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--color-steel-500); background: rgba(0,0,0,0.2);">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                  <div class="rfq-results-placeholder" data-part="0"
+                    style="border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: var(--radius-lg); margin-top: 16px; min-height: 120px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--color-steel-500); background: rgba(0,0,0,0.2);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="1.5">
+                      <path
+                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                      </path>
                       <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                       <line x1="12" y1="22.08" x2="12" y2="12"></line>
                     </svg>
@@ -1244,7 +1396,8 @@
           <h4 style="color: var(--color-white); margin: 0 0 12px 0; font-weight: 600; font-size: 16px;">Transform Your
             Supply Chain</h4>
           <p style="color: var(--color-steel-400); line-height: 1.6; font-size: 13px; margin: 0 0 24px 0;">
-            Engage Atlas DT for end-to-end supply chain management, on-ground factory auditing, and strategic sourcing. Let
+            Engage Atlas DT for end-to-end supply chain management, on-ground factory auditing, and strategic sourcing.
+            Let
             our experts handle the complexity of global manufacturing.
           </p>
           <div style="color: var(--color-steel-500); font-size: 11px; margin-top: auto;">
@@ -1387,7 +1540,8 @@
           <form id="signup-form" class="auth-form">
             <div class="auth-input-group">
               <label for="signup-tier">Select Your Plan</label>
-              <select id="signup-tier" required style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 13px; margin-bottom: 2px;">
+              <select id="signup-tier" required
+                style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 13px; margin-bottom: 2px;">
                 <option value="basic">Basic (Free)</option>
                 <option value="professional">Professional ($49/mo)</option>
                 <option value="enterprise">Enterprise (Custom)</option>
@@ -1430,4 +1584,3 @@
 </body>
 
 </html>
-

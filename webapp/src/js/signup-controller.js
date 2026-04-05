@@ -77,11 +77,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Add click listeners to tier cards (Left sidebar)
   tierCards.forEach(card => {
     card.addEventListener('click', () => {
-      if (card.dataset.tier === 'enterprise') {
-        alert('Enterprise requires a custom scope. Please contact sales on the profile page.');
-        window.location.href = '/profile.html';
-        return;
-      }
       setTier(card.dataset.tier);
     });
   });
@@ -99,12 +94,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.documentElement.style.setProperty('--tier-pro-color', pColor);
     
     // Update Main Action button text depending on free/paid
+    const entGroup = document.getElementById('enterprise-needs-group');
+    const entNeeds = document.getElementById('enterprise-needs');
+    
     if (tier === 'free') {
       step1Btn.innerHTML = 'Complete Setup <div class="spinner"></div>';
       pip2.style.display = 'none'; // Hide step 2 pip
+      if (entGroup) entGroup.style.display = 'none';
+      if (entNeeds) entNeeds.required = false;
+    } else if (tier === 'enterprise') {
+      step1Btn.innerHTML = 'Submit Inquiry <div class="spinner"></div>';
+      pip2.style.display = 'none'; // Hide step 2 pip
+      if (entGroup) entGroup.style.display = 'block';
+      if (entNeeds) entNeeds.required = true;
     } else {
       step1Btn.innerHTML = 'Next Step: Payment <div class="spinner"></div>';
       pip2.style.display = 'block'; 
+      if (entGroup) entGroup.style.display = 'none';
+      if (entNeeds) entNeeds.required = false;
     }
   }
 
@@ -120,6 +127,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (currentTier === 'free') {
         // Complete the signup directly
         window.location.href = '/profile.html';
+      } else if (currentTier === 'enterprise') {
+        // Submit inquiry to Atlas DT
+        alert('Inquiry sent! Our team will contact you shortly to scope your custom requirements.');
+        window.location.href = '/index.html';
       } else {
         // Unlocks checkout step
         step1Container.classList.remove('active');
