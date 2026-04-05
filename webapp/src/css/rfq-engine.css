@@ -3,7 +3,7 @@
    ═══════════════════════════════════════════════════════ */
 .rfq-engine {
   position: absolute;
-  top: 110px; /* ~100px for nav + 10px margin */
+  top: 80px; /* ~56px for nav + 24px margin (halved) */
   left: 50%;
   transform: translateX(-50%);
   width: 980px;
@@ -48,7 +48,7 @@
   width: 420px;
   flex-shrink: 0;
   z-index: 101;
-  height: calc(100vh - 132px); /* Matches left pane: card (100vh-220px) + gap (16px) + CTA (72px) */
+  height: calc(100vh - 72px); /* Matches left pane: card (100vh-160px) + gap (16px) + CTA (72px) */
 }
 
 /* ══ PRIMARY CARD ═══════════════════════════════════════ */
@@ -61,7 +61,7 @@
   padding: var(--space-4) var(--space-5);
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6), 0 0 40px rgba(59, 130, 246, 0.1);
   pointer-events: auto;
-  height: calc(100vh - 220px) !important;
+  height: calc(100vh - 160px) !important;
   max-height: none !important;
   /* Lock to consistent height for both panels to resolve tab-switching shifts */
   /* Taller card */
@@ -132,7 +132,7 @@
 
 .rfq-engine__header {
   text-align: center;
-  flex: 1;
+  margin-bottom: 24px;
 }
 
 .rfq-engine__header h2 {
@@ -254,6 +254,11 @@
 
 /* ── Upload Zone ─────────────────────────────────────── */
 .rfq-upload-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.rfq-fields-col {
   display: flex;
   flex-direction: column;
 }
@@ -415,6 +420,7 @@
 .rfq-custom-details {
   display: flex;
   flex-direction: column;
+  flex: 1;
   gap: 4px;
 }
 
@@ -436,10 +442,20 @@
   font-size: 12px;
   color: var(--color-white);
   outline: none;
-  resize: vertical;
+  resize: none;
   min-height: 60px;
+  flex: 1;
   transition: border-color var(--duration-fast);
   box-sizing: border-box;
+}
+
+/* ── Geometry Results Placeholder ────────────────────── */
+.rfq-results-placeholder {
+  transition: opacity var(--duration-fast);
+}
+
+.rfq-results-placeholder:has(+ .rfq-results:not(.hidden)) {
+  display: none !important;
 }
 
 .rfq-custom-details textarea:focus {

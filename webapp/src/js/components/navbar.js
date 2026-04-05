@@ -63,26 +63,78 @@ export async function initNavbar() {
 
   // Populate the navbar avatar with real user data
   const user = await getCurrentUser();
-  if (user && loginBtn) {
+  const navUserMenu = document.getElementById('nav-user-menu');
+  const navAvatar = document.getElementById('nav-avatar');
+  const navLoginBtn = document.getElementById('nav-login-btn');
+
+  let sysTier = sessionStorage.getItem('atlasdt_tier') || 'basic';
+
+  if (user) {
+    if (navUserMenu) navUserMenu.classList.add('active');
+    if (navLoginBtn) navLoginBtn.style.display = 'none';
+
     const profile = await getMyProfile();
+    if (profile && profile.tier) {
+      sysTier = profile.tier;
+      sessionStorage.setItem('atlasdt_tier', sysTier);
+    }
+    
     const firstName = profile?.first_name || user.user_metadata?.first_name || '';
     const initial = (firstName || user.email || '?')[0].toUpperCase();
     const company = profile?.company || '';
+    const tooltipText = [firstName, company].filter(Boolean).join(' · ') || user.email;
 
-    // Replace the generic person icon with user initial
-    loginBtn.innerHTML = initial;
-    loginBtn.title = [firstName, company].filter(Boolean).join(' · ') || user.email;
-    loginBtn.style.cssText += `
-      background: linear-gradient(135deg, var(--color-electric), var(--color-neon-purple));
-      font-size: 15px;
-      font-weight: 700;
-      color: white;
-      border: 2px solid rgba(255,255,255,0.15);
-    `;
+    // Handle generic button (index.html)
+    if (loginBtn) {
+      loginBtn.innerHTML = initial;
+      loginBtn.title = tooltipText;
+      loginBtn.style.cssText += `
+        background: linear-gradient(135deg, var(--color-electric), var(--color-neon-purple));
+        font-size: 15px;
+        font-weight: 700;
+        color: white;
+        border: 2px solid rgba(255,255,255,0.15);
+      `;
+    }
+    
+    // Handle specific avatar (app.html)
+    if (navAvatar) {
+      navAvatar.innerHTML = initial;
+      navAvatar.title = tooltipText;
+    }
+  } else {
+    if (navUserMenu) navUserMenu.classList.remove('active');
+    if (navLoginBtn) navLoginBtn.style.display = 'block';
+  }
+
+  // Handle Tab Visibility based on Zero-Trust Guard
+  const restrictedViews = ['suppliers', 'product-builder', 'tariff'];
+  if (sysTier.toLowerCase().trim() === 'basic' || !user) {
+    menuItems.forEach(item => {
+      if (restrictedViews.includes(item.dataset.view)) {
+        item.style.display = 'none';
+      }
+    });
   }
 
   // ── Click Handlers ─────────────────────────────────────
-  loginBtn?.addEventListener('click', () => openProfilePanel());
+  loginBtn?.addEventListener('click', () => {
+    // If we're on a page with generic btn-login (like index.html)
+    // clicking the avatar should take you to the main profile page
+    if (user) {
+      window.location.href = '/profile.html';
+    }
+  });
+  
+  // Notice we purposefully DO NOT hijack the profile settings btn click anymore
+  // so it proceeds with normal href="/profile.html" navigation.
+
+  const logoutBtn = document.getElementById('nav-logout-btn');
+  logoutBtn?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const { logoutUser } = await import('../services/auth.js');
+    await logoutUser();
+  });
 
   document.getElementById('btn-notifications')?.addEventListener('click', () => {
     console.log('[PRD] Notifications — coming soon');

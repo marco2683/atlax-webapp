@@ -373,8 +373,8 @@
    SALES FUNNEL OVERLAY (REPLACES CAROUSEL)
    ═══════════════════════════════════════════════════════════ */
 .sales-funnel-page {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
   background: radial-gradient(circle at 50% 10%, rgba(43, 90, 255, 0.1) 0%, rgba(13, 17, 23, 0.95) 60%), rgba(13, 17, 23, 0.95);
   backdrop-filter: blur(24px);
   z-index: 100;
@@ -420,8 +420,9 @@
 }
 
 .sales-funnel__content {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
+  padding: 0 40px;
   display: flex;
   flex-direction: column;
   gap: 120px; /* More breathing room */
@@ -620,15 +621,11 @@
 
 .pricing-grid {
   padding-top: 24px;
-  padding-top: 64px;
   margin-top: 32px;
-  padding-top: 24px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
   align-items: stretch;
-  max-width: 1100px;
-  margin: 0 auto;
 }
 
 .pricing-card {
@@ -802,8 +799,8 @@
 }
 
 .sales-funnel-page {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
   background: rgba(13, 17, 23, 0.95);
   backdrop-filter: blur(20px);
   z-index: 100;
@@ -818,8 +815,9 @@
 }
 
 .sales-funnel__content {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
+  padding: 0 40px;
   display: flex;
   flex-direction: column;
   gap: 80px;
@@ -944,12 +942,10 @@
 
 .pricing-grid {
   padding-top: 24px;
-  padding-top: 64px;
   margin-top: 32px;
-  padding-top: 24px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
   align-items: stretch;
 }
 
@@ -1189,4 +1185,65 @@
 
 .carousel-cta-area {
   margin-top: 8px;
+}
+
+
+/* FEATURE DEEP DIVE */
+.sales-deep-dive {
+  max-width: 1000px;
+  margin: 80px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+.deep-dive-row {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+.deep-dive-row.reverse {
+  flex-direction: row-reverse;
+}
+.deep-dive-text {
+  flex: 1;
+}
+.deep-dive-text h2 {
+  font-size: 32px;
+  margin-bottom: 24px;
+  color: #fff;
+}
+.deep-dive-text p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+.deep-dive-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.deep-dive-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255,255,255,0.9);
+  font-size: 15px;
+}
+.deep-dive-list svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.deep-dive-img {
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .deep-dive-row, .deep-dive-row.reverse {
+    flex-direction: column;
+    gap: 40px;
+  }
 }

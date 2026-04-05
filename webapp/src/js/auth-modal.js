@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       loginError.innerText = '';
+      loginError.classList.remove('visible');
       const email = document.getElementById('login-email').value;
       const pass = document.getElementById('login-password').value;
       
@@ -63,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (error) {
         loginError.innerText = error.message;
+        loginError.classList.add('visible');
         loginBtn.innerText = 'Log In';
         loginBtn.disabled = false;
       } else {
@@ -81,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       signupError.innerText = '';
+      signupError.classList.remove('visible');
       
       const email = document.getElementById('signup-email').value;
       const pass = document.getElementById('signup-password').value;
@@ -91,16 +94,23 @@ document.addEventListener('DOMContentLoaded', () => {
       signupBtn.innerText = 'Creating Account...';
       signupBtn.disabled = true;
 
+      const pendingTier = document.getElementById('signup-tier')?.value || 'basic';
       const metadata = {
         first_name: first,
         last_name: last,
-        company: company
+        company: company,
+        tier: pendingTier
       };
+      
+      if (pendingTier !== 'basic') {
+        sessionStorage.setItem('pending_tier_subscription', pendingTier);
+      }
 
       const { data, error } = await signUpUser(email, pass, metadata);
       
       if (error) {
         signupError.innerText = error.message;
+        signupError.classList.add('visible');
         signupBtn.innerText = 'Create Account';
         signupBtn.disabled = false;
       } else {

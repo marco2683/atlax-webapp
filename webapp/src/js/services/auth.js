@@ -49,8 +49,15 @@ export async function logoutUser() {
     try {
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
+        
+        // Clear local app state and explicitly redirect to home page
+        sessionStorage.removeItem('atlasdt_tier');
+        sessionStorage.removeItem('pending_tier_subscription');
+        window.location.href = '/index.html';
     } catch (error) {
         console.error("Logout error:", error.message);
+        // Force redirect even on error to break loop
+        window.location.href = '/index.html';
     }
 }
 

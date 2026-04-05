@@ -405,7 +405,7 @@ function switchView(view, globe) {
   const modeToggles = document.getElementById('search-mode-toggles');
   const hero = document.getElementById('hero');
 
-  const selectionScreen = document.getElementById('supplier-selection');
+  const selectionScreen = document.getElementById('sales-funnel');
   const tabularEngine = document.getElementById('supplier-tabular-engine');
 
   console.log('[PRD] Switching to view:', view);

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atlas DT — Sign Up & Checkout</title>
+  <link rel="icon" type="image/svg+xml" href="/prd-favicon.svg" />
+  <link rel="stylesheet" href="/src/css/design-system.css">
+  <link rel="stylesheet" href="/src/css/signup-checkout.css">
+</head>
+<body>
+
+  <!-- Top fixed logo -->
+  <div style="position: absolute; top: 30px; left: 30px; z-index: 10;">
+    <a href="/index.html"><img src="/logos/atlasdt-logo-light.png" alt="Atlas DT" style="height: 24px; object-fit: contain;"></a>
+  </div>
+
+  <div class="checkout-container">
+    
+    <!-- LEFT PANEL: TIER SELECTOR -->
+    <aside class="checkout-sidebar">
+      <div class="sidebar-header" style="margin-top: 40px;">
+        <h1>Your Ecosystem Plan</h1>
+        <p>You can change your selection before completing checkout.</p>
+      </div>
+
+      <div class="tier-selector">
+        
+        <div class="tier-card" data-tier="free">
+          <div class="tier-info">
+            <h3 style="color: var(--tier-free-color);">Free</h3>
+            <p>Quotes & Platform Viewing</p>
+          </div>
+          <div class="tier-price">
+            <span class="amount">$0</span>
+            <span class="interval">/mo</span>
+          </div>
+        </div>
+
+        <div class="tier-card" data-tier="designer">
+          <div class="tier-info">
+            <h3 style="color: var(--tier-designer-color);">Designer</h3>
+            <p>Bids, Job Boards & Profiles</p>
+          </div>
+          <div class="tier-price">
+            <span class="amount">$29</span>
+            <span class="interval">/mo</span>
+          </div>
+        </div>
+
+        <div class="tier-card" data-tier="entrepreneur">
+          <div class="tier-info">
+            <h3 style="color: var(--tier-entrepreneur-color);">Entrepreneur</h3>
+            <p>Hire Teams & RFQ Allocation</p>
+          </div>
+          <div class="tier-price">
+            <span class="amount">$59</span>
+            <span class="interval">/mo</span>
+          </div>
+        </div>
+
+        <div class="tier-card" data-tier="professional">
+          <div class="tier-info">
+            <h3 style="color: var(--tier-pro-color);">Professional</h3>
+            <p>Unlimited RFQs & 1100+ Factories</p>
+          </div>
+          <div class="tier-price">
+            <span class="amount">$199</span>
+            <span class="interval">/mo</span>
+          </div>
+        </div>
+
+        <div class="tier-card" data-tier="enterprise">
+          <div class="tier-info">
+            <h3 style="color: var(--tier-enterprise-color);">Enterprise</h3>
+            <p>Custom Integrations</p>
+          </div>
+          <div class="tier-price" style="display:flex; align-items:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- RIGHT PANEL: FORMS -->
+    <main class="checkout-main">
+      <div class="form-steps">
+        
+        <div class="step-indicator" style="margin-top: 40px;">
+          <div class="step-pip active" id="pip-1"></div>
+          <div class="step-pip" id="pip-2"></div>
+        </div>
+
+        <!-- STEP 1: ACCOUNT SETUP -->
+        <div class="step-container active" id="step-1-container">
+          <div class="form-header">
+            <h2>Account Details</h2>
+            <p>We'll create your secure workspace environment.</p>
+          </div>
+          
+          <form id="step-1-form">
+            <div class="input-row">
+              <div class="input-group">
+                <label for="fname">First Name</label>
+                <input type="text" id="fname" required placeholder="Jane">
+              </div>
+              <div class="input-group">
+                <label for="lname">Last Name</label>
+                <input type="text" id="lname" required placeholder="Doe">
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="company">Company</label>
+              <input type="text" id="company" required placeholder="Acme Inc.">
+            </div>
+
+            <div class="input-group">
+              <label for="email">Work Email</label>
+              <input type="email" id="email" required placeholder="jane@acme.com">
+            </div>
+
+            <div class="input-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" required placeholder="••••••••">
+            </div>
+
+            <button type="submit" class="submit-btn" id="step-1-btn">Next Step: Payment <div class="spinner"></div></button>
+            <p style="text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 16px;">Already have an account? <a href="/profile.html" style="color: var(--text-primary);">Log in</a></p>
+          </form>
+        </div>
+
+        <!-- STEP 2: CHECKOUT (MOCK) -->
+        <div class="step-container" id="step-2-container">
+          <div class="form-header">
+            <a href="#" id="go-back-btn" style="color: var(--text-secondary); font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 12px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              Go Back
+            </a>
+            <h2>Complete Payment</h2>
+            <p>Your connection is secure and encrypted.</p>
+          </div>
+
+          <form id="step-2-form">
+            
+            <div class="stripe-mock-container">
+              <div class="input-group">
+                <label>Card details</label>
+                <div class="card-element">
+                  <svg class="credit-card-icon" viewBox="0 0 24 24"><path d="M21 4H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM3 6h18v2H3V6zm0 12v-6h18v6H3z"/></svg>
+                  <input type="text" placeholder="Card number" required>
+                  <div class="card-extras">
+                    <input type="text" placeholder="MM / YY" style="width: 50%" required>
+                    <input type="text" placeholder="CVC" style="width: 50%" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="input-group" style="margin-top: 20px;">
+                <label>Name on card</label>
+                <input type="text" placeholder="Jane Doe" required>
+              </div>
+
+              <div class="input-group" style="margin-bottom: 0;">
+                <label>Country</label>
+                <input type="text" value="United States" required>
+              </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="step-2-btn">Submit Payment <div class="spinner"></div></button>
+            <div class="payment-secure">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              Payments processed securely by Stripe
+            </div>
+          </form>
+
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script src="/src/js/signup-controller.js"></script>
+</body>
+</html>

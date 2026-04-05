@@ -1,0 +1,352 @@
+/* Signup & Checkout Global Variables */
+:root {
+  --signup-bg: #090B10;
+  --panel-bg: rgba(20, 24, 34, 0.6);
+  --border-light: rgba(255, 255, 255, 0.1);
+  --text-primary: #fff;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  
+  --tier-free-color: #94a3b8;
+  --tier-designer-color: #a78bfa;
+  --tier-entrepreneur-color: #fdba74;
+  --tier-pro-color: #5ea2ff;
+  --tier-enterprise-color: #ffffff;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--signup-bg);
+  color: var(--text-primary);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Layout Container */
+.checkout-container {
+  display: flex;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* LEFT PANEL (Tier Graphics) */
+.checkout-sidebar {
+  flex: 0 0 450px;
+  border-right: 1px solid var(--border-light);
+  padding: 60px 40px;
+  background: var(--panel-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  margin-bottom: 40px;
+}
+
+.sidebar-header h1 {
+  font-size: 28px;
+  margin: 0 0 8px;
+  background: linear-gradient(135deg, #fff 0%, #8892b0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sidebar-header p {
+  color: var(--text-secondary);
+  font-size: 15px;
+  margin: 0;
+}
+
+.tier-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Tier Card Styles */
+.tier-card {
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tier-card:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.tier-info h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.tier-info p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.tier-price {
+  text-align: right;
+}
+
+.tier-price .amount {
+  font-size: 24px;
+  font-weight: 700;
+  display: block;
+}
+
+.tier-price .interval {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Active states for each tier */
+.tier-card.active[data-tier="free"] {
+  border-color: var(--tier-free-color);
+  background: rgba(148, 163, 184, 0.1);
+}
+.tier-card.active[data-tier="designer"] {
+  border-color: var(--tier-designer-color);
+  background: rgba(167, 139, 250, 0.1);
+}
+.tier-card.active[data-tier="entrepreneur"] {
+  border-color: var(--tier-entrepreneur-color);
+  background: rgba(253, 186, 116, 0.1);
+}
+.tier-card.active[data-tier="professional"] {
+  border-color: var(--tier-pro-color);
+  background: rgba(94, 162, 255, 0.1);
+}
+.tier-card.active[data-tier="enterprise"] {
+  border-color: var(--tier-enterprise-color);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* RIGHT PANEL (Forms) */
+.checkout-main {
+  flex: 1;
+  padding: 60px 80px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-steps {
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.step-indicator {
+  display: flex;
+  margin-bottom: 40px;
+  gap: 8px;
+}
+
+.step-pip {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.step-pip.active::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: var(--tier-pro-color); /* Default, overridden by JS */
+}
+
+/* Step Containers */
+.step-container {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+.step-container.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-header {
+  margin-bottom: 32px;
+}
+
+.form-header h2 {
+  font-size: 24px;
+  margin: 0 0 8px;
+}
+
+.form-header p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+/* Input Styles */
+.input-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.input-row .input-group {
+  margin-bottom: 0;
+  flex: 1;
+}
+
+label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 14px;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  border-color: var(--tier-pro-color);
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+  background: var(--tier-pro-color);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-top: 12px;
+  position: relative;
+}
+
+.submit-btn:hover {
+  opacity: 0.9;
+}
+
+/* Mock Stripe Elements Container */
+.stripe-mock-container {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.card-element {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-element input {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+.card-element input:focus {
+  border: none;
+}
+
+.card-extras {
+  display: flex;
+  gap: 12px;
+  width: 140px;
+}
+
+.credit-card-icon {
+  width: 24px;
+  height: 24px;
+  fill: var(--text-secondary);
+}
+
+.payment-secure {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+/* Spinner */
+.spinner {
+  display: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0,0,0,0.2);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.submit-btn.loading {
+  color: transparent;
+  pointer-events: none;
+}
+.submit-btn.loading .spinner {
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .checkout-container {
+    flex-direction: column;
+  }
+  .checkout-sidebar {
+    flex: none;
+    padding: 30px 20px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .checkout-main {
+    padding: 40px 20px;
+  }
+}

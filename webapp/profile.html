@@ -136,7 +136,15 @@
       box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
     }
 
+    .profile-content {
+      align-items: stretch;
+      display: flex;
+      flex-direction: column;
+    }
+
     .profile-content-pane {
+      height: 700px !important;
+      overflow-y: auto;
       background: rgba(20,20,20,0.4);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255,255,255,0.08);
@@ -267,7 +275,7 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
       Back to Platform
     </a>
-    <div style="font-weight: 600; font-family: 'Space Grotesk', sans-serif; letter-spacing: 2px;">Atlas DT HUB</div>
+    <img src="/logos/atlasdt-logo-light.png" alt="Atlas DT Logo" style="height: 28px;">
   </nav>
 
   <div class="profile-layout">
@@ -391,11 +399,7 @@
             </div>
           </div>
 
-          <div style="margin-top: 40px; display: flex; justify-content: flex-end; align-items: center; gap: 16px;">
-            <span id="prof-save-msg" style="font-size: 14px; font-weight: 500; color: #4ade80; display: none;">Saved successfully!</span>
-            <button type="submit" class="btn-save" id="prof-save-btn">Save Changes</button>
-          </div>
-        </form>
+          </form>
       </div>
 
       <!-- Billing Tab -->
@@ -448,10 +452,7 @@
               <input type="text" class="profile-input" id="prof-methodologies" placeholder="e.g. Agile, Lean Six Sigma, Waterfall">
             </div>
           </div>
-          <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
-            <button type="submit" class="btn-save" id="prof-work-save-btn">Save Work Profile</button>
-          </div>
-        </form>
+          </form>
       </div>
 
       <!-- Resume / CV Tab -->
@@ -467,7 +468,10 @@
           <div id="resume-upload-status" style="margin-top: 16px; font-size: 14px; color: #4ade80; display: none;">Upload successful!</div>
           <div id="current-resume-container" style="margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; display: none;">
             <h4 style="font-size: 14px; margin-bottom: 8px;">Current Resume:</h4>
-            <a href="#" id="current-resume-link" target="_blank" style="color: var(--color-electric); text-decoration: underline;">View Uploaded Resume</a>
+            <div style="display: flex; gap: 16px; align-items: center;">
+              <a href="#" id="current-resume-link" target="_blank" style="color: var(--color-electric); text-decoration: underline;">View Uploaded Resume</a>
+              <button id="remove-resume-btn" class="btn-save" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; padding: 6px 12px; font-size: 12px;">Remove</button>
+            </div>
           </div>
         </div>
       </div>
@@ -489,13 +493,26 @@
         </div>
       </div>
 
+    
+      <!-- Persistent Global Save Action Card -->
+      <div class="billing-card" style="margin-top: 24px; padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.3);">
+        <div>
+          <h3 style="font-size: 16px; margin: 0; font-family: 'Space Grotesk', sans-serif;">Save Profile Changes</h3>
+          <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin: 4px 0 0 0;">Don't forget to save your edits across all tabs.</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <span id="global-save-msg" style="font-size: 14px; font-weight: 500; color: #4ade80; display: none;">Saved successfully!</span>
+          <button class="btn-save" id="global-save-btn" style="min-width: 160px;">Save All Changes</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <!-- Onboarding Modal Container -->
   <div class="auth-modal hidden" id="role-onboarding-modal" style="z-index: 9999; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; background: rgba(8, 8, 8, 0.85); backdrop-filter: blur(12px);">
-    <div class="auth-modal-glass" style="max-width: 600px; text-align: center;">
-      <button class="close-auth-modal" id="close-role-onboarding">&times;</button>
+    <div class="auth-modal-glass modal-expanded" style="max-width: 900px; padding: 0; border: 1px solid rgba(255,255,255,0.05); text-align: left; overflow: hidden; background: #0d1117; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+      <button class="close-auth-modal" id="close-role-onboarding" style="z-index: 10;">&times;</button>
       <div id="onboarding-content-area" style="text-align: left;">
         <!-- Dynamically populated via JS depending on Designer vs Entrepreneur -->
       </div>

@@ -47,8 +47,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const tierCheck = String(userTier).toLowerCase().trim();
   const isProAccess = ['professional', 'pro', 'enterprise'].includes(tierCheck);
 
-  if (isProAccess || justSubscribed) {
-    openGlobeView();
+  if (isAuthenticated || justSubscribed) {
+    if (isProAccess || justSubscribed) {
+      openGlobeView();
+    } else {
+      window.dispatchEvent(new CustomEvent('prd-nav-switch', { detail: { view: 'rfq' } }));
+      document.getElementById('sales-funnel')?.classList.add('hidden');
+    }
   } else {
     // Hide the globe elements initially to show selection screen
     const searchBar = document.getElementById('search-bar');
@@ -113,6 +118,13 @@ document.addEventListener('DOMContentLoaded', async () => {
           // Switch to signup view
           const btnSignupToggle = document.getElementById('toggle-to-signup');
           if (btnSignupToggle) btnSignupToggle.click();
+          
+          // Pre-select the tier in dropdown
+          const pendingTier = btn.dataset.tier || 'basic';
+          const signupTierSelect = document.getElementById('signup-tier');
+          if (signupTierSelect) {
+            signupTierSelect.value = pendingTier;
+          }
         } else {
           window.location.href = '/index.html';
         }
