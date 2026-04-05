@@ -50,6 +50,22 @@
 </head>
 
 <body>
+  <!-- Hide navbar when funnel overlay is visible (stacking context fix) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var funnel = document.getElementById('sales-funnel');
+      var navbar = document.getElementById('navbar');
+      if (!funnel || !navbar) return;
+      // Initial check
+      if (!funnel.classList.contains('hidden')) navbar.style.display = 'none';
+      // Watch for class changes on the funnel
+      var obs = new MutationObserver(function() {
+        navbar.style.display = funnel.classList.contains('hidden') ? '' : 'none';
+      });
+      obs.observe(funnel, { attributes: true, attributeFilter: ['class'] });
+    });
+  </script>
+
   <div id="app">
 
     <!-- ═══════════════════════════════════════════════════
@@ -169,7 +185,6 @@
         </div>
         <div class="sales-grid-bg"></div>
         <div class="sales-funnel__content">
-
 
           <!-- Hero Section -->
           <section class="sales-hero" style="margin-top: 40px; text-align: center;">

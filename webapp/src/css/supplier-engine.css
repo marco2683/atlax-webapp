@@ -803,7 +803,7 @@
   top: 0; left: 0; width: 100vw; height: 100vh;
   background: rgba(13, 17, 23, 0.95);
   backdrop-filter: blur(20px);
-  z-index: 100;
+  z-index: 200;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 80px 20px;
@@ -1187,7 +1187,6 @@
   margin-top: 8px;
 }
 
-
 /* FEATURE DEEP DIVE */
 .sales-deep-dive {
   max-width: 1000px;
@@ -1245,5 +1244,173 @@
   .deep-dive-row, .deep-dive-row.reverse {
     flex-direction: column;
     gap: 40px;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     FUNNEL PAGE — Full Mobile Overrides
+     ══════════════════════════════════════════════════════════ */
+
+  /* Funnel overlay — reduce padding, z-index above navbar (100) */
+  .sales-funnel-page {
+    padding: 60px 12px !important;
+    z-index: 200 !important;
+  }
+
+  .sales-funnel__content {
+    padding: 0 8px !important;
+    gap: 48px !important;
+  }
+
+  /* Back button — compact */
+  .sales-funnel__header {
+    padding: 16px 16px !important;
+  }
+
+  /* Hero — scale down */
+  .sales-hero {
+    margin-top: 20px !important;
+  }
+
+  .sales-hero__title {
+    font-size: 28px !important;
+    line-height: 1.15 !important;
+    margin-bottom: 12px !important;
+  }
+
+  .sales-hero__subtitle {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* ── Value Prop Cards: force stack ──────────────────────── */
+
+  /* All inline flex rows → column on mobile */
+  .sales-funnel__content > section > div[style*="display: flex"] {
+    flex-direction: column !important;
+    gap: 24px !important;
+    padding: 24px 20px !important;
+  }
+
+  /* Undo row-reverse on entrepreneur card */
+  .sales-funnel__content > section > div[style*="row-reverse"] {
+    flex-direction: column !important;
+  }
+
+  /* Value card headings */
+  .sales-funnel__content h3 {
+    font-size: 22px !important;
+  }
+
+  .sales-funnel__content h4 {
+    font-size: 16px !important;
+  }
+
+  /* Hide verbose paragraphs in value cards */
+  .sales-funnel__content > section > div > div > p {
+    display: none !important;
+  }
+
+  /* Professional Engine: inner flex → column */
+  .sales-funnel__content > section > div > div[style*="display: flex"][style*="align-items: stretch"] {
+    flex-direction: column !important;
+  }
+
+  /* Professional Engine: text content */
+  .sales-funnel__content > section > div > div > div[style*="padding: 48px"] {
+    padding: 24px 20px !important;
+  }
+
+  /* Professional Engine: hide second-level paragraph */
+  .sales-funnel__content > section > div > div > div > p {
+    display: none !important;
+  }
+
+  /* Professional Engine: 2x2 grid → 1x2 */
+  .sales-funnel__content > section > div > div > div[style*="grid-template-columns: 1fr 1fr"][style*="gap: 2px"] {
+    grid-template-columns: 1fr 1fr !important;
+    min-height: 200px !important;
+  }
+
+  /* Professional Engine: feature grid → single column */
+  .sales-funnel__content > section > div > div > div > div[style*="grid-template-columns: 1fr 1fr"][style*="gap: 14px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Images in value cards */
+  .sales-funnel__content > section img {
+    border-radius: 12px !important;
+    max-height: 200px !important;
+    object-fit: cover !important;
+  }
+
+  /* ── Deep-Dive Section ─────────────────────────────────── */
+  .sales-deep-dive {
+    margin: 40px auto !important;
+    gap: 48px !important;
+    padding: 0 12px !important;
+  }
+
+  .deep-dive-text h2 {
+    font-size: 22px !important;
+    text-align: center !important;
+  }
+
+  .deep-dive-text p {
+    display: none !important;
+  }
+
+  .deep-dive-list li {
+    font-size: 13px !important;
+  }
+
+  .deep-dive-img img {
+    border-radius: 12px !important;
+  }
+
+  /* ── Pricing Section ───────────────────────────────────── */
+  .sales-pricing {
+    padding: 0 12px !important;
+  }
+
+  .sales-pricing h2 {
+    font-size: 24px !important;
+    text-align: center !important;
+  }
+
+  .sales-pricing > p {
+    display: none !important;
+  }
+
+  .pricing-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    padding-top: 24px !important;
+  }
+
+  .pricing-card {
+    padding: 24px 20px !important;
+  }
+
+  .pricing-card.popular {
+    transform: none !important;
+  }
+
+  /* ── Showcase Gallery ──────────────────────────────────── */
+  .sales-gallery {
+    grid-template-columns: 1fr !important;
+    padding: 0 12px !important;
+  }
+
+  .sales-gallery-col {
+    margin-top: 0 !important;
+  }
+
+  /* ── Footer CTA ────────────────────────────────────────── */
+  .sales-footer-cta h2 {
+    font-size: 22px !important;
+  }
+
+  .sales-footer-cta p {
+    display: none !important;
   }
 }
