@@ -490,7 +490,8 @@ document.addEventListener('DOMContentLoaded', () => {
     contentRouting.querySelectorAll('.admin-status-toggle').forEach(toggle => {
       toggle.addEventListener('change', async (e) => {
         const id = e.target.dataset.id;
-        const sup = loadedSuppliers.find(s => String(s.id) === String(id));
+        // In the table it might be dataset.id as id or name, we should find by id or name
+        const sup = loadedSuppliers.find(s => String(s.id || s.name) === String(id));
         if (!sup) return;
         
         sup.isActive = e.target.checked;
@@ -499,12 +500,12 @@ document.addEventListener('DOMContentLoaded', () => {
         else row.classList.add('row-disabled');
 
         try {
-          const res = await fetch('/api/suppliers', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(sup)
-          });
-          if (!res.ok) throw new Error('Toggle save failed');
+          const dbPayload = {
+            id: sup.id, name: sup.name, segment: sup.segment, tech_group: sup.techGroup || '',
+            data: (() => { const c = { ...sup }; delete c.id; delete c.name; delete c.segment; delete c.techGroup; return c; })()
+          };
+          const { error } = await supabase.from('suppliers').upsert(dbPayload);
+          if (error) throw new Error(error.message);
         } catch(err) {
           console.error(err);
           alert('Failed to update status');
