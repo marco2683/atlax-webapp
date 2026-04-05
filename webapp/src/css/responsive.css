@@ -660,7 +660,7 @@
 
   .sales-marquee-track {
     gap: 16px !important;
-    animation-duration: 6s !important; /* 2.5x faster than 15s per user request */
+    animation-duration: 10s !important; /* Sped up for mobile context */
   }
 
   /* Center the intro text for manufacturing engine section */
