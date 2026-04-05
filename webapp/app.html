@@ -212,7 +212,7 @@
           <section style="max-width: 1100px; margin: 40px auto 80px; display: flex; flex-direction: column; gap: 48px; padding: 0 20px;">
 
             <!-- Designer Row (image left, text right) -->
-            <div style="display: flex; align-items: center; gap: 48px; background: rgba(139, 92, 246, 0.04); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 16px; padding: 40px; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
+            <div class="sales-plan-row" style="display: flex; align-items: center; gap: 48px; background: rgba(139, 92, 246, 0.04); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 16px; padding: 40px; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
                  onmouseover="this.style.borderColor='rgba(139,92,246,0.5)'; this.style.transform='translateY(-4px)'"
                  onmouseout="this.style.borderColor='rgba(139,92,246,0.25)'; this.style.transform='none'">
               <div style="flex: 1; min-width: 0;">
@@ -233,7 +233,7 @@
             </div>
 
             <!-- Entrepreneur Row (text left, image right — reversed) -->
-            <div style="display: flex; align-items: center; gap: 48px; flex-direction: row-reverse; background: rgba(249, 115, 22, 0.04); border: 1px solid rgba(249, 115, 22, 0.25); border-radius: 16px; padding: 40px; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
+            <div class="sales-plan-row" style="display: flex; align-items: center; gap: 48px; flex-direction: row-reverse; background: rgba(249, 115, 22, 0.04); border: 1px solid rgba(249, 115, 22, 0.25); border-radius: 16px; padding: 40px; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
                  onmouseover="this.style.borderColor='rgba(249,115,22,0.5)'; this.style.transform='translateY(-4px)'"
                  onmouseout="this.style.borderColor='rgba(249,115,22,0.25)'; this.style.transform='none'">
               <div style="flex: 1; min-width: 0;">
@@ -255,7 +255,7 @@
 
             <!-- Professional Engine — full-width with image grid -->
             <div style="position: relative;">
-              <div style="display: flex; align-items: stretch; gap: 0; background: linear-gradient(180deg, rgba(20,184,166,0.06) 0%, rgba(13,17,23,0) 100%); border: 1px solid rgba(20,184,166,0.35); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 60px rgba(20,184,166,0.06); transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
+              <div class="sales-plan-row" style="display: flex; align-items: stretch; gap: 0; background: linear-gradient(180deg, rgba(20,184,166,0.06) 0%, rgba(13,17,23,0) 100%); border: 1px solid rgba(20,184,166,0.35); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 60px rgba(20,184,166,0.06); transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
                    onmouseover="this.style.borderColor='rgba(20,184,166,0.6)'; this.style.transform='translateY(-4px)'"
                    onmouseout="this.style.borderColor='rgba(20,184,166,0.35)'; this.style.transform='none'">
 
@@ -273,7 +273,7 @@
                 </div>
 
                 <!-- Right: 2×2 Image Grid -->
-                <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; min-height: 340px;">
+                <div class="sales-plan-images" style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; min-height: 340px;">
                   <img src="/images/showcase-2.png" alt="Instant Quoting" style="width: 100%; height: 100%; object-fit: cover;">
                   <img src="/images/showcase-4.png" alt="Global Supply Chain" style="width: 100%; height: 100%; object-fit: cover;">
                   <img src="/images/showcase-7.png" alt="End-to-End Control" style="width: 100%; height: 100%; object-fit: cover;">
@@ -480,7 +480,7 @@
             <!-- ═══ ROW 2: Professional — full-width hero card ═══ -->
             <div style="max-width: 1100px; margin: 48px auto 0; position: relative;">
               <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: linear-gradient(90deg, #3c6bff, #5ea2ff); color: #fff; padding: 6px 20px; border-radius: 20px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; box-shadow: 0 4px 16px rgba(94,162,255,0.4); z-index: 2;">RECOMMENDED</div>
-              <div style="display: flex; align-items: stretch; gap: 0; background: linear-gradient(180deg, rgba(43,90,255,0.06) 0%, rgba(13,17,23,0) 100%); border: 1px solid rgba(94,162,255,0.4); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 80px rgba(43,90,255,0.08); transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
+              <div class="sales-plan-row" style="display: flex; align-items: stretch; gap: 0; background: linear-gradient(180deg, rgba(43,90,255,0.06) 0%, rgba(13,17,23,0) 100%); border: 1px solid rgba(94,162,255,0.4); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 80px rgba(43,90,255,0.08); transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
                    onmouseover="this.style.borderColor='rgba(94,162,255,0.7)'; this.style.transform='translateY(-4px)'"
                    onmouseout="this.style.borderColor='rgba(94,162,255,0.4)'; this.style.transform='none'">
 
@@ -507,7 +507,7 @@
                 </div>
 
                 <!-- Right: Image Grid -->
-                <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; min-height: 380px;">
+                <div class="sales-plan-images" style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; min-height: 380px;">
                   <img src="/images/showcase-2.png" alt="Instant Quoting" style="width: 100%; height: 100%; object-fit: cover;">
                   <img src="/images/showcase-4.png" alt="Supply Chain" style="width: 100%; height: 100%; object-fit: cover;">
                   <img src="/images/showcase-3.png" alt="Supplier Engine" style="width: 100%; height: 100%; object-fit: cover;">
@@ -517,7 +517,7 @@
             </div>
 
             <!-- ═══ ROW 3: Free & Enterprise — compact row ═══ -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1100px; margin: 48px auto 0;">
+            <div class="sales-pricing-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1100px; margin: 48px auto 0;">
 
               <!-- Free Tier -->
               <div style="border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.02); border-radius: 16px; padding: 32px; display: flex; flex-direction: column; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);"
