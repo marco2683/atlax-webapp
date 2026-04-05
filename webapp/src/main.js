@@ -400,6 +400,7 @@ function switchView(view, globe) {
   const tariffEngine = document.getElementById('tariff-engine');
   const searchBar = document.getElementById('search-bar');
   const tagline = document.getElementById('search-tagline');
+  const heroTitleContainer = document.querySelector('.hero__title-container');
   const bottomResults = document.getElementById('bottom-results-container');
   const globeContainer = document.getElementById('globe-container');
   const heroOverlay = document.querySelector('.hero__overlay');
@@ -438,17 +439,26 @@ function switchView(view, globe) {
     }
   }
 
-  if (searchBar) { searchBar.style.opacity = '1'; searchBar.style.pointerEvents = 'auto'; }
-  if (tagline) tagline.style.opacity = '1';
-  if (globeContainer) globeContainer.style.opacity = '1';
-  if (heroOverlay) heroOverlay.style.opacity = '1';
+  // Global resets based on view type
+  if (view === 'suppliers' || view === 'home') {
+    heroTitleContainer?.classList.remove('hidden');
+    if (searchBar) { searchBar.style.opacity = '1'; searchBar.style.pointerEvents = 'auto'; }
+    if (tagline) tagline.style.opacity = '1';
+    if (globeContainer) globeContainer.style.opacity = '1';
+    if (heroOverlay) heroOverlay.style.opacity = '1';
+    
+    // Auth guard for Basic Tier: Hide search components if they aren't supposed to see suppliers
+    if (sysTier === 'basic') {
+       heroTitleContainer?.classList.add('hidden');
+    }
+  } else {
+    heroTitleContainer?.classList.add('hidden');
+  }
 
   if (view === 'rfq') {
     appState.searchType = 'rfq';
     rfqEngine?.classList.remove('hidden');
     rfqRight?.classList.remove('hidden');
-    if (searchBar) { searchBar.style.opacity = '0'; searchBar.style.pointerEvents = 'none'; }
-    if (tagline) tagline.style.opacity = '0';
     bottomResults?.classList.add('hidden');
 
     if (!appState._rfqInitialized) {
@@ -489,7 +499,7 @@ function switchView(view, globe) {
 
   } else if (view === 'suppliers') {
     appState.searchType = 'suppliers';
-    selectionScreen?.classList.remove('hidden');
+    selectionScreen?.classList.add('hidden');
     
     if (appState.hasSearched) {
       bottomResults?.classList.remove('hidden');

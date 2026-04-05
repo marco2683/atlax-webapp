@@ -352,38 +352,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('admin-filter-tech')?.addEventListener('change', e => { adminSupplierFilters.techGroup = e.target.value; renderSuppliersTable(true); });
       document.getElementById('admin-filter-country')?.addEventListener('change', e => { adminSupplierFilters.country = e.target.value; renderSuppliersTable(true); });
 
-      // Bulk Selection
-      const masterCheckbox = document.getElementById('admin-sup-select-all');
-      const rowCheckboxes = document.querySelectorAll('.admin-sup-row-select');
-      const bulkActions = document.getElementById('admin-bulk-actions');
-      const bulkCount = document.getElementById('admin-bulk-count');
-      
-      function updateBulkActions() {
-        if (!bulkActions || !bulkCount) return;
-        const selected = document.querySelectorAll('.admin-sup-row-select:checked');
-        const count = selected.length;
-        if (count > 0) {
-          bulkActions.style.display = 'flex';
-          bulkCount.textContent = `${count} selected`;
-        } else {
-          bulkActions.style.display = 'none';
-        }
-        if (masterCheckbox) {
-          masterCheckbox.checked = rowCheckboxes.length > 0 && count === rowCheckboxes.length;
-        }
-      }
-
-      if (masterCheckbox) {
-        masterCheckbox.addEventListener('change', (e) => {
-          rowCheckboxes.forEach(cb => cb.checked = e.target.checked);
-          updateBulkActions();
-        });
-      }
-
-      rowCheckboxes.forEach(cb => {
-        cb.addEventListener('change', updateBulkActions);
-      });
-
       document.getElementById('admin-bulk-deactivate')?.addEventListener('click', async () => {
         const selectedIds = Array.from(document.querySelectorAll('.admin-sup-row-select:checked')).map(cb => cb.dataset.id);
         if (selectedIds.length === 0) return;
@@ -400,19 +368,19 @@ document.addEventListener('DOMContentLoaded', () => {
           if (!sup) continue;
           sup.isActive = false;
           try {
-            const res = await fetch('/api/suppliers', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(sup)
-            });
-            if (res.ok) successCount++;
+            const dbPayload = {
+              id: sup.id, name: sup.name, segment: sup.segment, tech_group: sup.techGroup || '',
+              data: (() => { const c = { ...sup }; delete c.id; delete c.name; delete c.segment; delete c.techGroup; return c; })()
+            };
+            const { error } = await supabase.from('suppliers').upsert(dbPayload);
+            if (!error) successCount++;
           } catch(e) { console.error(e); }
         }
 
         btn.textContent = ogText;
         btn.style.pointerEvents = '';
         await loadCRMData();
-        renderSuppliersTable();
+        renderSuppliersTable(true);
       });
 
       document.getElementById('admin-bulk-delete')?.addEventListener('click', async () => {
@@ -427,8 +395,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         for (const id of selectedIds) {
           try {
-            const res = await fetch(`/api/suppliers?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
-            if (res.ok) successCount++;
+            const { error } = await supabase.from('suppliers').delete().eq('id', id);
+            if (!error) successCount++;
           } catch(e) { console.error(e); }
         }
         
@@ -437,6 +405,40 @@ document.addEventListener('DOMContentLoaded', () => {
         alert(`Successfully deleted ${successCount} out of ${selectedIds.length} suppliers.`);
       });
     }
+
+    // --- REBIND TABLE-SPECIFIC EVENTS EVERY RENDER ---
+    
+    // Bulk Selection
+    const masterCheckbox = document.getElementById('admin-sup-select-all');
+    const rowCheckboxes = document.querySelectorAll('.admin-sup-row-select');
+    const bulkActions = document.getElementById('admin-bulk-actions');
+    const bulkCount = document.getElementById('admin-bulk-count');
+    
+    function updateBulkActions() {
+      if (!bulkActions || !bulkCount) return;
+      const selected = document.querySelectorAll('.admin-sup-row-select:checked');
+      const count = selected.length;
+      if (count > 0) {
+        bulkActions.style.display = 'flex';
+        bulkCount.textContent = `${count} selected`;
+      } else {
+        bulkActions.style.display = 'none';
+      }
+      if (masterCheckbox) {
+        masterCheckbox.checked = rowCheckboxes.length > 0 && count === rowCheckboxes.length;
+      }
+    }
+
+    if (masterCheckbox) {
+      masterCheckbox.addEventListener('change', (e) => {
+        rowCheckboxes.forEach(cb => cb.checked = e.target.checked);
+        updateBulkActions();
+      });
+    }
+
+    rowCheckboxes.forEach(cb => {
+      cb.addEventListener('change', updateBulkActions);
+    });
 
     // Sort header clicks
     contentRouting.querySelectorAll('.sortable').forEach(th => {
@@ -468,7 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.style.pointerEvents = 'none';
         try {
           const { error } = await supabase.from('suppliers').delete().eq('id', btn.dataset.id);
-          if (res.ok) {
+          if (!error) {
             await loadCRMData();
             renderSuppliersTable();
           } else {

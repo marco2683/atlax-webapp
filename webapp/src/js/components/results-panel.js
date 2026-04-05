@@ -156,22 +156,47 @@ export function renderStackedResults(suppliers, onGroupClick, options = {}) {
     wrapper.appendChild(card);
   });
 
-  // 5. Add spacers so first card sits at the left edge of the visible area
-  const startSpacer = document.createElement('div');
-  startSpacer.className = 'grid-spacer';
-  startSpacer.style.flex = '0 0 calc(15vw - 8px)';
-  wrapper.prepend(startSpacer);
+  // 5. Mobile vs Desktop layout
+  const isMobile = window.innerWidth <= 768;
 
-  const endSpacer = document.createElement('div');
-  endSpacer.className = 'grid-spacer';
-  endSpacer.style.flex = '0 0 calc(15vw - 8px)';
-  wrapper.appendChild(endSpacer);
+  if (isMobile) {
+    // Mobile: vertical stack, centered — apply inline to guarantee override
+    wrapper.style.display = 'flex';
+    wrapper.style.flexDirection = 'column';
+    wrapper.style.alignItems = 'center';
+    wrapper.style.overflowX = 'hidden';
+    wrapper.style.width = '100%';
+    wrapper.style.padding = '0';
+    wrapper.style.gap = '8px';
+    wrapper.style.maskImage = 'none';
+    wrapper.style.webkitMaskImage = 'none';
+
+    // Set each card to 90% width, centered
+    wrapper.querySelectorAll('.stacked-group').forEach(card => {
+      card.style.flex = '0 0 auto';
+      card.style.width = '90%';
+      card.style.maxWidth = '90%';
+      card.style.margin = '0 auto';
+      card.style.boxSizing = 'border-box';
+    });
+  } else {
+    // Desktop: horizontal scroll with spacers
+    const startSpacer = document.createElement('div');
+    startSpacer.className = 'grid-spacer';
+    startSpacer.style.flex = '0 0 calc(15vw - 8px)';
+    wrapper.prepend(startSpacer);
+
+    const endSpacer = document.createElement('div');
+    endSpacer.className = 'grid-spacer';
+    endSpacer.style.flex = '0 0 calc(15vw - 8px)';
+    wrapper.appendChild(endSpacer);
+
+    requestAnimationFrame(() => {
+      wrapper.scrollLeft = 0;
+    });
+  }
 
   container.appendChild(wrapper);
-
-  requestAnimationFrame(() => {
-    wrapper.scrollLeft = 0; 
-  });
 
   container.style.display = '';
   container.classList.remove('hidden');

@@ -116,33 +116,51 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Next Step Action (Account Setup submit)
-  document.getElementById('step-1-form').addEventListener('submit', (e) => {
+  document.getElementById('step-1-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     step1Btn.classList.add('loading');
     
-    // Simulate Supabase user creation / API delay
-    setTimeout(() => {
-      step1Btn.classList.remove('loading');
+    const fname = document.getElementById('fname')?.value || '';
+    const lname = document.getElementById('lname')?.value || '';
+    const company = document.getElementById('company')?.value || '';
+    const email = document.getElementById('email')?.value || '';
+    const password = document.getElementById('password')?.value || '';
+
+    // If not already logged in, create the account
+    if (!isLoggedIn && password) {
+      const { signUpUser } = await import('./services/auth.js');
+      const { data, error } = await signUpUser(email, password, {
+        first_name: fname,
+        last_name: lname,
+        company: company,
+        tier: currentTier
+      });
       
-      if (currentTier === 'free') {
-        // Complete the signup directly
-        window.location.href = '/profile.html';
-      } else if (currentTier === 'enterprise') {
-        // Submit inquiry to Atlas DT
-        alert('Inquiry sent! Our team will contact you shortly to scope your custom requirements.');
-        window.location.href = '/index.html';
-      } else {
-        // Unlocks checkout step
-        step1Container.classList.remove('active');
-        step2Container.classList.add('active');
-        
-        pip1.classList.remove('active');
-        pip2.classList.add('active');
-        
-        const stepLabel = document.getElementById('step-text-label');
-        if (stepLabel) stepLabel.innerHTML = 'Step 2 of 2: Payment';
+      if (error) {
+        step1Btn.classList.remove('loading');
+        alert(error.message);
+        return;
       }
-    }, 1000);
+    } else if (isLoggedIn) {
+      // Just update tier preference if already logged in
+      sessionStorage.setItem('pending_tier_subscription', currentTier);
+    }
+    
+    step1Btn.classList.remove('loading');
+    
+    if (currentTier === 'free') {
+      window.location.href = '/profile.html';
+    } else if (currentTier === 'enterprise') {
+      alert('Inquiry sent! Our team will contact you shortly to scope your custom requirements.');
+      window.location.href = '/index.html';
+    } else {
+      step1Container.classList.remove('active');
+      step2Container.classList.add('active');
+      pip1.classList.remove('active');
+      pip2.classList.add('active');
+      const stepLabel = document.getElementById('step-text-label');
+      if (stepLabel) stepLabel.innerHTML = 'Step 2 of 2: Payment';
+    }
   });
 
   // Final Step Action (Checkout submit)

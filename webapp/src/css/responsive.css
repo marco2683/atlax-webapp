@@ -272,21 +272,21 @@
      ══════════════════════════════════════════════════════════ */
 
   /* About Hero — inline-styled header */
-  body.marketing-page > header {
+  body.marketing-page>header {
     padding: 120px 20px 40px 20px !important;
   }
 
-  body.marketing-page > header h1 {
+  body.marketing-page>header h1 {
     font-size: 2.2rem !important;
     line-height: 1.1 !important;
     letter-spacing: -1px !important;
   }
 
-  body.marketing-page > header p {
+  body.marketing-page>header p {
     display: none !important;
   }
 
-  body.marketing-page > header .m-hero__chip {
+  body.marketing-page>header .m-hero__chip {
     display: none !important;
   }
 
@@ -297,32 +297,32 @@
   }
 
   /* Video placeholder */
-  [data-cms-id="about-media"] > div:first-child {
+  [data-cms-id="about-media"]>div:first-child {
     min-height: 200px !important;
     aspect-ratio: 16/9 !important;
     border-radius: 16px !important;
   }
 
   /* Side images column: stack horizontally on mobile */
-  [data-cms-id="about-media"] > div:last-child {
+  [data-cms-id="about-media"]>div:last-child {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 12px !important;
     flex-direction: row !important;
   }
 
-  [data-cms-id="about-media"] > div:last-child > div {
+  [data-cms-id="about-media"]>div:last-child>div {
     min-height: 140px !important;
     border-radius: 16px !important;
   }
 
   /* Reduce section bottom margin */
-  body.marketing-page > section:first-of-type {
+  body.marketing-page>section:first-of-type {
     margin-bottom: 60px !important;
   }
 
   /* About Section: reduce padding */
-  body.marketing-page > section {
+  body.marketing-page>section {
     padding-left: 20px !important;
     padding-right: 20px !important;
   }
@@ -332,15 +332,15 @@
     padding: 60px 20px !important;
   }
 
-  #team > div:first-child h2 {
+  #team>div:first-child h2 {
     font-size: 2rem !important;
   }
 
-  #team > div:first-child p {
+  #team>div:first-child p {
     display: none !important;
   }
 
-  #team > div:last-child {
+  #team>div:last-child {
     grid-template-columns: 1fr !important;
     gap: 20px !important;
   }
@@ -621,7 +621,7 @@
   }
 
   /* Hide block-level descriptions, keep just the headline */
-  .service-block__content > p {
+  .service-block__content>p {
     display: none !important;
   }
 
@@ -660,11 +660,12 @@
 
   .sales-marquee-track {
     gap: 16px !important;
-    animation-duration: 25s !important; /* Dialed down speed per user request */
+    animation-duration: 25s !important;
+    /* Dialed down speed per user request */
   }
 
   /* Center the intro text for manufacturing engine section */
-  .service-block > div[style*="text-align: center"] p {
+  .service-block>div[style*="text-align: center"] p {
     display: none !important;
   }
 
@@ -730,7 +731,7 @@
   }
 
   /* Footer brand description — hide on mobile */
-  footer .navbar__brand + p {
+  footer .navbar__brand+p {
     display: none !important;
   }
 
@@ -788,7 +789,7 @@
   }
 
   body.app-page .navbar__menu-item {
-    display: inline-block !important;
+    display: inline-block;
     font-size: 11px !important;
     padding: 6px 12px !important;
     flex-shrink: 0 !important;
@@ -812,45 +813,84 @@
     overflow-y: visible !important;
     padding: 60px 20px !important;
   }
-  
+
   body.app-page .sales-plan-row {
     flex-direction: column !important;
   }
+
   body.app-page .sales-plan-images {
     min-height: 200px !important;
     flex: none !important;
   }
+
   body.app-page .sales-pricing-grid {
     grid-template-columns: 1fr !important;
   }
-  
+
   /* ── Tabular Engine Normal Page Flow ────────────────── */
+  /* Tabular scroll fixes: remove height auto to prevent native body stretch / double scroll */
   body.app-page .supplier-tabular-engine {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    height: auto !important;
+    position: absolute !important;
+    top: 60px !important;
+    left: 0 !important;
+    height: calc(100vh - 60px) !important;
     width: 100% !important;
-    overflow: visible !important;
-    padding: 20px 16px 80px 16px !important;
+    padding: 10px 10px 40px 10px !important;
     z-index: 100 !important;
   }
-  
-  body.app-page .tabular-container {
-    height: auto !important;
-    overflow: visible !important;
-  }
-  
-  body.app-page .tabular-body {
-    height: auto !important;
-    overflow: visible !important;
-  }
-  
+
+  body.app-page .tabular-container,
+  body.app-page .tabular-body,
   body.app-page .tabular-table-container,
-  body.app-page .tabular-table-scroll,
   body.app-page .tabular-table {
-    height: auto !important;
-    overflow: visible !important;
+    display: flex;
+    flex-direction: column;
+    height: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  body.app-page .tabular-table-scroll {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+  }
+
+  /* Stack tabular rows into cards for mobile */
+  body.app-page .tabular-table thead {
+    display: none;
+    /* Hide standard table headers */
+  }
+
+  body.app-page .tabular-table tbody,
+  body.app-page .tabular-table tr,
+  body.app-page .tabular-table td {
+    display: flex;
+    flex-direction: column;
+    width: 100% !important;
+  }
+
+  body.app-page .tabular-table tr {
+    background: rgba(13, 17, 23, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    margin-bottom: 12px !important;
+    padding: 12px !important;
+    gap: 8px !important;
+  }
+
+  body.app-page .tabular-table td {
+    border: none !important;
+    padding: 0 !important;
+    font-size: 13px !important;
+    align-items: flex-start;
+  }
+
+  body.app-page .tabular-table td:first-child {
+    font-weight: bold;
+    font-size: 15px !important;
+    margin-bottom: 4px;
+    color: var(--color-electric);
   }
 
   /* ── Hero: hide globe, compact search ────────────────── */
@@ -871,20 +911,22 @@
 
   body.app-page .hero__content {
     height: auto !important;
+    width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
     opacity: 1 !important;
     visibility: visible !important;
   }
 
-  body.app-page .hero__title-container {
+  body.app-page .hero__title-container:not(.hidden) {
     display: flex !important;
     flex-direction: column !important;
     position: relative !important;
     top: auto !important;
     left: auto !important;
     transform: none !important;
-    padding: 40px 16px 16px !important;
+    padding: 100px 16px 16px !important;
+    /* Pushed down to clear mobile navbar */
     max-width: 100% !important;
     opacity: 1 !important;
     visibility: visible !important;
@@ -903,9 +945,7 @@
 
   body.app-page .search-bar {
     max-width: 100% !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
+    /* Removed opacity/visibility overrides to allow JS control */
     display: flex !important;
     margin-bottom: 16px !important;
   }
@@ -925,6 +965,7 @@
     visibility: visible !important;
     display: flex !important;
   }
+
   body.app-page .region-chip {
     font-size: 10px !important;
     padding: 3px 8px !important;
@@ -947,18 +988,58 @@
   }
 
   /* ── Bottom Results Container — compact on mobile ──── */
-  body.app-page .bottom-results-container {
-    padding: 8px 12px 12px !important;
-  }
-
-  body.app-page .results-grid {
+  body.app-page .bottom-results-container:not(.hidden) {
+    position: relative !important;
+    padding: 12px 16px 24px !important;
+    width: 100vw !important;
+    left: 0 !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    box-sizing: border-box !important;
+    display: flex !important;
     flex-direction: column !important;
-    gap: 8px !important;
+    align-items: center !important;
   }
 
-  body.app-page .results-grid > div {
+  body.app-page .results-grid:not(.hidden) {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
     width: 100% !important;
     max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+    scroll-snap-type: none !important;
+  }
+
+  body.app-page .results-grid > .stacked-group,
+  body.app-page .results-grid > div.stacked-group {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: 380px !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    align-self: center !important;
+    transform: none !important;
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+  }
+
+  body.app-page .results-grid > .grid-spacer,
+  body.app-page .results-grid > div.grid-spacer {
+    display: none !important;
+    flex: 0 0 0px !important;
+    width: 0 !important;
+    height: 0 !important;
   }
 
   /* ── Shortlist Panel — bottom sheet ──────────────────── */
@@ -1252,7 +1333,7 @@
   }
 
   /* ── Contact Modal — full width on mobile ─────────── */
-  body.app-page #contact-modal > div {
+  body.app-page #contact-modal>div {
     width: 100% !important;
     max-width: 100% !important;
     max-height: 100vh !important;
