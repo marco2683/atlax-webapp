@@ -50,13 +50,14 @@
       line-height: 1.6;
     }
 
-    .service-block {
+    .service-block, .engine-block {
       padding: 100px 5%;
       max-width: 1600px;
       margin: 0 auto;
     }
 
-    .service-block+.service-block {
+    .service-block + .service-block,
+    .engine-block + .service-block {
       border-top: 1px solid rgba(255, 255, 255, 0.05);
     }
 
@@ -282,7 +283,7 @@
     </section>
 
     <!-- MANUFACTURING ENGINE -->
-    <section class="service-block">
+    <section class="engine-block">
       <div style="text-align: center; max-width: 800px; margin: 0 auto 60px;">
         <h2 style="font-size: 40px; font-weight: 700; color: var(--color-white); margin-bottom: 24px; letter-spacing: -1px;">The Manufacturing Engine</h2>
         <p style="color: var(--color-steel-300); font-size: 18px; line-height: 1.6;">Our integrated software directly connects you to a heavily vetted network of premium global suppliers at industry-best costs. Instantly quote, orchestrate production, and scale your supply chain with radical efficiency.</p>
