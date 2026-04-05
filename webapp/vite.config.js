@@ -125,7 +125,8 @@ export default defineConfig({
         services: resolve(__dirname, 'services.html'),
         workspace: resolve(__dirname, 'workspace.html'),
         admin: resolve(__dirname, 'admin.html'),
-        profile: resolve(__dirname, 'profile.html')
+        profile: resolve(__dirname, 'profile.html'),
+        signup: resolve(__dirname, 'signup.html')
       }
     }
   }
