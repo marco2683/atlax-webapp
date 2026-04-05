@@ -66,6 +66,7 @@ const authModalHtml = `
               <label for="signup-password">Password</label>
               <input type="password" id="signup-password" required
                 placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+              <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars: 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
             </div>
             <div id="signup-error" class="auth-error-msg"></div>
             <button type="submit" class="auth-btn" id="signup-submit-btn">Create Account</button>

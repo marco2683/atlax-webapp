@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const target = tab.getAttribute('data-tab');
       
       // Handle logout pseudo-tab
-      if (tab.textContent === 'Log Out') {
+      if (tab.textContent.includes('Log Out')) {
         await logoutUser();
         window.location.href = '/';
         return;
@@ -401,5 +401,158 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupRoleOnboarding('btn-role-designer', 'designer');
   setupRoleOnboarding('btn-role-entrepreneur', 'entrepreneur');
 
+  // ── Account Management Actions ─────────────────────────────
+  
+  const customActionModal = document.getElementById('custom-action-modal');
+  const closeCustomAction = document.getElementById('close-custom-action');
+
+  if (closeCustomAction) {
+    closeCustomAction.addEventListener('click', () => {
+      customActionModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    });
+  }
+
+  const btnChangeEmail = document.getElementById('btn-change-email');
+  if (btnChangeEmail) {
+    btnChangeEmail.addEventListener('click', () => {
+      customActionModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      // Auto-focus email
+      const emailInput = document.getElementById('new-email-input');
+      if (emailInput) setTimeout(() => emailInput.focus(), 100);
+      
+      if (window.initPasswordToggles) {
+        window.initPasswordToggles();
+      }
+    });
+  }
+
+  const emailForm = document.getElementById('update-email-form');
+
+  if (emailForm) {
+    emailForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newEmail = document.getElementById('new-email-input').value;
+      const btn = document.getElementById('submit-email-btn');
+      const err = document.getElementById('email-error-msg');
+      
+      err.classList.remove('visible');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      const { error } = await supabase.auth.updateUser({ email: newEmail.trim() });
+      
+      if (error) {
+        err.textContent = error.message;
+        err.classList.add('visible');
+        btn.textContent = 'Change Email';
+        btn.disabled = false;
+      } else {
+        btn.textContent = 'Sent!';
+        btn.style.background = 'var(--color-emerald)';
+        setTimeout(async () => {
+          customActionModal.classList.add('hidden');
+          document.body.style.overflow = '';
+          btn.textContent = 'Change Email';
+          btn.style.background = '';
+          btn.disabled = false;
+          emailForm.reset();
+          await logoutUser();
+        }, 3000);
+      }
+    });
+  }
+
+  const btnRoutePassword = document.getElementById('btn-route-password');
+  if (btnRoutePassword) {
+    btnRoutePassword.addEventListener('click', () => {
+      customActionModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      
+      const pwdInput = document.getElementById('prof-old-pwd');
+      if (pwdInput) setTimeout(() => pwdInput.focus(), 100);
+      
+      // Auto-trigger the password visibility toggle hook if they were dynamically added
+      if (window.initPasswordToggles) {
+        window.initPasswordToggles();
+      }
+    });
+  }
+
+  const pwdForm = document.getElementById('update-pwd-form');
+  if (pwdForm) {
+    pwdForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const oldPass = document.getElementById('prof-old-pwd').value;
+      const newPass = document.getElementById('prof-new-pwd').value;
+      const confirmPass = document.getElementById('prof-confirm-pwd').value;
+      
+      const btn = document.getElementById('submit-pwd-btn');
+      const err = document.getElementById('pwd-error-msg');
+      
+      err.classList.remove('visible');
+
+      if (newPass !== confirmPass) {
+        err.textContent = 'Passwords do not match.';
+        err.classList.add('visible');
+        return;
+      }
+
+      if (newPass.length < 8) {
+        err.textContent = 'Password must be at least 8 characters.';
+        err.classList.add('visible');
+        return;
+      }
+
+      btn.textContent = 'Verifying...';
+      btn.disabled = true;
+
+      const { data: { user } } = await supabase.auth.getUser();
+      const { error: verifyError } = await supabase.auth.signInWithPassword({ email: user.email, password: oldPass });
+      
+      if (verifyError) {
+        err.textContent = "Incorrect current password.";
+        err.classList.add('visible');
+        btn.textContent = 'Update Password';
+        btn.disabled = false;
+        return;
+      }
+
+      btn.textContent = 'Updating...';
+      const { error: updateError } = await supabase.auth.updateUser({ password: newPass });
+
+      if (updateError) {
+        err.textContent = updateError.message;
+        err.classList.add('visible');
+        btn.textContent = 'Update Password';
+        btn.disabled = false;
+      } else {
+        btn.textContent = 'Success!';
+        btn.style.background = 'var(--color-emerald)';
+        setTimeout(() => {
+          customActionModal.classList.add('hidden');
+          document.body.style.overflow = '';
+          btn.textContent = 'Update Password';
+          btn.style.background = '';
+          btn.disabled = false;
+          pwdForm.reset();
+        }, 2000);
+      }
+    });
+  }
+
+  const btnDeleteAccount = document.getElementById('btn-delete-account');
+  if (btnDeleteAccount) {
+    btnDeleteAccount.addEventListener('click', () => {
+      const confirmation = confirm("WARNING: Deleting your account is permanent and irreversible. All your personal data, past RFQs, projects, and portfolio items will be destroyed.");
+      if (confirmation) {
+          alert("For regulatory and data security reasons, irreversible account deletion must be handled by our support team. \n\nPlease email support@atlasdt.com from your registered email address with the subject 'Account Deletion Request'.");
+      }
+    });
+  }
+
 });
+
+
 

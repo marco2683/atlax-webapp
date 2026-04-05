@@ -12,7 +12,8 @@ export async function signUpUser(email, password, metadata = {}) {
             email,
             password,
             options: {
-                data: metadata
+                data: metadata,
+                emailRedirectTo: `${window.location.origin}/index.html?login=true`
             }
         });
         if (error) throw error;
@@ -58,6 +59,38 @@ export async function logoutUser() {
         console.error("Logout error:", error.message);
         // Force redirect even on error to break loop
         window.location.href = '/index.html';
+    }
+}
+
+/**
+ * Send password reset email
+ */
+export async function resetPasswordForEmail(email) {
+    try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${window.location.origin}/index.html?login=true&type=recovery`
+        });
+        if (error) throw error;
+        return { error: null };
+    } catch (error) {
+        console.error('Password reset error:', error);
+        return { error };
+    }
+}
+
+/**
+ * Update authenticated user's password
+ */
+export async function updatePassword(newPassword) {
+    try {
+        const { data, error } = await supabase.auth.updateUser({
+            password: newPassword
+        });
+        if (error) throw error;
+        return { data, error: null };
+    } catch (error) {
+        console.error('Password update error:', error);
+        return { data: null, error };
     }
 }
 

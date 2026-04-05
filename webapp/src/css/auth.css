@@ -274,3 +274,29 @@
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-steel-400);
+  padding: 4px;
+}
+.password-toggle:hover {
+  color: var(--color-electric);
+}
+.auth-state-reset #form-login, .auth-state-reset #form-signup { display: none !important; }
+.auth-state-reset #form-reset { display: block !important; }
+
+#form-reset { display: none; }
+
+.auth-state-changepwd #form-login,.auth-state-changepwd #form-signup,.auth-state-changepwd #form-reset { display: none !important; }
+.auth-state-changepwd #form-changepwd { display: block !important; }

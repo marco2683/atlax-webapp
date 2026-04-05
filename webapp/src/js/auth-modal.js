@@ -22,6 +22,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Auto-open if query parameter has login=true (e.g. from email verification links or splash screens)
+  if (window.location.search.includes('login=true')) {
+    authModal.classList.remove('hidden');
+    // Ensure login form is displayed
+    const containerLogin = document.getElementById('form-login');
+    const containerSignup = document.getElementById('form-signup');
+    if (containerLogin) containerLogin.style.display = 'block';
+    if (containerSignup) containerSignup.style.display = 'none';
+    
+    // Check if coming from verification
+    if (window.location.hash.includes('type=verify') || window.location.search.includes('login=true')) {
+      // Optional: add a tiny message
+      const loginHeader = document.querySelector('#form-login .auth-header p');
+      if (loginHeader && window.location.hash.includes('type=signup')) {
+         loginHeader.innerText = "Email verified! Please log in.";
+         loginHeader.style.color = "var(--color-electric, #5ea2ff)";
+      }
+    }
+  }
+
   // Handle Form UI toggles
   const loginForm = document.getElementById('login-form');
   const signupForm = document.getElementById('signup-form');
@@ -114,11 +134,19 @@ document.addEventListener('DOMContentLoaded', () => {
         signupBtn.innerText = 'Create Account';
         signupBtn.disabled = false;
       } else {
-        signupBtn.innerText = 'Check your email to verify!';
-        setTimeout(() => {
+        containerSignup.innerHTML = `
+          <div style="text-align: center; padding: 30px 10px;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-electric, #5ea2ff)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><path d="M22 10.5V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h12.5"></path><polyline points="22 7 12 14 2 7"></polyline><path d="M20 14v6"></path><path d="M17 17l3 3 3-3"></path></svg>
+            <h3 style="margin-bottom: 12px; font-size: 24px; color: white;">Verify Your Email</h3>
+            <p style="font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 24px; line-height: 1.5;">We've sent a verification link to <strong style="color:white;">${email}</strong>.<br>Please check your inbox to activate your account.</p>
+            <button id="auth-modal-splash-return" class="auth-btn" style="background: rgba(94, 162, 255, 0.1); border: 1px solid rgba(94, 162, 255, 0.3); color: var(--color-electric, #5ea2ff);">Return to Login</button>
+          </div>
+        `;
+        document.getElementById('auth-modal-splash-return').addEventListener('click', (ev) => {
+          ev.preventDefault();
           containerSignup.style.display = 'none';
           containerLogin.style.display = 'block';
-        }, 3000);
+        });
       }
     });
   }

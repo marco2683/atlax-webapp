@@ -141,6 +141,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert(error.message);
         return;
       }
+
+      if (data && data.user && !data.session) {
+        step1Btn.classList.remove('loading');
+        // Show email verification splash
+        const container = document.querySelector('.form-steps') || document.body;
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: white; margin-top: 60px;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--color-electric, #5ea2ff)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 24px;"><path d="M22 10.5V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h12.5"></path><polyline points="22 7 12 14 2 7"></polyline><path d="M20 14v6"></path><path d="M17 17l3 3 3-3"></path></svg>
+            <h2 style="font-size: 32px; margin-bottom: 16px;">Verify your email</h2>
+            <p style="font-size: 16px; color: rgba(255,255,255,0.7); margin-bottom: 32px;">We've sent a verification link to <strong style="color:white;">${email}</strong>. Please check your inbox and click the link to activate your account.</p>
+            <a href="/index.html?login=true" style="display: inline-block; padding: 12px 24px; background: rgba(94, 162, 255, 0.1); border: 1px solid rgba(94, 162, 255, 0.3); border-radius: 8px; color: var(--color-electric, #5ea2ff); text-decoration: none; font-weight: 500; transition: all 0.2s;">Return to Login</a>
+          </div>
+        `;
+        return;
+      }
     } else if (isLoggedIn) {
       // Just update tier preference if already logged in
       sessionStorage.setItem('pending_tier_subscription', currentTier);

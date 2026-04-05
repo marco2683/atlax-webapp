@@ -399,6 +399,41 @@
             </div>
           </div>
 
+          <!-- Account Management Section -->
+          <div style="margin-top: 48px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 32px;">
+            <h3 style="font-size: 1.4rem; margin-bottom: 16px; font-family: 'Space Grotesk', sans-serif;">Account Management</h3>
+            <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 24px; max-width: 600px;">
+              Manage your security credentials and data permanence. Note that changing your email or password will require verification.
+            </p>
+            
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;">
+                <div>
+                  <h4 style="font-size: 15px; margin: 0 0 4px 0; font-weight: 500;">Update Email Address</h4>
+                  <p style="font-size: 13px; color: rgba(255,255,255,0.5); margin: 0;">Change the email associated with your account.</p>
+                </div>
+                <button type="button" class="btn-save" id="btn-change-email" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; font-size: 13px;">Change Email</button>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;">
+                <div>
+                  <h4 style="font-size: 15px; margin: 0 0 4px 0; font-weight: 500;">Update Password</h4>
+                  <p style="font-size: 13px; color: rgba(255,255,255,0.5); margin: 0;">Ensure your account maintains strong security credentials.</p>
+                </div>
+                <!-- We can trigger the global nav-changepwd-btn functionality here -->
+                <button type="button" class="btn-save" id="btn-route-password" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; font-size: 13px;">Change Password</button>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px;">
+                <div>
+                  <h4 style="font-size: 15px; margin: 0 0 4px 0; font-weight: 500; color: #f87171;">Delete Account</h4>
+                  <p style="font-size: 13px; color: rgba(239, 68, 68, 0.6); margin: 0;">Permanently remove your account and all associated data.</p>
+                </div>
+                <button type="button" class="btn-save" id="btn-delete-account" style="background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 10px 20px; font-size: 13px;">Delete Account</button>
+              </div>
+            </div>
+          </div>
+
           </form>
       </div>
 
@@ -518,6 +553,57 @@
       </div>
     </div>
   </div>
+
+  <!-- Custom Action Modal Container -->
+  <div class="auth-modal hidden" id="custom-action-modal" style="z-index: 9999; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; background: rgba(8, 8, 8, 0.85); backdrop-filter: blur(12px); pointer-events: none;">
+    <div class="auth-modal-glass" style="max-width: 480px; width: 90%; position: relative; pointer-events: auto; max-height: 90vh; overflow-y: auto;">
+      <button class="close-auth-modal" id="close-custom-action">&times;</button>
+      <div class="auth-forms-container" style="display: block;">
+        
+        <div class="auth-form-wrapper" id="action-form-unified">
+          <div class="auth-header">
+            <h2>Account Security.</h2>
+            <p>Manage your login credentials below.</p>
+          </div>
+
+          <!-- EMAIL UPDATE SUB-FORM -->
+          <form id="update-email-form" class="auth-form" style="margin-bottom: 32px;">
+            <div style="font-size: 14px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; margin-bottom: 16px; color: var(--color-electric);">Reset Email Address</div>
+            <div class="auth-input-group">
+              <label for="new-email-input">New Email Address</label>
+              <input type="email" id="new-email-input" required placeholder="name@company.com">
+            </div>
+            <div id="email-error-msg" class="auth-error-msg"></div>
+            <button type="submit" class="auth-btn" id="submit-email-btn">Send Email Verification</button>
+          </form>
+
+          <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin-bottom: 32px;">
+
+          <!-- PASSWORD UPDATE SUB-FORM -->
+          <form id="update-pwd-form" class="auth-form">
+            <div style="font-size: 14px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; margin-bottom: 16px; color: var(--color-electric);">Change Password</div>
+            <div class="auth-input-group">
+              <label for="prof-old-pwd">Current Password</label>
+              <input type="password" id="prof-old-pwd" required placeholder="••••••••">
+            </div>
+            <div class="auth-input-group">
+              <label for="prof-new-pwd">New Password</label>
+              <input type="password" id="prof-new-pwd" required placeholder="••••••••">
+              <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars: 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
+            </div>
+            <div class="auth-input-group">
+              <label for="prof-confirm-pwd">Confirm New Password</label>
+              <input type="password" id="prof-confirm-pwd" required placeholder="••••••••">
+            </div>
+            <div id="pwd-error-msg" class="auth-error-msg"></div>
+            <button type="submit" class="auth-btn" id="submit-pwd-btn">Update Password</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module" src="/src/js/profile-app.js"></script>
