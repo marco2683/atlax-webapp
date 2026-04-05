@@ -1,4 +1,7 @@
-document.addEventListener('DOMContentLoaded', () => {
+import { supabase } from './utils/supabaseClient.js';
+import { getMyProfile } from './services/profile.js';
+
+document.addEventListener('DOMContentLoaded', async () => {
   const urlParams = new URLSearchParams(window.location.search);
   const initialTier = urlParams.get('tier') || 'free';
   
@@ -22,6 +25,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize UI
   setTier(initialTier);
+
+  // Check Auth State
+  let isLoggedIn = false;
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (session) {
+    isLoggedIn = true;
+    const profile = await getMyProfile();
+    
+    // Fill and lock inputs
+    const fnameInput = document.getElementById('fname');
+    const lnameInput = document.getElementById('lname');
+    const companyInput = document.getElementById('company');
+    const emailInput = document.getElementById('email');
+    const pwdInput = document.getElementById('password');
+
+    if (fnameInput) {
+      fnameInput.value = profile?.first_name || '';
+      fnameInput.readOnly = true;
+      fnameInput.style.opacity = '0.6';
+    }
+    if (lnameInput) {
+      lnameInput.value = profile?.last_name || '';
+      lnameInput.readOnly = true;
+      lnameInput.style.opacity = '0.6';
+    }
+    if (companyInput) {
+      companyInput.value = profile?.company || '';
+      companyInput.readOnly = true;
+      companyInput.style.opacity = '0.6';
+    }
+    if (emailInput) {
+      emailInput.value = session.user.email;
+      emailInput.readOnly = true;
+      emailInput.style.opacity = '0.6';
+    }
+    
+    // Disable password so it doesn't block form submission (required)
+    if (pwdInput) {
+      pwdInput.parentElement.style.display = 'none';
+      pwdInput.disabled = true;
+      pwdInput.removeAttribute('required');
+    }
+    
+    // Hide login links since they are logged in
+    const loginLink = document.querySelector('#step-1-form p');
+    if (loginLink) loginLink.style.display = 'none';
+  }
 
   // Add click listeners to tier cards (Left sidebar)
   tierCards.forEach(card => {

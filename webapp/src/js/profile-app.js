@@ -280,34 +280,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Stripe Integration Triggers
+  // Stripe Integration Triggers
   document.getElementById('btn-upgrade').addEventListener('click', async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return alert("You must be logged in.");
-
-      document.getElementById('btn-upgrade').textContent = 'Loading...';
-      
-      const response = await fetch('/.netlify/functions/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user.id
-        })
-      });
-
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert('Checkout API Error: ' + JSON.stringify(data));
-        btn.textContent = originalText;
-        btn.disabled = false;
-      }
-    } catch (err) {
-      alert('Network/Fetch Error: ' + err.message);
-      btn.textContent = 'Upgrade to Professional';
-      btn.disabled = false;
-    }
+    window.location.href = '/signup.html?tier=professional';
   });
 
   document.getElementById('btn-customer-portal').addEventListener('click', async () => {
@@ -351,36 +326,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (closeOnboardingBtn) closeOnboardingBtn.addEventListener('click', closeOnboarding);
 
   const performStripeCheckout = async (planType, btn) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return alert("You must be logged in.");
-
-      const originalText = btn.innerHTML;
-      btn.innerHTML = 'Connecting to Secure Checkout...';
-      btn.disabled = true;
-      
-      const response = await fetch('/.netlify/functions/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user.id,
-          planType: planType
-        })
-      });
-
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert('Checkout API Error: ' + JSON.stringify(data));
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-      }
-    } catch (err) {
-      alert('Network/Fetch Error: ' + err.message);
-      btn.innerHTML = 'Proceed to Checkout';
-      btn.disabled = false;
-    }
+    window.location.href = `/signup.html?tier=${planType}`;
   };
 
   const setupRoleOnboarding = (btnId, planType) => {
