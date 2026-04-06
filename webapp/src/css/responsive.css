@@ -759,11 +759,14 @@
   /* Custom layout for app-page actions (avatar) to appear next to brand */
   body.app-page .navbar__actions {
     display: flex !important;
-    width: auto !important;
+    width: auto !important; /* NOT 100% */
     flex-direction: row !important;
     align-items: center !important;
     background: transparent !important;
     padding: 0 !important;
+    order: 2 !important; /* Put it before the menu (which is 3) */
+    margin-left: auto !important; /* Push it to the far right */
+    justify-content: flex-end;
   }
   
   body.app-page .navbar__actions #btn-workspace {
