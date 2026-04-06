@@ -761,6 +761,7 @@
     display: flex !important;
     width: auto !important;
     flex-direction: row !important;
+    align-items: center !important;
     background: transparent !important;
     padding: 0 !important;
   }
