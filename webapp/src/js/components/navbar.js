@@ -109,10 +109,20 @@ export async function initNavbar() {
 
   // Handle Tab Visibility based on Zero-Trust Guard
   const restrictedViews = ['suppliers', 'product-builder', 'tariff'];
-  if (sysTier.toLowerCase().trim() === 'basic' || !user) {
+  const isBasic = sysTier.toLowerCase().trim() === 'basic';
+  
+  if (isBasic || !user) {
     menuItems.forEach(item => {
       if (restrictedViews.includes(item.dataset.view)) {
         item.style.display = 'none';
+      }
+    });
+  } else {
+    // If user is logged in and NOT basic, affirmatively un-hide tabs and remove the anti-flash guard
+    document.documentElement.classList.remove('is-basic-tier');
+    menuItems.forEach(item => {
+      if (restrictedViews.includes(item.dataset.view)) {
+        item.style.display = 'flex';
       }
     });
   }

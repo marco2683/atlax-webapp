@@ -138,14 +138,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // 6. Tier Cards (modal)
-  initTierCards((selectedTier) => {
-    appState.currentTier = selectedTier;
-    import('./js/components/supplier-carousel.js').then(m => m.setCurrentTier(selectedTier));
-    renderShortlist(appState.shortlist, appState.currentTier);
-  });
-
-
 
   // 6. Autocomplete
   initAutocomplete(appState.suppliersData);

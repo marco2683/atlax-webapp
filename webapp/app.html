@@ -61,11 +61,11 @@
       try {
         var hasAuth = Object.keys(localStorage).some(function(k) { return k.startsWith('sb-') && k.endsWith('-auth-token'); });
         var tier = sessionStorage.getItem('atlasdt_tier') || 'basic';
-        var isPro = ['professional', 'pro', 'enterprise'].includes(tier.toLowerCase().trim());
+        var isBasic = tier.toLowerCase().trim() === 'basic';
         
         if (hasAuth) {
           document.documentElement.classList.add('is-authenticated');
-          if (!isPro) {
+          if (isBasic) {
             document.documentElement.classList.add('is-basic-tier');
           }
         }
