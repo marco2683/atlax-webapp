@@ -604,12 +604,12 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div class="admin-form-grid cols-3">
             <div class="admin-field">
-              <label>City <span class="req">*</span></label>
-              <input type="text" name="city" value="${s.city || ''}" required placeholder="Shenzhen">
+              <label>City</label>
+              <input type="text" name="city" value="${s.city || ''}" placeholder="Shenzhen">
             </div>
             <div class="admin-field">
-              <label>Country <span class="req">*</span></label>
-              <input type="text" name="country" value="${s.country || ''}" required placeholder="China">
+              <label>Country</label>
+              <input type="text" name="country" value="${s.country || ''}" placeholder="China">
             </div>
             <div class="admin-field">
               <label>Region / Province</label>
@@ -654,8 +654,8 @@ document.addEventListener('DOMContentLoaded', () => {
               <input type="text" id="admin-form-new-techgroup" name="newTechGroup" style="display:none; margin-top:8px; width:100%; box-sizing:border-box;" class="admin-input-filter" placeholder="e.g. Advanced Assembly">
             </div>
             <div class="admin-field">
-              <label>Manufacturing Stage <span class="req">*</span></label>
-              <select name="stage" required>
+              <label>Manufacturing Stage</label>
+              <select name="stage">
                 <option value="">Select…</option>
                 ${STAGES.map(st => `<option value="${st}" ${s.stage === st ? 'selected' : ''}>${st}</option>`).join('')}
               </select>
@@ -801,7 +801,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div class="admin-field">
             <label>Website</label>
-            <input type="url" name="website" value="${s.website || ''}" placeholder="https://www.precision-mold.cn">
+            <input type="url" name="website" value="${s.website || s.url || ''}" placeholder="https://www.precision-mold.cn">
           </div>
         </div>
 
@@ -1017,6 +1017,7 @@ document.addEventListener('DOMContentLoaded', () => {
         email: fd.get('email'),
         phone: fd.get('phone'),
         website: fd.get('website'),
+        url: fd.get('website'),
         logo: fd.get('logo'),
         banner: fd.get('banner'),
         internalNotes: fd.get('internalNotes'),

@@ -69,7 +69,7 @@ body .modal-close:hover {
 /* ── LEFT SIDEBAR (Identity) ── */
 .sup-dossier__sidebar {
   width: 380px;
-  background: #ffffff;
+  background: #fcfbf9; /* Subtle beige matching the dashboard */
   border-right: 1px solid #e2e8f0; /* Crisp subtle border */
   padding: 40px 32px;
   flex-shrink: 0;
@@ -193,7 +193,7 @@ body .modal-close:hover {
 
 .sup-metric-card {
   flex: 1;
-  background: #ffffff;
+  background: #fcfbf9; /* Subtle beige matching the dash */
   border-radius: 12px;
   padding: 24px;
   border: 1px solid #e2e8f0;
@@ -385,7 +385,7 @@ body .modal-close:hover {
 }
 
 .sup-panel {
-  background: #ffffff;
+  background: #fcfbf9; /* Subtle beige matching the dash */
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   padding: 28px;
