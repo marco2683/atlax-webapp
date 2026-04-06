@@ -229,7 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
     search: '',
     techGroup: '',
     country: '',
-    segment: ''
+    segment: '',
+    hideDisabled: true
   };
 
   function renderSuppliersTable(preserveUI = false) {
@@ -253,14 +254,23 @@ document.addEventListener('DOMContentLoaded', () => {
         let seg = (s.segment || '').toUpperCase();
         match = match && seg.includes(adminSupplierFilters.segment);
       }
+      if (adminSupplierFilters.hideDisabled && s.isActive === false) {
+        match = false;
+      }
       return match;
     });
 
     const sorted = filtered.sort((a, b) => compareValues(a, b, supplierSort.key, supplierSort.dir));
 
-    const rows = sorted.map(s => `
+    const rows = sorted.map(s => {
+      const url = s.website || s.url;
+      const urlLink = url ? (url.startsWith('http') ? url : 'https://' + url) : null;
+      return `
       <tr class="${s.isActive === false ? 'row-disabled' : ''}">
         <td style="width:40px;"><input type="checkbox" class="admin-sup-row-select" data-id="${s.id || s.name}"></td>
+        <td style="width:40px; text-align:center;">
+          ${urlLink ? `<a href="${urlLink}" target="_blank" title="${urlLink}" style="color:var(--color-electric);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>` : '<span style="opacity:0.2;">—</span>'}
+        </td>
         <td>
           <strong>${s.name}</strong><br>
           <span style="font-size:12px; color:var(--color-steel-400);">${s.nameZh || '—'}</span>
@@ -292,12 +302,14 @@ document.addEventListener('DOMContentLoaded', () => {
           <button class="admin-action-btn admin-edit-supplier" data-id="${s.id || s.name}">Edit</button>
           <button class="admin-action-btn admin-delete-supplier" data-id="${s.id || s.name}" style="color:#ef4444;border-color:rgba(239,68,68,.2);">Delete</button>
         </div></td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
 
     const tableHTML = `
         <table class="admin-table">
           <thead><tr>
             <th style="width:40px;"><input type="checkbox" id="admin-sup-select-all" title="Select all visible rows"></th>
+            <th style="width:40px;" title="Website URL">🔗</th>
             <th class="sortable" data-sort-key="name">Manufacturer Name ${sortArrow('name', supplierSort)}</th>
             <th class="sortable" data-sort-key="location_display">Location ${sortArrow('location_display', supplierSort)}</th>
             <th class="sortable" data-sort-key="segment">Tier ${sortArrow('segment', supplierSort)}</th>
@@ -325,13 +337,24 @@ document.addEventListener('DOMContentLoaded', () => {
               <option value="OEM" ${adminSupplierFilters.segment === 'OEM' ? 'selected':''}>OEM</option>
             </select>
             <select id="admin-filter-tech" class="admin-input-filter">
-              <option value="">All Technologies...</option>
-              ${[...new Set(loadedSuppliers.map(s=>s.techGroup).filter(Boolean))].map(t => `<option value="${t}" ${adminSupplierFilters.techGroup === t ? 'selected':''}>${t}</option>`).join('')}
+              ${(() => {
+                let dynamicSupList = loadedSuppliers;
+                if (adminSupplierFilters.segment) {
+                  const seg = adminSupplierFilters.segment;
+                  dynamicSupList = dynamicSupList.filter(s => (s.segment || '').toUpperCase().includes(seg));
+                }
+                const availableTechGroups = [...new Set(dynamicSupList.map(s=>s.techGroup).filter(Boolean))].sort();
+                return `<option value="">All Technologies...</option>` + availableTechGroups.map(t => `<option value="${t}" ${adminSupplierFilters.techGroup === t ? 'selected':''}>${t}</option>`).join('');
+              })()}
             </select>
             <select id="admin-filter-country" class="admin-input-filter">
               <option value="">All Countries...</option>
               ${[...new Set(loadedSuppliers.map(s=>s.country).filter(Boolean))].map(c => `<option value="${c}" ${adminSupplierFilters.country === c ? 'selected':''}>${c}</option>`).join('')}
             </select>
+            <label style="display:flex; align-items:center; gap:6px; color:var(--color-steel-300); font-size:12px; cursor:pointer; margin-left:8px;" title="Hide/Show explicitly deactivated suppliers">
+              <input type="checkbox" id="admin-filter-hide-disabled" ${adminSupplierFilters.hideDisabled ? 'checked' : ''} style="cursor:pointer; accent-color:var(--color-electric);">
+              Hide Disabled
+            </label>
           </div>
           <div style="display:flex;gap:12px;align-items:center;">
              <div id="admin-bulk-actions" style="display:none; gap:8px; align-items:center;">
@@ -346,11 +369,16 @@ document.addEventListener('DOMContentLoaded', () => {
           ${tableHTML}
         </div>`;
 
-      // Filter events
       document.getElementById('admin-filter-search')?.addEventListener('input', e => { adminSupplierFilters.search = e.target.value.toLowerCase(); renderSuppliersTable(true); });
-      document.getElementById('admin-filter-segment')?.addEventListener('change', e => { adminSupplierFilters.segment = e.target.value; renderSuppliersTable(true); });
+      document.getElementById('admin-filter-segment')?.addEventListener('change', e => { 
+        adminSupplierFilters.segment = e.target.value; 
+        // Reset tech group filter since options might change and become invalid
+        adminSupplierFilters.techGroup = '';
+        renderSuppliersTable(true); 
+      });
       document.getElementById('admin-filter-tech')?.addEventListener('change', e => { adminSupplierFilters.techGroup = e.target.value; renderSuppliersTable(true); });
       document.getElementById('admin-filter-country')?.addEventListener('change', e => { adminSupplierFilters.country = e.target.value; renderSuppliersTable(true); });
+      document.getElementById('admin-filter-hide-disabled')?.addEventListener('change', e => { adminSupplierFilters.hideDisabled = e.target.checked; renderSuppliersTable(true); });
 
       document.getElementById('admin-bulk-deactivate')?.addEventListener('click', async () => {
         const selectedIds = Array.from(document.querySelectorAll('.admin-sup-row-select:checked')).map(cb => cb.dataset.id);

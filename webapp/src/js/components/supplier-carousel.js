@@ -8,6 +8,7 @@ const DEFAULT_BANNER = 'https://images.unsplash.com/photo-1565043589221-1a6fd9ae
 
 let currentIndex = 0;
 let currentSuppliers = [];
+let currentTechName = '';
 let currentTier = 'free';
 
 export function setCurrentTier(tierId) {
@@ -43,12 +44,11 @@ function generateClassifiers(factoryScore) {
 }
 
 export function openSupplierCarousel(techName, suppliers) {
+  currentTechName = techName;
   currentSuppliers = suppliers;
   currentIndex = 0;
   const backdrop = document.getElementById('supplier-backdrop');
   const modal = document.getElementById('supplier-modal');
-  const title = document.getElementById('supplier-modal-title');
-  title.textContent = `${techName} Suppliers`;
   backdrop.classList.remove('hidden');
   modal.classList.remove('hidden');
   renderCurrentCard();
@@ -90,8 +90,21 @@ function updateCounter() {
 /* ── Main Render ── */
 function renderCurrentCard() {
   const body = document.getElementById('supplier-modal-body');
+  const title = document.getElementById('supplier-modal-title');
   if (!body || !currentSuppliers[currentIndex]) return;
   const s = currentSuppliers[currentIndex];
+
+  if (title) {
+    const mainPill = `<span style="background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.4); padding: 5px 12px; border-radius: 6px; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-right: 12px; vertical-align: middle; position: relative; top: -2px; box-shadow: 0 1px 2px rgba(16,185,129,0.05);">${currentTechName}</span>`;
+    
+    let subPills = '';
+    if (s.technologies && s.technologies.length > 0) {
+      subPills = s.technologies.map(t => `<span style="background: rgba(99, 102, 241, 0.08); color: #4f46e5; border: 1px solid rgba(99, 102, 241, 0.25); padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-right: 6px; vertical-align: middle; position: relative; top: -2px;">${t}</span>`).join('');
+    }
+    
+    title.innerHTML = `${mainPill} ${subPills}`;
+  }
+
   const score = s.factoryScore || 70;
 
   // Classifier row
@@ -293,52 +306,57 @@ function renderCurrentCard() {
       <!-- Middle Row: Tech & Map -->
       <div class="sup-board-grid">
         <!-- Technical Capabilities -->
-        <div class="sup-panel sup-panel--tall">
+        <div class="sup-panel sup-panel--tall" style="grid-column: span 2; display: flex; flex-direction: column;">
           <div class="sup-panel__title">Technical Capabilities & Machinery</div>
-          <div class="sup-cap-container">
-            <div class="sup-cap-list">
-            ${(s.technologies || []).map(t => `
-            <div class="sup-cap-item">
-              <div class="sup-cap-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
-              <div class="sup-cap-details">
-                <div class="sup-cap-name">${t}</div>
-                <div class="sup-cap-sub">Verified Manufacturing Node</div>
+          <div style="display: flex; flex-direction: row; gap: 24px; flex: 1; overflow: hidden; padding-bottom: 8px;">
+            <!-- LEFT: Technical Capabilities -->
+            <div class="sup-cap-container" style="flex: 2; border-right: 1px solid #e2e8f0; padding-right: 20px;">
+              <div class="sup-cap-list">
+              ${(s.technologies || []).map(t => `
+              <div class="sup-cap-item">
+                <div class="sup-cap-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
+                <div class="sup-cap-details">
+                  <div class="sup-cap-name">${t}</div>
+                  <div class="sup-cap-sub">Verified Manufacturing Node</div>
+                </div>
+              </div>
+              `).join('')}
+              ${(s.tags || []).map(t => `
+              <div class="sup-cap-item">
+                <div class="sup-cap-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
+                <div class="sup-cap-details">
+                  <div class="sup-cap-name">${t}</div>
+                  <div class="sup-cap-sub">Material / Specialty Process</div>
+                </div>
+              </div>
+              `).join('')}
               </div>
             </div>
-            `).join('')}
-            ${(s.tags || []).map(t => `
-            <div class="sup-cap-item">
-              <div class="sup-cap-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
-              <div class="sup-cap-details">
-                <div class="sup-cap-name">${t}</div>
-                <div class="sup-cap-sub">Material / Specialty Process</div>
+            
+            <!-- RIGHT: Stacked Cards -->
+            <div class="sup-facility-details" style="flex: 1; display: flex; flex-direction: column; gap: 12px; margin-top: 0; overflow-y: auto; padding-right: 4px;">
+              <div class="sup-facility-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px;">
+                <div class="sup-detail-label" style="margin: 0;">Factory Area</div>
+                <div class="sup-detail-value" style="font-size: 14px;">${s.factoryArea || '--'}</div>
               </div>
-            </div>
-            `).join('')}
-            </div>
-          </div>
-          <div class="sup-facility-details">
-            <div class="sup-facility-detail">
-              <div class="sup-detail-label">Factory Area</div>
-              <div class="sup-detail-value">${s.factoryArea || '--'}</div>
-            </div>
-            <div class="sup-facility-detail">
-              <div class="sup-detail-label">Employees</div>
-              <div class="sup-detail-value">${s.employees || '--'}</div>
-            </div>
-            <div class="sup-facility-detail">
-              <div class="sup-detail-label">Min Order Qty</div>
-              <div class="sup-detail-value">${s.moq || '--'}</div>
-            </div>
-            <div class="sup-facility-detail">
-              <div class="sup-detail-label">Lead Time</div>
-              <div class="sup-detail-value">${s.leadTime || '--'}</div>
+              <div class="sup-facility-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px;">
+                <div class="sup-detail-label" style="margin: 0;">Employees</div>
+                <div class="sup-detail-value" style="font-size: 14px;">${s.employees || '--'}</div>
+              </div>
+              <div class="sup-facility-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px;">
+                <div class="sup-detail-label" style="margin: 0;">Min Order Qty</div>
+                <div class="sup-detail-value" style="font-size: 14px;">${s.moq || '--'}</div>
+              </div>
+              <div class="sup-facility-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px;">
+                <div class="sup-detail-label" style="margin: 0;">Lead Time</div>
+                <div class="sup-detail-value" style="font-size: 14px;">${s.leadTime || '--'}</div>
+              </div>
             </div>
           </div>
         </div>
         
         <!-- Factory Location -->
-        <div class="sup-panel sup-panel--map">
+        <div class="sup-panel sup-panel--map" style="grid-column: span 1;">
           <div class="sup-panel__title">Factory Location</div>
           <div style="flex: 1; padding: 16px;">
             <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="${mapEmbedUrl}" style="border-radius: 8px;"></iframe>
