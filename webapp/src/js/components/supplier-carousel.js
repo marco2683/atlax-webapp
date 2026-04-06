@@ -232,9 +232,10 @@ function renderCurrentCard() {
       <!-- Middle Row: Tech & Map -->
       <div class="sup-board-grid">
         <!-- Technical Capabilities -->
-        <div class="sup-panel">
+        <div class="sup-panel sup-panel--tall">
           <div class="sup-panel__title">Technical Capabilities & Machinery</div>
-          <div class="sup-cap-list">
+          <div class="sup-cap-container">
+            <div class="sup-cap-list">
             ${(s.technologies || []).map(t => `
             <div class="sup-cap-item">
               <div class="sup-cap-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
@@ -253,8 +254,8 @@ function renderCurrentCard() {
               </div>
             </div>
             `).join('')}
+            </div>
           </div>
-          
           <div class="sup-facility-details">
             <div class="sup-facility-detail">
               <div class="sup-detail-label">Factory Area</div>
@@ -276,8 +277,8 @@ function renderCurrentCard() {
         </div>
         
         <!-- Factory Location -->
-        <div class="sup-panel" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
-          <div class="sup-panel__title" style="margin: 24px 24px 0 24px;">Factory Location</div>
+        <div class="sup-panel sup-panel--map">
+          <div class="sup-panel__title">Factory Location</div>
           <div style="flex: 1; padding: 16px;">
             <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="${mapEmbedUrl}" style="border-radius: 8px;"></iframe>
           </div>

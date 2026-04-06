@@ -1,24 +1,27 @@
 /* ============================================================
-   SUPPLIER MODAL LIGHT DASHBOARD (HYBRID CONCEPT)
+   SUPPLIER MODAL LIGHT DASHBOARD (WESTERN CLASSIC)
    ============================================================ */
 
 /* Target the specific modal to override dark theme */
 body .supplier-modal {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
+  border-radius: 8px; /* Sharper classic corners */
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  max-width: 1100px;
-  width: 96%;
+  max-width: 95vw; /* Much wider footprint */
+  width: 95vw;
   height: 90vh; /* force large modal */
 }
 
 body .supplier-modal__top-bar {
   border-bottom: 1px solid #e2e8f0;
   background: #ffffff;
+  border-radius: 8px 8px 0 0;
 }
 
 body .supplier-modal__nav-row h2 {
   color: #0f172a;
+  font-family: var(--font-display);
 }
 
 body .nav-arrow {
@@ -34,6 +37,7 @@ body .nav-arrow:hover {
 body .nav-counter {
   color: #64748b;
   font-weight: 600;
+  font-family: var(--font-body);
 }
 
 body .modal-close {
@@ -55,7 +59,7 @@ body .modal-close:hover {
 
 /* ── LEFT SIDEBAR (Identity) ── */
 .sup-dossier__sidebar {
-  width: 280px;
+  width: 380px;
   background: #ffffff;
   border-right: 1px solid #e2e8f0;
   padding: 32px 24px;
@@ -68,8 +72,8 @@ body .modal-close:hover {
 .sup-dossier__logo {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b, #312e81); /* Deep navy professional gradient */
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,11 +82,11 @@ body .modal-close:hover {
   font-weight: 800;
   font-family: var(--font-display);
   margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 4px 12px rgba(30, 27, 75, 0.15);
 }
 
 .sup-dossier__name {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
   color: #0f172a;
   line-height: 1.2;
@@ -92,13 +96,15 @@ body .modal-close:hover {
 
 .sup-dossier__category {
   font-size: 13px;
-  color: #475569;
-  font-weight: 500;
+  color: #4f46e5; /* Indigo accent */
+  font-weight: 600;
   margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .sup-dossier__location {
-  font-size: 12px;
+  font-size: 13px;
   color: #64748b;
   margin-bottom: 32px;
 }
@@ -124,16 +130,16 @@ body .modal-close:hover {
   text-decoration: none;
   display: block;
   margin-bottom: 16px;
-  word-break: break-all;
+  word-wrap: break-word;
 }
 
 .sup-sidebar__cta {
   margin-top: auto;
   width: 100%;
   padding: 12px;
-  background: #2563eb;
+  background: #0f172a; /* Navy action target */
   color: white;
-  border-radius: 8px;
+  border-radius: 6px; /* Crisper border radius */
   font-weight: 600;
   font-size: 14px;
   border: none;
@@ -143,16 +149,17 @@ body .modal-close:hover {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  font-family: var(--font-display);
 }
 .sup-sidebar__cta:hover {
-  background: #1d4ed8;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  background: #1e293b;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
 }
 
 .sup-sidebar__cta--added {
-  background: #f0fdf4 !important;
-  color: #15803d !important;
-  border: 1px solid #bbf7d0 !important;
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
   box-shadow: none !important;
   pointer-events: none;
 }
@@ -176,10 +183,10 @@ body .modal-close:hover {
 .sup-metric-card {
   flex: 1;
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 6px;
   padding: 20px;
   border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
   display: flex;
   flex-direction: column;
 }
@@ -189,6 +196,7 @@ body .modal-close:hover {
   font-weight: 600;
   color: #475569;
   margin-bottom: 12px;
+  font-family: var(--font-display);
 }
 
 .sup-metric-value-row {
@@ -201,8 +209,9 @@ body .modal-close:hover {
   font-size: 32px;
   font-weight: 800;
   color: #0f172a;
-  font-family: var(--font-mono);
+  font-family: var(--font-display); /* Keep display bold instead of mono for classic feel */
   line-height: 1;
+  letter-spacing: -0.02em;
 }
 
 .sup-metric-sub {
@@ -212,7 +221,7 @@ body .modal-close:hover {
 }
 
 .color-green { color: #10b981; }
-.color-blue { color: #2563eb; }
+.color-blue { color: #4f46e5; }
 .color-amber { color: #f59e0b; }
 
 /* Dashboard Content Grid */
@@ -221,14 +230,21 @@ body .modal-close:hover {
   grid-template-columns: 3fr 2fr;
   gap: 24px;
   margin-bottom: 24px;
+  align-items: start;
 }
 
 .sup-panel {
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 6px;
   border: 1px solid #e2e8f0;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.sup-panel--tall {
+  height: 460px;
+  display: flex;
+  flex-direction: column;
 }
 
 .sup-panel__title {
@@ -240,9 +256,29 @@ body .modal-close:hover {
   margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 1px solid #f1f5f9;
+  font-family: var(--font-display);
+  flex-shrink: 0;
 }
 
-/* Capabilities List */
+/* Capabilities List Container */
+.sup-cap-container {
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 8px;
+}
+
+/* Custom slick scrollbar for the container */
+.sup-cap-container::-webkit-scrollbar {
+  width: 6px;
+}
+.sup-cap-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sup-cap-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
 .sup-cap-list {
   display: flex;
   flex-direction: column;
@@ -265,9 +301,9 @@ body .modal-close:hover {
 .sup-cap-icon {
   width: 32px;
   height: 32px;
-  background: #eff6ff;
-  color: #2563eb;
-  border-radius: 8px;
+  background: #eef2ff; /* Very soft indigo */
+  color: #4f46e5; /* Indigo accent */
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -283,6 +319,7 @@ body .modal-close:hover {
   font-weight: 600;
   color: #1e293b;
   margin-bottom: 4px;
+  font-family: var(--font-display);
 }
 
 .sup-cap-sub {
@@ -296,7 +333,7 @@ body .modal-close:hover {
   color: #334155;
   background: #f1f5f9;
   padding: 4px 8px;
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 /* Specific details for tabular visual */
@@ -305,12 +342,14 @@ body .modal-close:hover {
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-top: 16px;
+  flex-shrink: 0;
 }
 
 .sup-facility-detail {
   background: #f8fafc;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 6px;
+  border: 1px solid #f1f5f9;
 }
 
 .sup-detail-label {
@@ -319,18 +358,34 @@ body .modal-close:hover {
   color: #64748b;
   font-weight: 600;
   margin-bottom: 4px;
+  font-family: var(--font-display);
 }
 
 .sup-detail-value {
   font-size: 14px;
   font-weight: 700;
   color: #0f172a;
+  font-family: var(--font-display);
+}
+
+/* Factory Map Container */
+.sup-panel--map {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: 1; /* Forcing square ratio as requested */
+  max-height: 460px;
+}
+
+.sup-panel--map .sup-panel__title {
+  margin: 24px 24px 0 24px;
 }
 
 /* Locked Overlay */
 .sup-intel-gate--light {
   position: relative;
-  border-radius: 12px;
+  border-radius: 6px;
   overflow: hidden;
 }
 
@@ -347,7 +402,7 @@ body .modal-close:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 12px;
+  border-radius: 6px;
 }
 
 .sup-intel-gate-btn {
@@ -355,14 +410,15 @@ body .modal-close:hover {
   border: 1px solid #e2e8f0;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   padding: 12px 24px;
-  border-radius: 8px;
+  border-radius: 6px;
   font-weight: 600;
   font-size: 14px;
-  color: #f59e0b;
+  color: #4f46e5;
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  font-family: var(--font-display);
 }
 .sup-intel-gate-btn:hover {
   transform: translateY(-2px);
@@ -380,7 +436,7 @@ body .modal-close:hover {
   width: 100%;
   aspect-ratio: 4/3;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid #e2e8f0;
   background: #f1f5f9;
 }
