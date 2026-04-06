@@ -10,6 +10,7 @@ import './css/profile.css';
 import './css/light-theme.css';
 import './css/designers-engine.css';
 import './css/product-builder.css';
+import './css/supplier-modal-light.css';
 import './css/responsive.css';
 
 import { initGlobe } from './js/globe/globe-engine.js';

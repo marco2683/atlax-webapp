@@ -149,230 +149,159 @@ function renderCurrentCard() {
   };
 
   body.innerHTML = `
-    <!-- Hero Split 2:3 Banner, 1:3 Map -->
-    <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-      <div class="sup-banner" style="flex: 2; border-radius: 12px; margin-bottom: 0; background-image: url('${bannerUrl}');">
-        <div class="sup-banner__info">
-          <div>
-            <div class="sup-banner__name">${s.name}</div>
-            <div class="sup-banner__location">📍 ${s.city || ''}, ${s.country || ''}</div>
-            ${shortlistBtnHTML}
-          </div>
-        </div>
-      </div>
-      <a href="${mapUrl}" target="_blank" style="flex: 1; min-height: 200px; display: block; border-radius: 12px; overflow: hidden; position: relative;">
-        <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="${mapEmbedUrl}" style="pointer-events: none;"></iframe>
-      </a>
+<div class="sup-dossier">
+  
+  <!-- LEFT SIDEBAR -->
+  <div class="sup-dossier__sidebar">
+    <div class="sup-dossier__logo">${s.name.substring(0, Math.min(2, s.name.length)).toUpperCase()}</div>
+    <div class="sup-dossier__name">${s.name}</div>
+    <div class="sup-dossier__category">${s.segment || 'Industrial Manufacturing'}</div>
+    <div class="sup-dossier__location">📍 ${s.city || ''}${s.country ? ', ' + s.country : ''}</div>
+    
+    <div class="sup-contact-block">
+      <span class="sup-contact-label">Email</span>
+      <a href="mailto:${email}" class="sup-contact-value" style="color: #2563eb;">${email}</a>
+      
+      <span class="sup-contact-label">Phone</span>
+      <span class="sup-contact-value">${phone || '--'}</span>
+      
+      <span class="sup-contact-label">WeChat</span>
+      <span class="sup-contact-value">${wechat || '--'}</span>
+      
+      <span class="sup-contact-label">Website</span>
+      <a href="${websiteUrl ? (websiteUrl.startsWith('http') ? websiteUrl : 'https://' + websiteUrl) : '#'}" target="_blank" class="sup-contact-value" style="color: #2563eb;">${websiteUrl || '--'}</a>
     </div>
 
-    <div class="sup-content">
-      <!-- Classifier Row -->
-      <div style="display: flex; gap: 8px; padding: 12px 24px; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02); margin: 0 -24px 20px -24px;">
-        ${classifierHTML}
-      </div>
-
-      <div class="sup-section">
-      <div class="sup-section__title" style="text-align: center;">🔬 Expertise & Core Technologies</div>
-      <div class="sup-materials-grid" style="grid-template-columns: 1fr;">
-        <div class="sup-materials-col">
-          <div class="sup-materials-col__tags" style="justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-            ${(s.technologies || []).map(t => `<span class="sup-tech-tag" style="flex: 1 1 auto; text-align: center; margin: 0;">${t}</span>`).join('')}
-            ${(s.tags || []).map(t => `<span class="sup-tech-tag" style="flex: 1 1 auto; text-align: center; margin: 0;">${t}</span>`).join('')}
-          </div>
-        </div>
-      </div>
-      ${s.description ? `<p class="sup-desc" style="text-align: justify; line-height: 1.6; margin-top: 16px;">${s.description}</p>` : ''}
+    <!-- RFQ Card -->
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+      <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #475569; margin-bottom: 8px;">📋 Send Inquiry</div>
+      <textarea rows="3" placeholder="Product requirements..." style="width: 100%; border: 1px solid #cbd5e1; border-radius: 4px; padding: 8px; font-size: 13px; margin-bottom: 8px; font-family: inherit; resize: vertical;box-sizing:border-box;"></textarea>
+      <input type="email" placeholder="Your reply email" style="width: 100%; border: 1px solid #cbd5e1; border-radius: 4px; padding: 8px; font-size: 13px; margin-bottom: 8px; font-family: inherit;box-sizing:border-box;">
+      <button id="modal-send-rfq" style="width: 100%; background: #0f172a; color: white; border: none; padding: 8px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 13px;">Submit</button>
     </div>
 
-    <!-- Section: Supplier Scorecard -->
-    <div class="sup-section" style="padding-top: 0;">
-      <div class="sup-section__title" style="text-align: center;">📊 Supplier Scorecard</div>
-      <div style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;">
-        <div style="flex: 1; min-width: 110px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 24px 16px; border-radius: 8px; text-align: center;">
-          <div style="font-size: 24px; font-weight: bold; color: ${s.factoryScore >= 80 ? '#10b981' : '#f59e0b'};">${s.factoryScore || '--'}</div>
-          <div style="font-size: 11px; color: var(--color-steel-400); text-transform: uppercase;">Atlas DT Score</div>
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 8px;">
+      ${shortlistBtnHTML.replace('sup-banner__add-shortlist-btn', 'sup-sidebar__cta' + (isShortlisted ? ' sup-sidebar__cta--added' : ''))}
+      <button id="modal-engage-consulting" style="width: 100%; padding: 12px; background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;">🌿 Atlas DT Audit</button>
+    </div>
+  </div>
+
+  <!-- RIGHT DASHBOARD -->
+  <div class="sup-dossier__dashboard">
+    <!-- Top Ribbon -->
+    <div class="sup-ribbon">
+      <div class="sup-metric-card">
+        <div class="sup-metric-header">Supplier Score</div>
+        <div class="sup-metric-value-row">
+          <div class="sup-metric-value ${s.factoryScore >= 80 ? 'color-green' : 'color-amber'}">${s.factoryScore || '--'}</div>
+          <div class="sup-metric-sub">/ 100</div>
         </div>
-        <div style="flex: 1; min-width: 110px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 24px 16px; border-radius: 8px; text-align: center;">
-          <div style="font-size: 24px; font-weight: bold; color: #fff;">${s.yearEstablished || '--'}</div>
-          <div style="font-size: 11px; color: var(--color-steel-400); text-transform: uppercase;">Established</div>
+      </div>
+      <div class="sup-metric-card">
+        <div class="sup-metric-header">Established</div>
+        <div class="sup-metric-value-row">
+          <div class="sup-metric-value" style="color: #0f172a;">${s.yearEstablished || '--'}</div>
         </div>
-        <div style="flex: 1; min-width: 110px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 24px 16px; border-radius: 8px; text-align: center;">
-          <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">${s.certifications ? s.certifications.length : 0}</div>
-          <div style="font-size: 11px; color: var(--color-steel-400); text-transform: uppercase;">Active Certs</div>
+      </div>
+      <div class="sup-metric-card">
+        <div class="sup-metric-header">Certifications</div>
+        <div class="sup-metric-value-row">
+          <div class="sup-metric-value color-blue">${s.certifications ? s.certifications.length : 0}</div>
+          <div class="sup-metric-sub">Active</div>
         </div>
-        <div style="flex: 1; min-width: 110px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 24px 16px; border-radius: 8px; text-align: center;">
-          <div style="font-size: 24px; font-weight: bold; color: #fff;">${exportCountries}</div>
-          <div style="font-size: 11px; color: var(--color-steel-400); text-transform: uppercase;">Export Mkts</div>
+      </div>
+      <div class="sup-metric-card">
+        <div class="sup-metric-header">Markets</div>
+        <div class="sup-metric-value-row">
+          <div class="sup-metric-value" style="color: #0f172a;">${exportCountries}</div>
+          <div class="sup-metric-sub">Regions</div>
         </div>
       </div>
     </div>
-
-    <!-- Section: Visuals (Products & Facilities) -->
-    ${productImgs.length > 0 || facilityImgs.length > 0 ? `
-    <div class="sup-section" style="padding-top: 0;">
-      ${productImgs.length > 0 ? `
-        <div class="sup-section__title">📦 Featured Products</div>
-        ${renderImageGrid(productImgs)}
-      ` : ''}
-      ${facilityImgs.length > 0 ? `
-        <div class="sup-section__title" style="margin-top: 16px;">🏭 Facilities & Equipment</div>
-        ${renderImageGrid(facilityImgs)}
-      ` : ''}
-    </div>
-    ` : ''}
-
-    <!-- INTEL GATE OVERLAY -->
-    ${isIntelLocked ? `
-    <div class="sup-intel-overlay">
-      <button class="sup-intel-overlay__btn" onclick="window.location.href='/profile.html?tab=billing'">
-        🔒 Upgrade to View Full Details
-      </button>
-    </div>
-    ` : ''}
-
-    <div class="sup-intel-gate ${isIntelLocked ? 'sup-intel-gate--locked' : ''}">
-
-
-      <!-- Section: Video Walkthrough -->
-      ${s.videoWalkthrough ? `
-      <div class="sup-section">
-        <div class="sup-section__title">🎥 Video Walkthrough</div>
-        <div class="sup-video-embed" style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
-          <iframe style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;" 
-            src="${s.videoWalkthrough.includes('watch?v=') ? s.videoWalkthrough.replace('watch?v=', 'embed/') : s.videoWalkthrough}" 
-            allowfullscreen>
-          </iframe>
+    
+    <!-- Intel Gate overlay wraps the content -->
+    <div class="sup-intel-gate--light ${isIntelLocked ? 'is-locked' : ''}">
+      ${isIntelLocked ? `
+        <div class="sup-intel-gate-overlay">
+          <button class="sup-intel-gate-btn" onclick="window.location.href='/profile.html?tab=billing'">
+            🔒 Upgrade to View Full Dossier
+          </button>
         </div>
-      </div>
-      ` : ''}
-
-      <!-- Section: Facilities & Equipment Info -->
-      <div class="sup-section">
-        <div class="sup-section__title">🏭 Facilities & Equipment</div>
-        <div class="sup-facility-grid">
-          ${s.factoryArea ? `
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Factory Area</div>
-            <div class="sup-facility-card__value">${s.factoryArea}</div>
-          </div>` : ''}
-          ${s.employees ? `
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Employees</div>
-            <div class="sup-facility-card__value">${s.employees}</div>
-          </div>` : ''}
-          ${s.yearEstablished ? `
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Year Established</div>
-            <div class="sup-facility-card__value">${s.yearEstablished}</div>
-          </div>` : ''}
-          ${s.moq ? `
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Min Order Qty</div>
-            <div class="sup-facility-card__value">${s.moq}</div>
-          </div>` : ''}
-          ${s.leadTime ? `
-          <div class="sup-facility-card">
-            <div class="sup-facility-card__label">Lead Time</div>
-            <div class="sup-facility-card__value">${s.leadTime}</div>
-          </div>` : ''}
-        </div>
-      </div>
-
-      <!-- Section: Documents & Downloads -->
-      ${s.documents && s.documents.length > 0 ? `
-      <div class="sup-section">
-        <div class="sup-section__title">📄 Documents & Downloads</div>
-        <div class="sup-certs-row">
-          ${s.documents.map((doc, i) => `
-            <a href="${doc}" target="_blank" class="sup-cert-badge" style="text-decoration: none; cursor: pointer;">
-              <div class="sup-cert-badge__icon">⬇️</div>
-              <div class="sup-cert-badge__name">Document ${i + 1}</div>
-              <div class="sup-cert-badge__status sup-cert-badge__status--active">Download</div>
-            </a>
-          `).join('')}
-        </div>
-      </div>
       ` : ''}
       
-      <!-- Section: Quality & Certifications -->
-      ${s.certifications && s.certifications.length > 0 ? `
-      <div class="sup-section">
-        <div class="sup-section__title">✅ Quality & Certifications</div>
-        <div class="sup-certs-row">
-          ${s.certifications.map(c => `
-          <div class="sup-cert-badge">
-            <div class="sup-cert-badge__icon">🏆</div>
-            <div class="sup-cert-badge__name">${c}</div>
-            <div class="sup-cert-badge__status sup-cert-badge__status--active">Verified</div>
+      <!-- Middle Row: Tech & Map -->
+      <div class="sup-board-grid">
+        <!-- Technical Capabilities -->
+        <div class="sup-panel">
+          <div class="sup-panel__title">Technical Capabilities & Machinery</div>
+          <div class="sup-cap-list">
+            ${(s.technologies || []).map(t => `
+            <div class="sup-cap-item">
+              <div class="sup-cap-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
+              <div class="sup-cap-details">
+                <div class="sup-cap-name">${t}</div>
+                <div class="sup-cap-sub">Verified Manufacturing Node</div>
+              </div>
+            </div>
+            `).join('')}
+            ${(s.tags || []).map(t => `
+            <div class="sup-cap-item">
+              <div class="sup-cap-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
+              <div class="sup-cap-details">
+                <div class="sup-cap-name">${t}</div>
+                <div class="sup-cap-sub">Material / Specialty Process</div>
+              </div>
+            </div>
+            `).join('')}
           </div>
-          `).join('')}
+          
+          <div class="sup-facility-details">
+            <div class="sup-facility-detail">
+              <div class="sup-detail-label">Factory Area</div>
+              <div class="sup-detail-value">${s.factoryArea || '--'}</div>
+            </div>
+            <div class="sup-facility-detail">
+              <div class="sup-detail-label">Employees</div>
+              <div class="sup-detail-value">${s.employees || '--'}</div>
+            </div>
+            <div class="sup-facility-detail">
+              <div class="sup-detail-label">Min Order Qty</div>
+              <div class="sup-detail-value">${s.moq || '--'}</div>
+            </div>
+            <div class="sup-facility-detail">
+              <div class="sup-detail-label">Lead Time</div>
+              <div class="sup-detail-value">${s.leadTime || '--'}</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Factory Location -->
+        <div class="sup-panel" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+          <div class="sup-panel__title" style="margin: 24px 24px 0 24px;">Factory Location</div>
+          <div style="flex: 1; padding: 16px;">
+            <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="${mapEmbedUrl}" style="border-radius: 8px;"></iframe>
+          </div>
         </div>
       </div>
-      ` : ''}
       
-      <!-- Section: Contact & Location -->
-      <div class="sup-section">
-        <div class="sup-section__title">Contact & Location</div>
-        <div class="sup-contact-grid">
-          <div class="sup-contact-item">
-            <span class="sup-contact-label">Email</span>
-            <span class="sup-contact-value">${email}</span>
-          </div>
-          <div class="sup-contact-item">
-            <span class="sup-contact-label">Phone</span>
-            <span class="sup-contact-value">${phone}</span>
-          </div>
-          <div class="sup-contact-item">
-            <span class="sup-contact-label">WeChat</span>
-            <span class="sup-contact-value">${wechat}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Official Website -->
-      ${websiteUrl ? `
-      <div class="sup-section">
-        <div class="sup-section__title" style="display:flex; justify-content:space-between; align-items:center;">
-          🌐 Official Website
-          <a href="${websiteUrl.startsWith('http') ? websiteUrl : 'https://' + websiteUrl}" target="_blank" style="font-size:11px; color:var(--color-amber); text-decoration:none; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:4px;">Open ↗</a>
-        </div>
-        <div class="sup-frame-window">
-          <iframe src="${websiteUrl.startsWith('http') ? websiteUrl : 'https://' + websiteUrl}" width="100%" height="100%" style="border:none;" sandbox="allow-same-origin allow-scripts"></iframe>
+      <!-- Bottom Row: Photo Gallery -->
+      ${[...productImgs, ...facilityImgs].length > 0 ? `
+      <div class="sup-panel">
+        <div class="sup-panel__title">Facility & Product Portfolio</div>
+        <div class="sup-gallery-grid">
+          ${[...productImgs, ...facilityImgs].slice(0, 8).map(img => `
+            <img src="${img}" class="sup-gallery-img" />
+          `).join('')}
         </div>
       </div>
       ` : ''}
 
     </div> <!-- CLOSING INTEL GATE -->
-    
-    <!-- RFQ Card (Always Visible) -->
-    <div class="sup-rfq">
-      <div class="sup-rfq__title">📋 Send an inquiry</div>
-      <p class="sup-rfq__desc">Describe your product, upload drawings, and specify quantities for a direct quote.</p>
-      <textarea class="sup-rfq__textarea" rows="5" placeholder="Product requirements, materials, quantities..."></textarea>
-      <div style="margin: 12px 0;">
-        <input type="email" placeholder="Your reply email" class="sup-rfq__textarea" style="height: auto; padding: 10px; margin-bottom: 8px;">
-        <div style="position: relative; width: 100%; border-radius: 6px; overflow: hidden;">
-          <label style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.2); cursor: pointer; color: var(--color-steel-400); font-size: 13px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-            Attach Drawings or Specs
-          </label>
-          <input type="file" id="modal-attach-files" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
-        </div>
-      </div>
-      <div class="sup-rfq__actions">
-        <button class="btn btn--primary" id="modal-send-rfq" style="width: 100%;">Submit Inquiry</button>
-      </div>
-    </div>
-    
-    <!-- Atlas DT Consulting Card (Moved Inside Content Container) -->
-    <div class="sup-mjs" style="padding: 16px; margin-top: 20px;">
-      <div class="sup-mjs__title" style="margin-bottom: 4px; font-size: 14px;">🌿 Atlas DT Quality Consulting</div>
-      <p class="sup-mjs__desc" style="margin-bottom: 12px; font-size: 13px;">Let our on-ground team handle supplier management and factory audits directly on the floor.</p>
-      <button class="btn btn--success btn--sm" style="width: 100%;" id="modal-engage-consulting">Engage Atlas DT Consulting →</button>
-    </div>
-
-  </div> <!-- CLOSING SUP-CONTENT -->
+  </div>
+</div>
   `;
+
+
 
   // Attach event listeners
   if (!isShortlisted) {
