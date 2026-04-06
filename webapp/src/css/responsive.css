@@ -756,17 +756,22 @@
     gap: 0 !important;
   }
 
-  /* Hide desktop action icons (bell, gear, avatar, contact) on mobile */
+  /* Custom layout for app-page actions (avatar) to appear next to brand */
   body.app-page .navbar__actions {
-    display: none !important;
+    display: flex !important;
+    width: auto !important;
+    flex-direction: row !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+  
+  body.app-page .navbar__actions #btn-workspace {
+    display: none !important; /* Hide 'workspace' text button on mobile app */
   }
 
-  /* Hamburger not needed — using tab strip instead */
   body.app-page .mobile-menu-toggle {
-    display: none !important;
+    display: none !important; /* We don't need hamburger if avatar is visible */
   }
-
-  /* Menu: scrollable horizontal tab strip below brand */
   body.app-page .navbar__menu {
     order: 3 !important;
     width: 100% !important;

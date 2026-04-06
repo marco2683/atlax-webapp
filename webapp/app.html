@@ -54,7 +54,40 @@
   <link rel="stylesheet" href="/src/css/supplier-engine.css">
   <script type="module" src="/src/js/contact-modal.js"></script>
   <link rel="stylesheet" href="/src/css/auth.css">
-  <link rel="stylesheet" href="/src/css/auth.css">
+
+  <!-- Anti-Flash Script that runs before body paints -->
+  <script>
+    (function() {
+      try {
+        var hasAuth = Object.keys(localStorage).some(function(k) { return k.startsWith('sb-') && k.endsWith('-auth-token'); });
+        var tier = sessionStorage.getItem('atlasdt_tier') || 'basic';
+        var isPro = ['professional', 'pro', 'enterprise'].includes(tier.toLowerCase().trim());
+        
+        if (hasAuth) {
+          document.documentElement.classList.add('is-authenticated');
+          if (!isPro) {
+            document.documentElement.classList.add('is-basic-tier');
+          }
+        }
+      } catch(e) {}
+    })();
+  </script>
+  <style>
+    /* Prevent flashing of Sales Funnel if authenticated */
+    html.is-authenticated #sales-funnel {
+      display: none !important;
+    }
+    
+    /* Prevent flashing of restricted tabs if Basic Tier or unauthenticated */
+    html.is-basic-tier .navbar__menu-item[data-view="suppliers"],
+    html.is-basic-tier .navbar__menu-item[data-view="product-builder"],
+    html.is-basic-tier .navbar__menu-item[data-view="tariff"],
+    html:not(.is-authenticated) .navbar__menu-item[data-view="suppliers"],
+    html:not(.is-authenticated) .navbar__menu-item[data-view="product-builder"],
+    html:not(.is-authenticated) .navbar__menu-item[data-view="tariff"] {
+      display: none !important;
+    }
+  </style>
 </head>
 
 <body class="app-page">
