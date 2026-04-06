@@ -1,51 +1,51 @@
 /* ============================================================
-   SUPPLIER MODAL LIGHT DASHBOARD (WESTERN CLASSIC)
+   SUPPLIER MODAL LIGHT DASHBOARD (CLAUDE-LIKE PALE & INDIGO)
    ============================================================ */
 
 /* Target the specific modal to override dark theme */
 body .supplier-modal {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px; /* Sharper classic corners */
+  background: #fdfbf7; /* Paler Claude-like warm base */
+  border: 1px solid #e5e1d8;
+  border-radius: 8px; 
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  max-width: 95vw; /* Much wider footprint */
+  max-width: 95vw; 
   width: 95vw;
   height: 90vh; /* force large modal */
 }
 
 body .supplier-modal__top-bar {
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e5e1d8;
   background: #ffffff;
   border-radius: 8px 8px 0 0;
 }
 
 body .supplier-modal__nav-row h2 {
-  color: #0f172a;
+  color: #110e0a;
   font-family: var(--font-display);
 }
 
 body .nav-arrow {
-  border-color: #cbd5e1;
-  color: #475569;
+  border-color: #d1ccbf;
+  color: #544b41;
 }
 
 body .nav-arrow:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: #f2efe9;
+  color: #110e0a;
 }
 
 body .nav-counter {
-  color: #64748b;
+  color: #6b6357;
   font-weight: 600;
   font-family: var(--font-body);
 }
 
 body .modal-close {
-  color: #475569;
+  color: #544b41;
 }
 body .modal-close:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: #f2efe9;
+  color: #110e0a;
 }
 
 /* ── Split Layout Container ── */
@@ -53,7 +53,7 @@ body .modal-close:hover {
   display: flex;
   height: 100%;
   overflow: hidden; /* inner scroll */
-  color: #1e293b;
+  color: #201a14;
   font-family: var(--font-body);
 }
 
@@ -61,7 +61,7 @@ body .modal-close:hover {
 .sup-dossier__sidebar {
   width: 380px;
   background: #ffffff;
-  border-right: 1px solid #e2e8f0;
+  border-right: 1px solid #e5e1d8;
   padding: 32px 24px;
   flex-shrink: 0;
   display: flex;
@@ -72,7 +72,7 @@ body .modal-close:hover {
 .sup-dossier__logo {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, #1e1b4b, #312e81); /* Deep navy professional gradient */
+  background: linear-gradient(135deg, #3730a3, #4f46e5); /* Indigo / bluish-purple gradient */
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -82,13 +82,13 @@ body .modal-close:hover {
   font-weight: 800;
   font-family: var(--font-display);
   margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(30, 27, 75, 0.15);
+  box-shadow: 0 4px 12px rgba(55, 48, 163, 0.15);
 }
 
 .sup-dossier__name {
   font-size: 22px;
   font-weight: 800;
-  color: #0f172a;
+  color: #110e0a;
   line-height: 1.2;
   margin-bottom: 8px;
   font-family: var(--font-display);
@@ -105,7 +105,7 @@ body .modal-close:hover {
 
 .sup-dossier__location {
   font-size: 13px;
-  color: #64748b;
+  color: #6b6357;
   margin-bottom: 32px;
 }
 
@@ -118,14 +118,14 @@ body .modal-close:hover {
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.05em;
-  color: #94a3b8;
+  color: #8c8273;
   margin-bottom: 6px;
   display: block;
 }
 
 .sup-contact-value {
   font-size: 14px;
-  color: #334155;
+  color: #201a14;
   font-weight: 500;
   text-decoration: none;
   display: block;
@@ -137,9 +137,9 @@ body .modal-close:hover {
   margin-top: auto;
   width: 100%;
   padding: 12px;
-  background: #0f172a; /* Navy action target */
+  background: #3730a3; /* Deep bluish purple action target */
   color: white;
-  border-radius: 6px; /* Crisper border radius */
+  border-radius: 6px;
   font-weight: 600;
   font-size: 14px;
   border: none;
@@ -152,14 +152,14 @@ body .modal-close:hover {
   font-family: var(--font-display);
 }
 .sup-sidebar__cta:hover {
-  background: #1e293b;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+  background: #312e81;
+  box-shadow: 0 4px 12px rgba(49, 46, 129, 0.2);
 }
 
 .sup-sidebar__cta--added {
-  background: #f8fafc !important;
-  color: #0f172a !important;
-  border: 1px solid #cbd5e1 !important;
+  background: #fdfbf7 !important;
+  color: #3730a3 !important;
+  border: 1px solid #d1ccbf !important;
   box-shadow: none !important;
   pointer-events: none;
 }
@@ -168,7 +168,7 @@ body .modal-close:hover {
 /* ── RIGHT DASHBOARD (Data) ── */
 .sup-dossier__dashboard {
   flex: 1;
-  background: #f8fafc;
+  background: #fdfbf7;
   padding: 32px;
   overflow-y: auto;
 }
@@ -183,46 +183,142 @@ body .modal-close:hover {
 .sup-metric-card {
   flex: 1;
   background: #ffffff;
-  border-radius: 6px;
-  padding: 20px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  border-radius: 8px;
+  padding: 24px;
+  border: 1px solid #e5e1d8;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
   display: flex;
   flex-direction: column;
 }
 
 .sup-metric-header {
-  font-size: 13px;
-  font-weight: 600;
-  color: #475569;
-  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #201a14;
+  margin-bottom: 16px;
   font-family: var(--font-display);
-}
-
-.sup-metric-value-row {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.sup-metric-value {
-  font-size: 32px;
+.sup-metric-header svg {
+  color: #8c8273;
+}
+
+.sup-metric-main-value {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.sup-metric-main-value .number {
+  font-size: 36px;
   font-weight: 800;
-  color: #0f172a;
-  font-family: var(--font-display); /* Keep display bold instead of mono for classic feel */
+  color: #110e0a;
+  font-family: var(--font-display); 
   line-height: 1;
   letter-spacing: -0.02em;
 }
 
-.sup-metric-sub {
+.sup-pill {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.sup-pill--green {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+/* Quality Chart Mini */
+.sup-mini-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 60px;
+  border-bottom: 2px solid #f2efe9;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.sup-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.sup-bar {
+  width: 24px;
+  border-radius: 2px 2px 0 0;
+  background: #4f46e5;
+  transition: height 0.5s ease;
+}
+.sup-bar-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #6b6357;
+  margin-top: 4px;
+}
+.sup-bar-val {
+  font-size: 10px;
+  font-weight: 700;
+  color: #201a14;
+}
+
+/* Foundation Details */
+.sup-foundation-block {
+  margin-bottom: 16px;
+}
+.sup-foundation-label {
+  font-size: 12px;
+  color: #6b6357;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.sup-foundation-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #110e0a;
+  font-family: var(--font-display);
+}
+.sup-foundation-sub {
   font-size: 13px;
-  color: #64748b;
+  color: #201a14;
   font-weight: 500;
 }
 
-.color-green { color: #10b981; }
-.color-blue { color: #4f46e5; }
-.color-amber { color: #f59e0b; }
+/* Cert Table */
+.sup-cert-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.sup-cert-table th {
+  text-align: left;
+  font-size: 11px;
+  color: #6b6357;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e1d8;
+}
+.sup-cert-table td {
+  padding: 10px 0;
+  border-bottom: 1px solid #f2efe9;
+  font-size: 13px;
+  color: #201a14;
+  font-weight: 500;
+}
+.sup-cert-table tr:last-child td {
+  border-bottom: none;
+}
 
 /* Dashboard Content Grid */
 .sup-board-grid {
@@ -236,7 +332,7 @@ body .modal-close:hover {
 .sup-panel {
   background: #ffffff;
   border-radius: 6px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e5e1d8;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }
@@ -252,10 +348,10 @@ body .modal-close:hover {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #64748b;
+  color: #6b6357;
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f2efe9;
   font-family: var(--font-display);
   flex-shrink: 0;
 }
@@ -275,7 +371,7 @@ body .modal-close:hover {
   background: transparent;
 }
 .sup-cap-container::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d1ccbf;
   border-radius: 4px;
 }
 
@@ -290,7 +386,7 @@ body .modal-close:hover {
   align-items: flex-start;
   gap: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #f8fafc;
+  border-bottom: 1px solid #fdfbf7;
 }
 
 .sup-cap-item:last-child {
@@ -317,21 +413,21 @@ body .modal-close:hover {
 .sup-cap-name {
   font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
+  color: #201a14;
   margin-bottom: 4px;
   font-family: var(--font-display);
 }
 
 .sup-cap-sub {
   font-size: 12px;
-  color: #64748b;
+  color: #6b6357;
 }
 
 .sup-cap-value {
   font-size: 13px;
   font-weight: 600;
-  color: #334155;
-  background: #f1f5f9;
+  color: #201a14;
+  background: #f2efe9;
   padding: 4px 8px;
   border-radius: 4px;
 }
@@ -346,16 +442,16 @@ body .modal-close:hover {
 }
 
 .sup-facility-detail {
-  background: #f8fafc;
+  background: #fdfbf7;
   padding: 12px;
   border-radius: 6px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid #f2efe9;
 }
 
 .sup-detail-label {
   font-size: 10px;
   text-transform: uppercase;
-  color: #64748b;
+  color: #6b6357;
   font-weight: 600;
   margin-bottom: 4px;
   font-family: var(--font-display);
@@ -364,7 +460,7 @@ body .modal-close:hover {
 .sup-detail-value {
   font-size: 14px;
   font-weight: 700;
-  color: #0f172a;
+  color: #110e0a;
   font-family: var(--font-display);
 }
 
@@ -397,7 +493,7 @@ body .modal-close:hover {
 .sup-intel-gate-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(248, 250, 252, 0.6);
+  background: rgba(253, 251, 247, 0.6);
   z-index: 10;
   display: flex;
   justify-content: center;
@@ -407,7 +503,7 @@ body .modal-close:hover {
 
 .sup-intel-gate-btn {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e5e1d8;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   padding: 12px 24px;
   border-radius: 6px;
@@ -437,6 +533,6 @@ body .modal-close:hover {
   aspect-ratio: 4/3;
   object-fit: cover;
   border-radius: 6px;
-  border: 1px solid #e2e8f0;
-  background: #f1f5f9;
+  border: 1px solid #e5e1d8;
+  background: #f2efe9;
 }

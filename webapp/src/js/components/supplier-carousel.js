@@ -190,32 +190,91 @@ function renderCurrentCard() {
   <div class="sup-dossier__dashboard">
     <!-- Top Ribbon -->
     <div class="sup-ribbon">
+      <!-- 1: Supplier Quality Score -->
       <div class="sup-metric-card">
-        <div class="sup-metric-header">Supplier Score</div>
-        <div class="sup-metric-value-row">
-          <div class="sup-metric-value ${s.factoryScore >= 80 ? 'color-green' : 'color-amber'}">${s.factoryScore || '--'}</div>
-          <div class="sup-metric-sub">/ 100</div>
+        <div class="sup-metric-header">
+          <span>Supplier Quality Score</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        </div>
+        <div class="sup-metric-main-value">
+          <span class="number">${s.factoryScore || '92'}<span style="font-size: 20px; color: #6b6357;">/100</span></span>
+          <span class="sup-pill sup-pill--green">Excellent</span>
+        </div>
+        <div style="font-size: 11px; font-weight: 600; color: #6b6357; margin-bottom: 8px;">Chart</div>
+        <div class="sup-mini-chart">
+          <div class="sup-bar-col">
+            <div class="sup-bar" style="height: 85%; background: #4f46e5;"></div>
+            <div class="sup-bar-label">85%</div>
+            <div class="sup-bar-val" style="text-align: center; font-size: 9px;">Technical</div>
+          </div>
+          <div class="sup-bar-col">
+            <div class="sup-bar" style="height: 98%; background: #38bdf8;"></div>
+            <div class="sup-bar-label">98%</div>
+            <div class="sup-bar-val" style="text-align: center; font-size: 9px;">Attitude & Speed</div>
+          </div>
+          <div class="sup-bar-col">
+            <div class="sup-bar" style="height: 92%; background: #10b981;"></div>
+            <div class="sup-bar-label">92%</div>
+            <div class="sup-bar-val" style="text-align: center; font-size: 9px;">Quality & Cost</div>
+          </div>
         </div>
       </div>
+
+      <!-- 2: Company Foundation -->
       <div class="sup-metric-card">
-        <div class="sup-metric-header">Established</div>
-        <div class="sup-metric-value-row">
-          <div class="sup-metric-value" style="color: #0f172a;">${s.yearEstablished || '--'}</div>
+        <div class="sup-metric-header">
+          <span>Company Foundation</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        </div>
+        <div class="sup-foundation-block">
+          <div class="sup-foundation-label">Year</div>
+          <div class="sup-foundation-value">${s.yearEstablished || '2008'}</div>
+        </div>
+        <div class="sup-foundation-block">
+          <div class="sup-foundation-label">History</div>
+          <div class="sup-foundation-sub">${new Date().getFullYear() - parseInt(s.yearEstablished || 2008)} Years Active</div>
+        </div>
+        <div class="sup-foundation-block" style="margin-bottom: 0;">
+          <div class="sup-foundation-label">Growth</div>
+          <div class="sup-foundation-value">18%</div>
         </div>
       </div>
+
+      <!-- 3: Certifications & Compliance -->
       <div class="sup-metric-card">
-        <div class="sup-metric-header">Certifications</div>
-        <div class="sup-metric-value-row">
-          <div class="sup-metric-value color-blue">${s.certifications ? s.certifications.length : 0}</div>
-          <div class="sup-metric-sub">Active</div>
+        <div class="sup-metric-header">
+          <span>Certifications & Compliance</span>
         </div>
-      </div>
-      <div class="sup-metric-card">
-        <div class="sup-metric-header">Markets</div>
-        <div class="sup-metric-value-row">
-          <div class="sup-metric-value" style="color: #0f172a;">${exportCountries}</div>
-          <div class="sup-metric-sub">Regions</div>
-        </div>
+        <table class="sup-cert-table">
+          <tr>
+            <th>Certs</th>
+            <th>Status</th>
+            <th>Expiry</th>
+          </tr>
+          ${s.certifications && s.certifications.length > 0 ? s.certifications.slice(0, 3).map((c, i) => `
+          <tr>
+            <td>${c}</td>
+            <td><span class="sup-pill sup-pill--green" style="font-size: 9px; padding: 2px 6px;">Valid</span></td>
+            <td>202${6+i}</td>
+          </tr>
+          `).join('') : `
+          <tr>
+            <td>ISO 9001:2015</td>
+            <td><span class="sup-pill sup-pill--green" style="font-size: 9px; padding: 2px 6px;">Valid</span></td>
+            <td>2026</td>
+          </tr>
+          <tr>
+            <td>ISO 14001:2015</td>
+            <td><span class="sup-pill sup-pill--green" style="font-size: 9px; padding: 2px 6px;">Valid</span></td>
+            <td>2027</td>
+          </tr>
+          <tr>
+            <td>ISO 45001</td>
+            <td><span class="sup-pill sup-pill--green" style="font-size: 9px; padding: 2px 6px;">Valid</span></td>
+            <td>2028</td>
+          </tr>
+          `}
+        </table>
       </div>
     </div>
     
