@@ -217,24 +217,116 @@ export function initAuthModal() {
     });
   }
 
+  // If triggered by a password recovery link
+  if (window.location.hash.includes('type=recovery') || window.location.search.includes('type=recovery')) {
+    formsContainer.innerHTML = ''; // Clear all other forms
+    
+    // Inject the new password form dynamically
+    formsContainer.innerHTML = `
+      <div id="form-changepwd" class="auth-card" style="display: block;">
+        <div class="auth-header">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 20px; color: var(--color-emerald);">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <h2 style="font-size: 24px;">Set New Password</h2>
+          <p>Please enter your new password below.</p>
+        </div>
+        <form id="changepwd-form" class="auth-form">
+          <div class="form-group">
+            <label>New Password</label>
+            <div class="pwd-input-wrapper" style="position: relative;">
+               <input type="password" id="changepwd-new" required placeholder="Enter new password">
+               <button type="button" class="pwd-reveal-btn" style="position: absolute; right: 12px; top: 12px; background: none; border: none; cursor: pointer; color: #8b949e;">
+                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+               </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Confirm Password</label>
+            <div class="pwd-input-wrapper" style="position: relative;">
+               <input type="password" id="changepwd-confirm" required placeholder="Confirm new password">
+               <button type="button" class="pwd-reveal-btn" style="position: absolute; right: 12px; top: 12px; background: none; border: none; cursor: pointer; color: #8b949e;">
+                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+               </button>
+            </div>
+            <p class="input-helper" style="font-size: 11px; color: #8b949e; margin-top: 6px;">Must be at least 8 characters with a mix of numbers, letters, and symbols.</p>
+          </div>
+          <div id="changepwd-error" class="auth-error"></div>
+          <button type="submit" id="changepwd-submit-btn" class="auth-btn">Save New Password</button>
+        </form>
+      </div>
+    `;
+    
+    // Add eye icon reveal logic
+    document.querySelectorAll('.pwd-reveal-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const input = btn.previousElementSibling;
+        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+        input.setAttribute('type', type);
+        btn.style.color = type === 'text' ? 'var(--color-electric)' : '#8b949e';
+      });
+    });
+
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // Handle form submit
+    document.getElementById('changepwd-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newPwd = document.getElementById('changepwd-new').value;
+      const confirmPwd = document.getElementById('changepwd-confirm').value;
+      const btn = document.getElementById('changepwd-submit-btn');
+      const err = document.getElementById('changepwd-error');
+      
+      btn.disabled = true;
+      err.classList.remove('visible');
+
+      if (newPwd !== confirmPwd) {
+        err.textContent = "Passwords do not match!";
+        err.classList.add('visible');
+        btn.disabled = false;
+        return;
+      }
+      if (newPwd.length < 8) {
+        err.textContent = "Password must be at least 8 characters long.";
+        err.classList.add('visible');
+        btn.disabled = false;
+        return;
+      }
+
+      btn.textContent = 'Saving...';
+      const { updatePassword } = await import('../services/auth.js');
+      const { error } = await updatePassword(newPwd);
+      
+      if (error) {
+        err.textContent = error.message;
+        err.classList.add('visible');
+        btn.textContent = 'Save New Password';
+        btn.disabled = false;
+      } else {
+        btn.textContent = 'Password Updated!';
+        btn.style.background = 'var(--color-emerald)';
+        setTimeout(() => {
+          // Clean URLs if they came from recovery
+          if (window.location.hash.includes('type=recovery') || window.location.search.includes('type=recovery')) {
+             window.history.replaceState({}, document.title, window.location.pathname);
+          }
+          // Redirect to app since they are authenticated
+          window.location.href = '/app.html';
+        }, 2000);
+      }
+    });
+
+    // Skip the rest of initialization for normal forms
+    return;
+  }
+
   // Handle Change Password flow
   const navChangePwdBtn = document.getElementById('nav-changepwd-btn');
   const toggleChangepwdClose = document.getElementById('toggle-changepwd-close');
   const formChangepwd = document.getElementById('form-changepwd');
   const changepwdForm = document.getElementById('changepwd-form');
-
-  // If triggered by a password recovery link
-  if (window.location.hash.includes('type=recovery') || window.location.search.includes('type=recovery')) {
-    if (formChangepwd) {
-      formsContainer.className = 'auth-forms-container auth-state-changepwd';
-      modal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-      // Hide old password requirement since they securely used an email link
-      const oldPwdCnt = document.getElementById('old-pwd-container');
-      if (oldPwdCnt) oldPwdCnt.style.display = 'none';
-      if (toggleChangepwdClose) toggleChangepwdClose.style.display = 'none'; // Force them to change
-    }
-  }
 
   if (navChangePwdBtn && formChangepwd) {
     navChangePwdBtn.addEventListener('click', (e) => {
