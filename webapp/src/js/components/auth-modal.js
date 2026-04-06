@@ -233,26 +233,26 @@ export function initAuthModal() {
           <p>Please enter your new password below.</p>
         </div>
         <form id="changepwd-form" class="auth-form">
-          <div class="form-group">
+          <div class="auth-input-group">
             <label>New Password</label>
-            <div class="pwd-input-wrapper" style="position: relative;">
-               <input type="password" id="changepwd-new" required placeholder="Enter new password">
-               <button type="button" class="pwd-reveal-btn" style="position: absolute; right: 12px; top: 12px; background: none; border: none; cursor: pointer; color: #8b949e;">
+            <div class="password-input-wrapper">
+               <input type="password" id="changepwd-new" required placeholder="Enter new password" style="width: 100%;">
+               <button type="button" class="pwd-reveal-btn" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #8b949e;">
                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                </button>
             </div>
           </div>
-          <div class="form-group">
+          <div class="auth-input-group">
             <label>Confirm Password</label>
-            <div class="pwd-input-wrapper" style="position: relative;">
-               <input type="password" id="changepwd-confirm" required placeholder="Confirm new password">
-               <button type="button" class="pwd-reveal-btn" style="position: absolute; right: 12px; top: 12px; background: none; border: none; cursor: pointer; color: #8b949e;">
+            <div class="password-input-wrapper">
+               <input type="password" id="changepwd-confirm" required placeholder="Confirm new password" style="width: 100%;">
+               <button type="button" class="pwd-reveal-btn" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #8b949e;">
                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                </button>
             </div>
-            <p class="input-helper" style="font-size: 11px; color: #8b949e; margin-top: 6px;">Must be at least 8 characters with a mix of numbers, letters, and symbols.</p>
+            <p class="input-helper" style="font-size: 11px; color: var(--color-steel-400); margin-top: 6px;">Must be at least 8 characters with a mix of numbers, letters, and symbols.</p>
           </div>
-          <div id="changepwd-error" class="auth-error"></div>
+          <div id="changepwd-error" class="auth-error-msg"></div>
           <button type="submit" id="changepwd-submit-btn" class="auth-btn">Save New Password</button>
         </form>
       </div>
