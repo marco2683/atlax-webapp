@@ -1,0 +1,197 @@
+REQUEST FOR INFORMATION(RFI)           
+供应商信息表
+Author
+E-mail
+Date
+Please fill in the WHITE CELL in English! 
+请用英语填写在白色格中
+!
+COMPANY IDENTIFICATION 
+公司基本信息
+Name of Company 
+公司名称
+:
+Website 
+网址
+:
+City and Country 
+城市及国家
+:
+Date Founded 
+公司成立时间
+:
+Address 
+地址
+:
+ZIP Code 
+邮政编码
+:
+Main Contact 
+主要联系人
+:
+Contact Position 
+职位
+:
+Telephone 
+电话
+:
+Mobile Phone number 
+手机
+:
+E-mail 
+电子邮箱
+:
+General Manager 
+总经理
+:
+Telephone 
+电话
+:
+Mobile Phone number 
+手机
+:
+E-mail 
+电子邮箱
+:
+Production Sites 
+生产地点
+:
+Occupied Area(in m2) 
+占地面积
+:
+Company Type(State owned Private Foreign invested) 
+公司类型
+( 
+国有
+ 
+私营
+ 
+外资
+)
+Is the company a subsidiary affiliate of a group? 
+贵公司是某集团的子公司吗
+?
+If yes, Which one? 
+哪个集团
+?
+Does the company have subsidiaries affiliates? 
+贵公司有子公司吗
+?
+If yes, Which one? 
+哪些子公司
+?
+FINANCIAL DATA 
+财务数据
+Currency figures should be in K US$! 货币单位为千美元
+Year 
+年
+Sales (k US$) 
+销售额
+(
+以千美元
+ 
+计
+)
+Export % 
+出口比例
+EBIT (k US$) 
+利润
+ (
+以千美元
+ 
+计
+)
+COMPANY WORKFORCE 
+公司人员构造
+Design                        
+设计人员
+Production                    
+生产人员
+Assembly                   
+组装线人员
+Quality                           
+质量人员
+Sales & Marketing 
+销售
+&
+市场人员
+Others                         
+其它人员
+TOTAL             
+总数
+Employees 
+员工人数
+BUSINESS & PRODUCTS 
+公司主要经营领域及产品
+Main sectors of activity and corresponding customes 
+主要产品领域和相应和客户
+:
+Sector 生产领域
+% of turnover 相关领域营业额占比
+Major Clients 
+主要客户
+Main products 
+主要产品
+:
+if available, please provide a picture to Attach_Product Picture 如果可能请提供图片至本表格第三页"附件_产品图片"
+Product 1 产品1:
+Product 2 产品2:
+Product 3 产品3:
+Product 4 
+产品
+4:
+Your Capability 主要产品生产能力:
+Type
+Yes/No
+Annual Production Pieces
+Tooling fabrication
+Others
+Free Capacity(%) 剩余产能:
+EXPORT 出口状况
+Do you export directly (Y/N)? 贵司是否能直接出口?
+If direct export, please provide your export license number 如果贵司可以直接出口，请提供出口许可证号
+Export % Total Sales 当前出口各区域所占销售额比重:
+West Europe 西欧
+North America 北美
+East Europe 东欧
+South America 南美
+Australian region 澳洲区
+Other 其它
+SUPPLYCHIAN & QUALITY MANAGEMENT 供应链状况和质量管理体系
+What's your current outsourcing ratio % 贵司目前外购比重为？
+What's your major outsource product and supplier? 目前主要外观产品及相应供应商
+Name 供应商名称
+Products 零部件名称
+Sourcing % of Total 占总外购比重
+Please list your company's quality process certification(s)?
+请列出贵司所获质量体系证书
+Explain the structure of your quality management dept.
+请简单介绍贵司质量管理部门的组织架构
+其它关于品质的，可以填到此栏中
+Quality Management (tools, methods and policies) 烦请介绍贵司使用哪些质量管理工具, 方法以及质保方案
+DESCRIBE YOUR PRODUCTION AND CONTROL CAPABILITIES 请描叙生产和控制能力
+If the space is not enough, please provide an equipment list to Attch_Machine List 请提供设备清单至本表 附件_设备清单
+Machine description 生产设备
+Type/Manufacturer 型号/厂商
+Quantity 数量
+Size 吨位/尺寸
+DESCRIBE YOUR TESTING CAPABILITIES (provide a list of equipments) 请描叙贵司的测试能力 (请提供主要测试设备清单)
+DESCRIBE YOUR DESIGN CAPABILITIES 
+请描叙贵司的产品设计能力
+DESCRIBE YOUR QA METROLOGY CAPABILITIES 请描叙贵司的品质测量能力，比如拥有哪些测量工具
+DESCRIBE YOUR FORECAST INVESTMENT (if applicable) 如有，请描叙贵司未来的投资计划
+Date of Filling in (填表日期):
+Responsible Person (填表人):
+Company Stamping (公司公章):
+THANK YOU VERY MUCH FOR YOUR TIME AND THE QUALITY AND ACCURACY OF THE DATA PROVIDED!
+非常感谢贵司认真严谨的工作态度和对该项目的重视!
+IN CASE OF ANY TROUBLE FILLING IN THIS FORM, DO NOT HESITATE TO CONTACT OUR ANNEX TEAM
+如有任何问题, 请联系我们公司相关工作人员
+Machine list
+Size 设备吨位/尺寸
+CNC Machining
+Injection molding
+Sandblasting and anodizing
+powder coated 
+Assembly & Pack-out
+PVD plating

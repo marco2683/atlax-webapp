@@ -1,0 +1,143 @@
+,Unnamed: 0,Unnamed: 1,Unnamed: 2,Unnamed: 3,Unnamed: 4,Unnamed: 5,Unnamed: 6,Unnamed: 7,Unnamed: 8,Unnamed: 9,Unnamed: 10,Unnamed: 11,Unnamed: 12
+0,,,,,,,,,REQUEST FOR INFORMATION,,,,
+1,,,,,,,,,Supplier Onboarding Package,,,,
+2,,,,,,,,,供应商信息登记表,,,,
+3,,Please complete all MANDATORY fields (yellow). Optional fields (grey) welcomed.   请填写所有必填项（黄色），选填项（灰色）尽可能提供。,,,,,,,,,,,
+4,,,,,,,,,,,,,
+5,,RFI Reference 编号,,,,Issue Date 发出日期,,,Buyer Contact 买方联系人,,,,Buyer E-mail 邮箱
+6,,,,,,,,,,,,,
+7,,  PART 1 — COMPANY IDENTIFICATION    第一部分 — 公司基本信息,,,,,,,,,,,MANDATORY 必填
+8,,,,,,,,,,,,,
+9,,"Legal Company Name
+公司法定名称",,,,,,,"Trading Name (if different)
+商业名称（如不同）",,,,
+10,,"Country & City
+国家及城市",,,,,,,"Website
+网址",,,,
+11,,"Registered Address
+注册地址",,,,,,,,,,,
+12,,"Date Founded
+成立日期",,,,,,,"Business Registration No.
+营业执照号",,,,
+13,,"Company Type (State/Private/JV/Foreign)
+公司性质（国有/私营/合资/外资）",,,,,,,"Tax ID / VAT No.
+税号/增值税号",,,,
+14,,"Parent Group (if any)
+所属集团（如有）",,,,,,,"Subsidiaries (if any)
+下属子公司（如有）",,,,
+15,,,,,,,,,,,,,
+16,,  PART 2 — KEY CONTACTS    第二部分 — 主要联系人,,,,,,,,,,,MANDATORY 必填
+17,,,,,,,,,,,,,
+18,,"Primary Contact — Name
+主要联系人 — 姓名",,,,,,,"Position / Title
+职位",,,,
+19,,"Mobile 手机
+",,,,,,,"Email 邮箱
+",,,,
+20,,"General Manager — Name
+总经理 — 姓名",,,,,,,"Email 邮箱
+",,,,
+21,,"Quality Manager — Name
+质量负责人 — 姓名",,,,,,,"Email 邮箱
+",,,,
+22,,,,,,,,,,,,,
+23,,  PART 3 — MANUFACTURING FOOTPRINT    第三部分 — 生产规模,,,,,,,,,,,MANDATORY 必填
+24,,,,,,,,,,,,,
+25,,"Production Site(s) — Address
+生产地点",,,,,,,"Site Area (m²)
+占地面积（平方米）",,,,
+26,,"Total Employees
+员工总数",,,,,,,"Production Employees
+生产人员数",,,,
+27,,"Years in Current Activity
+当前业务经营年数",,,,,,,"Free Capacity (%)
+剩余产能 (%)",,,,
+28,,,,,,,,,,,,,
+29,,"  PART 4 — FINANCIAL SNAPSHOT (last 3 FY, k US$)    第四部分 — 近三年财务概况（千美元）",,,,,,,,,,,MANDATORY 必填
+30,,,,,,,,,,,,,
+31,,Metric 指标,,,,FY-2 (e.g. 2023),,,FY-1 (e.g. 2024),,,FY (e.g. 2025),
+32,,Total Revenue 销售总额    (k US$),,,,,,,,,,,
+33,,Export Revenue % 出口比例    (%),,,,,,,,,,,
+34,,EBIT / Operating Profit 营业利润    (k US$),,,,,,,,,,,
+35,,Annual CapEx 年度资本支出    (k US$),,,,,,,,,,,
+36,,,,,,,,,,,,,
+37,,  PART 5 — CERTIFICATIONS & COMPLIANCE    第五部分 — 资质证书与合规,,,,,,,,,,,MANDATORY 必填
+38,,,,,,,,,,,,,
+39,,Standard 标准,,,,,,Held? 是否持有,,Cert. No. 证书编号,,,Expiry 有效期
+40,,ISO 9001 — Quality Management 质量管理,,,,,,,,,,,
+41,,ISO 14001 — Environmental 环境管理,,,,,,,,,,,
+42,,ISO 45001 — Occupational H&S 职业健康安全,,,,,,,,,,,
+43,,IATF 16949 — Automotive 汽车,,,,,,,,,,,
+44,,ISO 13485 — Medical Devices 医疗器械,,,,,,,,,,,
+45,,UL / CE / RoHS / REACH (specify),,,,,,,,,,,
+46,,Other 其他 (specify),,,,,,,,,,,
+47,,,,,,,,,,,,,
+48,,  PART 6 — BUSINESS & PRODUCTS    第六部分 — 业务与产品,,,,,,,,,,,OPTIONAL 选填
+49,,,,,,,,,,,,,
+50,,"Core business description — what you make, for whom, your edge
+核心业务描述 — 产品、主要客户、核心优势",,,,,,,,,,,
+51,,"Top 3 customers & sectors served (optional, NDA respected)
+主要客户及服务行业（可选，保密）",,,,,,,,,,,
+52,,"Key products / product families (list 3–5)
+主要产品或产品系列（3–5项）",,,,,,,,,,,
+53,,,,,,,,,,,,,
+54,,  PART 7 — CAPABILITIES & PROCESSES    第七部分 — 工艺与能力,,,,,,,,,,,OPTIONAL 选填
+55,,,,,,,,,,,,,
+56,,"In-house processes (CNC, injection moulding, sheet metal, assembly, surface treatment, electronics, etc.)
+自有工艺（数控、注塑、钣金、组装、表面处理、电子等）",,,,,,,,,,,
+57,,"Key equipment — highlights (full list can be attached on tab 'Machine List')
+核心设备概况（完整清单请附于 Machine List 页）",,,,,,,,,,,
+58,,"Design & engineering capability (CAD, DFM, prototyping, tooling)
+设计与工程能力（CAD、DFM、打样、模具）",,,,,,,,,,,
+59,,"Testing & metrology capability (equipment, lab, accreditations)
+测试与计量能力（设备、实验室、认证）",,,,,,,,,,,
+60,,,,,,,,,,,,,
+61,,  PART 8 — QUALITY & SUPPLY CHAIN    第八部分 — 质量与供应链,,,,,,,,,,,OPTIONAL 选填
+62,,,,,,,,,,,,,
+63,,"Quality management approach (tools, methods, KPIs — e.g. PPAP, APQP, 8D, SPC, FMEA)
+质量管理方法（工具、方法、KPI — 如 PPAP、APQP、8D、SPC、FMEA）",,,,,,,,,,,
+64,,"Outsourcing ratio & key sub-suppliers (names can be withheld)
+外购比重及主要分包商（名称可保密）",,,,,,,,,,,
+65,,"Traceability & serialization capability
+可追溯性与序列化能力",,,,,,,,,,,
+66,,,,,,,,,,,,,
+67,,  PART 9 — EXPORT & LOGISTICS    第九部分 — 出口与物流,,,,,,,,,,,OPTIONAL 选填
+68,,,,,,,,,,,,,
+69,,"Direct Export Capable?
+是否可直接出口？",,,,,,,"Export License No.
+出口许可证号",,,,
+70,,"Export markets served & approximate % split (W. Europe / N. America / APAC / Other)
+出口市场分布及大致比例",,,,,,,,,,,
+71,,"Preferred Incoterms
+贸易术语",,,,,,,"Typical Lead Time (weeks)
+常规交货周期（周）",,,,
+72,,,,,,,,,,,,,
+73,,  PART 10 — SUSTAINABILITY & ETHICS    第十部分 — 可持续发展与商业道德,,,,,,,,,,,OPTIONAL 选填
+74,,,,,,,,,,,,,
+75,,"ESG / sustainability policy summary (carbon reporting, energy mix, waste, water)
+ESG / 可持续发展政策概述（碳排放、能源结构、废弃物、水）",,,,,,,,,,,
+76,,"Code of conduct / anti-bribery / labour policy (attach if available)
+行为准则 / 反贿赂 / 劳工政策（如有请附件）",,,,,,,,,,,
+77,,,,,,,,,,,,,
+78,,  PART 11 — INNOVATION & ROADMAP    第十一部分 — 创新与发展规划,,,,,,,,,,,OPTIONAL 选填
+79,,,,,,,,,,,,,
+80,,"R&D focus areas & recent innovations
+研发重点方向及近期创新成果",,,,,,,,,,,
+81,,"Planned CapEx / new capabilities over next 24 months
+未来24个月资本支出与新增能力规划",,,,,,,,,,,
+82,,"Anything else you want us to know
+其他您希望我们了解的信息",,,,,,,,,,,
+83,,,,,,,,,,,,,
+84,,  SIGN-OFF    确认与签署,,,,,,,,,,,MANDATORY 必填
+85,,,,,,,,,,,,,
+86,,"Completed By — Name
+填表人姓名",,,,,,,"Position 职位
+",,,,
+87,,"Date 日期
+",,,,,,,"Email 邮箱
+",,,,
+88,,"Signature & Company Stamp 签字及公司公章
+",,,,,,,,,,,
+89,,,,,,,,,,,,,
+90,,Thank you for the time and accuracy invested in this submission.   感谢贵司认真严谨的配合。,,,,,,,,,,,
+91,,Questions? Contact the buyer named at the top of this form.   如有疑问，请联系表头列出的买方联系人。,,,,,,,,,,,
