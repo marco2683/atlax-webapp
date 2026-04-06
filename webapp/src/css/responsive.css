@@ -773,6 +773,12 @@
     display: none !important; /* Hide 'workspace' text button on mobile app */
   }
 
+  body.app-page .nav-avatar {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 11px !important;
+  }
+
   body.app-page .mobile-menu-toggle {
     display: none !important; /* We don't need hamburger if avatar is visible */
   }

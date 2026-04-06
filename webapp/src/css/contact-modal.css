@@ -364,8 +364,8 @@ a.nav-link.nav-contact-trigger:hover {
 
   /* Make the app page contact button a tiny round icon next to avatar */
   body.app-page #atlasdt-contact-nav-trigger-app {
-    width: 32px !important;
-    height: 32px !important;
+    width: 26px !important;
+    height: 26px !important;
     padding: 0 !important;
     border-radius: 50% !important;
     display: flex !important;
@@ -379,7 +379,7 @@ a.nav-link.nav-contact-trigger:hover {
 
   body.app-page #atlasdt-contact-nav-trigger-app svg {
     margin: 0 !important;
-    width: 14px !important;
-    height: 14px !important;
+    width: 12px !important;
+    height: 12px !important;
   }
 }
