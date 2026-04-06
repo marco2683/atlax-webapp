@@ -203,19 +203,16 @@ function renderCurrentCard() {
         <div style="font-size: 11px; font-weight: 600; color: #6b6357; margin-bottom: 8px;">Chart</div>
         <div class="sup-mini-chart">
           <div class="sup-bar-col">
-            <div class="sup-bar" style="height: 85%; background: #4f46e5;"></div>
-            <div class="sup-bar-label">85%</div>
-            <div class="sup-bar-val" style="text-align: center; font-size: 9px;">Technical</div>
+            <div class="sup-bar" style="height: 85%; background: #3b82f6;"></div>
+            <div class="sup-bar-label">85%<span>Reliability</span></div>
           </div>
           <div class="sup-bar-col">
-            <div class="sup-bar" style="height: 98%; background: #38bdf8;"></div>
-            <div class="sup-bar-label">98%</div>
-            <div class="sup-bar-val" style="text-align: center; font-size: 9px;">Attitude & Speed</div>
+            <div class="sup-bar" style="height: 98%; background: #0ea5e9;"></div>
+            <div class="sup-bar-label">98%<span>Delivery</span></div>
           </div>
           <div class="sup-bar-col">
-            <div class="sup-bar" style="height: 92%; background: #10b981;"></div>
-            <div class="sup-bar-label">92%</div>
-            <div class="sup-bar-val" style="text-align: center; font-size: 9px;">Quality & Cost</div>
+            <div class="sup-bar" style="height: 92%; background: #22c55e;"></div>
+            <div class="sup-bar-label">92%<span>Compliance</span></div>
           </div>
         </div>
       </div>
@@ -247,31 +244,36 @@ function renderCurrentCard() {
         </div>
         <table class="sup-cert-table">
           <tr>
-            <th>Certs</th>
+            <th>ISO Certs</th>
             <th>Status</th>
             <th>Expiry</th>
           </tr>
           ${s.certifications && s.certifications.length > 0 ? s.certifications.slice(0, 3).map((c, i) => `
           <tr>
             <td>${c}</td>
-            <td><span class="sup-pill sup-pill--green" style="font-size: 9px; padding: 2px 6px;">Valid</span></td>
+            <td><span class="sup-pill sup-pill--green">Valid</span></td>
             <td>202${6+i}</td>
           </tr>
           `).join('') : `
           <tr>
             <td>ISO 9001:2015</td>
-            <td><span class="sup-pill sup-pill--green" style="font-size: 9px; padding: 2px 6px;">Valid</span></td>
+            <td><span class="sup-pill sup-pill--green">Valid</span></td>
             <td>2026</td>
           </tr>
           <tr>
             <td>ISO 14001:2015</td>
-            <td><span class="sup-pill sup-pill--green" style="font-size: 9px; padding: 2px 6px;">Valid</span></td>
+            <td><span class="sup-pill sup-pill--green">Valid</span></td>
             <td>2027</td>
           </tr>
           <tr>
             <td>ISO 45001</td>
-            <td><span class="sup-pill sup-pill--green" style="font-size: 9px; padding: 2px 6px;">Valid</span></td>
+            <td><span class="sup-pill sup-pill--green">Valid</span></td>
             <td>2028</td>
+          </tr>
+          <tr>
+            <td>AS9100 Rev D</td>
+            <td><span class="sup-pill sup-pill--green">Certified</span></td>
+            <td>--</td>
           </tr>
           `}
         </table>
