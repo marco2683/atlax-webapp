@@ -14,7 +14,7 @@ import './css/responsive.css';
 
 import { initGlobe } from './js/globe/globe-engine.js';
 import { initNavbar } from './js/components/navbar.js';
-import { initTierCards } from './js/components/tier-cards.js';
+
 import { renderStackedResults, hideStackedResults } from './js/components/results-panel.js';
 import { initSupplierCarousel, openSupplierCarousel } from './js/components/supplier-carousel.js';
 

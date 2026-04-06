@@ -107,8 +107,12 @@ function renderCurrentCard() {
   const email = s.email || 'sales@' + s.name.toLowerCase().replace(/[^a-z]/g, '') + '.com';
   const phone = s.phone || '';
   const wechat = s.wechat || '';
-  const isContactsLocked = currentTier === 'free';
-  const isIntelLocked = currentTier === 'free' || currentTier === 'contacts';
+  const userTier = sessionStorage.getItem('atlasdt_tier') || 'basic';
+  const tierCheck = String(userTier).toLowerCase().trim();
+  const isProAccess = ['professional', 'pro', 'enterprise'].includes(tierCheck);
+
+  const isContactsLocked = !isProAccess;
+  const isIntelLocked = !isProAccess;
 
   const supplierId = s.id || s.name;
   const isShortlisted = !!document.querySelector(`.shortlist-item[data-id="${supplierId}"]`);
@@ -220,7 +224,7 @@ function renderCurrentCard() {
     <!-- INTEL GATE OVERLAY -->
     ${isIntelLocked ? `
     <div class="sup-intel-overlay">
-      <button class="sup-intel-overlay__btn" onclick="window.dispatchEvent(new CustomEvent('prd-open-tier-modal'))">
+      <button class="sup-intel-overlay__btn" onclick="window.location.href='/profile.html?tab=billing'">
         🔒 Upgrade to View Full Details
       </button>
     </div>
@@ -392,8 +396,7 @@ function renderCurrentCard() {
 
   body.querySelectorAll('.sup-section--locked').forEach(el => {
     el.addEventListener('click', () => {
-      document.getElementById('pricing-backdrop')?.classList.remove('hidden');
-      document.getElementById('pricing-modal')?.classList.remove('hidden');
+      window.location.href = '/profile.html?tab=billing';
     });
   });
 }
