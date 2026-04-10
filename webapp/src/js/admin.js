@@ -3147,15 +3147,30 @@ document.addEventListener('DOMContentLoaded', () => {
   let curatorTaxonomy = [];
   let curatorSearchOffset = 0;
   let curatorSelectedTechId = '';
+  let curatorApiAvailable = false;
 
   async function fetchCuratorTaxonomy() {
+    // Try Flask API first (supports search/add/remove)
     try {
-      const res = await fetch(`${CURATOR_API}/api/taxonomy`);
+      const res = await fetch(`${CURATOR_API}/api/taxonomy`, { signal: AbortSignal.timeout(3000) });
       if (!res.ok) throw new Error('Curator API not reachable');
       const data = await res.json();
       curatorTaxonomy = data.technologies || [];
+      curatorApiAvailable = true;
+      return;
     } catch (e) {
-      console.error('Curator API error:', e);
+      console.warn('Flask Curator API not available, falling back to static JSON…');
+      curatorApiAvailable = false;
+    }
+
+    // Fallback: load from static JSON (categories will populate, but search/add won't work)
+    try {
+      const res = await fetch('/data/taxonomy/master_taxonomy_enriched.json');
+      if (!res.ok) throw new Error('Static taxonomy also failed');
+      const data = await res.json();
+      curatorTaxonomy = data.technologies || [];
+    } catch (e2) {
+      console.error('Cannot load taxonomy from any source:', e2);
       curatorTaxonomy = [];
     }
   }
@@ -3166,6 +3181,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       contentRouting.innerHTML = `
         <div style="max-width:1200px;">
+          ${!curatorApiAvailable ? `
+          <div style="background:rgba(234,179,8,0.1); border:1px solid rgba(234,179,8,0.3); border-radius:8px; padding:14px 20px; margin-bottom:20px; display:flex; align-items:center; gap:12px; color:#b45309;">
+            <span style="font-size:18px;">⚠️</span>
+            <div>
+              <strong>Flask Curator API is offline.</strong> Categories loaded from static file. To use search, add, or upload features, run: <code style="background:rgba(0,0,0,0.06); padding:2px 6px; border-radius:4px; font-size:12px;">python execution/admin_image_curator.py</code>
+            </div>
+          </div>` : ''}
           <p style="color:var(--color-steel-400); margin-bottom:24px;">
             Select a technology from the taxonomy, generate candidate images via Serper API, and add the best ones to the taxonomy JSON.
           </p>
