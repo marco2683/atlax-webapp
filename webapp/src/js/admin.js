@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td style="width:40px; text-align:center;">
           ${urlLink ? `<a href="${urlLink}" target="_blank" title="${urlLink}" style="color:var(--color-electric);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>` : '<span style="opacity:0.2;">—</span>'}
         </td>
-        <td>
+        <td class="admin-supplier-name" data-id="${s.id || s.name}" style="cursor:pointer;" title="Double-click to edit">
           <strong>${s.name}</strong><br>
           <span style="font-size:12px; color:var(--color-steel-400);">${s.nameZh || '—'}</span>
         </td>
@@ -492,6 +492,14 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    contentRouting.querySelectorAll('.admin-supplier-name').forEach(cell => {
+      cell.addEventListener('dblclick', () => {
+        const supId = cell.dataset.id;
+        const sup = loadedSuppliers.find(s => String(s.id || s.name) === String(supId));
+        if (sup) renderSupplierForm(sup);
+      });
+    });
+
     contentRouting.querySelectorAll('.admin-delete-supplier').forEach(btn => {
       btn.addEventListener('click', async () => {
         if (!confirm('Are you sure you want to permanently delete this supplier?')) return;
@@ -614,6 +622,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="admin-field" style="margin-top: 10px; flex-grow: 1;">
             <label>Description / Overview <span class="req">*</span></label>
             <textarea name="description" style="flex-grow: 1; resize: none;" required placeholder="Tier-1 injection molding facility with 8,000sqm workshop...">${s.description || ''}</textarea>
+          </div>
+          <div class="admin-field" style="margin-top: 10px;">
+            <label>Website URL</label>
+            <input type="url" name="website" value="${s.website || s.url || ''}" placeholder="https://www.example.com">
           </div>
         </div>
 
@@ -3143,35 +3155,50 @@ document.addEventListener('DOMContentLoaded', () => {
   // ═══════════════════════════════════════════════════════════
   //  T A X O N O M Y   I M A G E   C U R A T O R
   // ═══════════════════════════════════════════════════════════
-  const CURATOR_API = 'http://localhost:5050';
   let curatorTaxonomy = [];
   let curatorSearchOffset = 0;
   let curatorSelectedTechId = '';
-  let curatorApiAvailable = false;
+  let _curatorImageCache = [];
 
   async function fetchCuratorTaxonomy() {
-    // Try Flask API first (supports search/add/remove)
-    try {
-      const res = await fetch(`${CURATOR_API}/api/taxonomy`, { signal: AbortSignal.timeout(3000) });
-      if (!res.ok) throw new Error('Curator API not reachable');
-      const data = await res.json();
-      curatorTaxonomy = data.technologies || [];
-      curatorApiAvailable = true;
-      return;
-    } catch (e) {
-      console.warn('Flask Curator API not available, falling back to static JSON…');
-      curatorApiAvailable = false;
-    }
-
-    // Fallback: load from static JSON (categories will populate, but search/add won't work)
+    // Load taxonomy from static JSON
     try {
       const res = await fetch('/data/taxonomy/master_taxonomy_enriched.json');
-      if (!res.ok) throw new Error('Static taxonomy also failed');
+      if (!res.ok) throw new Error('Cannot fetch taxonomy JSON');
       const data = await res.json();
       curatorTaxonomy = data.technologies || [];
-    } catch (e2) {
-      console.error('Cannot load taxonomy from any source:', e2);
+    } catch (e) {
+      console.error('Cannot load taxonomy:', e);
       curatorTaxonomy = [];
+      return;
+    }
+
+    // Merge images stored in Supabase (additions made via the curator)
+    try {
+      const mRes = await fetch('/.netlify/functions/curator-manage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'list' })
+      });
+      if (mRes.ok) {
+        const { images: dbImages } = await mRes.json();
+        if (dbImages && dbImages.length > 0) {
+          const byTech = {};
+          dbImages.forEach(row => {
+            if (!byTech[row.tech_id]) byTech[row.tech_id] = [];
+            byTech[row.tech_id].push(row.image_url);
+          });
+          curatorTaxonomy.forEach(tech => {
+            if (byTech[tech.id]) {
+              const existing = new Set(tech.images || []);
+              byTech[tech.id].forEach(url => existing.add(url));
+              tech.images = [...existing];
+            }
+          });
+        }
+      }
+    } catch (e) {
+      console.warn('Could not merge Supabase images:', e);
     }
   }
 
@@ -3181,13 +3208,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       contentRouting.innerHTML = `
         <div style="max-width:1200px;">
-          ${!curatorApiAvailable ? `
-          <div style="background:rgba(234,179,8,0.1); border:1px solid rgba(234,179,8,0.3); border-radius:8px; padding:14px 20px; margin-bottom:20px; display:flex; align-items:center; gap:12px; color:#b45309;">
-            <span style="font-size:18px;">⚠️</span>
-            <div>
-              <strong>Flask Curator API is offline.</strong> Categories loaded from static file. To use search, add, or upload features, run: <code style="background:rgba(0,0,0,0.06); padding:2px 6px; border-radius:4px; font-size:12px;">python execution/admin_image_curator.py</code>
-            </div>
-          </div>` : ''}
           <p style="color:var(--color-steel-400); margin-bottom:24px;">
             Select a technology from the taxonomy, generate candidate images via Serper API, and add the best ones to the taxonomy JSON.
           </p>
@@ -3306,15 +3326,15 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.disabled = true;
 
         try {
-          const res = await fetch(`${CURATOR_API}/api/add-image`, {
+          const res = await fetch('/.netlify/functions/curator-manage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ techId: curatorSelectedTechId, imageUrl: url })
+            body: JSON.stringify({ action: 'add', techId: curatorSelectedTechId, imageUrl: url })
           });
           if (res.ok) {
             urlInput.value = '';
+            await fetchCuratorTaxonomy();
             showCurrentImages(curatorSelectedTechId);
-            fetchCuratorTaxonomy();
             btn.textContent = '✓ Added!';
             setTimeout(() => { btn.textContent = 'Add URL'; btn.disabled = false; }, 1500);
           } else {
@@ -3358,17 +3378,17 @@ document.addEventListener('DOMContentLoaded', () => {
           const publicUrl = urlData?.publicUrl;
           if (!publicUrl) throw new Error('Could not get public URL');
 
-          // Add to taxonomy
-          const res = await fetch(`${CURATOR_API}/api/add-image`, {
+          // Add to taxonomy via serverless function
+          const res = await fetch('/.netlify/functions/curator-manage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ techId: curatorSelectedTechId, imageUrl: publicUrl })
+            body: JSON.stringify({ action: 'add', techId: curatorSelectedTechId, imageUrl: publicUrl })
           });
 
           if (res.ok) {
             fileInput.value = '';
+            await fetchCuratorTaxonomy();
             showCurrentImages(curatorSelectedTechId);
-            fetchCuratorTaxonomy();
             btn.textContent = '✓ Uploaded!';
             setTimeout(() => { btn.textContent = 'Upload'; btn.disabled = false; }, 1500);
           } else {
@@ -3385,49 +3405,40 @@ document.addEventListener('DOMContentLoaded', () => {
   function showCurrentImages(techId) {
     const tech = curatorTaxonomy.find(t => t.id === techId);
     const container = document.getElementById('curator-current-images');
-    if (!tech) { container.innerHTML = ''; return; }
+    if (!tech || !tech.images || tech.images.length === 0) {
+      container.innerHTML = `<div style="padding:16px; background:var(--section-bg); border:1px solid var(--color-slate-800); border-radius:var(--radius-md); color:var(--color-steel-400);">No images currently assigned to this technology.</div>`;
+      return;
+    }
 
-    // Fetch full data to get actual image URLs
-    fetch(`${CURATOR_API}/api/taxonomy`).then(r => r.json()).then(() => {
-      // We need to read the full JSON for images — re-fetch from file
-      fetch('/src/data/taxonomy/master_taxonomy_enriched.json').then(r => r.json()).then(data => {
-        const fullTech = (data.technologies || []).find(t => t.id === techId);
-        if (!fullTech || !fullTech.images || fullTech.images.length === 0) {
-          container.innerHTML = `<div style="padding:16px; background:var(--section-bg); border:1px solid var(--color-slate-800); border-radius:var(--radius-md); color:var(--color-steel-400);">No images currently assigned to this technology.</div>`;
-          return;
-        }
-
-        container.innerHTML = `
-          <div style="margin-bottom:12px; font-size:var(--text-sm); font-weight:var(--weight-bold); color:var(--color-white); text-transform:uppercase; letter-spacing:1px;">
-            Current Images (${fullTech.images.length})
+    container.innerHTML = `
+      <div style="margin-bottom:12px; font-size:var(--text-sm); font-weight:var(--weight-bold); color:var(--color-white); text-transform:uppercase; letter-spacing:1px;">
+        Current Images (${tech.images.length})
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:12px;">
+        ${tech.images.map(url => `
+          <div style="position:relative; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--color-slate-700); aspect-ratio:1;">
+            <img src="${url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://placehold.co/200x200/1e293b/94a3b8?text=Broken';">
+            <button class="curator-remove-img" data-url="${url}" style="position:absolute; top:4px; right:4px; background:rgba(239,68,68,0.9); color:white; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer; font-size:14px; line-height:1; display:flex; align-items:center; justify-content:center;" title="Remove">×</button>
           </div>
-          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:12px;">
-            ${fullTech.images.map(url => `
-              <div style="position:relative; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--color-slate-700); aspect-ratio:1;">
-                <img src="${url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://placehold.co/200x200/1e293b/94a3b8?text=Broken';">
-                <button class="curator-remove-img" data-url="${url}" style="position:absolute; top:4px; right:4px; background:rgba(239,68,68,0.9); color:white; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer; font-size:14px; line-height:1; display:flex; align-items:center; justify-content:center;" title="Remove">×</button>
-              </div>
-            `).join('')}
-          </div>
-        `;
+        `).join('')}
+      </div>
+    `;
 
-        container.querySelectorAll('.curator-remove-img').forEach(btn => {
-          btn.addEventListener('click', async () => {
-            if (!confirm('Remove this image from the taxonomy?')) return;
-            btn.textContent = '…';
-            try {
-              const res = await fetch(`${CURATOR_API}/api/remove-image`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ techId: curatorSelectedTechId, imageUrl: btn.dataset.url })
-              });
-              if (res.ok) {
-                showCurrentImages(curatorSelectedTechId);
-                fetchCuratorTaxonomy(); // refresh counts
-              }
-            } catch (e) { alert('Failed: ' + e.message); }
+    container.querySelectorAll('.curator-remove-img').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Remove this image from the taxonomy?')) return;
+        btn.textContent = '…';
+        try {
+          const res = await fetch('/.netlify/functions/curator-manage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'remove', techId: curatorSelectedTechId, imageUrl: btn.dataset.url })
           });
-        });
+          if (res.ok) {
+            await fetchCuratorTaxonomy();
+            showCurrentImages(curatorSelectedTechId);
+          }
+        } catch (e) { alert('Failed: ' + e.message); }
       });
     });
   }
@@ -3445,29 +3456,38 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!append) resultsDiv.innerHTML = '';
     const modeLabel = mode === 'product' ? '🎯 Product' : '⚙️ Process';
     const searchLabel = extraKeywords ? `${modeLabel}: "${techName}" + "${extraKeywords}"` : `${modeLabel}: "${techName}"`;
-    status.textContent = forceRefresh ? `Fetching fresh results for ${searchLabel}…` : `Loading batch from ${searchLabel}…`;
 
     try {
-      const res = await fetch(`${CURATOR_API}/api/search-images`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: techName, extraKeywords, offset: curatorSearchOffset, forceRefresh, mode })
-      });
+      // If fresh search or cache empty, fetch from serverless function
+      if (forceRefresh || _curatorImageCache.length === 0 || curatorSearchOffset === 0) {
+        status.textContent = `Searching for ${searchLabel}…`;
 
-      if (!res.ok) throw new Error('API returned ' + res.status);
-      const data = await res.json();
+        const res = await fetch('/.netlify/functions/curator-search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: techName, extraKeywords, mode, num: 40 })
+        });
 
-      if (!data.images || data.images.length === 0) {
-        status.textContent = `No more images available (showed ${curatorSearchOffset} of ${data.total || 0}). Try different keywords.`;
+        if (!res.ok) throw new Error('Search API returned ' + res.status);
+        const data = await res.json();
+        _curatorImageCache = data.images || [];
+        if (!append) curatorSearchOffset = 0;
+      }
+
+      // Paginate from cache
+      const batch = _curatorImageCache.slice(curatorSearchOffset, curatorSearchOffset + 5);
+
+      if (batch.length === 0) {
+        status.textContent = `No more images available (showed ${curatorSearchOffset} of ${_curatorImageCache.length}). Try different keywords.`;
         moreWrap.style.display = 'none';
         return;
       }
 
-      const shown = curatorSearchOffset + data.images.length;
-      status.textContent = `Showing ${shown} of ${data.total || '?'} results. Click "Add to Taxonomy" to save.`;
-      moreWrap.style.display = data.hasMore ? 'block' : 'none';
+      const shown = curatorSearchOffset + batch.length;
+      status.textContent = `Showing ${shown} of ${_curatorImageCache.length} results. Click "Add to Taxonomy" to save.`;
+      moreWrap.style.display = (shown < _curatorImageCache.length) ? 'block' : 'none';
 
-      data.images.forEach(img => {
+      batch.forEach(img => {
         const card = document.createElement('div');
         card.style.cssText = 'display:flex; gap:20px; padding:16px; background:var(--color-midnight); border:1px solid var(--color-slate-800); border-radius:var(--radius-md); margin-bottom:12px; align-items:center;';
         card.innerHTML = `
@@ -3485,25 +3505,26 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsDiv.appendChild(card);
       });
 
-      // Wire add buttons
-      resultsDiv.querySelectorAll('.curator-add-btn').forEach(btn => {
+      // Wire add buttons (only for newly added cards)
+      resultsDiv.querySelectorAll('.curator-add-btn:not([data-wired])').forEach(btn => {
+        btn.setAttribute('data-wired', 'true');
         btn.addEventListener('click', async () => {
           const url = btn.dataset.url;
           btn.textContent = 'Adding…';
           btn.disabled = true;
 
           try {
-            const res = await fetch(`${CURATOR_API}/api/add-image`, {
+            const res = await fetch('/.netlify/functions/curator-manage', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ techId: curatorSelectedTechId, imageUrl: url })
+              body: JSON.stringify({ action: 'add', techId: curatorSelectedTechId, imageUrl: url })
             });
 
             if (res.ok) {
               btn.textContent = '✓ Added';
               btn.style.background = 'var(--color-emerald)';
+              await fetchCuratorTaxonomy();
               showCurrentImages(curatorSelectedTechId);
-              fetchCuratorTaxonomy(); // refresh counts
             } else {
               const err = await res.json();
               btn.textContent = err.error || 'Failed';
@@ -3517,7 +3538,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
     } catch (e) {
-      status.textContent = `Error: ${e.message}. Is the Curator API running on localhost:5050?`;
+      status.textContent = `Error: ${e.message}`;
     }
   }
 

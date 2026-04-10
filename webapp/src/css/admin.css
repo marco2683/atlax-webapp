@@ -659,6 +659,13 @@ body.theme-light .admin-field input,
 body.theme-light .admin-field textarea,
 body.theme-light .admin-field select {
   color: #1d4ed8 !important;
+  background: #ffffff !important;
+}
+
+body.theme-light .admin-img-url-row input,
+body.theme-light .admin-portfolio-row input,
+body.theme-light .admin-review-row input {
+  background: #ffffff !important;
 }
 
 .admin-field input::placeholder,
