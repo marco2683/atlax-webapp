@@ -3600,7 +3600,7 @@ document.addEventListener('DOMContentLoaded', () => {
               const tEnabled = _visibilityMap[t.id] !== false;
               const imgCount = (t.images || []).length;
               return `
-                <div style="display:flex; align-items:center; gap:6px; padding:6px 12px; background:${tEnabled ? 'var(--color-midnight)' : 'rgba(239,68,68,0.08)'}; border:1px solid ${tEnabled ? 'var(--color-slate-700)' : 'rgba(239,68,68,0.3)'}; border-radius:var(--radius-sm); font-size:var(--text-xs); transition:all 0.2s;">
+                <div class="vis-chip" data-tech-id="${t.id}" data-cat="${cat}" style="display:flex; align-items:center; gap:6px; padding:6px 12px; background:${tEnabled ? 'var(--color-midnight)' : 'rgba(239,68,68,0.08)'}; border:1px solid ${tEnabled ? 'var(--color-slate-700)' : 'rgba(239,68,68,0.3)'}; border-radius:var(--radius-sm); font-size:var(--text-xs); transition:all 0.2s; cursor:pointer;" title="Double-click to jump to this technology">
                   <input type="checkbox" class="vis-toggle" data-id="${t.id}" ${tEnabled ? 'checked' : ''}
                     style="width:14px; height:14px; accent-color:var(--color-emerald); cursor:pointer;">
                   <span style="color:${tEnabled ? 'var(--color-white)' : 'var(--color-steel-500)'};">${t.name}</span>
@@ -3614,6 +3614,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     container.innerHTML = html;
+
+    // Wire double-click on chips to jump to that technology
+    container.querySelectorAll('.vis-chip').forEach(chip => {
+      chip.addEventListener('dblclick', (e) => {
+        if (e.target.tagName === 'INPUT') return; // don't hijack checkbox clicks
+        const techId = chip.dataset.techId;
+        const cat = chip.dataset.cat;
+
+        // Set category dropdown
+        const catSelect = document.getElementById('curator-category');
+        if (catSelect) {
+          catSelect.value = cat;
+          catSelect.dispatchEvent(new Event('change'));
+        }
+
+        // Set technology dropdown after category populates it
+        setTimeout(() => {
+          const techSelect = document.getElementById('curator-tech');
+          if (techSelect) {
+            techSelect.value = techId;
+            techSelect.dispatchEvent(new Event('change'));
+          }
+          // Scroll to top of curator
+          document.querySelector('#contentRouting')?.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 50);
+      });
+    });
 
     // Wire all toggle checkboxes
     container.querySelectorAll('.vis-toggle').forEach(toggle => {
