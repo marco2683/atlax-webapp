@@ -167,7 +167,7 @@
         .jump-btn { background: var(--accent); color: white; border: none; padding: 10px 24px; border-radius: 30px; font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 15px var(--accent-glow); }
         .jump-btn:hover { background: var(--accent-hover); transform: translateY(-2px); }
 
-        .detail-view { display: none; max-width: 1000px; margin: 0 auto; }
+        .detail-view { display: none; max-width: 1100px; margin: 0 auto; padding-bottom: 80px; }
         .detail-view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
         .tech-header { margin-bottom: 32px; }
@@ -187,17 +187,58 @@
         .supplier-meta { font-size: 0.75rem; color: var(--text-secondary); }
         .supplier-badge { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 6px; background: rgba(16, 185, 129, 0.1); color: #10b981; }
 
-        .image-gallery { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 250px 250px; gap: 16px; margin-bottom: 40px; }
-        .gallery-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background-color: var(--sidebar-bg); transition: transform 0.4s ease; display: block; }
-        .gallery-img:hover { transform: scale(1.05); }
-        .img-main { grid-column: 1 / 2; grid-row: 1 / 3; }
-        .img-wrap { position: relative; overflow: hidden; border-radius: 12px; border: 1px solid var(--card-border); width: 100%; height: 100%; }
+        /* Hero image — single large image */
+        .hero-image-wrap { width: 100%; height: 400px; border-radius: 16px; overflow: hidden; margin-bottom: 40px; position: relative; border: 1px solid var(--card-border); cursor: pointer; }
+        .hero-image-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .hero-image-wrap:hover img { transform: scale(1.03); }
+        .hero-image-count { position: absolute; bottom: 16px; right: 16px; background: rgba(0,0,0,0.7); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px); }
 
-        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        /* Paired content row: text card + image side by side */
+        .paired-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; align-items: stretch; }
+        .paired-row.reverse { direction: rtl; }
+        .paired-row.reverse > * { direction: ltr; }
+        .paired-row .info-card { margin: 0; }
+        .paired-row .paired-img { border-radius: 16px; overflow: hidden; border: 1px solid var(--card-border); cursor: pointer; position: relative; min-height: 220px; }
+        .paired-row .paired-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s; }
+        .paired-row .paired-img:hover img { transform: scale(1.04); }
+        @media (max-width: 800px) { .paired-row { grid-template-columns: 1fr; } .paired-row.reverse { direction: ltr; } }
+
+        /* Full-width info card (when no image to pair) */
+        .info-card-solo { margin-bottom: 24px; }
+
         .info-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 32px; transition: transform 0.2s; }
         .info-card.full-width { grid-column: 1 / -1; }
         .info-card h3 { font-family: 'Outfit', sans-serif; font-size: 1.25rem; color: var(--accent); margin-bottom: 16px; }
         .info-card p { line-height: 1.7; color: var(--text-secondary); font-size: 1rem; }
+
+        /* Overflow image gallery grid */
+        .overflow-gallery { margin-top: 48px; margin-bottom: 48px; }
+        .overflow-title { font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .overflow-title span { font-size: 0.85rem; font-weight: 400; color: var(--text-secondary); }
+        .overflow-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+        .overflow-grid .ov-img { border-radius: 12px; overflow: hidden; border: 1px solid var(--card-border); cursor: pointer; aspect-ratio: 4/3; position: relative; }
+        .overflow-grid .ov-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
+        .overflow-grid .ov-img:hover img { transform: scale(1.05); }
+        .overflow-grid .ov-img:hover { border-color: var(--accent); }
+
+        /* Lightbox Modal */
+        .lightbox { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.92); backdrop-filter: blur(12px); align-items: center; justify-content: center; }
+        .lightbox.active { display: flex; }
+        .lightbox-close { position: absolute; top: 24px; right: 32px; background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background 0.2s; z-index: 10; }
+        .lightbox-close:hover { background: rgba(255,255,255,0.1); }
+        .lightbox-counter { position: absolute; top: 28px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.6); font-size: 0.9rem; font-weight: 500; z-index: 10; }
+        .lightbox-img-wrap { max-width: 90vw; max-height: 85vh; display: flex; align-items: center; justify-content: center; }
+        .lightbox-img-wrap img { max-width: 100%; max-height: 85vh; object-fit: contain; border-radius: 8px; }
+        .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.1); border: none; color: #fff; width: 52px; height: 52px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; z-index: 10; }
+        .lightbox-nav:hover { background: rgba(255,255,255,0.2); }
+        .lightbox-prev { left: 24px; }
+        .lightbox-next { right: 24px; }
+
+        .image-gallery { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 250px 250px; gap: 16px; margin-bottom: 40px; }
+        .gallery-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background-color: var(--sidebar-bg); transition: transform 0.4s ease; display: block; cursor: pointer; }
+        .gallery-img:hover { transform: scale(1.05); }
+        .img-main { grid-column: 1 / 2; grid-row: 1 / 3; }
+        .img-wrap { position: relative; overflow: hidden; border-radius: 12px; border: 1px solid var(--card-border); width: 100%; height: 100%; }
 
         .products-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
         .product-chip { background: var(--muted-bg); border: 1px solid var(--card-border); padding: 6px 14px; border-radius: 20px; font-size: 0.875rem; color: var(--text-primary); }
@@ -270,15 +311,8 @@
                     <span class="tech-category-pill" id="vCategory">Category</span>
                     <h1 class="tech-title" id="vTitle">Technology Name</h1>
                 </div>
-                <div class="image-gallery" id="vGallery"></div>
-                <div class="info-grid">
-                    <div class="info-card full-width"><h3>Overview</h3><p id="vDesc"></p></div>
-                    <div class="info-card"><h3>Why Utilized</h3><p id="vWhy"></p></div>
-                    <div class="info-card"><h3>Key Achievements</h3><p id="vAchieve"></p></div>
-                    <div class="info-card"><h3>Process Intricacies</h3><p id="vIntricate"></p></div>
-                    <div class="info-card"><h3>Execution Strategy</h3><p id="vExecute"></p></div>
-                    <div class="info-card full-width"><h3>Common Applications</h3><div class="products-list" id="vProducts"></div></div>
-                </div>
+                <!-- Dynamic content injected by selectItem -->
+                <div id="vDynamicContent"></div>
 
                 <!-- Suppliers Section -->
                 <div class="suppliers-section">
@@ -311,6 +345,15 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- LIGHTBOX MODAL -->
+    <div class="lightbox" id="lightboxModal">
+        <button class="lightbox-close" onclick="closeLightbox()">×</button>
+        <div class="lightbox-counter" id="lightboxCounter">1 / 5</div>
+        <button class="lightbox-nav lightbox-prev" onclick="lightboxNav(-1)">‹</button>
+        <div class="lightbox-img-wrap"><img id="lightboxImg" src="" alt=""></div>
+        <button class="lightbox-nav lightbox-next" onclick="lightboxNav(1)">›</button>
     </div>
 
     <!-- TEARDOWN OVERLAY -->
@@ -354,9 +397,12 @@
         let teardownData = [];
         let groupedData = {};
         let currentMode = 'teardown'; 
+        let _visibilityMap = {};
 
-        const JSON_PATH = "../webapp/src/data/taxonomy/master_taxonomy_enriched.json";
-        const TEARDOWN_PATH = "../webapp/src/data/taxonomy/master_teardowns.json";
+        const JSON_PATH = "/data/taxonomy/master_taxonomy_enriched.json";
+        const TEARDOWN_PATH = "/data/taxonomy/master_teardowns.json";
+        const SUPABASE_URL = "https://qvxrwbcmyrugjevgvujb.supabase.co";
+        const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2eHJ3YmNteXJ1Z2pldmd2dWpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI1MDY4NzgsImV4cCI6MjA1ODA4Mjg3OH0.C3x-GI19bBxHiKkNSnlkVUe-xPbB7p5LsilhqJKHFKI";
 
         async function fetchTaxonomy(isInitial = false) {
             try {
@@ -365,6 +411,48 @@
                 const data = await response.json();
                 taxonomyData = data.technologies || [];
                 
+                // Merge Supabase-stored images
+                try {
+                    const imgRes = await fetch(`${SUPABASE_URL}/rest/v1/taxonomy_images?select=*`, {
+                        headers: { 'apikey': SUPABASE_ANON, 'Authorization': `Bearer ${SUPABASE_ANON}` }
+                    });
+                    if (imgRes.ok) {
+                        const dbImages = await imgRes.json();
+                        if (dbImages && dbImages.length > 0) {
+                            const byTech = {};
+                            dbImages.forEach(row => {
+                                if (!byTech[row.tech_id]) byTech[row.tech_id] = [];
+                                byTech[row.tech_id].push(row.image_url);
+                            });
+                            taxonomyData.forEach(tech => {
+                                if (byTech[tech.id]) {
+                                    const existing = new Set(tech.images || []);
+                                    byTech[tech.id].forEach(url => existing.add(url));
+                                    tech.images = [...existing];
+                                }
+                            });
+                        }
+                    }
+                } catch(e) { console.warn('Could not merge Supabase images:', e); }
+
+                // Load visibility and filter disabled items
+                try {
+                    const vRes = await fetch('/.netlify/functions/taxonomy-visibility');
+                    if (vRes.ok) {
+                        const vData = await vRes.json();
+                        _visibilityMap = {};
+                        vData.forEach(row => { _visibilityMap[row.id] = row.enabled; });
+
+                        // Filter out disabled categories and technologies
+                        taxonomyData = taxonomyData.filter(tech => {
+                            const catKey = 'cat:' + tech.category;
+                            if (_visibilityMap[catKey] === false) return false;
+                            if (_visibilityMap[tech.id] === false) return false;
+                            return true;
+                        });
+                    }
+                } catch(e) { console.warn('Visibility data not available:', e); }
+
                 // Also fetch teardowns if initial
                 if (isInitial) {
                     try {
@@ -661,6 +749,34 @@
             });
         }
 
+        // --- LIGHTBOX ---
+        let _lbImages = [];
+        let _lbIndex = 0;
+
+        function openLightbox(images, startIdx) {
+            _lbImages = images;
+            _lbIndex = startIdx || 0;
+            document.getElementById('lightboxModal').classList.add('active');
+            updateLightbox();
+        }
+        function closeLightbox() {
+            document.getElementById('lightboxModal').classList.remove('active');
+        }
+        function lightboxNav(dir) {
+            _lbIndex = (_lbIndex + dir + _lbImages.length) % _lbImages.length;
+            updateLightbox();
+        }
+        function updateLightbox() {
+            document.getElementById('lightboxImg').src = _lbImages[_lbIndex];
+            document.getElementById('lightboxCounter').textContent = `${_lbIndex + 1} / ${_lbImages.length}`;
+        }
+        document.addEventListener('keydown', (e) => {
+            if (!document.getElementById('lightboxModal').classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') lightboxNav(-1);
+            if (e.key === 'ArrowRight') lightboxNav(1);
+        });
+
         function selectItem(id, element) {
             if(element) {
                 document.querySelectorAll('.tech-item').forEach(el => el.classList.remove('selected'));
@@ -674,28 +790,75 @@
 
             document.getElementById('vCategory').innerText = item.category;
             document.getElementById('vTitle').innerText = item.name;
-            const isPlaceholder = item.description.startsWith("Detailed description for");
-            document.getElementById('vDesc').innerHTML = isPlaceholder ? `<em>Awaiting Intelligence...</em><br><br>${item.description}` : item.description;
-            document.getElementById('vWhy').innerText = item.whyUtilized;
-            document.getElementById('vAchieve').innerText = item.keyAchievement;
-            document.getElementById('vIntricate').innerText = item.intricacies;
-            document.getElementById('vExecute').innerText = item.wayToGoAboutIt;
 
-            const gallery = document.getElementById('vGallery');
-            gallery.innerHTML = '';
-            gallery.style.display = 'grid';
-            if (item.images && item.images.length > 0) {
-                const layouts = ['img-main', '', '', '', ''];
-                for(let i=0; i<Math.min(item.images.length, 5); i++) {
-                    gallery.innerHTML += `<div class="img-wrap ${layouts[i]}"><img src="${item.images[i]}" class="gallery-img" loading="lazy" onerror="this.onerror=null; this.src='https://image.pollinations.ai/prompt/${encodeURIComponent(item.name + ' industrial manufacturing texture')}?width=600&height=400&nologo=true';"></div>`;
+            const images = item.images || [];
+            const isPlaceholder = item.description && item.description.startsWith("Detailed description for");
+            const descHtml = isPlaceholder ? `<em>Awaiting Intelligence...</em><br><br>${item.description}` : (item.description || '');
+
+            // Build content sections
+            const sections = [
+                { title: 'Overview', content: descHtml, fullWidth: true },
+                { title: 'Why Utilized', content: item.whyUtilized || '' },
+                { title: 'Key Achievements', content: item.keyAchievement || '' },
+                { title: 'Process Intricacies', content: item.intricacies || '' },
+                { title: 'Execution Strategy', content: item.wayToGoAboutIt || '' },
+            ].filter(s => s.content && s.content.trim());
+
+            let html = '';
+            let imgIdx = 0; // Image pointer for pairing
+
+            // Hero image (first image, large)
+            if (images.length > 0) {
+                html += `<div class="hero-image-wrap" onclick="openLightbox(${JSON.stringify(images).replace(/"/g, '&quot;')}, 0)">
+                    <img src="${images[0]}" loading="lazy" onerror="this.style.display='none'">
+                    ${images.length > 1 ? `<div class="hero-image-count">📷 ${images.length} images</div>` : ''}
+                </div>`;
+                imgIdx = 1;
+            }
+
+            // Pair text cards with images
+            let rowFlip = false;
+            sections.forEach(section => {
+                if (section.fullWidth) {
+                    // Full-width card (Overview) — no pairing
+                    html += `<div class="info-card-solo"><div class="info-card"><h3>${section.title}</h3><p>${section.content}</p></div></div>`;
+                } else if (imgIdx < images.length) {
+                    // Paired row: text card + image, alternating sides
+                    const imgSrc = images[imgIdx];
+                    const clickHandler = `openLightbox(${JSON.stringify(images).replace(/"/g, '&quot;')}, ${imgIdx})`;
+                    html += `<div class="paired-row${rowFlip ? ' reverse' : ''}">
+                        <div class="info-card"><h3>${section.title}</h3><p>${section.content}</p></div>
+                        <div class="paired-img" onclick="${clickHandler}"><img src="${imgSrc}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>
+                    </div>`;
+                    imgIdx++;
+                    rowFlip = !rowFlip;
+                } else {
+                    // No more images — solo card
+                    html += `<div class="info-card-solo"><div class="info-card"><h3>${section.title}</h3><p>${section.content}</p></div></div>`;
                 }
-            } else { gallery.style.display = 'none'; }
+            });
 
-            const prodList = document.getElementById('vProducts');
-            prodList.innerHTML = '';
+            // Products section
+            let prodsHtml = '';
             if (item.exampleProducts && item.exampleProducts.length > 0) {
-                item.exampleProducts.forEach(prod => { prodList.innerHTML += `<div class="product-chip">${prod}</div>`; });
-            } else { prodList.innerHTML = '<span style="color:var(--text-secondary)">No products.</span>'; }
+                prodsHtml = item.exampleProducts.map(p => `<div class="product-chip">${p}</div>`).join('');
+            } else {
+                prodsHtml = '<span style="color:var(--text-secondary)">No products.</span>';
+            }
+            html += `<div class="info-card-solo"><div class="info-card"><h3>Common Applications</h3><div class="products-list">${prodsHtml}</div></div></div>`;
+
+            // Overflow gallery — remaining images
+            if (imgIdx < images.length) {
+                const remaining = images.slice(imgIdx);
+                html += `<div class="overflow-gallery">
+                    <div class="overflow-title">📸 More References <span>(${remaining.length} additional)</span></div>
+                    <div class="overflow-grid">
+                        ${remaining.map((url, ri) => `<div class="ov-img" onclick="openLightbox(${JSON.stringify(images).replace(/"/g, '&quot;')}, ${imgIdx + ri})"><img src="${url}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`).join('')}
+                    </div>
+                </div>`;
+            }
+
+            document.getElementById('vDynamicContent').innerHTML = html;
             document.getElementById('mainScrollarea').scrollTo({ top: 0, behavior: 'smooth' });
         }
 

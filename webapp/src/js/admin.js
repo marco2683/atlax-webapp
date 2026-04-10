@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td style="width:40px; text-align:center;">
           ${urlLink ? `<a href="${urlLink}" target="_blank" title="${urlLink}" style="color:var(--color-electric);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>` : '<span style="opacity:0.2;">—</span>'}
         </td>
-        <td class="admin-supplier-name" data-id="${s.id || s.name}" style="cursor:pointer;" title="Double-click to edit">
+        <td class="admin-supplier-name" data-id="${s.id || s.name}">
           <strong>${s.name}</strong><br>
           <span style="font-size:12px; color:var(--color-steel-400);">${s.nameZh || '—'}</span>
         </td>
@@ -3159,6 +3159,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let curatorSearchOffset = 0;
   let curatorSelectedTechId = '';
   let _curatorImageCache = [];
+  let _visibilityMap = {}; // id → boolean
 
   async function fetchCuratorTaxonomy() {
     // Load taxonomy from static JSON
@@ -3199,6 +3200,18 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (e) {
       console.warn('Could not merge Supabase images:', e);
+    }
+
+    // Load visibility state
+    try {
+      const vRes = await fetch('/.netlify/functions/taxonomy-visibility');
+      if (vRes.ok) {
+        const vData = await vRes.json();
+        _visibilityMap = {};
+        vData.forEach(row => { _visibilityMap[row.id] = row.enabled; });
+      }
+    } catch (e) {
+      console.warn('Could not load visibility:', e);
     }
   }
 
@@ -3270,7 +3283,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <div id="curator-status" style="color:var(--color-steel-400); font-size:var(--text-sm);"></div>
         </div>
+
+        <!-- ══ VISIBILITY TOGGLES ══ -->
+        <div style="max-width:1200px; margin-top:48px; padding-top:32px; border-top:1px solid var(--color-slate-800);">
+          <h3 style="color:var(--color-white); font-size:var(--text-lg); font-weight:var(--weight-bold); margin-bottom:8px;">📋 Visibility Manager</h3>
+          <p style="color:var(--color-steel-400); margin-bottom:24px; font-size:var(--text-sm);">Control which categories and technologies appear on the public visualizer. Disabled items will be hidden from users but remain in your taxonomy.</p>
+          <div id="curator-visibility-toggles"></div>
+        </div>
       `;
+
+      renderVisibilityToggles();
 
       // Wire category → tech dropdown
       document.getElementById('curator-category').addEventListener('change', (e) => {
@@ -3287,7 +3309,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const techs = curatorTaxonomy.filter(t => t.category === cat);
         techSelect.innerHTML = '<option value="">Select Technology…</option>' +
-          techs.map(t => `<option value="${t.id}" data-name="${t.name}">${t.name} (${t.imageCount} images)</option>`).join('');
+          techs.map(t => {
+            const vis = _visibilityMap[t.id];
+            const icon = vis === false ? '🔴' : '🟢';
+            return `<option value="${t.id}" data-name="${t.name}">${icon} ${t.name} (${t.imageCount} images)</option>`;
+          }).join('');
         techSelect.disabled = false;
       });
 
@@ -3540,6 +3566,100 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {
       status.textContent = `Error: ${e.message}`;
     }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  V I S I B I L I T Y   T O G G L E S
+  // ═══════════════════════════════════════════════════════════
+  function renderVisibilityToggles() {
+    const container = document.getElementById('curator-visibility-toggles');
+    if (!container) return;
+
+    const categories = [...new Set(curatorTaxonomy.map(t => t.category))].sort();
+
+    let html = '';
+    categories.forEach(cat => {
+      const catId = 'cat:' + cat;
+      const catEnabled = _visibilityMap[catId] !== false;
+      const techs = curatorTaxonomy.filter(t => t.category === cat);
+
+      html += `
+        <div style="margin-bottom:24px; background:var(--section-bg); border:1px solid var(--color-slate-800); border-radius:var(--radius-md); overflow:hidden;">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--color-slate-800); background:${catEnabled ? 'transparent' : 'rgba(239,68,68,0.05)'};">
+            <div style="font-weight:var(--weight-bold); color:var(--color-white); text-transform:uppercase; letter-spacing:0.5px; font-size:var(--text-sm);">
+              ${cat} <span style="font-weight:400; color:var(--color-steel-400); text-transform:none; letter-spacing:0;">(${techs.length} techs)</span>
+            </div>
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:var(--text-sm); color:${catEnabled ? 'var(--color-emerald)' : 'var(--color-error)'};">
+              <span class="vis-status">${catEnabled ? 'Enabled' : 'Disabled'}</span>
+              <input type="checkbox" class="vis-toggle" data-id="${catId}" ${catEnabled ? 'checked' : ''}
+                style="width:18px; height:18px; accent-color:var(--color-emerald); cursor:pointer;">
+            </label>
+          </div>
+          <div style="padding:12px 20px; display:flex; flex-wrap:wrap; gap:8px;">
+            ${techs.map(t => {
+              const tEnabled = _visibilityMap[t.id] !== false;
+              const imgCount = (t.images || []).length;
+              return `
+                <div style="display:flex; align-items:center; gap:6px; padding:6px 12px; background:${tEnabled ? 'var(--color-midnight)' : 'rgba(239,68,68,0.08)'}; border:1px solid ${tEnabled ? 'var(--color-slate-700)' : 'rgba(239,68,68,0.3)'}; border-radius:var(--radius-sm); font-size:var(--text-xs); transition:all 0.2s;">
+                  <input type="checkbox" class="vis-toggle" data-id="${t.id}" ${tEnabled ? 'checked' : ''}
+                    style="width:14px; height:14px; accent-color:var(--color-emerald); cursor:pointer;">
+                  <span style="color:${tEnabled ? 'var(--color-white)' : 'var(--color-steel-500)'};">${t.name}</span>
+                  <span style="color:var(--color-steel-500); font-size:10px;">(${imgCount} img)</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+
+    // Wire all toggle checkboxes
+    container.querySelectorAll('.vis-toggle').forEach(toggle => {
+      toggle.addEventListener('change', async (e) => {
+        const id = e.target.dataset.id;
+        const enabled = e.target.checked;
+        _visibilityMap[id] = enabled;
+
+        // Update label for category toggles
+        const statusSpan = e.target.closest('label')?.querySelector('.vis-status');
+        if (statusSpan) {
+          statusSpan.textContent = enabled ? 'Enabled' : 'Disabled';
+          statusSpan.style.color = enabled ? 'var(--color-emerald)' : 'var(--color-error)';
+        }
+
+        // If this is a category toggle, cascade to all techs in it
+        if (id.startsWith('cat:')) {
+          const catName = id.replace('cat:', '');
+          const techs = curatorTaxonomy.filter(t => t.category === catName);
+          for (const t of techs) {
+            _visibilityMap[t.id] = enabled;
+            const techCheckbox = container.querySelector(`.vis-toggle[data-id="${t.id}"]`);
+            if (techCheckbox) techCheckbox.checked = enabled;
+            try {
+              await fetch('/.netlify/functions/taxonomy-visibility', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: t.id, enabled })
+              });
+            } catch(err) { console.warn('Toggle save failed for', t.id); }
+          }
+        }
+
+        // Persist this toggle
+        try {
+          await fetch('/.netlify/functions/taxonomy-visibility', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, enabled })
+          });
+        } catch(err) {
+          alert('Failed to save visibility');
+          e.target.checked = !enabled;
+        }
+      });
+    });
   }
 
 });

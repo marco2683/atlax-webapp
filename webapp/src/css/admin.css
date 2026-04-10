@@ -280,8 +280,17 @@
   border-bottom: none;
 }
 
-.admin-table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+.admin-table tbody tr:hover td {
+  background: rgba(59, 130, 246, 0.04);
+  transition: background 0.15s ease;
+}
+
+.admin-table tbody tr:hover td:first-child {
+  box-shadow: inset 3px 0 0 var(--color-electric);
+}
+
+body.theme-light .admin-table tbody tr:hover td {
+  background: rgba(59, 130, 246, 0.06);
 }
 
 .admin-badge {
