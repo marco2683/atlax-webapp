@@ -62,18 +62,49 @@ function createPartPanelHTML(partIdx) {
     <div class="rfq-part-panel" data-part="${partIdx}">
       <div class="rfq-top-row">
         <div class="rfq-upload-col">
-          <div class="rfq-engine__upload-zone" id="rfq-upload-zone-${partIdx}">
-            <input type="file" class="rfq-file-input" data-part="${partIdx}" multiple accept=".step,.stp,.stl,.obj,.3mf,.iges,.igs,.dxf,.pdf,.sldprt,.ipt,.x_t,.x_b,.3dxml,.catpart,.prt,.sat,.jt" hidden />
+          <!-- 3D Files Dropzone -->
+          <div class="rfq-engine__upload-zone" id="rfq-upload-zone-${partIdx}" style="min-height: 220px;">
+            <input type="file" class="rfq-file-input" data-part="${partIdx}" multiple accept=".step,.stp,.stl,.obj,.3mf,.iges,.igs,.dxf,.sldprt,.ipt,.x_t,.x_b,.3dxml,.catpart,.prt,.sat,.jt" hidden />
             <div class="upload-icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             </div>
             <div class="upload-text">
-              <h3>Drag & Drop or <span class="upload-link">Choose File</span></h3>
-              <p>Upload at least 1 CAD file.</p>
+              <h3>Drag & Drop 3D CAD Files</h3>
+              <p style="margin-top: 4px;">Upload at least 1 3D CAD file to get started.</p>
             </div>
-            <div class="upload-formats"><p>STEP · STP · STL · OBJ · IGES · DXF · 3DXML · CATPART · PRT · 3MF</p></div>
-            <button class="upload-btn rfq-select-files-btn" data-part="${partIdx}">Select Files</button>
+            <button class="upload-btn rfq-select-files-btn" data-part="${partIdx}">Select 3D Files</button>
             <div class="upload-file-list hidden" data-part="${partIdx}"></div>
+            <div class="upload-formats">
+              <p style="font-size: 9.5px;">STEP · STP · SLDPRT · STL · DXF · IGES · IGS · IPT · X_T · X_B · 3DXML · CATPART · PRT · SAT · 3MF · JT</p>
+            </div>
+          </div>
+
+          <!-- 2D / Supporting Docs Dropzone -->
+          <div class="rfq-engine__upload-zone" id="rfq-upload-zone-2d-${partIdx}" style="min-height: 140px; margin-top: 12px; background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.08);">
+            <input type="file" class="rfq-file-input-2d" data-part="${partIdx}" multiple accept=".pdf,.dwg,.dxf,.png,.jpg,.jpeg,.doc,.docx" hidden />
+            <div class="upload-icon" style="color: var(--color-steel-400); margin-bottom: -6px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+            <div class="upload-text">
+              <h3 style="font-size: 12px; color: var(--color-steel-300);">2D Drawings & Supporting Docs</h3>
+              <p style="font-size: 10px; margin-top: 2px;">Drag & Drop or <span class="upload-link">Choose Files</span></p>
+            </div>
+            <div class="upload-file-list hidden" id="upload-file-list-2d-${partIdx}"></div>
+            <div class="upload-formats" style="margin-top: 4px;">
+              <p>PDF · DWG · DXF · PNG · JPG</p>
+            </div>
+          </div>
+
+          <!-- DFM Toggle -->
+          <div class="rfq-engine__dfm-toggle" style="margin-top: var(--space-3);">
+            <label class="rfq-toggle" style="width: 100%; box-sizing: border-box; justify-content: center; padding: 12px;">
+              <input type="checkbox" class="rfq-dfm-check" data-part="${partIdx}" />
+              <span class="rfq-toggle__slider"></span>
+              <span class="rfq-toggle__text" style="text-align: left;">
+                <strong>DFM Feedback</strong>
+                <small>Get manufacturing analysis</small>
+              </span>
+            </label>
           </div>
         </div>
         <div class="rfq-fields-col">
@@ -98,8 +129,8 @@ function createPartPanelHTML(partIdx) {
             </div>
             <div class="rfq-field"><label>Lead Time</label>
               <select class="rfq-lead-time" data-part="${partIdx}">
-                <option value="economy">Economy (30+d)</option><option value="standard" selected>Standard (15–20d)</option>
-                <option value="express">Express (7–10d)</option><option value="rush">Rush (3–5d)</option>
+                <option value="economy">Economy (30+ days)</option><option value="standard" selected>Standard (15–20 days)</option>
+                <option value="express">Express (7–10 days)</option><option value="rush">Rush (3–5 days)</option>
               </select>
             </div>
             <div class="rfq-field"><label>Surface Finish</label>
@@ -118,16 +149,31 @@ function createPartPanelHTML(partIdx) {
               <input type="text" class="rfq-threads" data-part="${partIdx}" placeholder="M3×0.5, brass..." />
             </div>
           </div>
+
+          <!-- 2D Drawing Note -->
           <div class="rfq-drawing-note">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             <span>Have a 2D drawing? Upload it alongside the 3D file for a more thorough review of your tolerances, GD&T, and special requirements.</span>
           </div>
+
+          <!-- Custom Details / Post-Processing Notes -->
           <div class="rfq-custom-details"><label>Additional Notes & Requirements</label>
             <textarea class="rfq-custom-notes" data-part="${partIdx}" rows="3" placeholder="Surface finish details, coating specs, heat treatments, certifications, special requirements..."></textarea>
           </div>
         </div>
       </div>
 
+      <!-- Geometry Analysis Placeholder (visible BEFORE upload) -->
+      <div class="rfq-results-placeholder" data-part="${partIdx}" style="border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: var(--radius-lg); margin-top: 16px; min-height: 120px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--color-steel-500); background: rgba(0,0,0,0.2);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        <span style="font-size: 11px;">Geometry analysis will appear here after upload</span>
+      </div>
+
+      <!-- Geometry Analysis Results (hidden until parsed) -->
       <div class="rfq-results hidden" data-part="${partIdx}">
         <div class="rfq-results__header">
           <h3>Geometry Analysis</h3>
@@ -409,6 +455,28 @@ function wirePartPanel(partIdx) {
     if (e.target === uploadZone || e.target.closest('.upload-icon') || e.target.closest('.upload-text')) fileInput?.click();
   });
 
+  // ── 2D Upload Zone Wiring ─────────────────────────────
+  const uploadZone2d = panel.querySelector(`#rfq-upload-zone-2d-${partIdx}`);
+  const fileInput2d  = panel.querySelector('.rfq-file-input-2d');
+
+  if (uploadZone2d && fileInput2d) {
+    uploadZone2d.querySelector('.upload-link')?.addEventListener('click', (e) => { e.stopPropagation(); fileInput2d.click(); });
+    fileInput2d.addEventListener('change', () => {
+      if (fileInput2d.files.length > 0) handle2DFiles(fileInput2d.files, partIdx);
+    });
+
+    uploadZone2d.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone2d.classList.add('drag-over'); });
+    uploadZone2d.addEventListener('dragleave', () => uploadZone2d.classList.remove('drag-over'));
+    uploadZone2d.addEventListener('drop', (e) => {
+      e.preventDefault(); uploadZone2d.classList.remove('drag-over');
+      if (e.dataTransfer.files.length > 0) handle2DFiles(e.dataTransfer.files, partIdx);
+    });
+
+    uploadZone2d.addEventListener('click', (e) => {
+      if (e.target === uploadZone2d || e.target.closest('.upload-icon') || e.target.closest('.upload-text')) fileInput2d.click();
+    });
+  }
+
   // Delegate file removal
   panel.querySelector('.upload-file-list')?.addEventListener('click', (e) => {
     const removeBtn = e.target.closest('.upload-file-item__remove');
@@ -418,6 +486,8 @@ function wirePartPanel(partIdx) {
       if (list && list.children.length === 0) {
         list.classList.add('hidden');
         panel.querySelector('.rfq-results')?.classList.add('hidden');
+        // Re-show placeholder when geometry is cleared
+        panel.querySelector('.rfq-results-placeholder')?.classList.remove('hidden');
         getPartState(partIdx).analysis = null;
         updateSubmitButtonState();
       }
@@ -445,6 +515,38 @@ function removeTab(partIdx) {
   document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`)?.remove();
   const remaining = document.querySelector('.rfq-tab');
   if (remaining) switchTab(parseInt(remaining.dataset.part));
+}
+/**
+ * Handle 2D / supporting document uploads.
+ * Shows file badges in the 2D upload zone file list.
+ */
+function handle2DFiles(fileList, partIdx) {
+  const files = Array.from(fileList);
+  const fileListEl = document.getElementById(`upload-file-list-2d-${partIdx}`);
+  if (!fileListEl) return;
+
+  fileListEl.classList.remove('hidden');
+  files.forEach(file => {
+    const item = document.createElement('div');
+    item.className = 'upload-file-item';
+    item.innerHTML = `
+      <span class="upload-file-item__name">📄 ${file.name}</span>
+      <span class="upload-file-item__size">${formatFileSize(file.size)}</span>
+      <button class="upload-file-item__remove" title="Remove">&times;</button>
+    `;
+    fileListEl.appendChild(item);
+
+    // Wire remove button
+    item.querySelector('.upload-file-item__remove')?.addEventListener('click', () => {
+      item.remove();
+      if (fileListEl.children.length === 0) fileListEl.classList.add('hidden');
+    });
+  });
+
+  // Track 2D files in part state
+  const state = getPartState(partIdx);
+  if (!state.files2d) state.files2d = [];
+  state.files2d.push(...files);
 }
 
 async function handleFiles(fileList, partIdx) {
@@ -494,6 +596,8 @@ async function handleFiles(fileList, partIdx) {
   );
 
   if (parseable) {
+    // Hide the placeholder, show the analysis results
+    panel.querySelector('.rfq-results-placeholder')?.classList.add('hidden');
     resultsEl?.classList.remove('hidden');
     if (statusEl) { statusEl.textContent = 'Analyzing...'; statusEl.classList.remove('done'); }
     panel.querySelectorAll('[data-stat]').forEach(el => el.textContent = '...');
