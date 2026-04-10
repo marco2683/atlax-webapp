@@ -395,7 +395,7 @@ function updateStackedResultsOnly(globe) {
 function switchView(view, globe) {
   // ZERO-TRUST AUTHORIZATION GUARD
   const sysTier = sessionStorage.getItem('atlasdt_tier') || 'basic';
-  const restrictedViews = ['suppliers', 'product-builder', 'tariff'];
+  const restrictedViews = ['suppliers', 'product-builder', 'tariff', 'taxonomy'];
   if (sysTier === 'basic' && restrictedViews.includes(view)) {
     console.warn(`[Auth] Blocked restricted view attempt: ${view} on ${sysTier} tier.`);
     return;
@@ -405,6 +405,7 @@ function switchView(view, globe) {
   const designersEngine = document.getElementById('designers-engine');
   const productBuilderEngine = document.getElementById('product-builder-engine');
   const tariffEngine = document.getElementById('tariff-engine');
+  const taxonomyEngine = document.getElementById('taxonomy-engine');
   const searchBar = document.getElementById('search-bar');
   const tagline = document.getElementById('search-tagline');
   const heroTitleContainer = document.querySelector('.hero__title-container');
@@ -425,6 +426,7 @@ function switchView(view, globe) {
   designersEngine?.classList.add('hidden');
   productBuilderEngine?.classList.add('hidden');
   tariffEngine?.classList.add('hidden');
+  taxonomyEngine?.classList.add('hidden');
   hero?.classList.remove('hidden');
   tabularEngine?.classList.add('hidden');
   selectionScreen?.classList.add('hidden');
@@ -503,6 +505,25 @@ function switchView(view, globe) {
     hero?.classList.add('hidden');
     bottomResults?.classList.add('hidden');
     tariffEngine?.classList.remove('hidden');
+
+  } else if (view === 'taxonomy') {
+    appState.searchType = 'taxonomy';
+    hero?.classList.add('hidden');
+    bottomResults?.classList.add('hidden');
+    taxonomyEngine?.classList.remove('hidden');
+
+    // Lazy-load the iframe
+    const iframe = document.getElementById('taxonomy-iframe');
+    if (iframe && !iframe.src.includes('visualizer')) {
+      iframe.src = '/visualizer/visualizer.html';
+    }
+
+    // Close button
+    document.getElementById('taxonomy-close')?.addEventListener('click', () => {
+      taxonomyEngine?.classList.add('hidden');
+      hero?.classList.remove('hidden');
+      switchView('suppliers', globe);
+    });
 
   } else if (view === 'suppliers') {
     appState.searchType = 'suppliers';

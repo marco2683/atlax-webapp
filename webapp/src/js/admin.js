@@ -195,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (t === 'rfqs')      { pageTitle.textContent = 'RFQ \u0026 Project Tracker';    renderRFQs(); }
         if (t === 'website')   { pageTitle.textContent = 'Website Content Manager';  renderWebsiteContent(); }
         if (t === 'staff')     { pageTitle.textContent = 'Staff Directory';  renderStaffTable(); }
+        if (t === 'taxonomy-images') { pageTitle.textContent = 'Taxonomy Image Curator'; renderTaxonomyImages(); }
       });
     });
   }
@@ -3137,6 +3138,365 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Failed to save staff member');
       }
     });
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  T A X O N O M Y   I M A G E   C U R A T O R
+  // ═══════════════════════════════════════════════════════════
+  const CURATOR_API = 'http://localhost:5050';
+  let curatorTaxonomy = [];
+  let curatorSearchOffset = 0;
+  let curatorSelectedTechId = '';
+
+  async function fetchCuratorTaxonomy() {
+    try {
+      const res = await fetch(`${CURATOR_API}/api/taxonomy`);
+      if (!res.ok) throw new Error('Curator API not reachable');
+      const data = await res.json();
+      curatorTaxonomy = data.technologies || [];
+    } catch (e) {
+      console.error('Curator API error:', e);
+      curatorTaxonomy = [];
+    }
+  }
+
+  function renderTaxonomyImages() {
+    fetchCuratorTaxonomy().then(() => {
+      const categories = [...new Set(curatorTaxonomy.map(t => t.category))].sort();
+
+      contentRouting.innerHTML = `
+        <div style="max-width:1200px;">
+          <p style="color:var(--color-steel-400); margin-bottom:24px;">
+            Select a technology from the taxonomy, generate candidate images via Serper API, and add the best ones to the taxonomy JSON.
+          </p>
+
+          <div style="display:flex; gap:16px; margin-bottom:32px; align-items:flex-end; flex-wrap:wrap;">
+            <div class="admin-field" style="flex:1; min-width:200px;">
+              <label>Category</label>
+              <select id="curator-category" class="admin-input-filter" style="width:100%;">
+                <option value="">Select Category…</option>
+                ${categories.map(c => `<option value="${c}">${c}</option>`).join('')}
+              </select>
+            </div>
+            <div class="admin-field" style="flex:2; min-width:250px;">
+              <label>Technology</label>
+              <select id="curator-tech" class="admin-input-filter" style="width:100%;" disabled>
+                <option value="">Select a category first…</option>
+              </select>
+            </div>
+            <div class="admin-field" style="flex:2; min-width:200px;">
+              <label>Extra Keywords <span class="hint">(optional — refine the search)</span></label>
+              <input type="text" id="curator-keywords" class="admin-input-filter" style="width:100%;" placeholder="e.g. macro photo, texture, CNC, factory floor…">
+            </div>
+            <div class="admin-field" style="min-width:160px;">
+              <label>Search Mode</label>
+              <select id="curator-mode" class="admin-input-filter" style="width:100%;">
+                <option value="product" selected>🎯 Product / Outcome</option>
+                <option value="process">⚙️ Process / Factory</option>
+              </select>
+            </div>
+            <div style="display:flex; gap:8px; padding-bottom: 8px;">
+              <button class="btn btn-primary" id="curator-generate" disabled>Generate Images</button>
+            </div>
+          </div>
+
+          <!-- Manual Add Section -->
+          <div style="display:flex; gap:16px; margin-bottom:32px; padding:20px; border:1px solid var(--color-slate-800); border-radius:var(--radius-md); background:var(--section-bg); flex-wrap:wrap; align-items:flex-end;">
+            <div class="admin-field" style="flex:2; min-width:300px;">
+              <label>📋 Paste Image URL</label>
+              <div style="display:flex; gap:8px;">
+                <input type="text" id="curator-manual-url" class="admin-input-filter" style="flex:1;" placeholder="https://example.com/image.jpg">
+                <button class="btn btn-secondary" id="curator-add-url" style="white-space:nowrap;">Add URL</button>
+              </div>
+            </div>
+            <div class="admin-field" style="flex:1; min-width:200px;">
+              <label>📁 Upload Image File</label>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <input type="file" id="curator-file-upload" accept="image/*" style="font-size:var(--text-sm); color:var(--color-steel-400);">
+                <button class="btn btn-secondary" id="curator-upload-btn" style="white-space:nowrap;">Upload</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="curator-current-images" style="margin-bottom:32px;"></div>
+
+          <div id="curator-results" style="margin-bottom:24px;"></div>
+
+          <div id="curator-more-wrap" style="display:none; text-align:center; margin-bottom:32px;">
+            <button class="btn btn-secondary" id="curator-more">Generate More</button>
+          </div>
+
+          <div id="curator-status" style="color:var(--color-steel-400); font-size:var(--text-sm);"></div>
+        </div>
+      `;
+
+      // Wire category → tech dropdown
+      document.getElementById('curator-category').addEventListener('change', (e) => {
+        const cat = e.target.value;
+        const techSelect = document.getElementById('curator-tech');
+        const generateBtn = document.getElementById('curator-generate');
+
+        if (!cat) {
+          techSelect.innerHTML = '<option value="">Select a category first…</option>';
+          techSelect.disabled = true;
+          generateBtn.disabled = true;
+          return;
+        }
+
+        const techs = curatorTaxonomy.filter(t => t.category === cat);
+        techSelect.innerHTML = '<option value="">Select Technology…</option>' +
+          techs.map(t => `<option value="${t.id}" data-name="${t.name}">${t.name} (${t.imageCount} images)</option>`).join('');
+        techSelect.disabled = false;
+      });
+
+      document.getElementById('curator-tech').addEventListener('change', (e) => {
+        const btn = document.getElementById('curator-generate');
+        curatorSelectedTechId = e.target.value;
+        btn.disabled = !curatorSelectedTechId;
+
+        // Show current images for this tech
+        if (curatorSelectedTechId) {
+          showCurrentImages(curatorSelectedTechId);
+        } else {
+          document.getElementById('curator-current-images').innerHTML = '';
+        }
+      });
+
+      document.getElementById('curator-generate').addEventListener('click', () => {
+        curatorSearchOffset = 0;
+        searchCuratorImages(false, true);  // not append, force refresh
+      });
+
+      document.getElementById('curator-more')?.addEventListener('click', () => {
+        curatorSearchOffset += 5;
+        searchCuratorImages(true, false);  // append, no refresh
+      });
+
+      // Manual URL paste
+      document.getElementById('curator-add-url')?.addEventListener('click', async () => {
+        const urlInput = document.getElementById('curator-manual-url');
+        const url = urlInput?.value?.trim();
+        if (!url) { alert('Please paste a URL first'); return; }
+        if (!curatorSelectedTechId) { alert('Please select a technology first'); return; }
+
+        const btn = document.getElementById('curator-add-url');
+        btn.textContent = 'Adding…';
+        btn.disabled = true;
+
+        try {
+          const res = await fetch(`${CURATOR_API}/api/add-image`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ techId: curatorSelectedTechId, imageUrl: url })
+          });
+          if (res.ok) {
+            urlInput.value = '';
+            showCurrentImages(curatorSelectedTechId);
+            fetchCuratorTaxonomy();
+            btn.textContent = '✓ Added!';
+            setTimeout(() => { btn.textContent = 'Add URL'; btn.disabled = false; }, 1500);
+          } else {
+            const err = await res.json();
+            alert(err.error || 'Failed to add URL');
+            btn.textContent = 'Add URL'; btn.disabled = false;
+          }
+        } catch(e) {
+          alert('Error: ' + e.message);
+          btn.textContent = 'Add URL'; btn.disabled = false;
+        }
+      });
+
+      // File upload to Supabase Storage
+      document.getElementById('curator-upload-btn')?.addEventListener('click', async () => {
+        const fileInput = document.getElementById('curator-file-upload');
+        const file = fileInput?.files?.[0];
+        if (!file) { alert('Please select a file first'); return; }
+        if (!curatorSelectedTechId) { alert('Please select a technology first'); return; }
+
+        const btn = document.getElementById('curator-upload-btn');
+        btn.textContent = 'Uploading…';
+        btn.disabled = true;
+
+        try {
+          // Upload to Supabase Storage
+          const ext = file.name.split('.').pop();
+          const fileName = `${curatorSelectedTechId}/${Date.now()}.${ext}`;
+          
+          const { data, error } = await supabase.storage
+            .from('taxonomy-images')
+            .upload(fileName, file, { cacheControl: '3600', upsert: false });
+
+          if (error) throw error;
+
+          // Get public URL
+          const { data: urlData } = supabase.storage
+            .from('taxonomy-images')
+            .getPublicUrl(fileName);
+
+          const publicUrl = urlData?.publicUrl;
+          if (!publicUrl) throw new Error('Could not get public URL');
+
+          // Add to taxonomy
+          const res = await fetch(`${CURATOR_API}/api/add-image`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ techId: curatorSelectedTechId, imageUrl: publicUrl })
+          });
+
+          if (res.ok) {
+            fileInput.value = '';
+            showCurrentImages(curatorSelectedTechId);
+            fetchCuratorTaxonomy();
+            btn.textContent = '✓ Uploaded!';
+            setTimeout(() => { btn.textContent = 'Upload'; btn.disabled = false; }, 1500);
+          } else {
+            throw new Error('Failed to add image to taxonomy');
+          }
+        } catch(e) {
+          alert('Upload failed: ' + e.message);
+          btn.textContent = 'Upload'; btn.disabled = false;
+        }
+      });
+    });
+  }
+
+  function showCurrentImages(techId) {
+    const tech = curatorTaxonomy.find(t => t.id === techId);
+    const container = document.getElementById('curator-current-images');
+    if (!tech) { container.innerHTML = ''; return; }
+
+    // Fetch full data to get actual image URLs
+    fetch(`${CURATOR_API}/api/taxonomy`).then(r => r.json()).then(() => {
+      // We need to read the full JSON for images — re-fetch from file
+      fetch('/src/data/taxonomy/master_taxonomy_enriched.json').then(r => r.json()).then(data => {
+        const fullTech = (data.technologies || []).find(t => t.id === techId);
+        if (!fullTech || !fullTech.images || fullTech.images.length === 0) {
+          container.innerHTML = `<div style="padding:16px; background:var(--section-bg); border:1px solid var(--color-slate-800); border-radius:var(--radius-md); color:var(--color-steel-400);">No images currently assigned to this technology.</div>`;
+          return;
+        }
+
+        container.innerHTML = `
+          <div style="margin-bottom:12px; font-size:var(--text-sm); font-weight:var(--weight-bold); color:var(--color-white); text-transform:uppercase; letter-spacing:1px;">
+            Current Images (${fullTech.images.length})
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:12px;">
+            ${fullTech.images.map(url => `
+              <div style="position:relative; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--color-slate-700); aspect-ratio:1;">
+                <img src="${url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://placehold.co/200x200/1e293b/94a3b8?text=Broken';">
+                <button class="curator-remove-img" data-url="${url}" style="position:absolute; top:4px; right:4px; background:rgba(239,68,68,0.9); color:white; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer; font-size:14px; line-height:1; display:flex; align-items:center; justify-content:center;" title="Remove">×</button>
+              </div>
+            `).join('')}
+          </div>
+        `;
+
+        container.querySelectorAll('.curator-remove-img').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            if (!confirm('Remove this image from the taxonomy?')) return;
+            btn.textContent = '…';
+            try {
+              const res = await fetch(`${CURATOR_API}/api/remove-image`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ techId: curatorSelectedTechId, imageUrl: btn.dataset.url })
+              });
+              if (res.ok) {
+                showCurrentImages(curatorSelectedTechId);
+                fetchCuratorTaxonomy(); // refresh counts
+              }
+            } catch (e) { alert('Failed: ' + e.message); }
+          });
+        });
+      });
+    });
+  }
+
+  async function searchCuratorImages(append = false, forceRefresh = false) {
+    const techSelect = document.getElementById('curator-tech');
+    const selectedOption = techSelect.options[techSelect.selectedIndex];
+    const techName = selectedOption?.dataset?.name || selectedOption?.textContent || '';
+    const extraKeywords = document.getElementById('curator-keywords')?.value || '';
+    const mode = document.getElementById('curator-mode')?.value || 'product';
+    const status = document.getElementById('curator-status');
+    const resultsDiv = document.getElementById('curator-results');
+    const moreWrap = document.getElementById('curator-more-wrap');
+
+    if (!append) resultsDiv.innerHTML = '';
+    const modeLabel = mode === 'product' ? '🎯 Product' : '⚙️ Process';
+    const searchLabel = extraKeywords ? `${modeLabel}: "${techName}" + "${extraKeywords}"` : `${modeLabel}: "${techName}"`;
+    status.textContent = forceRefresh ? `Fetching fresh results for ${searchLabel}…` : `Loading batch from ${searchLabel}…`;
+
+    try {
+      const res = await fetch(`${CURATOR_API}/api/search-images`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: techName, extraKeywords, offset: curatorSearchOffset, forceRefresh, mode })
+      });
+
+      if (!res.ok) throw new Error('API returned ' + res.status);
+      const data = await res.json();
+
+      if (!data.images || data.images.length === 0) {
+        status.textContent = `No more images available (showed ${curatorSearchOffset} of ${data.total || 0}). Try different keywords.`;
+        moreWrap.style.display = 'none';
+        return;
+      }
+
+      const shown = curatorSearchOffset + data.images.length;
+      status.textContent = `Showing ${shown} of ${data.total || '?'} results. Click "Add to Taxonomy" to save.`;
+      moreWrap.style.display = data.hasMore ? 'block' : 'none';
+
+      data.images.forEach(img => {
+        const card = document.createElement('div');
+        card.style.cssText = 'display:flex; gap:20px; padding:16px; background:var(--color-midnight); border:1px solid var(--color-slate-800); border-radius:var(--radius-md); margin-bottom:12px; align-items:center;';
+        card.innerHTML = `
+          <div style="width:200px; height:140px; flex-shrink:0; border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--color-slate-700); background:#000;">
+            <img src="${img.url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://placehold.co/200x140/1e293b/94a3b8?text=Error';">
+          </div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-weight:var(--weight-semibold); color:var(--color-white); margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${img.title || 'Untitled'}</div>
+            <div style="font-size:var(--text-xs); color:var(--color-steel-400); margin-bottom:4px;">${img.source || ''}</div>
+            <div style="font-size:var(--text-xs); color:var(--color-steel-500); margin-bottom:12px; word-break:break-all; max-height:40px; overflow:hidden;">${img.url}</div>
+            <div style="font-size:var(--text-xs); color:var(--color-steel-500);">${img.width || '?'}×${img.height || '?'}</div>
+          </div>
+          <button class="btn btn-primary curator-add-btn" data-url="${img.url}" style="flex-shrink:0; padding:10px 16px; font-size:var(--text-sm);">Add to Taxonomy</button>
+        `;
+        resultsDiv.appendChild(card);
+      });
+
+      // Wire add buttons
+      resultsDiv.querySelectorAll('.curator-add-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const url = btn.dataset.url;
+          btn.textContent = 'Adding…';
+          btn.disabled = true;
+
+          try {
+            const res = await fetch(`${CURATOR_API}/api/add-image`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ techId: curatorSelectedTechId, imageUrl: url })
+            });
+
+            if (res.ok) {
+              btn.textContent = '✓ Added';
+              btn.style.background = 'var(--color-emerald)';
+              showCurrentImages(curatorSelectedTechId);
+              fetchCuratorTaxonomy(); // refresh counts
+            } else {
+              const err = await res.json();
+              btn.textContent = err.error || 'Failed';
+              btn.disabled = false;
+            }
+          } catch (e) {
+            btn.textContent = 'Error';
+            btn.disabled = false;
+          }
+        });
+      });
+
+    } catch (e) {
+      status.textContent = `Error: ${e.message}. Is the Curator API running on localhost:5050?`;
+    }
   }
 
 });

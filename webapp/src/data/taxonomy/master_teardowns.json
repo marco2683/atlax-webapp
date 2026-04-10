@@ -1,0 +1,1691 @@
+{
+  "teardowns": [
+    {
+      "productName": "Apple iPhone 15 Pro",
+      "category": "Consumer Electronics",
+      "heroImageKeyword": "iphone 15 pro titanium",
+      "components": [
+        {
+          "name": "Chassis Band",
+          "material": "Grade 5 Titanium alloy",
+          "manufacturing": [
+            "CNC Machining",
+            "Solid State Diffusion Bonding"
+          ],
+          "finishes": [
+            "Brushed finish",
+            "PVD coating"
+          ],
+          "image": "https://cdn.shopify.com/s/files/1/1806/3989/files/iPhone-15-specs_2048x2048.jpg?v=1694544023"
+        },
+        {
+          "name": "Front Display Glass",
+          "material": "Ceramic Shield Glass",
+          "manufacturing": [
+            "Chemical Strengthening",
+            "Precision Grinding"
+          ],
+          "finishes": [
+            "Oleophobic coating"
+          ],
+          "image": "https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/refurb-iphone-15-pro-blacktitanium-202412?wid=1144&hei=1144&fmt=jpeg&qlt=90&.v=dkRYUzNIZktUUlpiYVJibmhmNTFOWHVNTFN5d3c0eUpkaGNHMEJlYUYvUXdSMmpDa2JYTzBSK2p1eEV0dUJJc1ZXdVNJbGxGODh2NXZCWDNadFJ0VUFYUldRZVYxMHFkRFZrQVZuaWMwSkRwSXpFcWpxYkZOUEV1bU9MUWRNemU"
+        },
+        {
+          "name": "Rear Glass Panel",
+          "material": "Borosilicate Glass",
+          "manufacturing": [
+            "Hot Press Forming",
+            "Ion Exchange"
+          ],
+          "finishes": [
+            "Matte etched texture"
+          ],
+          "image": "https://valkyrie.cdn.ifixit.com/media/2023/09/24125711/screen_combined_3.jpg"
+        },
+        {
+          "name": "Internal Chassis Substructure",
+          "material": "Recycled Aluminum 6061",
+          "manufacturing": [
+            "Die Casting",
+            "CNC Milling"
+          ],
+          "finishes": [
+            "Anodized"
+          ],
+          "image": "https://www.apple.com/newsroom/images/2023/09/apple-unveils-iphone-15-pro-and-iphone-15-pro-max/article/Apple-iPhone-15-Pro-lineup-hero-230912_Full-Bleed-Image.jpg.large.jpg"
+        },
+        {
+          "name": "Camera Lens Cover",
+          "material": "Synthetic Sapphire Crystal",
+          "manufacturing": [
+            "Diamond Lapping",
+            "Polishing"
+          ],
+          "finishes": [
+            "Anti-reflective coating"
+          ],
+          "image": "https://cdsassets.apple.com/live/7WUAS350/images/tech-specs/111828-iphone-15-pro-max-portimage-2.png"
+        },
+        {
+          "name": "Haptic Engine Housing",
+          "material": "Tungsten Alloy",
+          "manufacturing": [
+            "Metal Injection Molding"
+          ],
+          "finishes": [
+            "Passivation"
+          ],
+          "image": "https://tekdep.com/wp-content/uploads/imported/3/OEM-Vibrator-Taptic-Engine-Compatible-For-iPhone-15-Pro-Max-A2849-115931439233-scaled.jpg"
+        },
+        {
+          "name": "Logic Board PCB",
+          "material": "FR4 Fiberglass Laminate",
+          "manufacturing": [
+            "Photolithography",
+            "Laser Drilling"
+          ],
+          "finishes": [
+            "ENIG plating"
+          ],
+          "image": "https://ae01.alicdn.com/kf/S7217b9258d9640b0ac9119d97f0cf75aS.png"
+        },
+        {
+          "name": "Battery Cell Housing",
+          "material": "Aluminum foil laminate",
+          "manufacturing": [
+            "Heat Sealing",
+            "Vacuum Lamination"
+          ],
+          "finishes": [
+            "Polymer coating"
+          ],
+          "image": "https://valkyrie.cdn.ifixit.com/media/2023/09/24112731/battery_front.jpg"
+        }
+      ],
+      "images": [
+        "https://milaaj.ae/wp-content/uploads/2025/05/iphone-15-charging-port-repair.webp",
+        "https://s.yimg.com/ny/api/res/1.2/GsXIdeLK319NseIFIzIccA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTI0MDA7aD0xMzE4/https://s.yimg.com/os/creatr-uploaded-images/2024-02/7b409500-c5d5-11ee-b6ea-2cda50a36d47",
+        "https://i.ytimg.com/vi/h8NAmpA83nE/maxresdefault.jpg",
+        "https://ae01.alicdn.com/kf/Sb7c02d0e99884e8592d62edbedeb2ca37.png",
+        "https://preview.redd.it/key-chip-suppliers-for-apples-vision-pro-v0-72sl37a541zc1.png?width=640&crop=smart&auto=webp&s=8a1e1b699c4fc477594e17817eabcc8f0015922a"
+      ]
+    },
+    {
+      "productName": "Rolex Submariner",
+      "category": "Luxury Watch",
+      "heroImageKeyword": "rolex submariner oyster steel",
+      "components": [
+        {
+          "name": "Oyster Case",
+          "material": "904L Stainless Steel",
+          "manufacturing": [
+            "Cold Forging",
+            "CNC Machining"
+          ],
+          "finishes": [
+            "Polishing",
+            "Satin brushing"
+          ],
+          "image": "https://i.ebayimg.com/images/g/nhwAAOSwTlVeWLsX/s-l400.jpg"
+        },
+        {
+          "name": "Bezel Insert",
+          "material": "Cerachrom Ceramic",
+          "manufacturing": [
+            "High Temperature Sintering"
+          ],
+          "finishes": [
+            "PVD platinum deposition"
+          ],
+          "image": "https://i.ebayimg.com/images/g/7ekAAOSw7Wlk1RLx/s-l1200.png"
+        },
+        {
+          "name": "Watch Crystal",
+          "material": "Synthetic Sapphire",
+          "manufacturing": [
+            "Diamond grinding"
+          ],
+          "finishes": [
+            "Anti-reflective coating"
+          ],
+          "image": "https://www.bobswatches.com/rolex-blog/wp-content/uploads/2014/03/Features-of-the-Rolex-Submariner.jpg"
+        },
+        {
+          "name": "Dial",
+          "material": "Brass",
+          "manufacturing": [
+            "Stamping",
+            "Galvanic deposition"
+          ],
+          "finishes": [
+            "Lacquered"
+          ],
+          "image": "http://deboulle.com/cdn/shop/files/m126619lb-0003_drp-upright-bba-with-shadow.webp?v=1717535364"
+        },
+        {
+          "name": "Hands and Hour Markers",
+          "material": "18k Gold",
+          "manufacturing": [
+            "Die Stamping"
+          ],
+          "finishes": [
+            "Chromalight luminescent coating"
+          ],
+          "image": "http://deboulle.com/cdn/shop/files/m126619lb-0003_drp-upright-bba-with-shadow.webp?v=1717535364"
+        },
+        {
+          "name": "Bracelet Links",
+          "material": "904L Stainless Steel",
+          "manufacturing": [
+            "Machining",
+            "Micro-welding"
+          ],
+          "finishes": [
+            "Brushed finish"
+          ],
+          "image": "https://m.media-amazon.com/images/I/61ubl5VddyL._AC_UY1000_.jpg"
+        },
+        {
+          "name": "Movement Mainplate",
+          "material": "Brass",
+          "manufacturing": [
+            "CNC Milling"
+          ],
+          "finishes": [
+            "Rhodium plating"
+          ],
+          "image": "https://i.ebayimg.com/images/g/gPIAAOSw5epoDKRl/s-l400.png"
+        },
+        {
+          "name": "Hairspring",
+          "material": "Parachrom (Niobium-Zirconium alloy)",
+          "manufacturing": [
+            "Wire Drawing"
+          ],
+          "finishes": [
+            "Blue oxidation"
+          ],
+          "image": "https://www.bobswatches.com/rolex-blog/wp-content/uploads/2015/08/rolex-caliber-3135.jpg"
+        }
+      ],
+      "images": [
+        "https://accessglobal.media.clients.ellingtoncms.com/uploads/froala_editor/images/1767004349336.png",
+        "https://majestixcollection.com/wp-content/uploads/2025/12/Disassembled-Rolex-Deepsea-1-1024x576.jpg",
+        "http://diamondsbyraymondlee.com/cdn/shop/articles/where-to-repair-my-watch-scaled_d0eb8d7d-1474-4fa5-85e6-1b87e74e7ec1.jpg?v=1758043966",
+        "https://images.squarespace-cdn.com/content/v1/6408827eb3d36b718ad40c38/ac4f8174-73fa-453a-be83-a22b882d04b6/Ultimate+guide+to+rolex+watch+repair.png",
+        "https://i.redd.it/8dhhmocbbbh81.jpg"
+      ]
+    },
+    {
+      "productName": "Herman Miller Aeron Chair",
+      "category": "Office Furniture",
+      "heroImageKeyword": "herman miller aeron",
+      "components": [
+        {
+          "name": "Frame",
+          "material": "Die-cast Aluminum",
+          "manufacturing": [
+            "High-pressure Die Casting"
+          ],
+          "finishes": [
+            "Powder Coating"
+          ],
+          "image": "https://crandalloffice.com/cdn/shop/files/Crandall-Remanufactured-Herman-Miller-Aeron-Options-Adjustable-Arms.jpg?v=1730819307&width=1214"
+        },
+        {
+          "name": "Pellicle Suspension Mesh",
+          "material": "Elastomeric Polymer",
+          "manufacturing": [
+            "Weaving"
+          ],
+          "finishes": [
+            "UV Stabilization"
+          ],
+          "image": "https://m.media-amazon.com/images/I/71Qa44-4WPL._AC_UF894,1000_QL80_.jpg"
+        },
+        {
+          "name": "Base",
+          "material": "Die-cast Aluminum",
+          "manufacturing": [
+            "Die Casting"
+          ],
+          "finishes": [
+            "Polished"
+          ],
+          "image": "http://crandalloffice.com/cdn/shop/collections/Crandall-Parts-Aeron-Collection-1024x1024.jpg?crop=center&height=1200&v=1730818267&width=1200"
+        },
+        {
+          "name": "Armrest Pads",
+          "material": "Polyurethane Foam",
+          "manufacturing": [
+            "Reaction Injection Molding"
+          ],
+          "finishes": [
+            "Skin-textured molding"
+          ],
+          "image": "https://i.ebayimg.com/images/g/tiYAAeSwZKRokcIJ/s-l1200.jpg"
+        },
+        {
+          "name": "Casters",
+          "material": "Nylon",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Self-lubricating"
+          ],
+          "image": "https://cdn10.bigcommerce.com/s-iht7sjnk/products/397/images/773/S4482_Side_View_Set_of_5__89215.1435253765.1280.1280.jpg?c=2"
+        },
+        {
+          "name": "Tilt Mechanism Housing",
+          "material": "Steel",
+          "manufacturing": [
+            "Stamping"
+          ],
+          "finishes": [
+            "E-Coating"
+          ],
+          "image": "https://crandalloffice.com/cdn/shop/files/Crandall-Office-Aeron-Chair-Parts-3-Paddle-Kit-0002.jpg?v=1728054468&width=2048"
+        },
+        {
+          "name": "Tension Knob",
+          "material": "ABS Plastic",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Matte texturing"
+          ],
+          "image": "https://i.ebayimg.com/images/g/OqoAAOSwY~NdG9fd/s-l1200.jpg"
+        },
+        {
+          "name": "Fasteners",
+          "material": "Zinc Plated Steel",
+          "manufacturing": [
+            "Cold Heading"
+          ],
+          "finishes": [
+            "Passivation"
+          ],
+          "image": "http://crandalloffice.com/cdn/shop/collections/Crandall-Parts-Aeron-Collection-1024x1024.jpg?crop=center&height=1200&v=1730818267&width=1200"
+        }
+      ],
+      "images": [
+        "https://nulifechairs.com/wp-content/uploads/2025/09/How-to-Disassemble-Herman-Miller-Aeron-Without-Damaging-It-1024x576.jpg",
+        "https://nulifechairs.com/wp-content/uploads/2025/09/Step-3.-Take-off-the-armrests.png",
+        "https://nulifechairs.com/wp-content/uploads/2025/09/Step-2.-Take-off-the-backrest.jpg",
+        "https://nulifechairs.com/wp-content/uploads/2025/09/Step-1.-Remove-the-Seat.png",
+        "https://www.officelogixshop.com/cdn/shop/articles/how-to-identify-a-fake-herman-miller-aeron-chair-8394379.jpg?v=1772924419&width=1600"
+      ]
+    },
+    {
+      "productName": "Tesla Model S Alloy Wheel",
+      "category": "Automotive Hardware",
+      "heroImageKeyword": "tesla model s tempest wheel",
+      "components": [
+        {
+          "name": "Wheel Hub",
+          "material": "A356 Aluminum Alloy",
+          "manufacturing": [
+            "Low Pressure Casting"
+          ],
+          "finishes": [
+            "Anodized"
+          ],
+          "image": "https://service.tesla.com/docs/ModelS/ServiceManual/Palladium/en-us/GUID-1D4803E8-4267-4373-B73B-1784C084C84C-online-en-US.jpg"
+        },
+        {
+          "name": "Rim Barrel",
+          "material": "6061 Aluminum",
+          "manufacturing": [
+            "Flow Forming"
+          ],
+          "finishes": [
+            "Powder Coating"
+          ],
+          "image": "https://cdn.shopify.com/s/files/1/0752/7664/8768/files/aly95238u35_1_2_2d7bc0f9-12ea-4c20-b615-5bb9481b42cb.jpg?v=1692774992&width=547"
+        },
+        {
+          "name": "Center Cap",
+          "material": "Polycarbonate",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Vacuum Metallization"
+          ],
+          "image": "https://i.ebayimg.com/00/s/MTUwMFgxNTAw/z/m6cAAOSwEgFm0aGJ/$_10.JPG?set_id=880000500F"
+        },
+        {
+          "name": "Valve Stem",
+          "material": "Rubber and Brass",
+          "manufacturing": [
+            "Overmolding"
+          ],
+          "finishes": [
+            "EPMD coating"
+          ],
+          "image": "https://service.tesla.com/docs/ModelY/ServiceManual/2025/en-us/GUID-196895C7-A863-4115-A2AB-EBD54F96604F-online-en-US.jpg"
+        },
+        {
+          "name": "Lug Nut Seats",
+          "material": "Heat Treated Steel",
+          "manufacturing": [
+            "CNC Machining"
+          ],
+          "finishes": [
+            "Zinc Phosphate"
+          ],
+          "image": "https://i.ebayimg.com/images/g/~SMAAOSwi1lnPSvH/s-l400.jpg"
+        },
+        {
+          "name": "Aero Insert",
+          "material": "Polypropylene",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Matte paint"
+          ],
+          "image": "https://www.greendrive-accessories.com/10802-large_default/set-of-4-rims-the-new-aero-the-razor-19-or-21-for-tesla-model-s.jpg"
+        }
+      ],
+      "images": [
+        "https://cleantechnica.com/files/2021/08/Tesla-Model-S-Plaid-teardown-for-Blake-Fuller-race-car-CleanTechnica-19.jpeg",
+        "https://www.visualcapitalist.com/wp-content/uploads/2016/03/tesla-model-s-share.jpg",
+        "https://external-preview.redd.it/tesla-model-3-teardown-deconstructed-3-motor-trend-v0-s-nYAZ5HMWrMecdwytiFHTN9rQkhiiKOeE7rd6NpdTo.jpg?auto=webp&s=179faaf8b7cdf5b9784a14b6b792e4a7e9944463",
+        "https://i.ytimg.com/vi/Pzq779IVO_8/sddefault.jpg",
+        "https://leandesign.com/wp-content/uploads/2025/04/VW-vs-Tesla.webp"
+      ]
+    },
+    {
+      "productName": "DJI Mavic 3 Drone",
+      "category": "UAV Hardware",
+      "heroImageKeyword": "dji mavic 3 drone",
+      "components": [
+        {
+          "name": "Main Chassis",
+          "material": "Polycarbonate/ABS Blend",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "UV-resistant paint"
+          ],
+          "image": "https://volatusdrones.com/cdn/shop/articles/introducing-the-dji-mavic-3-enterprise-series-649237_800x.jpg?v=1681404934"
+        },
+        {
+          "name": "Propeller Blades",
+          "material": "Carbon Fiber Reinforced Polymer",
+          "manufacturing": [
+            "Compression Molding"
+          ],
+          "finishes": [
+            "Gloss clear coat"
+          ],
+          "image": "http://www.dslrpros.com/cdn/shop/files/ZtpOoCw2mneMJE1un2EU-iJBWyxPF6oxUoCD4tiUSM.jpg?v=1757070573"
+        },
+        {
+          "name": "Gimbal Camera Housing",
+          "material": "Magnesium Alloy",
+          "manufacturing": [
+            "Thixomolding"
+          ],
+          "finishes": [
+            "Anodized"
+          ],
+          "image": "https://i.ebayimg.com/images/g/bCAAAOSw08pntF4e/s-l1200.jpg"
+        },
+        {
+          "name": "Motor Stators",
+          "material": "Electrical Steel",
+          "manufacturing": [
+            "Lamination Stamping"
+          ],
+          "finishes": [
+            "Epoxy Insulation"
+          ],
+          "image": "https://i.ebayimg.com/images/g/wmsAAOSwlnhk00ZB/s-l400.png"
+        },
+        {
+          "name": "Landing Gear",
+          "material": "Impact-modified Nylon",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Matte texturing"
+          ],
+          "image": "https://m.media-amazon.com/images/I/61qwbVfckSL._AC_UF894,1000_QL80_.jpg"
+        },
+        {
+          "name": "Obstacle Sensing Lens",
+          "material": "PMMA (Acrylic)",
+          "manufacturing": [
+            "Optical Injection Molding"
+          ],
+          "finishes": [
+            "Anti-scratch coating"
+          ],
+          "image": "https://shop.quadrocopter.com/assets/images/05dcf9d62bffe45e38f82391e9a9e012origin.jpg"
+        },
+        {
+          "name": "Battery Enclosure",
+          "material": "Flame Retardant ABS",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Laser etching"
+          ],
+          "image": "https://i.ebayimg.com/images/g/~mIAAOSw9FtlXcEx/s-l400.jpg"
+        },
+        {
+          "name": "Internal Heat Sink",
+          "material": "Aluminum 1050",
+          "manufacturing": [
+            "Extrusion"
+          ],
+          "finishes": [
+            "Black anodization"
+          ],
+          "image": "https://www.dominiondrones.com/cdn/shop/products/dji-mavic-3-thermal-enterprise-with-care-basic-warranty-djim3tbasic-dji-90d_2048x2048.jpg?v=1667255192"
+        }
+      ],
+      "images": [
+        "https://discoveryalert.com.au/wp-content/uploads/2026/03/9c636b02-c14f-46ee-938d-f028198c4210-1024x572.jpg",
+        "http://www.dslrpros.com/cdn/shop/articles/Header_DJI_Dock_2_vs_Dock_3_30654edb-aade-41d8-aaa2-c79d05578d54.webp?v=1749597591",
+        "https://cdn.shopify.com/s/files/1/0699/2769/8662/files/Infographic_DJI_Dock_2_vs_Dock_3.webp?v=1748860027",
+        "https://www.agisoftmetashape.com/wp-content/uploads/2025/07/Photogrammetry-vs-Laser-Scanning.png",
+        "https://i.ytimg.com/vi/cmx3cASb0b0/sddefault.jpg"
+      ]
+    },
+    {
+      "productName": "Dyson V15 Vacuum",
+      "category": "Home Appliance",
+      "heroImageKeyword": "dyson v15 detect",
+      "components": [
+        {
+          "name": "Cyclone Shroud",
+          "material": "Polycarbonate",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "High-gloss polishing"
+          ],
+          "image": "https://m.media-amazon.com/images/I/51kfcXUXA3L._AC_UF894,1000_QL80_.jpg"
+        },
+        {
+          "name": "Bin Canister",
+          "material": "Clear Polycarbonate",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Anti-static coating"
+          ],
+          "image": "https://i.ebayimg.com/images/g/ObYAAOSwUkxnu4fe/s-l400.jpg"
+        },
+        {
+          "name": "Wand Tube",
+          "material": "Aluminum 6061",
+          "manufacturing": [
+            "Tube Drawing"
+          ],
+          "finishes": [
+            "Anodized color"
+          ],
+          "image": "https://i.ebayimg.com/images/g/w-YAAOSwJy5gHBfw/s-l400.jpg"
+        },
+        {
+          "name": "Motor Housing",
+          "material": "Glass-filled Nylon",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Textured finish"
+          ],
+          "image": "https://i.ebayimg.com/images/g/LjUAAOSwhWRmCb5t/s-l400.jpg"
+        },
+        {
+          "name": "HEPA Filter Media",
+          "material": "PTFE/Glass Fiber Composite",
+          "manufacturing": [
+            "Pleating"
+          ],
+          "finishes": [
+            "Thermal welding"
+          ],
+          "image": "https://m.media-amazon.com/images/I/717FYVGwkBL._AC_UF894,1000_QL80_.jpg"
+        },
+        {
+          "name": "Brush Roll Bristles",
+          "material": "Nylon Filament",
+          "manufacturing": [
+            "Tufting"
+          ],
+          "finishes": [
+            "Heat treatment"
+          ],
+          "image": "https://m.media-amazon.com/images/I/61AeNl-BurL.jpg"
+        },
+        {
+          "name": "LCD Interface Panel",
+          "material": "PMMA",
+          "manufacturing": [
+            "Insert Molding"
+          ],
+          "finishes": [
+            "Hard-coat"
+          ],
+          "image": "https://i.ebayimg.com/images/g/G3AAAOSwLW1m5SW9/s-l400.png"
+        },
+        {
+          "name": "Sealing Gaskets",
+          "material": "Silicone Rubber",
+          "manufacturing": [
+            "Compression Molding"
+          ],
+          "finishes": [
+            "Surface treatment"
+          ],
+          "image": "https://m.media-amazon.com/images/I/61GqMyxsJ7L._AC_UF894,1000_QL80_.jpg"
+        }
+      ],
+      "images": [
+        "https://preview.redd.it/can-i-replace-the-cells-in-my-dyson-stick-vac-v0-3k0p31uu945g1.jpeg?auto=webp&s=001604947357b7c5eda08848643a559f8851eda4",
+        "https://i.ytimg.com/vi/dKhp0gJE5Tc/sddefault.jpg",
+        "https://mobileimages.lowes.com/productimages/2476f8d1-440d-431a-9392-f892879a4d0b/75498899.jpeg?size=pdhism",
+        "https://www.techwalls.com/wp-content/uploads/2021/04/dyson-v15-7.jpeg",
+        "https://mobileimages.lowes.com/productimages/c717911e-b964-4f20-8a14-d708793c0d1b/75499960.jpeg?size=pdhism"
+      ]
+    },
+    {
+      "productName": "Leica M11 Camera",
+      "category": "Optics",
+      "heroImageKeyword": "leica m11 silver chrome",
+      "components": [
+        {
+          "name": "Top and Bottom Plates",
+          "material": "Brass",
+          "manufacturing": [
+            "Stamping",
+            "CNC Machining"
+          ],
+          "finishes": [
+            "Chrome Plating"
+          ],
+          "image": "https://cdn11.bigcommerce.com/s-7e68x4oyjl/images/stencil/2500x2500/products/3786/2679/Leica-M11-L-Plate-plus-Grip.main-05__92464.1683745636.png?c=1"
+        },
+        {
+          "name": "Chassis Skeleton",
+          "material": "Magnesium Alloy",
+          "manufacturing": [
+            "Die Casting"
+          ],
+          "finishes": [
+            "Black E-coating"
+          ],
+          "image": "https://www.reddotforum.com/wp-content/uploads/2022/01/Leica_M11_HF_Ambient20.jpg"
+        },
+        {
+          "name": "Leatherette Grip",
+          "material": "Vulcanized Cowhide",
+          "manufacturing": [
+            "Embossing"
+          ],
+          "finishes": [
+            "Polyurethane seal"
+          ],
+          "image": "https://cdn11.bigcommerce.com/s-r16b86mn51/images/stencil/1280x1280/products/10229/30222/20220_M11-D_black_front_1920px__42815.1724362018.jpg?c=2"
+        },
+        {
+          "name": "Shutter Curtain",
+          "material": "Carbon Fiber/Kevlar weave",
+          "manufacturing": [
+            "Precision cutting"
+          ],
+          "finishes": [
+            "Teflon coating"
+          ],
+          "image": "https://www.reddotforum.com/wp-content/uploads/2022/01/Leica_M11_HF_Ambient20.jpg"
+        },
+        {
+          "name": "Rangefinder Window",
+          "material": "Optical Glass",
+          "manufacturing": [
+            "Diamond Polishing"
+          ],
+          "finishes": [
+            "Multi-layer anti-reflective"
+          ],
+          "image": "https://thepixelconnection.com/cdn/shop/products/lei-20201-3_1000x.jpg?v=1691215590"
+        },
+        {
+          "name": "Control Dials",
+          "material": "Aluminum",
+          "manufacturing": [
+            "CNC Turning"
+          ],
+          "finishes": [
+            "Knurling",
+            "Anodized"
+          ],
+          "image": "https://robertscamera.com/media/catalog/product/cache/c7ca3a2f3d47b24c1115dfc5475f94df/2/0/20208_leica_m11_monochrom_front_lores_rgb.jpg"
+        },
+        {
+          "name": "Mount Flange",
+          "material": "Stainless Steel",
+          "manufacturing": [
+            "CNC Milling"
+          ],
+          "finishes": [
+            "Nickel Plating"
+          ],
+          "image": "https://www.reddotforum.com/wp-content/uploads/2022/01/Leica_M11_HF_Ambient20.jpg"
+        },
+        {
+          "name": "Internal Electronics Cover",
+          "material": "Polycarbonate",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Conductive paint"
+          ],
+          "image": "https://cdn11.bigcommerce.com/s-r16b86mn51/images/stencil/1280x1280/products/10229/30222/20220_M11-D_black_front_1920px__42815.1724362018.jpg?c=2"
+        }
+      ],
+      "images": [
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhYSY5AlyLNx0rTnenbFISqqL4uwInismSa3JO3eWcLEkiITCocA9Gv9MP2h126PaKkWJyQvt2Brdvc5ZGnHgGpIdtEDs6mCBK-yoZEpGp7_nh37xhL5BTkD0vcoZZO89H6SS8Z3ZuaXSEl_9sPBhFqZjo77KmWWHRJpqdyn40LDdaYiLI6YhoL-Qc61hs/s1024/Leica_m11_vs_m2_Markus_Hofstaetter_mhaustria.com_1.jpg",
+        "https://leica-camera.com/sites/default/files/styles/r_medium_media_3_2_desktop/public/2025-04/Leica_M11-P_safari_2_3840x2560.jpg.webp?itok=fWwFTInP",
+        "https://leica-camera.com/sites/default/files/styles/r_medium_media_3_2_desktop/public/2025-04/Leica_M11-P_safari_1_3840x2560.jpg.webp?itok=TFgD9qZt",
+        "https://admin.ylcamera.com.my/uploads/ckupload/ckupload_20250512041548_65.jpg",
+        "https://i.ytimg.com/vi/fiExC13dwC8/maxresdefault.jpg"
+      ]
+    },
+    {
+      "productName": "Sony PlayStation 5",
+      "category": "Gaming Console",
+      "heroImageKeyword": "ps5 console",
+      "components": [
+        {
+          "name": "Face Plates",
+          "material": "ABS Plastic",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Matte painting"
+          ],
+          "image": "https://cdn.mos.cms.futurecdn.net/P3B2dWSdtne8oTmmMn452W.jpg"
+        },
+        {
+          "name": "Internal Cooling Fan",
+          "material": "Glass-filled Polypropylene",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Balanced dynamic finish"
+          ],
+          "image": "https://kasynparts.com/wp-content/uploads/3-3.jpg"
+        },
+        {
+          "name": "Heatsink",
+          "material": "Copper and Aluminum",
+          "manufacturing": [
+            "Extrusion",
+            "Brazing"
+          ],
+          "finishes": [
+            "Nickel plating"
+          ],
+          "image": "https://images.squarespace-cdn.com/content/v1/531442ffe4b03cbb511321a9/dc96994c-9e5b-4098-a70b-37aa27ac812f/ps5+1215+backplate+fasttechstore.com+1+%284%29.png?format=1000w"
+        },
+        {
+          "name": "EMI Shielding",
+          "material": "Galvanized Steel",
+          "manufacturing": [
+            "Stamping"
+          ],
+          "finishes": [
+            "Zinc Passivation"
+          ],
+          "image": "https://i.redd.it/ssx22rkajx1e1.jpeg"
+        },
+        {
+          "name": "Motherboard",
+          "material": "FR4 Laminate",
+          "manufacturing": [
+            "Surface Mount Technology"
+          ],
+          "finishes": [
+            "Solder mask"
+          ],
+          "image": "https://kasynparts.com/wp-content/uploads/02-68.jpg"
+        },
+        {
+          "name": "Internal Frame",
+          "material": "Polycarbonate",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Textured mold"
+          ],
+          "image": "https://valkyrie.cdn.ifixit.com/media/2020/11/12195214/PS5_blog_board_size_2-scaled.jpg"
+        },
+        {
+          "name": "Power Supply Housing",
+          "material": "Phenolic Resin",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Flame-retardant coating"
+          ],
+          "image": "https://i.ebayimg.com/images/g/7FkAAOSwo5NoUIV~/s-l400.jpg"
+        },
+        {
+          "name": "External Interface Port",
+          "material": "Stainless Steel",
+          "manufacturing": [
+            "Stamping"
+          ],
+          "finishes": [
+            "Chrome plating"
+          ],
+          "image": "https://ae01.alicdn.com/kf/S2503e5eca82847049ec1e3b577409724l.jpg"
+        }
+      ],
+      "images": [
+        "https://external-preview.redd.it/playstation-5-pro-teardown-an-inside-look-at-the-most-v0-SH8irwsN99ivyuwyV1U0A2wjK9ul4TLnCTgqauPSGRg.jpg?width=640&crop=smart&auto=webp&s=fea52182663ddf48c9110177fb6f7864db19ade8",
+        "https://valkyrie.cdn.ifixit.com/media/2024/11/15114603/5Pro-vs-5Slim-heatsink_3x1-2701x900.jpg",
+        "https://i.ytimg.com/vi/Nl2HJA8KZAg/maxresdefault.jpg",
+        "https://blog-uploads.eneba.games/uploads/2025/04/ps5-muddaburd-1024x512.jpg",
+        "https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/24001582/RxIiQhY.jpeg?quality=90&strip=all&crop=7.780212899186,0,84.439574201628,100"
+      ]
+    },
+    {
+      "productName": "Bose QuietComfort Ultra",
+      "category": "Audio Hardware",
+      "heroImageKeyword": "bose qc ultra",
+      "components": [
+        {
+          "name": "Headband Core",
+          "material": "Spring Steel",
+          "manufacturing": [
+            "Stamping"
+          ],
+          "finishes": [
+            "Powder Coating"
+          ],
+          "image": "https://m.media-amazon.com/images/I/51-tmH4pZQL._AC_UF894,1000_QL80_.jpg"
+        },
+        {
+          "name": "Ear Cup Outer Shell",
+          "material": "Impact-resistant ABS",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Soft-touch paint"
+          ],
+          "image": "https://m.media-amazon.com/images/I/71V5HVDZfdL._AC_UF894,1000_QL80_.jpg"
+        },
+        {
+          "name": "Ear Cushions",
+          "material": "Synthetic Protein Leather",
+          "manufacturing": [
+            "Sonic Welding"
+          ],
+          "finishes": [
+            "Perforated"
+          ],
+          "image": "https://m.media-amazon.com/images/I/71zT0QDTpDL._AC_UF894,1000_QL80_.jpg"
+        },
+        {
+          "name": "Internal Driver Diaphragm",
+          "material": "PET Film",
+          "manufacturing": [
+            "Vacuum Forming"
+          ],
+          "finishes": [
+            "Vapor deposition"
+          ],
+          "image": "https://m.media-amazon.com/images/I/51Y-9iLkCCL.jpg"
+        },
+        {
+          "name": "Microphone Mesh",
+          "material": "Stainless Steel",
+          "manufacturing": [
+            "Photo-etching"
+          ],
+          "finishes": [
+            "Electro-polishing"
+          ],
+          "image": "https://m.media-amazon.com/images/I/51ZR4lyxBHL._AC_UF894,1000_QL80_.jpg"
+        },
+        {
+          "name": "Hinge Mechanism",
+          "material": "Glass-filled Nylon",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Matte"
+          ],
+          "image": "https://ae01.alicdn.com/kf/Sbcd42da6164b452aaae116ce3d2c616dH.jpg"
+        },
+        {
+          "name": "Battery Cell",
+          "material": "Lithium Polymer",
+          "manufacturing": [
+            "Lamination"
+          ],
+          "finishes": [
+            "Foil packaging"
+          ],
+          "image": "https://productimages.microcenter.com/671905_619023_01_front_comping.jpg"
+        }
+      ],
+      "images": [
+        "https://preview.redd.it/bose-quietcomfort-wifi-interference-issues-constant-v0-ie987zrdcpne1.jpeg?width=1241&format=pjpg&auto=webp&s=d26f6f29595a6f148440aa0956634ef4d5074ce1",
+        "https://ae01.alicdn.com/kf/Sbcd42da6164b452aaae116ce3d2c616dH.jpg",
+        "https://i.redd.it/zjzlih2y8pne1.jpeg",
+        "https://cdn.shopify.com/s/files/1/0742/0683/9100/files/Cross-sectional_diagram_showing_the_internal_components_of_heavy_audiophile_headphones_including_planar_magnetic_drivers_and_premium_build_materials.jpg?v=1763012451",
+        "https://preview.redd.it/the-right-speaker-is-dead-on-my-bose-nc700-v0-toqxn40n4xu71.jpg?width=1512&format=pjpg&auto=webp&s=db3aef09abbc0b6172c8cef523084801cffe8f13"
+      ]
+    },
+    {
+      "productName": "Zippo Lighter",
+      "category": "Classic EDC",
+      "heroImageKeyword": "zippo brass lighter",
+      "components": [
+        {
+          "name": "Outer Case",
+          "material": "Brass",
+          "manufacturing": [
+            "Deep Drawing"
+          ],
+          "finishes": [
+            "Brushed chrome"
+          ],
+          "image": "https://images.thdstatic.com/productImages/512f397e-fb45-4451-8c3a-ad4c02ec1753/svn/other-replacement-parts-65701-4f_600.jpg"
+        },
+        {
+          "name": "Chimney",
+          "material": "Steel",
+          "manufacturing": [
+            "Stamping"
+          ],
+          "finishes": [
+            "Nickel plating"
+          ],
+          "image": "https://cdn11.bigcommerce.com/s-quixg7v8hm/images/stencil/1280x1280/products/12471/38079/ZIP-150-BLKICE-003__13796.1729171497.jpg?c=1"
+        },
+        {
+          "name": "Flint Wheel",
+          "material": "Case-hardened Steel",
+          "manufacturing": [
+            "Knurling",
+            "Heat Treatment"
+          ],
+          "finishes": [
+            "Hardening"
+          ],
+          "image": "https://m.media-amazon.com/images/I/619P0JjvShL.jpg"
+        },
+        {
+          "name": "Insert Cam",
+          "material": "Stainless Steel",
+          "manufacturing": [
+            "Stamping"
+          ],
+          "finishes": [
+            "Polished"
+          ],
+          "image": "https://i.ebayimg.com/images/g/3a0AAOSwDD1ls-ZN/s-l1200.jpg"
+        },
+        {
+          "name": "Wick",
+          "material": "Cotton with Copper thread",
+          "manufacturing": [
+            "Braiding"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "http://zippo.com/cdn/shop/files/wg6zusyjgrmhkh7yxb9r_f61ce6e7-e7be-4cfc-a8c3-346f1971fa3d.jpg?v=1742319603"
+        },
+        {
+          "name": "Cotton Packing",
+          "material": "Rayon",
+          "manufacturing": [
+            "Carding"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "https://i.ebayimg.com/images/g/vyIAAOSwv7VnYR23/s-l400.jpg"
+        },
+        {
+          "name": "Hinge Pin",
+          "material": "Steel",
+          "manufacturing": [
+            "Wire cutting"
+          ],
+          "finishes": [
+            "Zinc plating"
+          ],
+          "image": "https://m.media-amazon.com/images/I/61XgcGDva4L.jpg"
+        }
+      ],
+      "images": [
+        "https://external-preview.redd.it/playstation-5-pro-teardown-an-inside-look-at-the-most-v0-SH8irwsN99ivyuwyV1U0A2wjK9ul4TLnCTgqauPSGRg.jpg?auto=webp&s=76a923f92f4bc48c5e1315af0964352523f2bee9",
+        "https://ae01.alicdn.com/kf/S38e3cd36f804423e88091dfbd1c4ae9ah.jpg_960x960.jpg",
+        "https://www.quietude.com.au/wp-content/uploads/2026/04/the-secret-inside-apples-affordable-macbook-neo-a-shocking-teardown-reveals-the-truth.jpg",
+        "https://image.pushauction.com/0/0/c8532c9d-d0c5-4469-be0d-2a8d49d4b030/fc8128f9-bf5c-4498-94f8-e453a4e1bda9.jpg",
+        "https://ae01.alicdn.com/kf/S7a38ae98996e4a64b817a25eb57a119d0.jpg"
+      ]
+    },
+    {
+      "productName": "Stanley Quencher Tumbler",
+      "category": "Drinkware",
+      "heroImageKeyword": "stanley quencher",
+      "components": [
+        {
+          "name": "Inner Wall",
+          "material": "18/8 Stainless Steel",
+          "manufacturing": [
+            "Deep Drawing"
+          ],
+          "finishes": [
+            "Electropolished"
+          ],
+          "image": "http://www.mycoastalace.com/cdn/shop/files/8091745_A.eps_High_1.jpg?v=1721743078"
+        },
+        {
+          "name": "Outer Wall",
+          "material": "18/8 Stainless Steel",
+          "manufacturing": [
+            "Deep Drawing"
+          ],
+          "finishes": [
+            "Powder Coating"
+          ],
+          "image": "http://www.mycoastalace.com/cdn/shop/files/8091745_A.eps_High_1.jpg?v=1721743078"
+        },
+        {
+          "name": "Lid",
+          "material": "BPA-free Tritan",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "https://m.media-amazon.com/images/I/71i4z81WpmL._AC_UF894,1000_QL80_.jpg"
+        },
+        {
+          "name": "Straw",
+          "material": "Polypropylene",
+          "manufacturing": [
+            "Extrusion"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "http://www.macrobaby.com/cdn/shop/files/stanley-quencher-h2-0-tumbler-with-handle-and-straw-40-oz-black-chrome_image_1.jpg?v=1767118410"
+        },
+        {
+          "name": "Vacuum Seal Gasket",
+          "material": "Silicone",
+          "manufacturing": [
+            "Compression Molding"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "https://cdn-tp6.mozu.com/24645-37138/cms/37138/files/e76e8f47-0719-418d-b349-adeaa8bdb9f2?quality=60&_mzcb=_1775493258237"
+        },
+        {
+          "name": "Handle",
+          "material": "Polypropylene with Overmold",
+          "manufacturing": [
+            "Overmolding"
+          ],
+          "finishes": [
+            "Soft-touch"
+          ],
+          "image": "https://www.mycoastalace.com/cdn/shop/files/8128685_A.eps_High_1_1024x.jpg?v=1763416479"
+        }
+      ],
+      "images": [
+        "https://i.ebayimg.com/images/g/8DcAAOSwPaplsJus/s-l1200.jpg",
+        "https://mobileimages.lowes.com/productimages/a621700f-fa74-40a6-ac08-ab4f18b89a4b/66573312.png",
+        "https://mobileimages.lowes.com/productimages/407572fb-16c3-464d-a75f-0d2fdc0b278d/66591806.png",
+        "https://i.ebayimg.com/images/g/DgcAAOSw7ChlkaLj/s-l1200.jpg",
+        "https://i.ebayimg.com/images/g/qB4AAOSwUE5mSBlT/s-l1200.jpg"
+      ]
+    },
+    {
+      "productName": "Lamy 2000 Fountain Pen",
+      "category": "Stationery",
+      "heroImageKeyword": "lamy 2000",
+      "components": [
+        {
+          "name": "Barrel",
+          "material": "Makrolon (Polycarbonate)",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Brushed texture"
+          ],
+          "image": "https://makoba.com/cdn/shop/files/Lamy2000FountainPen-Black_image3_720x.jpg?v=1734691638"
+        },
+        {
+          "name": "Nib",
+          "material": "14k Gold",
+          "manufacturing": [
+            "Stamping",
+            "Grinding"
+          ],
+          "finishes": [
+            "Platinum plating"
+          ],
+          "image": "https://i.ebayimg.com/images/g/TGgAAOSw~kRmAup-/s-l400.jpg"
+        },
+        {
+          "name": "Cap Clip",
+          "material": "Stainless Steel",
+          "manufacturing": [
+            "Stamping"
+          ],
+          "finishes": [
+            "Brushed finish"
+          ],
+          "image": "https://i.ebayimg.com/images/g/0FsAAOSwG~VhMG15/s-l1200.jpg"
+        },
+        {
+          "name": "Piston Mechanism",
+          "material": "Brass and POM",
+          "manufacturing": [
+            "Machining",
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Lubricated"
+          ],
+          "image": "http://endlesspens.com/cdn/shop/files/LAMY-Fountain-Pen-2000-Black-Makrolon-2_1024x.jpg?v=1743630441"
+        },
+        {
+          "name": "Feed",
+          "material": "Ebonite",
+          "manufacturing": [
+            "Precision Machining"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "https://i.ebayimg.com/images/g/nKIAAOSwm21ksYeb/s-l400.jpg"
+        }
+      ],
+      "images": [
+        "https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=10219839027966466",
+        "https://i.ebayimg.com/images/g/9uoAAOSwn7xnm~W2/s-l1200.jpg",
+        "https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=10219839029486504",
+        "https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=10164532831835820",
+        "https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=1173695904751739"
+      ]
+    },
+    {
+      "productName": "Nintendo Switch OLED",
+      "category": "Gaming Console",
+      "heroImageKeyword": "switch oled",
+      "components": [
+        {
+          "name": "Console Housing",
+          "material": "ABS/PC Blend",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Matte"
+          ],
+          "image": "https://external-preview.redd.it/nintendo-switch-oled-hands-on-we-compared-it-to-the-v0-AXtR_STjnJ6JlUtZFAyT8G_M7ndGWeyxPC6kKroiEnc.jpg?width=1080&crop=smart&auto=webp&s=17e6c155076035956d73fb46d57d01b2c33ec5de"
+        },
+        {
+          "name": "OLED Screen Panel",
+          "material": "Glass",
+          "manufacturing": [
+            "Thin Film Deposition"
+          ],
+          "finishes": [
+            "Anti-glare"
+          ],
+          "image": "https://preview.redd.it/complete-nintendo-switch-oled-modchip-installation-guide-v0-g3btsxhm9vuc1.jpg?width=1280&format=pjpg&auto=webp&s=77006b09787ccb547d1071ab7ae2ebad1b0a0bc7"
+        },
+        {
+          "name": "Joy-Con Rail",
+          "material": "Aluminum Alloy",
+          "manufacturing": [
+            "CNC Machining"
+          ],
+          "finishes": [
+            "Anodized"
+          ],
+          "image": "https://m.media-amazon.com/images/I/51AqUuujkrL.jpg"
+        },
+        {
+          "name": "Kickstand",
+          "material": "Stainless Steel",
+          "manufacturing": [
+            "Stamping"
+          ],
+          "finishes": [
+            "Powder Coating"
+          ],
+          "image": "https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/22701274/newswitch_kickstand.jpg?quality=90&strip=all&crop=0,0,100,100"
+        },
+        {
+          "name": "Internal Heat Pipe",
+          "material": "Copper",
+          "manufacturing": [
+            "Vacuum Sealing"
+          ],
+          "finishes": [
+            "Sintered wick structure"
+          ],
+          "image": "https://preview.redd.it/need-advices-before-reassembling-this-switch-oled-v0-8ilxkl5v6hoc1.jpeg?width=640&crop=smart&auto=webp&s=76d3de9c4b4b4d964b1775ec3668b39b5cc9634d"
+        },
+        {
+          "name": "Button Set",
+          "material": "Polycarbonate",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Pad printing"
+          ],
+          "image": "https://images.nintendolife.com/7064d955d8349/switch-oled-joy-con.900x.jpg"
+        }
+      ],
+      "images": [
+        "https://s.yimg.com/ny/api/res/1.2/Y.6AbJsIaKXTKWvZte40RA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTk2MDtoPTU0MA--/https://s.yimg.com/os/creatr-uploaded-images/2021-10/4e83f580-2c66-11ec-b9a7-22ac62544fbb",
+        "https://i.ytimg.com/vi/4umniX8nX5E/maxresdefault.jpg",
+        "https://external-preview.redd.it/ifixit-switch-2-teardown-with-repairability-insights-v0-0ZzfHd40DCYo2g_Ocd3ASXhTCZz0oiGfeKpmM3uK5dc.jpg?width=1080&crop=smart&auto=webp&s=2d34a2b061747e8e8da869e95d7d4b7d62d3f5b6",
+        "https://s.yimg.com/ny/api/res/1.2/1g.GsYEnKUzEo8cxLSzWHg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD03NTA-/https://s.yimg.com/os/creatr-uploaded-images/2021-10/281ba730-2c66-11ec-b7ff-712c08a13ad4",
+        "https://i.ytimg.com/vi/KGFAN0yhnM4/maxresdefault.jpg"
+      ]
+    },
+    {
+      "productName": "Pelican 1510 Case",
+      "category": "Protective Equipment",
+      "heroImageKeyword": "pelican 1510",
+      "components": [
+        {
+          "name": "Outer Shell",
+          "material": "Polypropylene Copolymer",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Textured mold"
+          ],
+          "image": "https://www.caseclub.com/wp-content/uploads/2016/12/pelican-hard-rolling-travel-carry-on-case1.jpg"
+        },
+        {
+          "name": "O-Ring Seal",
+          "material": "Neoprene",
+          "manufacturing": [
+            "Extrusion"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "https://cdn11.bigcommerce.com/s-dbe3e/images/stencil/1280x1280/products/4038/9804/pelican-pelican-1510-case__77885.1639940634.jpg?c=2"
+        },
+        {
+          "name": "Latches",
+          "material": "ABS",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "https://www.backscatter.com/ITEM_IMAGES/gt-50-25-012_1.jpg?resizeid=7&resizeh=1000&resizew=1000"
+        },
+        {
+          "name": "Pressure Release Valve",
+          "material": "Gore-Tex Membrane/ABS",
+          "manufacturing": [
+            "Insert Molding"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "https://cdn11.bigcommerce.com/s-dbe3e/images/stencil/1280x1280/products/4038/9804/pelican-pelican-1510-case__77885.1639940634.jpg?c=2"
+        },
+        {
+          "name": "Hinge Pins",
+          "material": "Stainless Steel",
+          "manufacturing": [
+            "Cold Heading"
+          ],
+          "finishes": [
+            "Passivation"
+          ],
+          "image": "https://m.media-amazon.com/images/I/61mEg0KV2ML._AC_UF350,350_QL80_.jpg"
+        }
+      ],
+      "images": [
+        "https://preview.redd.it/sffpc-small-form-factor-pelican-case-v0-c1uk840fytl51.jpg?auto=webp&s=77cbbabee4cc6629b1bb766f606292bc91cccfe8",
+        "https://www.foamerica.com/cdn/shop/files/Image_29_fe3c9358-3751-4464-b3bc-d40c8396c9a2.jpg?v=1738691674",
+        "https://www.foamerica.com/cdn/shop/files/Image_28_b91e4be8-f8b1-44e7-8489-d5704864bb3d.jpg?v=1738691674",
+        "https://image.made-in-china.com/202f0j00kefqjHEMCcbL/Factory-Portable-High-Voltage-Impulse-Generator-10kv-500j-Cable-Thumper-Fault-Locator-Kit.webp",
+        "https://image.made-in-china.com/2f0j00hvUqZLaCbbcP/Factory-Portable-High-Voltage-Impulse-Generator-10kv-500j-Cable-Thumper-Fault-Locator-Kit.jpg"
+      ]
+    },
+    {
+      "productName": "Weber Spirit E-310 Grill",
+      "category": "Outdoor Hardware",
+      "heroImageKeyword": "weber spirit e-310",
+      "components": [
+        {
+          "name": "Cookbox",
+          "material": "Cast Aluminum",
+          "manufacturing": [
+            "Die Casting"
+          ],
+          "finishes": [
+            "Powder Coating"
+          ],
+          "image": "https://surplusmetalroofing.com/cdn/shop/files/Screenshot2023-04-26134534.png?v=1682531186&width=603"
+        },
+        {
+          "name": "Cooking Grates",
+          "material": "Porcelain-enameled Cast Iron",
+          "manufacturing": [
+            "Casting",
+            "Enameling"
+          ],
+          "finishes": [
+            "Vitreous enamel"
+          ]
+        },
+        {
+          "name": "Flavorizer Bars",
+          "material": "Stainless Steel",
+          "manufacturing": [
+            "Stamping"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "https://m.media-amazon.com/images/I/61vk4BBpq4L.jpg"
+        },
+        {
+          "name": "Control Knobs",
+          "material": "ABS",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Chrome plating"
+          ],
+          "image": "https://cdn-tp6.mozu.com/24645-37138/cms/37138/files/5d5383c2-2299-4a85-bfc2-aa977d534d5d"
+        },
+        {
+          "name": "Lid Assembly",
+          "material": "Sheet Steel",
+          "manufacturing": [
+            "Deep Drawing"
+          ],
+          "finishes": [
+            "Porcelain Enamel"
+          ],
+          "image": "https://www.grillparts.com/images/brand-landing-headers/Weber/Weber-spirit-ii-310-gas-grill-parts.jpg"
+        },
+        {
+          "name": "Frame Legs",
+          "material": "Steel",
+          "manufacturing": [
+            "Tube Bending"
+          ],
+          "finishes": [
+            "Powder Coating"
+          ],
+          "image": "https://cdn-tp6.mozu.com/24645-37138/cms/37138/files/5d5383c2-2299-4a85-bfc2-aa977d534d5d"
+        }
+      ],
+      "images": [
+        "https://mobileimages.lowes.com/productimages/8288f7ad-299f-4788-962c-40de661e2347/69085962.jpeg",
+        "https://preview.redd.it/i-finished-first-phase-of-teardown-clean-up-rebuild-of-my-v0-927zp58iwwcd1.jpg?width=640&crop=smart&auto=webp&s=a9648f4ca083ecc22fbf733ab5d5a783ce034159",
+        "https://preview.redd.it/i-finished-first-phase-of-teardown-clean-up-rebuild-of-my-v0-00x84kjiwwcd1.jpg?width=640&crop=smart&auto=webp&s=1c96cec32b1ed0e15ebfe2df37a1974f48f37ecf",
+        "https://mobileimages.lowes.com/productimages/647eda25-db5c-4c40-854a-64d71fa78a2a/69085969.jpeg",
+        "https://preview.redd.it/i-finished-first-phase-of-teardown-clean-up-rebuild-of-my-v0-uanohgfiwwcd1.jpg?width=640&crop=smart&auto=webp&s=42dded157c49eb3c9d6b9e5b724665cbb9538712"
+      ]
+    },
+    {
+      "productName": "Birkenstock Arizona Sandal",
+      "category": "Footwear",
+      "heroImageKeyword": "birkenstock arizona",
+      "components": [
+        {
+          "name": "Footbed Core",
+          "material": "Cork and Latex",
+          "manufacturing": [
+            "Compression Molding"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "https://www.backcountry.com/images/items/large/BRK/BRK004R/BLAEVA.jpg"
+        },
+        {
+          "name": "Insole Liner",
+          "material": "Suede Leather",
+          "manufacturing": [
+            "Die Cutting"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "https://shopcgx.com/cdn/shop/files/1023115_pair.jpg?v=1708224216"
+        },
+        {
+          "name": "Upper Straps",
+          "material": "Birko-Flor (PVC/Fleece)",
+          "manufacturing": [
+            "Lamination"
+          ],
+          "finishes": [
+            "Leather-textured"
+          ],
+          "image": "https://bfasset.costco-static.com/U447IH35/as/p7b7w2w7xtht9x3ch58cc/4000437987-847_black_1?auto=webp&amp;format=jpg&width=600&height=600&fit=bounds&canvas=600,600"
+        },
+        {
+          "name": "Buckles",
+          "material": "Steel",
+          "manufacturing": [
+            "Die Casting"
+          ],
+          "finishes": [
+            "Antique brass plating"
+          ],
+          "image": "https://bfasset.costco-static.com/U447IH35/as/p7b7w2w7xtht9x3ch58cc/4000437987-847_black_1?auto=webp&amp;format=jpg&width=600&height=600&fit=bounds&canvas=600,600"
+        },
+        {
+          "name": "Outsole",
+          "material": "EVA",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Traction pattern"
+          ],
+          "image": "https://bfasset.costco-static.com/U447IH35/as/p7b7w2w7xtht9x3ch58cc/4000437987-847_black_1?auto=webp&amp;format=jpg&width=600&height=600&fit=bounds&canvas=600,600"
+        }
+      ],
+      "images": [
+        "https://cdn.shopify.com/s/files/1/0601/9704/4431/files/birk.webp?v=1746726925",
+        "https://nushoe.com/wp-content/uploads/2024/10/birkenstock-cork-replacement.jpg",
+        "https://media.licdn.com/dms/image/v2/D4E16AQE69XXN6yii5w/profile-displaybackgroundimage-shrink_200_800/profile-displaybackgroundimage-shrink_200_800/0/1722542911617?e=2147483647&v=beta&t=HlFWib2o8bDPyjZ03_DjAYx2KKLJAZEDebKEIIAefA0",
+        "https://s.yimg.com/ny/api/res/1.2/Xq9QflxQmIP2pLX9P9I4fQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyNDI7aD02OTk7Y2Y9d2VicA--/https://media.zenfs.com/en/realtor_com_468/97a887929fcf325d57e294ac74ed59b1",
+        "https://s.alicdn.com/@sc04/kf/H89ec367ea02d4f1a82ade03db928f62dL/Handmade-Summer-Flip-Flops-Sandal-Molds-Boys-High-Quality-Light-Anti-Slip-Leather-House-Slippers-Pu-Insole-New-Season-Winter.png"
+      ]
+    },
+    {
+      "productName": "Victorinox Swiss Army Knife",
+      "category": "Multi-tool",
+      "heroImageKeyword": "victorinox huntsman",
+      "components": [
+        {
+          "name": "Blade",
+          "material": "X55CrMo14 Stainless Steel",
+          "manufacturing": [
+            "Stamping",
+            "Heat Treatment"
+          ],
+          "finishes": [
+            "Polished"
+          ],
+          "image": "http://www.swissknifeshop.com/cdn/shop/products/SA54821.jpg?v=1568425341"
+        },
+        {
+          "name": "Scales (Handles)",
+          "material": "Cellidor (ABS)",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "Gloss polishing"
+          ],
+          "image": "https://i.ebayimg.com/images/g/bocAAOSweTFcY-qA/s-l1200.jpg"
+        },
+        {
+          "name": "Rivets",
+          "material": "Brass",
+          "manufacturing": [
+            "Turning"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "https://sakparts.com/cdn/shop/products/6PCS-Brass-Rivet-Caps-Tool-Part-Set-for-91mm-Victorinox-Swiss-Army-SAK-SAK-Parts-Victorinox-swiss-army-knife-tools-4256.jpg?v=1705646655&width=1445"
+        },
+        {
+          "name": "Springs",
+          "material": "Stainless Steel",
+          "manufacturing": [
+            "Blanking",
+            "Tempering"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "https://i.ebayimg.com/images/g/iIMAAOSwvNFkmARz/s-l400.jpg"
+        },
+        {
+          "name": "Separators",
+          "material": "Aluminum Alloy",
+          "manufacturing": [
+            "Stamping"
+          ],
+          "finishes": [
+            "Anodized"
+          ],
+          "image": "https://i.etsystatic.com/46151746/r/il/03ae3f/7482255299/il_fullxfull.7482255299_glvh.jpg"
+        }
+      ],
+      "images": [
+        "http://sakparts.com/cdn/shop/articles/1_The_Top_10_Swiss_Army_Knife_Parts_You_Need_to_Know_About.png?v=1752828850",
+        "https://imageengine.victorinox.com/transform/3e41526b-7ced-4cc1-8fee-c8447ed9d818/SAK_1_3603_S1?io=transform%3Afit%2Cwidth%3A570%2Cheight%3A320&quality=100",
+        "https://mobileimages.lowes.com/productimages/2bc5600e-3811-41da-92d2-5e999cbf7cad/00248125.jpg",
+        "https://www.sjtools.co.uk/image_resize/crop/mw1500/mh750/products/57202/VICRANGB.jpg",
+        "https://cdn11.bigcommerce.com/s-zv2yzuk65y/images/stencil/500x659/products/20576/109152/huntsman3__87037.1648462176.jpg?c=1"
+      ]
+    },
+    {
+      "productName": "LEGO 2x4 Brick",
+      "category": "Toy Hardware",
+      "heroImageKeyword": "lego 2x4 brick",
+      "components": [
+        {
+          "name": "Brick Body",
+          "material": "ABS Plastic",
+          "manufacturing": [
+            "Injection Molding"
+          ],
+          "finishes": [
+            "High-gloss mold"
+          ],
+          "image": "https://atlbrick.com/cdn/shop/files/Brick2x43001DarkRed.png?v=1702596469"
+        }
+      ],
+      "images": [
+        "https://preview.redd.it/i-disassembled-a-smart-brick-v0-cia8esepw0ng1.jpg?width=640&crop=smart&auto=webp&s=237bd6158748eacee64af44b82414c2f5bf741ae",
+        "https://preview.redd.it/i-disassembled-a-smart-brick-v0-sk4ti87qw0ng1.jpg?width=640&crop=smart&auto=webp&s=ec17d46593f99a5d676221636c3abe8efc2cc89e",
+        "https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=900945232071792",
+        "https://www.tiktok.com/api/img/?itemId=7592350086470896918&location=3&aid=1988&index=1",
+        "https://hackaday.com/wp-content/uploads/2022/06/hadimg_lego_oled_feat.png"
+      ]
+    },
+    {
+      "productName": "KitchenAid Artisan Mixer",
+      "category": "Kitchen Appliance",
+      "heroImageKeyword": "kitchenaid artisan",
+      "components": [
+        {
+          "name": "Main Body Housing",
+          "material": "Zinc Die-cast",
+          "manufacturing": [
+            "High-pressure Die Casting"
+          ],
+          "finishes": [
+            "Powder coating"
+          ],
+          "image": "https://cdn.mos.cms.futurecdn.net/v2/t:0,l:437,cw:1125,ch:1125,q:80,w:1125/PHPNGAHA8Et5muHdvJ6EK8.jpg"
+        },
+        {
+          "name": "Mixing Bowl",
+          "material": "Stainless Steel 304",
+          "manufacturing": [
+            "Deep Drawing",
+            "Spin Forming"
+          ],
+          "finishes": [
+            "Polished"
+          ],
+          "image": "https://m.media-amazon.com/images/S/aplus-media-library-service-media/501e9653-d13a-4b30-96ba-98849ae2fdf5.__CR0,0,600,450_PT0_SX600_V1___.png"
+        },
+        {
+          "name": "Internal Gear Train",
+          "material": "Hardened Steel",
+          "manufacturing": [
+            "Hobbing"
+          ],
+          "finishes": [
+            "Greased"
+          ],
+          "image": "https://m.media-amazon.com/images/I/71FEEj7SwEL.jpg"
+        },
+        {
+          "name": "Speed Control Lever",
+          "material": "Chrome-plated Steel",
+          "manufacturing": [
+            "Stamping"
+          ],
+          "finishes": [
+            "Chrome plating"
+          ],
+          "image": "https://cdn11.bigcommerce.com/s-hartp3wey/images/stencil/350x350/products/1981/37911/9709276-2__61230.1769188636.png?c=2"
+        },
+        {
+          "name": "Motor Housing End Cap",
+          "material": "Aluminum",
+          "manufacturing": [
+            "Casting"
+          ],
+          "finishes": [
+            "Powder coating"
+          ],
+          "image": "https://images.squarespace-cdn.com/content/v1/5f63ff3dce6e39523e4b6b80/881e5303-4246-4ea7-9576-90e8eb2e6457/Custom+Blue+%28powdercoat%29.png?format=1000w"
+        },
+        {
+          "name": "Attachments",
+          "material": "Aluminum with Nylon Coating",
+          "manufacturing": [
+            "Die Casting"
+          ],
+          "finishes": [
+            "Food-safe Enamel"
+          ],
+          "image": "https://images.thdstatic.com/productImages/0196b018-39c8-4305-824d-b0bdd44a84fc/svn/stainless-steel-kitchenaid-mixer-attachments-ksmsca-44_600.jpg"
+        }
+      ],
+      "images": [
+        "https://i.ytimg.com/vi/OPQEzG0KolY/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCyvrVeNGb1kgVXJr4qtzJvYr3sZw",
+        "https://ereplacementpartscom-cbgkc7gwbuakdcd6.z01.azurefd.net/assets/images/erp/blog/2010/10/P1230354.gif",
+        "https://i.ytimg.com/vi/QpuPZIcINEg/hq720.jpg?sqp=-oaymwE7CK4FEIIDSFryq4qpAy0IARUAAAAAGAElAADIQj0AgKJD8AEB-AH-CYAC0AWKAgwIABABGGUgUCg7MA8=&rs=AOn4CLC_3hRMO6mW4zJIq3eweiFi5GKcAw",
+        "https://preview.redd.it/should-i-give-up-on-kitchenaid-stand-mixer-v0-ekor3x8yww7f1.jpeg?width=640&crop=smart&auto=webp&s=ae17b02884d7fd2d43c36f2dbcf77806329a5e3e",
+        "https://guide-images.cdn.ifixit.com/igi/MF2u6ABwOl2JbXwO.standard"
+      ]
+    },
+    {
+      "productName": "Ray-Ban Wayfarer",
+      "category": "Eyewear",
+      "heroImageKeyword": "rayban wayfarer black",
+      "components": [
+        {
+          "name": "Frame Front",
+          "material": "Acetate",
+          "manufacturing": [
+            "CNC Milling"
+          ],
+          "finishes": [
+            "Tumble polishing"
+          ],
+          "image": "http://www.readingglasses.com/cdn/shop/files/rb2132_newwayfarer_black_20d_516ee424-2cd2-439c-b34d-428097846705.jpg?v=1753994326"
+        },
+        {
+          "name": "Temples",
+          "material": "Acetate",
+          "manufacturing": [
+            "CNC Milling"
+          ],
+          "finishes": [
+            "Tumble polishing"
+          ],
+          "image": "https://content.abt.com/image.php/ray-ban-meta-sunglasses-RW4012-601SSB50.jpg?image=/images/products/BDP_Images/ray-ban-meta-sunglasses-RW4012-601SSB50.jpg&canvas=1&width=750&height=550"
+        },
+        {
+          "name": "Lenses",
+          "material": "Mineral Glass",
+          "manufacturing": [
+            "Precision Grinding"
+          ],
+          "finishes": [
+            "Tinted"
+          ],
+          "image": "https://content.abt.com/image.php/ray-ban-meta-sunglasses-RW4012-601SSB50.jpg?image=/images/products/BDP_Images/ray-ban-meta-sunglasses-RW4012-601SSB50.jpg&canvas=1&width=750&height=550"
+        },
+        {
+          "name": "Hinges",
+          "material": "Nickel Silver",
+          "manufacturing": [
+            "Stamping"
+          ],
+          "finishes": [
+            "None"
+          ],
+          "image": "https://m.media-amazon.com/images/I/61HahoqhMzL._AC_UF1000,1000_QL80_.jpg"
+        },
+        {
+          "name": "Rivets",
+          "material": "Silver-plated Copper",
+          "manufacturing": [
+            "Cold Heading"
+          ],
+          "finishes": [
+            "Polished"
+          ],
+          "image": "https://replacementlenses.net/wp-content/uploads/sites/2/2025/05/2140.webp"
+        }
+      ],
+      "images": [
+        "https://roadtovrlive-5ea0.kxcdn.com/wp-content/uploads/2025/10/meta-ray-ban-display-1.jpg",
+        "https://www.lemon8-app.com/seo/image?item_id=7474200057642861072&index=0&sign=f2fb22b206746f2b724d7dc746a7045f",
+        "https://i.ebayimg.com/images/g/BH8AAOSw73tmW515/s-l400.png",
+        "https://i.ytimg.com/vi/G8ypYclM0bc/maxresdefault.jpg",
+        "https://s3-media0.fl.yelpcdn.com/bphoto/SvHSVGErKjSNfBX2_YHvhA/348s.jpg"
+      ]
+    }
+  ]
+}

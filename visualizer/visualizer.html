@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AtlasDT | Hardware Taxonomy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fdfbf7;
+            --sidebar-bg: #f8f6f0;
+            --card-bg: #ffffff;
+            --card-border: #e5e1d8;
+            --text-primary: #201a14;
+            --text-secondary: #6b6357;
+            --accent: #d97757;
+            --accent-glow: rgba(217, 119, 87, 0.15);
+            --accent-hover: #e89578;
+            --pill-bg: rgba(217, 119, 87, 0.1);
+            --pill-text: #d97757;
+            --muted-bg: #f2efe9;
+            --overlay-bg: rgba(253, 251, 247, 0.96);
+            --grid-line: rgba(0, 0, 0, 0.04);
+            --scrollbar: rgba(0, 0, 0, 0.12);
+            --scrollbar-hover: rgba(0, 0, 0, 0.2);
+            --gradient-soft-a: rgba(217, 119, 87, 0.06);
+            --gradient-soft-b: rgba(139, 92, 246, 0.04);
+        }
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --sidebar-bg: #1e293b;
+            --card-bg: #1e293b;
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.2);
+            --accent-hover: #60a5fa;
+            --pill-bg: rgba(59, 130, 246, 0.15);
+            --pill-text: #60a5fa;
+            --muted-bg: rgba(255, 255, 255, 0.06);
+            --overlay-bg: rgba(15, 23, 42, 0.95);
+            --grid-line: rgba(255, 255, 255, 0.03);
+            --scrollbar: rgba(255, 255, 255, 0.12);
+            --scrollbar-hover: rgba(255, 255, 255, 0.2);
+            --gradient-soft-a: rgba(99, 102, 241, 0.12);
+            --gradient-soft-b: rgba(56, 189, 248, 0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-primary); display: flex; height: 100vh; overflow: hidden; 
+               background-image: 
+                radial-gradient(circle at 15% 50%, var(--gradient-soft-a), transparent 30%), 
+                radial-gradient(circle at 85% 30%, var(--gradient-soft-b), transparent 30%),
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+               background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
+
+        .sidebar { width: 340px; height: 100%; background-color: var(--sidebar-bg); border-right: 1px solid var(--card-border); display: flex; flex-direction: column; flex-shrink: 0; z-index: 10; }
+        .sidebar-header { padding: 24px; border-bottom: 1px solid var(--card-border); }
+        .sidebar-header h1 { font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 600; letter-spacing: 0.5px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .sidebar-header h1 span { color: var(--accent); }
+
+        /* View Toggles */
+        .view-toggles { display: flex; background: var(--muted-bg); border-radius: 8px; padding: 4px; margin-bottom: 16px; }
+        .toggle-btn { flex: 1; padding: 8px 0; text-align: center; color: var(--text-secondary); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+        .toggle-btn.active { background: var(--accent); color: #fff; box-shadow: 0 4px 12px var(--accent-glow); }
+
+        /* Search */
+        .search-box { position: relative; }
+        .search-box input { width: 100%; background: var(--muted-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 10px 14px; color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 0.875rem; outline: none; transition: all 0.2s ease; }
+        .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
+
+        /* Navigation List */
+        .nav-list { flex-grow: 1; overflow-y: auto; padding: 16px; display: none; }
+        .nav-list.active { display: block; }
+        .category-group { margin-bottom: 8px; }
+        .category-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; cursor: pointer; border-radius: 6px; transition: background 0.2s; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); }
+        .category-header:hover { background: var(--muted-bg); color: var(--text-primary); }
+        .category-items { display: none; flex-direction: column; gap: 2px; padding-left: 12px; margin-top: 4px; border-left: 1px solid var(--card-border); margin-left: 18px; }
+        .category-group.active .category-items { display: flex; animation: slideDown 0.3s ease; }
+        .category-group.active .category-header { color: var(--text-primary); }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .tech-item { padding: 8px 12px; cursor: pointer; border-radius: 6px; color: var(--text-secondary); font-size: 0.875rem; transition: all 0.2s; }
+        .tech-item:hover { color: var(--text-primary); background: var(--muted-bg); }
+        .tech-item.selected { background: var(--accent-glow); color: var(--accent-hover); border-left: 2px solid var(--accent); }
+
+        /* Main Content wrapper */
+        .main-content { flex-grow: 1; height: 100%; overflow-y: auto; overflow-x: hidden; position: relative; }
+
+        /* TEARDOWN MODE */
+        .teardown-mode { display: none; padding: 32px 48px; animation: fadeIn 0.4s ease; }
+        .teardown-mode.active { display: block; }
+        .teardown-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); grid-auto-rows: 250px; grid-auto-flow: dense; gap: 24px; margin-top: 24px;}
+        .td-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; overflow: hidden; cursor: pointer; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+        .td-card:hover { transform: translateY(-4px) scale(1.01); border-color: var(--accent); z-index: 10; }
+        .td-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: rgba(0,0,0,0.2); transition: transform 0.5s; }
+        .td-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0) 60%); pointer-events: none; }
+        .td-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px; z-index: 2; pointer-events: none; }
+        .td-cat { color: #38bdf8; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; }
+        .td-title { font-size: 1.4rem; font-weight: 700; font-family: 'Outfit'; color: #ffffff; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .bento-0 { grid-column: span 2; grid-row: span 2; }
+        .bento-1 { grid-column: span 1; grid-row: span 1; }
+        .bento-2 { grid-column: span 1; grid-row: span 2; }
+        .bento-3 { grid-column: span 1; grid-row: span 1; }
+        .bento-4 { grid-column: span 2; grid-row: span 1; }
+        @media (max-width: 800px) { .td-card { grid-column: span 1 !important; grid-row: span 1 !important; } }
+
+        /* Teardown Detail Overlay */
+        .td-overlay { position: fixed; top: 0; left: 340px; right: 0; bottom: 0; background: var(--overlay-bg); backdrop-filter: blur(10px); z-index: 50; display: none; padding: 48px; overflow-y: auto; animation: fadeIn 0.3s ease;}
+        .td-overlay.active { display: block; }
+        .td-close { position: absolute; right: 32px; top: 32px; background: rgba(0,0,0,0.05); border: none; color: var(--text-primary); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.5rem; transition: background 0.2s;}
+        .td-close:hover { background: rgba(0,0,0,0.1); }
+        .td-hero-info { margin-bottom: 32px; }
+        .td-hero-info h2 { font-family: 'Outfit', sans-serif; font-size: 3.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;}
+        .td-hero-info p { color: var(--text-secondary); font-size: 1.1rem; max-width: 800px; line-height: 1.6;}
+        
+        .component-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+        .comp-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 24px; border-radius: 16px; display: flex; flex-direction: column; gap: 24px; position: relative; overflow: hidden; transition: all 0.3s; }
+        .comp-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+        .comp-img-wrapper { width: 100%; height: 260px; flex-shrink: 0; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid var(--card-border); background: var(--muted-bg); }
+        .comp-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .comp-content { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; z-index: 2; }
+        .comp-name { font-family: 'Outfit', sans-serif; font-size: 1.5rem; color: var(--text-primary); margin-bottom: 24px; display: flex; align-items: center; gap: 16px; font-weight: 700; letter-spacing: 0.5px; }
+        .comp-index { font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--pill-text); font-weight: 800; letter-spacing: 1px; padding: 6px 12px; background: var(--pill-bg); border-radius: 8px; }
+        
+        .comp-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
+        .meta-col h4 { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1.5px; font-weight: 700; display: flex; align-items: center; gap: 8px;}
+        .meta-col h4::before { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+        .meta-tags { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
+        .meta-tag-img { position: relative; aspect-ratio: 1 / 1; height: auto; border-radius: 12px; overflow: hidden; cursor: pointer; background-size: cover; background-position: center; transition: all 0.3s; border: 1px solid var(--card-border); background-color: var(--sidebar-bg); }
+        .meta-tag-img:hover { transform: translateY(-3px) scale(1.02); border-color: var(--accent); z-index: 10;}
+        .meta-tag-overlay { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.05) 100%); display: flex; align-items: flex-end; padding: 12px; font-size: 0.85rem; font-weight: 600; color: #fff; font-family: 'Inter', sans-serif; transition: all 0.2s; backdrop-filter: saturate(1.2);}
+        .meta-tag-img:hover .meta-tag-overlay { background: rgba(0, 0, 0, 0.4); }
+        .meta-tag-overlay span { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; width: 100%; text-shadow: 0 1px 4px rgba(0,0,0,0.8); line-height: 1.3;}
+
+
+        /* Gallery Mode (Pinterest Masonry) */
+        .gallery-mode { display: none; padding: 32px 48px 100px 48px; animation: fadeIn 0.4s ease; }
+        .gallery-mode.active { display: block; }
+        .header-title { margin-bottom: 24px; font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; justify-content: space-between; }
+        .header-counts { font-size: 1rem; font-weight: 400; color: var(--text-secondary); font-family: 'Inter', sans-serif; }
+        .masonry-grid { column-count: 4; column-gap: 20px; }
+        @media (max-width: 1600px) { .masonry-grid { column-count: 3; } }
+        @media (max-width: 1200px) { .masonry-grid { column-count: 2; } }
+        .masonry-card { break-inside: avoid; margin-bottom: 20px; border-radius: 16px; overflow: hidden; position: relative; cursor: pointer; background: var(--card-bg); border: 1px solid var(--card-border); transform: translateZ(0); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .masonry-card:hover { transform: translateY(-4px); border-color: var(--accent); z-index: 2; }
+        .masonry-img { width: 100%; display: block; background: rgba(0,0,0,0.2); min-height: 150px; object-fit: cover; }
+        .masonry-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 20px 20px 20px; background: linear-gradient(to top, rgba(3,7,18,0.95) 0%, rgba(3,7,18,0.6) 60%, transparent 100%); opacity: 0; transform: translateY(10px); transition: all 0.3s ease; pointer-events: none; }
+        .masonry-card:hover .masonry-overlay { opacity: 1; transform: translateY(0); }
+        .masonry-title { color: #fff; font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; }
+        .masonry-category { color: var(--accent-hover); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+
+        /* Detail View Mode (Hierarchy) */
+        .hierarchy-mode { display: none; padding: 48px; animation: fadeIn 0.4s ease; }
+        .hierarchy-mode.active { display: block; }
+        .empty-state { display: flex; flex-direction: column; justify-content: center; align-items: center; height: calc(100vh - 100px); color: var(--text-secondary); text-align: center; }
+        .empty-state h2 { font-family: 'Outfit', sans-serif; font-size: 1.5rem; color: var(--text-primary); margin-bottom: 8px; }
+        .empty-state p { max-width: 400px; line-height: 1.6; margin-bottom: 24px; }
+        .jump-btn { background: var(--accent); color: white; border: none; padding: 10px 24px; border-radius: 30px; font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 15px var(--accent-glow); }
+        .jump-btn:hover { background: var(--accent-hover); transform: translateY(-2px); }
+
+        .detail-view { display: none; max-width: 1000px; margin: 0 auto; }
+        .detail-view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        .tech-header { margin-bottom: 32px; }
+        .tech-category-pill { display: inline-block; background: var(--pill-bg); color: var(--pill-text); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+        .tech-title { font-family: 'Outfit', sans-serif; font-size: 3rem; font-weight: 700; color: var(--text-primary); line-height: 1.1; margin-bottom: 16px; }
+
+        /* Suppliers Section */
+        .suppliers-section { margin-top: 48px; }
+        .suppliers-section h3 { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+        .suppliers-section .section-subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 24px; }
+        .supplier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .supplier-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s; opacity: 0.6; }
+        .supplier-card:hover { border-color: var(--accent); opacity: 1; }
+        .supplier-avatar { width: 48px; height: 48px; border-radius: 12px; background: var(--muted-bg); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--text-secondary); flex-shrink: 0; }
+        .supplier-info { flex: 1; min-width: 0; }
+        .supplier-name { font-weight: 600; color: var(--text-primary); font-size: 0.95rem; margin-bottom: 2px; }
+        .supplier-meta { font-size: 0.75rem; color: var(--text-secondary); }
+        .supplier-badge { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 6px; background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+        .image-gallery { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 250px 250px; gap: 16px; margin-bottom: 40px; }
+        .gallery-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background-color: var(--sidebar-bg); transition: transform 0.4s ease; display: block; }
+        .gallery-img:hover { transform: scale(1.05); }
+        .img-main { grid-column: 1 / 2; grid-row: 1 / 3; }
+        .img-wrap { position: relative; overflow: hidden; border-radius: 12px; border: 1px solid var(--card-border); width: 100%; height: 100%; }
+
+        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .info-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 32px; transition: transform 0.2s; }
+        .info-card.full-width { grid-column: 1 / -1; }
+        .info-card h3 { font-family: 'Outfit', sans-serif; font-size: 1.25rem; color: var(--accent); margin-bottom: 16px; }
+        .info-card p { line-height: 1.7; color: var(--text-secondary); font-size: 1rem; }
+
+        .products-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .product-chip { background: var(--muted-bg); border: 1px solid var(--card-border); padding: 6px 14px; border-radius: 20px; font-size: 0.875rem; color: var(--text-primary); }
+        
+        .breadcrumbs { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 500; color: var(--text-primary); display: flex; align-items: center; gap: 12px; margin-bottom: 30px; border-bottom: 1px solid var(--card-border); padding-bottom: 16px;}
+        .crumb { cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;}
+        .crumb:hover { color: var(--accent); }
+        .crumb-sep { color: var(--text-secondary); }
+
+        .loading-pulse { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: var(--accent); margin-left: 10px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); } 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); } }
+
+        .status-bar { position: fixed; bottom: 24px; right: 32px; background: var(--card-bg); border: 1px solid var(--card-border); padding: 12px 20px; border-radius: 30px; display: flex; align-items: center; gap: 12px; font-size: 0.875rem; z-index: 100; }
+
+        /* Theme Toggle */
+        .theme-toggle { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--card-border); background: var(--muted-bg); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: all 0.3s; line-height: 1; }
+        .theme-toggle:hover { border-color: var(--accent); background: var(--accent-glow); }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1 style="justify-content:space-between;"><div style="display:flex;align-items:center;gap:12px;"><span>AtlasDT</span> Taxonomy</div><button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">☀️</button></h1>
+            <div class="view-toggles">
+                <div class="toggle-btn active" id="btnTeardown" onclick="switchMode('teardown')">Teardowns</div>
+                <div class="toggle-btn" id="btnGallery" onclick="switchMode('gallery')">Gallery</div>
+                <div class="toggle-btn" id="btnHierarchy" onclick="switchMode('hierarchy')">Detail</div>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search technologies...">
+            </div>
+        </div>
+        <div class="nav-list" id="navList"></div>
+    </div>
+
+    <div class="main-content" id="mainScrollarea">
+
+        <!-- TEARDOWN MODE -->
+        <div class="teardown-mode active" id="modeTeardown">
+            <div class="header-title">
+                Hardware Teardowns
+                <span class="header-counts">Reverse engineering iconic products</span>
+            </div>
+            <div class="teardown-grid" id="teardownGrid">
+                <!-- Teardown cards injected here -->
+            </div>
+        </div>
+
+        <!-- GALLERY MODE -->
+        <div class="gallery-mode" id="modeGallery">
+            <div class="header-title">
+                Visual Discovery
+                <span class="header-counts" id="masonryCounts">Filtering images</span>
+            </div>
+            <div class="masonry-grid" id="masonryGrid"></div>
+        </div>
+
+        <!-- HIERARCHY / DETAIL MODE -->
+        <div class="hierarchy-mode" id="modeHierarchy">
+            <div class="empty-state" id="emptyState">
+                <h2>Manufacturing Intelligence</h2>
+                <p>Select a specific technology or product teardown to explore deeper.</p>
+            </div>
+
+            <div class="detail-view" id="detailView">
+                <div id="vBreadcrumbs" class="breadcrumbs" style="display:none;"></div>
+                <div class="tech-header">
+                    <span class="tech-category-pill" id="vCategory">Category</span>
+                    <h1 class="tech-title" id="vTitle">Technology Name</h1>
+                </div>
+                <div class="image-gallery" id="vGallery"></div>
+                <div class="info-grid">
+                    <div class="info-card full-width"><h3>Overview</h3><p id="vDesc"></p></div>
+                    <div class="info-card"><h3>Why Utilized</h3><p id="vWhy"></p></div>
+                    <div class="info-card"><h3>Key Achievements</h3><p id="vAchieve"></p></div>
+                    <div class="info-card"><h3>Process Intricacies</h3><p id="vIntricate"></p></div>
+                    <div class="info-card"><h3>Execution Strategy</h3><p id="vExecute"></p></div>
+                    <div class="info-card full-width"><h3>Common Applications</h3><div class="products-list" id="vProducts"></div></div>
+                </div>
+
+                <!-- Suppliers Section -->
+                <div class="suppliers-section">
+                    <h3>🏭 Supply Chain Partners <span class="supplier-badge">Coming Soon</span></h3>
+                    <p class="section-subtitle">Verified manufacturers in the AtlasDT network who specialize in this technology.</p>
+                    <div class="supplier-grid" id="vSuppliers">
+                        <div class="supplier-card">
+                            <div class="supplier-avatar">🔒</div>
+                            <div class="supplier-info">
+                                <div class="supplier-name">Supplier data pending</div>
+                                <div class="supplier-meta">Shenzhen, China · Tier 1</div>
+                            </div>
+                        </div>
+                        <div class="supplier-card">
+                            <div class="supplier-avatar">🔒</div>
+                            <div class="supplier-info">
+                                <div class="supplier-name">Supplier data pending</div>
+                                <div class="supplier-meta">Dongguan, China · Tier 2</div>
+                            </div>
+                        </div>
+                        <div class="supplier-card">
+                            <div class="supplier-avatar">🔒</div>
+                            <div class="supplier-info">
+                                <div class="supplier-name">Supplier data pending</div>
+                                <div class="supplier-meta">Foshan, China · Specialized</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TEARDOWN OVERLAY -->
+    <div class="td-overlay" id="tdOverlay">
+        <button class="td-close" onclick="closeTeardown()">×</button>
+        <div id="tdBreadcrumbs" class="breadcrumbs" style="display:none; margin-bottom:24px;"></div>
+        <div class="td-hero-info">
+            <h2 id="tdTitle">Product Name</h2>
+            <p id="tdDesc">Architectural hardware breakdown and material analysis.</p>
+        </div>
+        <div class="image-gallery" id="tdGallery" style="margin-bottom: 48px;"></div>
+        <div class="component-list" id="tdComponents"></div>
+    </div>
+
+
+    <div class="status-bar" id="statusBar">
+        <div class="loading-pulse"></div>
+        <span id="statusText">Fetching Live JSON Data...</span>
+    </div>
+
+    <script>
+        // --- THEME TOGGLE ---
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            const btn = document.getElementById('themeToggle');
+            if (btn) btn.textContent = theme === 'dark' ? '🌙' : '☀️';
+        }
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            applyTheme(next);
+            localStorage.setItem('atlas-theme', next);
+        }
+        // Apply saved theme immediately
+        (function() {
+            const saved = localStorage.getItem('atlas-theme') || 'light';
+            applyTheme(saved);
+        })();
+
+        let taxonomyData = [];
+        let teardownData = [];
+        let groupedData = {};
+        let currentMode = 'teardown'; 
+
+        const JSON_PATH = "../webapp/src/data/taxonomy/master_taxonomy_enriched.json";
+        const TEARDOWN_PATH = "../webapp/src/data/taxonomy/master_teardowns.json";
+
+        async function fetchTaxonomy(isInitial = false) {
+            try {
+                const response = await fetch(JSON_PATH);
+                if (!response.ok) throw new Error('Cannot fetch taxonomy JSON.');
+                const data = await response.json();
+                taxonomyData = data.technologies || [];
+                
+                // Also fetch teardowns if initial
+                if (isInitial) {
+                    try {
+                        const tr = await fetch(TEARDOWN_PATH);
+                        if(tr.ok) {
+                            const tdata = await tr.json();
+                            teardownData = tdata.teardowns || [];
+                        }
+                    } catch(e) { console.warn("Teardowns not available yet."); }
+                }
+
+                document.getElementById('statusText').innerText = `Live: ${taxonomyData.length} entries tracked`;
+                document.getElementById('statusText').style.color = '#10b981';
+                
+                groupedData = {};
+                taxonomyData.forEach(item => {
+                    if (!groupedData[item.category]) groupedData[item.category] = [];
+                    groupedData[item.category].push(item);
+                });
+
+                if(isInitial) {
+                    renderSidebar('');
+                    renderMasonry('');
+                    renderTeardowns();
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.getElementById('btnTeardown').classList.toggle('active', mode === 'teardown');
+            document.getElementById('btnGallery').classList.toggle('active', mode === 'gallery');
+            document.getElementById('btnHierarchy').classList.toggle('active', mode === 'hierarchy');
+            
+            document.getElementById('modeTeardown').classList.toggle('active', mode === 'teardown');
+            document.getElementById('modeGallery').classList.toggle('active', mode === 'gallery');
+            document.getElementById('modeHierarchy').classList.toggle('active', mode === 'hierarchy');
+
+            document.getElementById('navList').style.display = mode === 'hierarchy' ? 'block' : 'none';
+        }
+
+        // --- TEARDOWN LOGIC ---
+        function renderTeardowns() {
+            const grid = document.getElementById('teardownGrid');
+            grid.innerHTML = '';
+            teardownData.forEach((td, idx) => {
+                let displayImg = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(`${td.productName} macro industrial photography`) + '?width=400&height=300&nologo=true';
+                if (td.images && td.images.length > 0) { displayImg = td.images[0]; }
+                
+                const card = document.createElement('div');
+                card.className = 'td-card bento-' + (idx % 5);
+                card.onclick = () => openTeardown(idx);
+                card.innerHTML = `
+                    <img src="${displayImg}" class="td-img" loading="lazy" onerror="this.onerror=null; this.src='https://image.pollinations.ai/prompt/${encodeURIComponent(td.productName + ' industrial hardware teardown macro')}?width=400&height=300&nologo=true';">
+                    <div class="td-info">
+                        <div class="td-cat">${td.category || "Hardware"}</div>
+                        <div class="td-title">${td.productName}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openTeardown(idx) {
+            const td = teardownData[idx];
+            document.getElementById('tdOverlay').classList.add('active');
+            document.getElementById('tdTitle').innerText = td.productName;
+            
+            breadcrumbHistory = ["Teardowns", td.productName];
+            renderBreadcrumbs();
+            
+            const gallery = document.getElementById('tdGallery');
+            gallery.innerHTML = '';
+            if (td.images && td.images.length > 0) {
+                const layouts = ['img-main', '', '', '', ''];
+                for(let i=0; i<Math.min(td.images.length, 5); i++) {
+                    gallery.innerHTML += `<div class="img-wrap ${layouts[i]}"><img src="${td.images[i]}" class="gallery-img" loading="lazy" onerror="this.onerror=null; this.src='https://image.pollinations.ai/prompt/${encodeURIComponent(td.productName + ' metallic internal components teardown')}?width=800&height=600&nologo=true';"></div>`;
+                }
+            } else {
+                const imgKeyword = td.heroImageKeyword || td.productName;
+                gallery.innerHTML = `<div class="img-wrap img-main"><img src="https://image.pollinations.ai/prompt/${encodeURIComponent(imgKeyword + ' industrial photography macro hardware')}?width=1000&height=800&nologo=true" class="gallery-img"></div>`;
+            }
+            
+            const list = document.getElementById('tdComponents');
+            list.innerHTML = '';
+            
+            if(td.components) {
+                let compIdx = 1;
+                td.components.forEach(comp => {
+                    // Helper to create pill tags that Deep-Link and render background images!
+                    const makeTags = (arr) => {
+                        if(!arr || arr.length === 0) return `<span style="color:#475569; font-style: italic; font-size: 0.85rem; padding-left: 14px;">Not specified...</span>`;
+                        if(typeof arr === 'string') arr = [arr];
+                        return arr.map(tag => {
+                            let bgImg = '';
+                            const targetStr = tag.toLowerCase();
+                            const taxItem = taxonomyData.find(i => i.name.toLowerCase() === targetStr || targetStr.includes(i.name.toLowerCase()));
+                            if (taxItem && taxItem.images && taxItem.images.length > 0) {
+                                bgImg = taxItem.images[0];
+                            } else {
+                                bgImg = `https://image.pollinations.ai/prompt/${encodeURIComponent(tag + ' manufacturing texture')}?width=150&height=50&nologo=true`;
+                            }
+                            return `<div class="meta-tag-img" style="background-image: url('${bgImg}');" onclick="deepLinkToTech('${tag.replace(/'/g, "\\'")}')"><div class="meta-tag-overlay"><span>${tag}</span></div></div>`;
+                        }).join('');
+                    };
+
+                    const compImgUrl = comp.image ? comp.image : `https://placehold.co/800x800/e2e8f0/475569?text=${encodeURIComponent(comp.name)}`;
+                    const fallbackImg = `https://placehold.co/800x800/e2e8f0/475569?text=${encodeURIComponent(comp.name)}`;
+                    
+                    const idxStr = compIdx < 10 ? '0' + compIdx : compIdx;
+
+                    list.innerHTML += `
+                        <div class="comp-card">
+                            <div class="comp-img-wrapper">
+                                <img src="${compImgUrl}" class="comp-img" loading="lazy" onerror="this.onerror=null; this.src='${fallbackImg}';">
+                                <div class="comp-img-overlay"></div>
+                            </div>
+                            <div class="comp-content">
+                                <div class="comp-name"><span class="comp-index">${idxStr}</span> ${comp.name}</div>
+                                <div class="comp-meta">
+                                    <div class="meta-col">
+                                        <h4>Material</h4>
+                                        <div class="meta-tags">${makeTags(comp.material)}</div>
+                                    </div>
+                                    <div class="meta-col">
+                                        <h4>Manufacturing</h4>
+                                        <div class="meta-tags">${makeTags(comp.manufacturing)}</div>
+                                    </div>
+                                    <div class="meta-col">
+                                        <h4>Finishing</h4>
+                                        <div class="meta-tags">${makeTags(comp.finishes)}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    compIdx++;
+                });
+            }
+        }
+
+        function closeTeardown() {
+            document.getElementById('tdOverlay').classList.remove('active');
+        }
+
+        let breadcrumbHistory = [];
+
+        function renderBreadcrumbs() {
+            let html = `<div class="crumb" onclick="closeAllFromBreadcrumb()">◀ Home</div>`;
+            breadcrumbHistory.forEach((item, index) => {
+                html += `<div class="crumb-sep">/</div>`;
+                html += `<div class="crumb" onclick="jumpToCrumb(${index})">${item}</div>`;
+            });
+
+            const vBc = document.getElementById('vBreadcrumbs');
+            if(vBc) {
+                if(breadcrumbHistory.length <= 1) vBc.style.display = 'none';
+                else { vBc.style.display = 'flex'; vBc.innerHTML = html; }
+            }
+
+            const tdBc = document.getElementById('tdBreadcrumbs');
+            if(tdBc) {
+                if(breadcrumbHistory.length === 0) tdBc.style.display = 'none';
+                else { tdBc.style.display = 'flex'; tdBc.innerHTML = html; }
+            }
+        }
+
+        function closeAllFromBreadcrumb() {
+            breadcrumbHistory = [];
+            renderBreadcrumbs();
+            document.getElementById('tdOverlay').classList.remove('active');
+            switchMode('teardown');
+        }
+
+        function jumpToCrumb(index) {
+            const target = breadcrumbHistory[index];
+            if (index === 0) {
+                closeAllFromBreadcrumb();
+                return;
+            }
+            if (index === 1 && currentMode !== 'teardown') {
+                 const tdIdx = teardownData.findIndex(td => td.productName === target);
+                 if(tdIdx >= 0) {
+                     document.getElementById('modeHierarchy').classList.remove('active');
+                     document.getElementById('detailView').classList.remove('active');
+                     switchMode('teardown');
+                     openTeardown(tdIdx);
+                     return;
+                 }
+            }
+
+            breadcrumbHistory = breadcrumbHistory.slice(0, Math.max(0, index + 1));
+            deepLinkToTech(target, true);
+        }
+
+        // DEEP LINKING MAGICK
+        function deepLinkToTech(techName, isNavigatingBack = false) {
+            if(!isNavigatingBack && !breadcrumbHistory.includes(techName)) {
+                if(breadcrumbHistory.length === 0) {
+                    breadcrumbHistory.push("Teardowns"); // Fallback if clicking from gallery mode
+                }
+                breadcrumbHistory.push(techName);
+            }
+            
+            closeTeardown();
+            switchMode('hierarchy');
+            
+            // Fuzzy search the taxonomyData to find the exact ID
+            const target = techName.toLowerCase();
+            const item = taxonomyData.find(i => i.name.toLowerCase().includes(target) || target.includes(i.name.toLowerCase()));
+            
+            if (item) {
+                document.querySelectorAll('.category-group').forEach(group => {
+                    if (group.querySelector('.category-header').innerText.trim().toLowerCase().includes(item.category.toLowerCase())) {
+                        group.classList.add('active');
+                    }
+                });
+                selectItem(item.id, document.querySelector(`.tech-item[data-id="${item.id}"]`));
+            } else {
+                console.warn("Could not find matching taxonomy entry for:", techName);
+                
+                // Smart Stub Generator for missing exact matches
+                const dynamicId = 'stub-' + Date.now();
+                taxonomyData.push({
+                    id: dynamicId,
+                    category: "Discovered Sub-component",
+                    name: techName,
+                    description: `Detailed intelligence for ${techName} is currently being mapped by the AtlasDT engine. Check back soon for full architectural and manufacturing metrics.`,
+                    whyUtilized: "Awaiting material analysis...",
+                    keyAchievement: "Pending benchmark...",
+                    intricacies: "Awaiting processing metrics...",
+                    wayToGoAboutIt: "Pending OEM evaluation...",
+                    images: [`https://placehold.co/800x500/e2e8f0/475569?text=${encodeURIComponent(techName)}`],
+                    exampleProducts: []
+                });
+                
+                selectItem(dynamicId, null);
+                
+                document.getElementById('searchInput').value = techName;
+                document.getElementById('searchInput').dispatchEvent(new Event('input'));
+            }
+            renderBreadcrumbs();
+        }
+
+
+        // --- MASONRY LOGIC ---
+        function renderMasonry(filter = '') {
+            const grid = document.getElementById('masonryGrid');
+            grid.innerHTML = '';
+            let imgCount = 0;
+            const filterLower = filter.toLowerCase();
+
+            taxonomyData.forEach(item => {
+                if (!item.name.toLowerCase().includes(filterLower) && !item.category.toLowerCase().includes(filterLower)) return;
+                if (item.images && item.images.length > 0) {
+                    item.images.forEach(imgUrl => {
+                        imgCount++;
+                        if (imgCount > 250 && filter === '') return; 
+                        const rh = Math.floor(Math.random() * (450 - 200 + 1) + 200);
+                        const card = document.createElement('div');
+                        card.className = 'masonry-card';
+                        card.onclick = () => { deepLinkToTech(item.name); };
+                        card.innerHTML = `
+                            <img src="${imgUrl}" class="masonry-img" loading="lazy" style="height: ${rh}px">
+                            <div class="masonry-overlay"><div class="masonry-category">${item.category}</div><div class="masonry-title">${item.name}</div></div>
+                        `;
+                        grid.appendChild(card);
+                    });
+                }
+            });
+            document.getElementById('masonryCounts').innerText = `Displaying ${imgCount} references`;
+        }
+
+
+        // --- SIDEBAR LOGIC ---
+        function renderSidebar(filter = '') {
+            const navList = document.getElementById('navList');
+            navList.innerHTML = '';
+            Object.keys(groupedData).forEach(category => {
+                const items = groupedData[category].filter(i => i.name.toLowerCase().includes(filter.toLowerCase()) || category.toLowerCase().includes(filter.toLowerCase()));
+                if (items.length === 0) return;
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'category-group';
+                if (filter) groupDiv.classList.add('active');
+                groupDiv.innerHTML = `
+                    <div class="category-header" onclick="this.parentElement.classList.toggle('active')">${category}</div>
+                    <div class="category-items">
+                        ${items.map(item => `<div class="tech-item" data-id="${item.id}" onclick="selectItem('${item.id}', this)">${item.name}</div>`).join('')}
+                    </div>
+                `;
+                navList.appendChild(groupDiv);
+            });
+        }
+
+        function selectItem(id, element) {
+            if(element) {
+                document.querySelectorAll('.tech-item').forEach(el => el.classList.remove('selected'));
+                element.classList.add('selected');
+            }
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('detailView').classList.add('active');
+
+            const item = taxonomyData.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('vCategory').innerText = item.category;
+            document.getElementById('vTitle').innerText = item.name;
+            const isPlaceholder = item.description.startsWith("Detailed description for");
+            document.getElementById('vDesc').innerHTML = isPlaceholder ? `<em>Awaiting Intelligence...</em><br><br>${item.description}` : item.description;
+            document.getElementById('vWhy').innerText = item.whyUtilized;
+            document.getElementById('vAchieve').innerText = item.keyAchievement;
+            document.getElementById('vIntricate').innerText = item.intricacies;
+            document.getElementById('vExecute').innerText = item.wayToGoAboutIt;
+
+            const gallery = document.getElementById('vGallery');
+            gallery.innerHTML = '';
+            gallery.style.display = 'grid';
+            if (item.images && item.images.length > 0) {
+                const layouts = ['img-main', '', '', '', ''];
+                for(let i=0; i<Math.min(item.images.length, 5); i++) {
+                    gallery.innerHTML += `<div class="img-wrap ${layouts[i]}"><img src="${item.images[i]}" class="gallery-img" loading="lazy" onerror="this.onerror=null; this.src='https://image.pollinations.ai/prompt/${encodeURIComponent(item.name + ' industrial manufacturing texture')}?width=600&height=400&nologo=true';"></div>`;
+                }
+            } else { gallery.style.display = 'none'; }
+
+            const prodList = document.getElementById('vProducts');
+            prodList.innerHTML = '';
+            if (item.exampleProducts && item.exampleProducts.length > 0) {
+                item.exampleProducts.forEach(prod => { prodList.innerHTML += `<div class="product-chip">${prod}</div>`; });
+            } else { prodList.innerHTML = '<span style="color:var(--text-secondary)">No products.</span>'; }
+            document.getElementById('mainScrollarea').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const val = e.target.value;
+            renderSidebar(val);
+            renderMasonry(val);
+        });
+
+        fetchTaxonomy(true);
+        setInterval(() => fetchTaxonomy(false), 10000);
+        switchMode('teardown'); // Start in Teardown mode
+
+    </script>
+</body>
+</html>
