@@ -3255,6 +3255,11 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </div>
 
+          <!-- ══ TECH DETAIL VIEW (hidden until tech selected) ══ -->
+          <div id="curator-tech-detail" style="display:none;">
+
+            <button id="curator-back-btn" class="btn btn-secondary" style="margin-bottom:24px; display:inline-flex; align-items:center; gap:8px; font-size:var(--text-sm);">← Back to Taxonomy</button>
+
           <!-- Manual Add Section -->
           <div style="display:flex; gap:16px; margin-bottom:32px; padding:20px; border:1px solid var(--color-slate-800); border-radius:var(--radius-md); background:var(--section-bg); flex-wrap:wrap; align-items:flex-end;">
             <div class="admin-field" style="flex:2; min-width:300px;">
@@ -3282,10 +3287,11 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <div id="curator-status" style="color:var(--color-steel-400); font-size:var(--text-sm);"></div>
+          </div><!-- end curator-tech-detail -->
         </div>
 
-        <!-- ══ VISIBILITY TOGGLES ══ -->
-        <div style="max-width:1200px; margin-top:48px; padding-top:32px; border-top:1px solid var(--color-slate-800);">
+        <!-- ══ VISIBILITY TOGGLES (only on main view) ══ -->
+        <div id="curator-visibility-section" style="max-width:1200px; margin-top:48px; padding-top:32px; border-top:1px solid var(--color-slate-800);">
           <h3 style="color:var(--color-white); font-size:var(--text-lg); font-weight:var(--weight-bold); margin-bottom:8px;">📋 Visibility Manager</h3>
           <p style="color:var(--color-steel-400); margin-bottom:24px; font-size:var(--text-sm);">Control which categories and technologies appear on the public visualizer. Disabled items will be hidden from users but remain in your taxonomy.</p>
           <div id="curator-visibility-toggles"></div>
@@ -3322,11 +3328,22 @@ document.addEventListener('DOMContentLoaded', () => {
         curatorSelectedTechId = e.target.value;
         btn.disabled = !curatorSelectedTechId;
 
-        // Show current images for this tech
+        const techDetail = document.getElementById('curator-tech-detail');
+        const visSection = document.getElementById('curator-visibility-section');
+
         if (curatorSelectedTechId) {
+          // Show tech detail, hide visibility manager
+          techDetail.style.display = 'block';
+          if (visSection) visSection.style.display = 'none';
           showCurrentImages(curatorSelectedTechId);
         } else {
+          // Back to main view
+          techDetail.style.display = 'none';
+          if (visSection) visSection.style.display = 'block';
           document.getElementById('curator-current-images').innerHTML = '';
+          document.getElementById('curator-results').innerHTML = '';
+          document.getElementById('curator-more-wrap').style.display = 'none';
+          document.getElementById('curator-status').textContent = '';
         }
       });
 
@@ -3338,6 +3355,29 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('curator-more')?.addEventListener('click', () => {
         curatorSearchOffset += 5;
         searchCuratorImages(true, false);  // append, no refresh
+      });
+
+      // Back button — reset to main taxonomy view
+      document.getElementById('curator-back-btn')?.addEventListener('click', () => {
+        curatorSelectedTechId = '';
+        document.getElementById('curator-category').value = '';
+        const techSelect = document.getElementById('curator-tech');
+        techSelect.innerHTML = '<option value="">Select a category first…</option>';
+        techSelect.disabled = true;
+        document.getElementById('curator-generate').disabled = true;
+        document.getElementById('curator-keywords').value = '';
+
+        // Toggle views
+        document.getElementById('curator-tech-detail').style.display = 'none';
+        const visSection = document.getElementById('curator-visibility-section');
+        if (visSection) visSection.style.display = 'block';
+
+        // Clean up
+        document.getElementById('curator-current-images').innerHTML = '';
+        document.getElementById('curator-results').innerHTML = '';
+        document.getElementById('curator-more-wrap').style.display = 'none';
+        document.getElementById('curator-status').textContent = '';
+        _curatorImageCache = [];
       });
 
       // Manual URL paste
