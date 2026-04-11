@@ -393,6 +393,14 @@
             applyTheme(saved);
         })();
 
+        // Listen for theme changes from parent app (iframe sync)
+        window.addEventListener('message', (e) => {
+            if (e.data && e.data.type === 'theme-change') {
+                applyTheme(e.data.theme);
+                localStorage.setItem('atlas-theme', e.data.theme);
+            }
+        });
+
         let taxonomyData = [];
         let teardownData = [];
         let groupedData = {};

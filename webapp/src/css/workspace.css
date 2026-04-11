@@ -1499,3 +1499,506 @@
   display: none !important;
 }
 
+/* ══════════════════════════════════════════════════════════
+   PROJECTS (KANBAN)
+   ══════════════════════════════════════════════════════════ */
+.ws-kanban {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 24px;
+  height: calc(100vh - 160px);
+}
+
+.ws-kanban-column {
+  flex: 0 0 320px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ws-kanban-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #fff;
+  padding: 16px;
+  margin: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ws-kanban-title--planning { border-top: 3px solid #3b82f6; border-top-left-radius: 12px; border-top-right-radius: 12px; }
+.ws-kanban-title--design { border-top: 3px solid #8b5cf6; border-top-left-radius: 12px; border-top-right-radius: 12px; }
+.ws-kanban-title--production { border-top: 3px solid #10b981; border-top-left-radius: 12px; border-top-right-radius: 12px; }
+.ws-kanban-title--completed { border-top: 3px solid #6b7280; border-top-left-radius: 12px; border-top-right-radius: 12px; }
+
+.ws-badge {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+.ws-kanban-cards {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ws-kanban-card {
+  background: rgba(14, 17, 23, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 14px;
+  cursor: grab;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.ws-kanban-card:hover {
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-2px);
+}
+
+.ws-kanban-card__tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  margin-bottom: 8px;
+}
+
+.ws-kanban-card h4 {
+  font-size: 14px;
+  color: #fff;
+  margin: 0 0 6px 0;
+  font-weight: 600;
+}
+
+.ws-kanban-card p {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ══════════════════════════════════════════════════════════
+   TAXONOMY SANDBOX
+   ══════════════════════════════════════════════════════════ */
+.ws-sandbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.ws-sandbox-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.2s;
+}
+
+.ws-sandbox-item:hover {
+  background: rgba(59, 130, 246, 0.05);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.ws-sandbox-item__icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.ws-sandbox-item__info h5 {
+  margin: 0 0 4px 0;
+  color: #fff;
+  font-size: 14px;
+}
+
+.ws-sandbox-item__info p {
+  margin: 0;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   DOCUMENT GENERATOR (TEMPLATES)
+   ══════════════════════════════════════════════════════════ */
+.ws-templates-layout {
+  display: flex;
+  gap: 24px;
+  height: calc(100vh - 160px);
+}
+
+.ws-templates-sidebar {
+  flex: 0 0 280px;
+  background: rgba(255, 255, 255, 0.02);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 16px 0;
+  gap: 8px;
+}
+
+.ws-template-item {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ws-template-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.ws-template-item--active {
+  background: rgba(59, 130, 246, 0.1) !important;
+  color: #60a5fa !important;
+  font-weight: 600;
+}
+
+.ws-templates-preview {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.ws-templates-toolbar {
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ws-templates-status {
+  font-size: 12px;
+  color: #34d399;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ws-document-paper {
+  flex: 1;
+  background: #fdfdfd;
+  color: #000;
+  padding: 40px 60px;
+  margin: 20px auto;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
+  font-family: "Times New Roman", Times, serif;
+  line-height: 1.6;
+  border-radius: 4px;
+}
+
+.ws-document-paper h1 {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ws-document-paper h2 {
+  font-size: 16px;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+.ws-document-paper p {
+  font-size: 13px;
+  margin-bottom: 16px;
+  text-align: justify;
+}
+
+.ws-document-var {
+  background: rgba(59, 130, 246, 0.2);
+  padding: 0 4px;
+  border-radius: 2px;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+  color: #1d4ed8;
+}
+
+.ws-document-signature-block {
+  margin-top: 60px;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 120px;
+}
+
+.ws-document-signature {
+  width: 45%;
+}
+
+.ws-document-signature-line {
+  border-bottom: 1px solid #000;
+  margin-bottom: 8px;
+  height: 40px;
+}
+
+.ws-document-signature-title {
+  font-size: 12px;
+}
+
+/* ============================================================
+   Workspace Light Theme Overrides
+   Activated via body.theme-light 
+   ============================================================ */
+
+body.theme-light .ws {
+  background: #f8f9fa;
+  color: #1e293b;
+}
+
+body.theme-light .ws-sidebar {
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+}
+
+body.theme-light .ws-sidebar__brand-text span:first-child {
+  color: #0f172a;
+}
+
+body.theme-light .ws-sidebar__brand-text span:last-child,
+body.theme-light .ws-sidebar__section-label {
+  color: #64748b;
+}
+
+body.theme-light .ws-sidebar__item {
+  color: #475569;
+}
+
+body.theme-light .ws-sidebar__item:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+body.theme-light .ws-sidebar__item--active {
+  background: rgba(79, 70, 229, 0.1);
+  color: #4f46e5;
+}
+
+body.theme-light .ws-sidebar__item svg {
+  opacity: 0.8;
+}
+
+body.theme-light .ws-header {
+  border-bottom: 1px solid #e2e8f0;
+  background: rgba(248, 249, 250, 0.85);
+}
+
+body.theme-light .ws-header__title {
+  color: #0f172a;
+}
+
+body.theme-light .ws-header__subtitle {
+  color: #64748b;
+}
+
+body.theme-light .ws-mobile-toggle {
+  color: #0f172a;
+}
+
+/* Panels & Cards */
+body.theme-light .ws-panel,
+body.theme-light .ws-card,
+body.theme-light .ws-kanban-card,
+body.theme-light .ws-sandbox-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+body.theme-light .ws-card__title {
+  color: #0f172a;
+}
+
+body.theme-light .ws-card__desc {
+  color: #475569;
+}
+
+/* Tables */
+body.theme-light .ws-table th {
+  background: #f1f5f9;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+body.theme-light .ws-table td {
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+}
+
+body.theme-light .ws-table tr:hover td {
+  background: #ffffff;
+}
+
+/* Kanban specific */
+body.theme-light .ws-kanban-column {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+
+body.theme-light .ws-kanban-title {
+  color: #0f172a;
+}
+
+body.theme-light .ws-kanban-card h4 {
+  color: #0f172a;
+}
+body.theme-light .ws-kanban-card p {
+  color: #475569;
+}
+
+/* File Vault */
+body.theme-light .ws-file-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+body.theme-light .ws-file-item:hover {
+  background: #f8f9fa;
+  border-color: #cbd5e1;
+}
+
+body.theme-light .ws-file-item__name {
+  color: #0f172a;
+}
+
+body.theme-light .ws-file-item__meta {
+  color: #64748b;
+}
+
+body.theme-light .ws-upload-zone {
+  background: #f8f9fa;
+  border: 2px dashed #cbd5e1;
+}
+
+body.theme-light .ws-upload-zone:hover {
+  border-color: #4f46e5;
+  background: #f1f5f9;
+}
+
+body.theme-light .ws-upload-zone__text {
+  color: #475569;
+}
+
+body.theme-light .ws-upload-zone__text span {
+  color: #94a3b8 !important;
+}
+
+body.theme-light .ws-file-toolbar {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+body.theme-light .ws-view-toggle {
+  color: #94a3b8;
+}
+
+body.theme-light .ws-view-toggle:hover {
+  color: #475569;
+  background: #f1f5f9;
+}
+
+body.theme-light .ws-view-toggle--active {
+  color: #0f172a;
+  background: #e2e8f0;
+}
+
+/* Sandbox */
+body.theme-light .ws-sandbox-item h5 {
+  color: #0f172a;
+}
+
+body.theme-light .ws-sandbox-item p {
+  color: #475569;
+}
+
+/* Document templates */
+body.theme-light .ws-templates-sidebar {
+  border-right: 1px solid #e2e8f0;
+  background: #f8f9fa;
+}
+
+body.theme-light .ws-template-item {
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+body.theme-light .ws-template-item:hover {
+  background: #ffffff;
+}
+
+body.theme-light .ws-template-item--active {
+  background: #ffffff;
+  color: #4f46e5;
+  border-left: 3px solid #4f46e5;
+}
+
+/* Buttons */
+body.theme-light .ws-btn--secondary {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+}
+
+body.theme-light .ws-btn--secondary:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+/* Empty States */
+body.theme-light .ws-empty {
+  border: 1px dashed #cbd5e1;
+  background: transparent;
+}
+
+body.theme-light .ws-empty__title {
+  color: #475569;
+}
+
+body.theme-light .ws-empty__subtitle {
+  color: #94a3b8;
+}
+

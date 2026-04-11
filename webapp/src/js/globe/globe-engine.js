@@ -22,12 +22,9 @@ export function initGlobe(containerId, suppliers = []) {
   const isLightMode = document.body.classList.contains('theme-light');
   
   const globe = Globe()
-    .globeImageUrl(isLightMode ? '//unpkg.com/three-globe/example/img/earth-blue-marble.jpg' : '//unpkg.com/three-globe/example/img/earth-night.jpg')
     .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-    .backgroundImageUrl(isLightMode ? null : '//unpkg.com/three-globe/example/img/night-sky.png')
     .backgroundColor('rgba(0,0,0,0)')
     .showAtmosphere(true)
-    .atmosphereColor(isLightMode ? '#93c5fd' : '#3b82f6')
     .atmosphereAltitude(0.15)
 
     // Points (supplier dots only — clean, small)
@@ -71,6 +68,42 @@ export function initGlobe(containerId, suppliers = []) {
 
     (container);
 
+  function updateGlobeMaterial(isLight) {
+    if (isLight) {
+      globe.globeImageUrl('//unpkg.com/three-globe/example/img/earth-day.jpg');
+      globe.bumpImageUrl(null); // Remove 3D shadows for a flat/cartoon feel
+      globe.backgroundImageUrl(null);
+      globe.showAtmosphere(true);
+      globe.atmosphereColor('#87CEEB'); // Softer sky blue atmosphere
+    } else {
+      globe.globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg');
+      globe.bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png');
+      globe.backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png');
+      globe.showAtmosphere(true);
+      globe.atmosphereColor('#3b82f6');
+    }
+    
+    // Reset material properties
+    setTimeout(() => {
+      const mat = globe.globeMaterial();
+      if (mat) {
+        if (isLight) {
+          mat.color = new THREE.Color('#ffffff');
+          mat.emissive = new THREE.Color('#000000'); // Remove foggy overlay
+          mat.emissiveIntensity = 0.0; 
+          mat.shininess = 0.0; // Flat matte cartoon look
+        } else {
+          mat.color = new THREE.Color('#ffffff');
+          mat.emissive = new THREE.Color('#000000');
+          mat.emissiveIntensity = 0;
+          mat.shininess = 0.8;
+        }
+      }
+    }, 50);
+  }
+
+  updateGlobeMaterial(isLightMode);
+
   // ── Sizing ─────────────────────────────────────────────
   function resize() {
     globe.width(container.clientWidth).height(container.clientHeight);
@@ -81,10 +114,16 @@ export function initGlobe(containerId, suppliers = []) {
   // ── Scene Tweaks ───────────────────────────────────────
   const renderer = globe.renderer();
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+  renderer.toneMappingExposure = isLightMode ? 1.3 : 1.1;
 
-  const ambientLight = new THREE.AmbientLight(0x3b82f6, 0.12);
+  const ambientLight = new THREE.AmbientLight(isLightMode ? 0xffffff : 0x3b82f6, isLightMode ? 0.85 : 0.12);
   globe.scene().add(ambientLight);
+  
+  if (isLightMode) {
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    directionalLight.position.set(1, 1, 1);
+    globe.scene().add(directionalLight);
+  }
 
   // ── Controls — SLOW rotation ───────────────────────────
   const controls = globe.controls();
@@ -328,9 +367,7 @@ export function initGlobe(containerId, suppliers = []) {
       updateShortlistNetwork(sl);
     },
     setGlobeTheme: (isLight) => {
-      globe.globeImageUrl(isLight ? '//unpkg.com/three-globe/example/img/earth-blue-marble.jpg' : '//unpkg.com/three-globe/example/img/earth-night.jpg');
-      globe.backgroundImageUrl(isLight ? null : '//unpkg.com/three-globe/example/img/night-sky.png');
-      globe.atmosphereColor(isLight ? '#93c5fd' : '#3b82f6');
+      updateGlobeMaterial(isLight);
     }
   };
 }

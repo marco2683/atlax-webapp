@@ -1,11 +1,20 @@
 /* ============================================================
    PRD — Global Light Theme Overrides
    Activated via body.theme-light
+   All rules scoped — dark mode is never touched.
    ============================================================ */
 
+/* ── Anti-flash preload (before JS runs) ───────────────── */
+html.theme-light-preload {
+  background-color: #f5f5f7 !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   1. DESIGN TOKEN OVERRIDES
+   ══════════════════════════════════════════════════════════ */
 body.theme-light {
   /* Core Backgrounds */
-  --color-void:          #f9fafb; /* Soft gray-white bg */
+  --color-void:          #f5f5f7;
   --color-midnight:      #ffffff;
   --color-slate-900:     #f3f4f6;
   --color-slate-800:     #e5e7eb;
@@ -13,47 +22,70 @@ body.theme-light {
   --color-slate-600:     #9ca3af;
   --color-slate-500:     #6b7280;
 
-  /* Neutrals (Inverted for text) */
-  --color-steel-400:     #4b5563; /* Mid-dark gray */
-  --color-steel-300:     #374151; /* Darkish gray */
-  --color-cloud:         #1f2937; /* Very dark gray for body text */
-  --color-white:         #111827; /* Almost black for precise headings */
+  /* Neutrals (Inverted for text on light bg) */
+  --color-steel-400:     #4b5563;
+  --color-steel-300:     #374151;
+  --color-steel-200:     #4b5563;
+  --color-steel-100:     #6b7280;
+  --color-cloud:         #1f2937;
+  --color-white:         #111827;
 
   /* Glass Effects */
   --glass-bg:            rgba(255, 255, 255, 0.75);
   --glass-bg-solid:      rgba(255, 255, 255, 0.95);
   --glass-border:        rgba(0, 0, 0, 0.08);
-  
+
   /* Borders */
   --border-subtle:       1px solid rgba(0, 0, 0, 0.04);
   --border-dim:          1px solid rgba(0, 0, 0, 0.08);
   --border-glass:        1px solid rgba(0, 0, 0, 0.12);
 
-  /* Shadows */
+  /* Shadows — lighter, more subtle */
   --shadow-sm:           0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md:           0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg:           0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl:           0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  /* Accent colors (Blues, Greens, etc. remain the same) */
+  --shadow-md:           0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg:           0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-xl:           0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
+  --shadow-glow:         0 0 20px rgba(59, 130, 246, 0.12);
+  --shadow-glow-cyan:    0 0 15px rgba(59, 130, 246, 0.1);
 
   color: var(--color-cloud);
   background-color: var(--color-void);
 }
 
-/* Base Element Inverse Colors */
-body.theme-light h1, 
-body.theme-light h2, 
-body.theme-light h3, 
-body.theme-light h4, 
-body.theme-light h5, 
+/* Base headings */
+body.theme-light h1,
+body.theme-light h2,
+body.theme-light h3,
+body.theme-light h4,
+body.theme-light h5,
 body.theme-light h6 {
   color: var(--color-white);
 }
 
-/* Navbar inversion */
+/* Scrollbar */
+body.theme-light ::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+body.theme-light ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+}
+body.theme-light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   2. NAVBAR
+   ══════════════════════════════════════════════════════════ */
 body.theme-light .navbar {
-  background: rgba(255, 255, 255, 0.85) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+  backdrop-filter: blur(20px);
+}
+
+body.theme-light .navbar--scrolled {
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 body.theme-light .navbar__brand img {
@@ -62,7 +94,7 @@ body.theme-light .navbar__brand img {
 
 body.theme-light .navbar__brand div {
   color: #111827 !important;
-  border-color: rgba(0,0,0,0.1) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 body.theme-light .navbar__brand div div {
@@ -70,29 +102,504 @@ body.theme-light .navbar__brand div div {
 }
 
 body.theme-light .navbar__menu-item {
-  color: var(--color-steel-400);
+  color: #4b5563;
 }
 
 body.theme-light .navbar__menu-item:hover,
 body.theme-light .navbar__menu-item--active {
-  color: var(--color-electric-dim);
+  color: #1d4ed8;
+  background: rgba(59, 130, 246, 0.06);
 }
 
 body.theme-light .navbar__icon-btn,
-body.theme-light .navbar__workspace-link,
-body.theme-light .navbar__avatar {
-  color: var(--color-steel-300);
+body.theme-light .navbar__workspace-link {
+  color: #4b5563;
+  border-color: rgba(0, 0, 0, 0.08);
   background: transparent;
 }
 
 body.theme-light .navbar__icon-btn:hover,
-body.theme-light .navbar__workspace-link:hover,
-body.theme-light .navbar__avatar:hover {
-  background: rgba(0, 0, 0, 0.05);
-  color: var(--color-electric-dim);
+body.theme-light .navbar__workspace-link:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: #1d4ed8;
+  border-color: rgba(59, 130, 246, 0.25);
 }
 
-/* Update Modal/Glass panel backgrounds to match light theme */
+
+/* ── Theme Toggle Button ────────────────────────────────── */
+.navbar__theme-toggle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.navbar__theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.theme-light .navbar__theme-toggle {
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #6b7280;
+}
+body.theme-light .navbar__theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: #374151;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   3. HERO / GLOBE SECTION
+   ══════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════
+   3. HERO / GLOBE SECTION
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .hero {
+  background: #f5f5f7 !important;
+}
+
+/* Remove any dark mode overlays or halos */
+body.theme-light .hero__overlay {
+  background: none !important;
+}
+
+/* Base globe container clear */
+body.theme-light .hero__globe-container {
+  background: transparent !important;
+}
+
+body.theme-light .hero__globe-container canvas {
+  filter: brightness(1.45) contrast(0.85) saturate(0.8) hue-rotate(5deg) !important;
+}
+
+/* Title gradient */
+body.theme-light .search-area__tagline h1 {
+  background: linear-gradient(135deg, #111827 0%, #374151 100%);
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+body.theme-light .search-area__tagline p {
+  color: #6b7280;
+}
+
+/* Selector buttons */
+body.theme-light .selector-btn {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #4b5563;
+}
+body.theme-light .selector-btn:hover {
+  color: #111827;
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+body.theme-light .selector-btn--active {
+  color: #1d4ed8;
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+body.theme-light .selector-step__label {
+  color: #6b7280;
+}
+body.theme-light .selector-step__chevron {
+  color: #9ca3af;
+}
+
+/* Stage / Region chips */
+body.theme-light .region-chip {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #4b5563;
+}
+body.theme-light .region-chip:hover {
+  color: #111827;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+body.theme-light .region-chip--active {
+  color: #1d4ed8;
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+/* Search bar */
+body.theme-light .search-bar {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+body.theme-light .search-bar:focus-within {
+  border-color: var(--color-electric);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+body.theme-light .search-bar__input {
+  color: #111827;
+}
+body.theme-light .search-bar__input::placeholder {
+  color: #9ca3af;
+}
+body.theme-light .search-bar__icon {
+  color: #9ca3af;
+}
+
+/* Autocomplete dropdown */
+body.theme-light .search-autocomplete {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+}
+body.theme-light .search-autocomplete__item {
+  color: #374151;
+}
+body.theme-light .search-autocomplete__item:not(:last-child) {
+  border-bottom-color: rgba(0, 0, 0, 0.05);
+}
+body.theme-light .search-autocomplete__item:hover {
+  color: #1d4ed8;
+  background: rgba(59, 130, 246, 0.04);
+}
+
+/* Scroll hint */
+body.theme-light .hero__scroll-hint {
+  color: #9ca3af;
+}
+body.theme-light .hero__scroll-indicator {
+  border-color: #9ca3af;
+}
+body.theme-light .hero__scroll-indicator::after {
+  background: #6b7280;
+}
+
+/* Pricing FAB */
+body.theme-light .pricing-fab {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #374151;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+body.theme-light .pricing-fab:hover {
+  background: rgba(59, 130, 246, 0.06);
+  border-color: rgba(59, 130, 246, 0.2);
+  color: #1d4ed8;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   4. INSTANT RFQ ENGINE
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .rfq-engine__card {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important;
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+body.theme-light .rfq-engine__card::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Mode selector */
+body.theme-light .rfq-mode-selector {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+body.theme-light .rfq-mode-btn {
+  color: #6b7280;
+}
+body.theme-light .rfq-mode-btn:hover {
+  color: #111827;
+  background: rgba(0, 0, 0, 0.03);
+}
+body.theme-light .rfq-mode-btn.active {
+  background: rgba(59, 130, 246, 0.1);
+  color: #1d4ed8;
+  box-shadow: none;
+}
+
+/* RFQ Header */
+body.theme-light .rfq-engine__header h2 {
+  color: #111827;
+}
+body.theme-light .rfq-engine__header p {
+  color: #6b7280;
+}
+
+/* Tabs */
+body.theme-light .rfq-tabs {
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+body.theme-light .rfq-tab {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #6b7280;
+}
+body.theme-light .rfq-tab:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: #111827;
+}
+body.theme-light .rfq-tab.active {
+  background: rgba(59, 130, 246, 0.06);
+  border-color: rgba(59, 130, 246, 0.2);
+  color: #1d4ed8;
+}
+body.theme-light .rfq-tabs__add {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #9ca3af;
+}
+body.theme-light .rfq-tabs__add:hover {
+  background: rgba(59, 130, 246, 0.06);
+  border-color: rgba(59, 130, 246, 0.2);
+  color: #1d4ed8;
+}
+
+/* Upload zones */
+body.theme-light .rfq-engine__upload-zone {
+  background: rgba(0, 0, 0, 0.015);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+body.theme-light .rfq-engine__upload-zone:hover,
+body.theme-light .rfq-engine__upload-zone.drag-over {
+  background: rgba(59, 130, 246, 0.04);
+  border-color: rgba(59, 130, 246, 0.35);
+}
+body.theme-light .upload-text h3 {
+  color: #111827;
+}
+body.theme-light .upload-text p {
+  color: #6b7280;
+}
+body.theme-light .upload-formats p {
+  color: #9ca3af;
+}
+body.theme-light .upload-btn {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #374151;
+}
+body.theme-light .upload-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* File badges */
+body.theme-light .upload-file-item {
+  background: rgba(59, 130, 246, 0.05);
+  border-color: rgba(59, 130, 246, 0.15);
+  color: #374151;
+}
+body.theme-light .upload-file-item__size {
+  color: #9ca3af;
+}
+
+/* Fields */
+body.theme-light .rfq-field label,
+body.theme-light .rfq-custom-details label,
+body.theme-light .rfq-engine__comments label {
+  color: #6b7280;
+}
+body.theme-light .rfq-field select,
+body.theme-light .rfq-field input {
+  background: #ffffff;
+  border-color: #d1d5db;
+  color: #111827;
+}
+body.theme-light .rfq-field select option {
+  background: #ffffff;
+  color: #111827;
+}
+body.theme-light .rfq-field select:focus,
+body.theme-light .rfq-field input:focus {
+  border-color: var(--color-electric);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+body.theme-light .rfq-custom-details textarea,
+body.theme-light .rfq-engine__comments textarea {
+  background: #ffffff;
+  border-color: #d1d5db;
+  color: #111827;
+}
+body.theme-light .rfq-custom-details textarea:focus,
+body.theme-light .rfq-engine__comments textarea:focus {
+  border-color: var(--color-electric);
+}
+body.theme-light .rfq-custom-details textarea::placeholder,
+body.theme-light .rfq-engine__comments textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* Drawing note */
+body.theme-light .rfq-drawing-note {
+  background: rgba(59, 130, 246, 0.04);
+  border-color: rgba(59, 130, 246, 0.1);
+}
+body.theme-light .rfq-drawing-note span {
+  color: #6b7280;
+}
+
+/* Geometry placeholder */
+body.theme-light .rfq-results-placeholder {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #9ca3af !important;
+  background: rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Geometry results */
+body.theme-light .rfq-results {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+body.theme-light .rfq-results__header h3 {
+  color: #111827;
+}
+body.theme-light .rfq-results__thumbnail {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+body.theme-light .rfq-stat {
+  background: rgba(0, 0, 0, 0.025);
+}
+body.theme-light .rfq-stat__label {
+  color: #6b7280;
+}
+body.theme-light .rfq-stat__value {
+  color: #111827;
+}
+
+/* DFM Toggle */
+body.theme-light .rfq-toggle {
+  background: rgba(59, 130, 246, 0.03);
+  border-color: rgba(59, 130, 246, 0.1);
+}
+body.theme-light .rfq-toggle:hover {
+  background: rgba(59, 130, 246, 0.06);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+body.theme-light .rfq-toggle__slider {
+  background: rgba(0, 0, 0, 0.1);
+}
+body.theme-light .rfq-toggle__text strong {
+  color: #111827;
+}
+body.theme-light .rfq-toggle__text small {
+  color: #6b7280;
+}
+
+/* Rich text editor */
+body.theme-light .rfq-editor {
+  background: #ffffff;
+  border-color: #d1d5db;
+}
+body.theme-light .rfq-editor__toolbar {
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+body.theme-light .rfq-editor__divider {
+  background: rgba(0, 0, 0, 0.08);
+}
+body.theme-light .rfq-editor__tool {
+  color: #6b7280;
+}
+body.theme-light .rfq-editor__tool:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: #111827;
+}
+body.theme-light .rfq-editor__tool.active {
+  background: rgba(59, 130, 246, 0.08);
+  color: #1d4ed8;
+}
+body.theme-light .rfq-editor__content {
+  color: #111827;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   5. RFQ RIGHT PANEL (Quote Summary)
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .rfq-engine__right {
+  background: rgba(255, 255, 255, 0.92);
+}
+body.theme-light .rfq-summary-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+body.theme-light .rfq-summary-card h3 {
+  color: #111827;
+}
+body.theme-light .rfq-summary-item {
+  border-bottom-color: rgba(0, 0, 0, 0.04);
+}
+body.theme-light .rfq-summary-item__label {
+  color: #6b7280;
+}
+body.theme-light .rfq-summary-item__value {
+  color: #111827;
+}
+body.theme-light .rfq-cta {
+  background: var(--color-electric);
+  color: #fff;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   6. SUPPLIER ENGINE & TABULAR VIEW
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .supplier-tabular-engine {
+  background: #f9fafb;
+}
+body.theme-light .stab-table th {
+  background: #f3f4f6;
+  color: #374151;
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+body.theme-light .stab-table td {
+  color: #374151;
+  border-bottom-color: rgba(0, 0, 0, 0.04);
+}
+body.theme-light .stab-table tr:hover {
+  background: rgba(59, 130, 246, 0.03);
+}
+body.theme-light .stab-toolbar {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+body.theme-light .stab-toolbar input,
+body.theme-light .stab-toolbar select {
+  background: #ffffff;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+/* Supplier view toggle */
+body.theme-light .supplier-view-toggle {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+body.theme-light .supplier-view-toggle button {
+  color: #6b7280;
+}
+body.theme-light .supplier-view-toggle button.active {
+  background: rgba(59, 130, 246, 0.08);
+  color: #1d4ed8;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   7. MODALS (Auth, Supplier, Pricing)
+   ══════════════════════════════════════════════════════════ */
 body.theme-light .auth-modal-glass,
 body.theme-light .supplier-modal__body {
   background: var(--glass-bg-solid);
@@ -100,22 +607,815 @@ body.theme-light .supplier-modal__body {
   box-shadow: var(--shadow-xl);
 }
 
-/* Modals inputs & buttons need to adapt */
 body.theme-light .auth-input-group input {
   background: #ffffff;
   border: 1px solid #d1d5db;
   color: #111827;
 }
-
 body.theme-light .auth-input-group label {
   color: #374151;
 }
-
 body.theme-light .auth-error-msg {
   color: var(--color-coral);
 }
 
-/* ── Hero / Globe section stays dark in light mode ─────────
-   The globe WebGL viewer doesn't translate well to light bg,
-   so we lock the hero (suppliers view) to always be dark.
-   ─────────────────────────────────────────────────────────── */
+body.theme-light .modal-backdrop {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+body.theme-light .pricing-modal {
+  background: rgba(255, 255, 255, 0.97);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+body.theme-light .pricing-modal__header {
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+body.theme-light .pricing-modal .tier-card {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+body.theme-light .pricing-modal .tier-card:hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+body.theme-light .modal-close {
+  color: #6b7280;
+}
+body.theme-light .modal-close:hover {
+  color: #111827;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* Supplier modal (main body inherits from supplier-modal-light.css) */
+body.theme-light .supplier-modal {
+  background: rgba(255, 255, 255, 0.97);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   8. SHORTLIST PANEL
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .shortlist-panel {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+body.theme-light .shortlist-panel__header h3 {
+  color: #111827;
+}
+body.theme-light .shortlist-item {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+body.theme-light .shortlist-item:hover {
+  border-color: rgba(59, 130, 246, 0.2);
+}
+body.theme-light .shortlist-item__name {
+  color: #111827;
+}
+body.theme-light .shortlist-item__tech {
+  color: #6b7280;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   9. BOTTOM RESULTS CONTAINER
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .stacked-results {
+  background: rgba(255, 255, 255, 0.9);
+}
+body.theme-light .stacked-results__card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+body.theme-light .stacked-results__card:hover {
+  border-color: rgba(59, 130, 246, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+body.theme-light .stacked-results__name {
+  color: #111827;
+}
+body.theme-light .stacked-results__meta {
+  color: #6b7280;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   10. PRODUCT BUILDER
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .product-builder-engine {
+  background: #f5f5f7;
+}
+body.theme-light .pb-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+body.theme-light .pb-card:hover {
+  border-color: rgba(59, 130, 246, 0.2);
+}
+body.theme-light .pb-label {
+  color: #6b7280;
+}
+body.theme-light .pb-input,
+body.theme-light .pb-textarea,
+body.theme-light .pb-select {
+  background: #ffffff;
+  border-color: #d1d5db;
+  color: #111827;
+}
+body.theme-light .pb-input:focus,
+body.theme-light .pb-textarea:focus,
+body.theme-light .pb-select:focus {
+  border-color: var(--color-electric);
+}
+
+/* Dossier panels */
+body.theme-light .dossier-panel {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+body.theme-light .dossier-panel__header {
+  color: #111827;
+}
+body.theme-light .dossier-panel__content {
+  color: #374151;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   11. DESIGNERS ENGINE
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .designers-engine {
+  background: #f5f5f7;
+}
+body.theme-light .designer-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+body.theme-light .designer-card:hover {
+  border-color: rgba(59, 130, 246, 0.2);
+}
+body.theme-light .designer-card__name {
+  color: #111827;
+}
+body.theme-light .designer-card__speciality {
+  color: #6b7280;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   12. TARIFF ENGINE
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .tariff-engine {
+  background: #f5f5f7;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   13. TAXONOMY ENGINE (iframe wrapper)
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .taxonomy-engine {
+  background: #f5f5f7 !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   14. CONTACT MODAL & MISC COMPONENTS
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .contact-modal__card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+body.theme-light .contact-modal__card input,
+body.theme-light .contact-modal__card textarea,
+body.theme-light .contact-modal__card select {
+  background: #ffffff;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+/* Dropdowns */
+body.theme-light .dropdown-content {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+body.theme-light .dropdown-item {
+  color: #374151;
+}
+body.theme-light .dropdown-item:hover {
+  background: rgba(59, 130, 246, 0.04);
+  color: #1d4ed8;
+}
+body.theme-light .dropdown-divider {
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+/* Save modal */
+body.theme-light .tabular-save-modal {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+}
+body.theme-light .tabular-save-modal input,
+body.theme-light .tabular-save-modal textarea {
+  background: #ffffff;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   15. BULK UPLOAD ZONE (RFQ)
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .rfq-bulk-zone {
+  background: rgba(0, 0, 0, 0.015);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+body.theme-light .rfq-bulk-zone:hover {
+  background: rgba(59, 130, 246, 0.04);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+body.theme-light .rfq-bulk-file {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.06);
+  color: #374151;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   16. RFQ CTA CARD (bottom bar)
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .rfq-cta-card {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+}
+body.theme-light .rfq-cta-card .rfq-engineer-toggle {
+  color: #374151;
+}
+body.theme-light .rfq-cta-card .rfq-engineer-toggle small {
+  color: #6b7280;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   17. RFQ QUOTE RESULT PANEL (right column)
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .rfq-quote-result--empty {
+  background: transparent !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+body.theme-light .rfq-quote-result__empty-hint-title {
+  color: rgba(0, 0, 0, 0.3) !important;
+}
+body.theme-light .rfq-quote-result__empty-hint-sub {
+  color: rgba(0, 0, 0, 0.2) !important;
+}
+body.theme-light .rfq-quote-result__placeholder {
+  color: rgba(0, 0, 0, 0.4) !important;
+}
+
+body.theme-light .rfq-quote-result--populated {
+  background: linear-gradient(160deg, rgba(240, 253, 244, 0.98), rgba(255, 255, 255, 0.98)) !important;
+  border-color: rgba(34, 197, 94, 0.2) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+}
+body.theme-light .rfq-quote-result__header {
+  border-bottom-color: rgba(0, 0, 0, 0.06) !important;
+}
+body.theme-light .rfq-quote-result__header h3 {
+  color: #111827 !important;
+}
+body.theme-light .rfq-quote-result__clear-all {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #4b5563 !important;
+}
+body.theme-light .rfq-quote-result__clear-all:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+  color: #111827 !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   18. CONTACT US NAV TRIGGER
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .navbar__actions .nav-contact-trigger {
+  color: #4b5563 !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  background: transparent !important;
+}
+
+body.theme-light .navbar__actions .nav-contact-trigger:hover {
+  color: #111827 !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+  background: #eff6ff !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   19. PROFILE PANEL (Fix Shadow Bleed on Right Edge)
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .profile-panel {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-left-color: rgba(0, 0, 0, 0.1) !important;
+  /* Prevent dark shadow bleeding when hidden */
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05) !important;
+  color: #111827 !important;
+}
+
+body.theme-light .profile-panel__identity h3 {
+  color: #111827 !important;
+}
+
+body.theme-light .profile-panel__identity p,
+body.theme-light .profile-section-title,
+body.theme-light .profile-field label {
+  color: #6b7280 !important;
+}
+
+body.theme-light .profile-panel__close {
+  color: #9ca3af !important;
+}
+body.theme-light .profile-panel__close:hover {
+  color: #111827 !important;
+  background: rgba(0,0,0,0.05) !important;
+}
+
+body.theme-light .profile-panel__header,
+body.theme-light .profile-panel__avatar-section,
+body.theme-light .profile-danger-zone {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+body.theme-light .profile-field input,
+body.theme-light .profile-field select {
+  background: #f9fafb !important;
+  border-color: rgba(0,0,0,0.1) !important;
+  color: #111827 !important;
+}
+body.theme-light .profile-field input:focus,
+body.theme-light .profile-field select:focus {
+  border-color: var(--color-electric) !important;
+}
+
+body.theme-light .profile-logout-btn {
+  color: #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+body.theme-light .profile-logout-btn:hover {
+  background: #fef2f2 !important;
+}
+
+/* Per-Part Quote Cards */
+body.theme-light .rfq-quote-part-card {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+body.theme-light .rfq-quote-part-card__header {
+  background: rgba(59, 130, 246, 0.05);
+  border-bottom-color: rgba(59, 130, 246, 0.08);
+}
+body.theme-light .rfq-quote-part-card__name {
+  color: #111827;
+}
+body.theme-light .rfq-quote-part-card__total {
+  border-top-color: rgba(0, 0, 0, 0.04);
+  background: rgba(0, 0, 0, 0.01);
+  color: #6b7280;
+}
+body.theme-light .rfq-quote-part-card__price {
+  color: #111827;
+}
+
+/* Grand Total */
+body.theme-light .rfq-quote-grand-total {
+  border-top-color: rgba(34, 197, 94, 0.2);
+}
+body.theme-light .rfq-quote-grand-total__row {
+  color: #111827;
+}
+body.theme-light .rfq-quote-grand-total__price {
+  text-shadow: none;
+}
+
+/* Quote line items */
+body.theme-light .rfq-line-item {
+  border-bottom-color: rgba(0, 0, 0, 0.04);
+}
+body.theme-light .rfq-line-item__label {
+  color: #6b7280;
+}
+body.theme-light .rfq-line-item__value {
+  color: #111827;
+}
+
+/* Action buttons in quote */
+body.theme-light .rfq-quote-result__actions {
+  border-top-color: rgba(0, 0, 0, 0.06);
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   18. VIEW TOGGLE BUTTONS (Tabular/Globe)
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .view-toggle-wrapper {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+body.theme-light .view-toggle-btn {
+  color: #6b7280;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+body.theme-light .view-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.03);
+  color: #374151;
+}
+body.theme-light .view-toggle-btn.active {
+  background: rgba(59, 130, 246, 0.08);
+  color: #1d4ed8;
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   19. INLINE COLOR CATCH-ALLS
+   ══════════════════════════════════════════════════════════ */
+
+/* Catch-all: generic dark backgrounds in inline styles */
+body.theme-light [style*="background: rgba(0,0,0,0.2)"],
+body.theme-light [style*="background:rgba(0,0,0,0.2)"] {
+  background: rgba(0, 0, 0, 0.03) !important;
+}
+body.theme-light [style*="background: rgba(0,0,0,0.3)"],
+body.theme-light [style*="background:rgba(0,0,0,0.3)"] {
+  background: #ffffff !important;
+}
+
+/* Inline color overrides for 2D upload zone in dynamic templates */
+body.theme-light [id^="rfq-upload-zone-2d-"] {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Override any remaining white text that should be dark */
+body.theme-light .rfq-engine__card .upload-icon {
+  color: var(--color-electric);
+}
+
+/* Select option backgrounds */
+body.theme-light .rfq-field select option {
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+/* 2D upload zone text */
+body.theme-light [id^="rfq-upload-zone-2d-"] h4 {
+  color: #374151 !important;
+}
+body.theme-light [id^="rfq-upload-zone-2d-"] p {
+  color: #6b7280 !important;
+}
+
+/* Geometry placeholder styling */
+body.theme-light .rfq-results-placeholder {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+body.theme-light .rfq-results-placeholder h4 {
+  color: #9ca3af !important;
+}
+body.theme-light .rfq-results-placeholder p {
+  color: #9ca3af !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   20. SALES FUNNEL OVERRIDES
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .sales-funnel-page {
+  background: radial-gradient(circle at 50% 10%, rgba(59, 130, 246, 0.05) 0%, rgba(245, 245, 247, 0.95) 60%), #f5f5f7 !important;
+}
+
+body.theme-light .sales-grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(59, 130, 246, 0.1) 1px, transparent 1px) !important;
+}
+
+body.theme-light .sales-funnel__header a {
+  color: #374151 !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+body.theme-light .sales-hero__title,
+body.theme-light .sales-section-title {
+  background: none !important;
+  color: #111827 !important;
+  text-shadow: none !important;
+  -webkit-text-fill-color: initial !important;
+}
+body.theme-light .sales-hero__title span {
+  background: none !important;
+  color: var(--color-electric) !important;
+  -webkit-text-fill-color: initial !important;
+}
+
+body.theme-light .sales-hero__subtitle,
+body.theme-light .sales-section-subtitle {
+  color: #4b5563 !important;
+}
+
+body.theme-light .sales-plan-row {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.theme-light .sales-plan-row h3,
+body.theme-light .sales-plan-row h4 {
+  color: #111827 !important;
+}
+
+body.theme-light .sales-plan-row p {
+  color: #4b5563 !important;
+}
+
+body.theme-light .sales-plan-row li {
+  color: #374151 !important;
+}
+
+body.theme-light .sales-plan-row [style*="color: #fff"],
+body.theme-light .sales-plan-row [style*="color: rgba(255,255,255"] {
+  color: #111827 !important;
+}
+
+body.theme-light .sales-plan-row [style*="color: rgba(255,255,255,0.6)"],
+body.theme-light .sales-plan-row [style*="color: rgba(255,255,255,0.4)"] {
+  color: #6b7280 !important;
+}
+
+body.theme-light .sales-deep-dive h2 {
+  color: #111827 !important;
+}
+body.theme-light .sales-deep-dive p,
+body.theme-light .deep-dive-list li {
+  color: #4b5563 !important;
+}
+
+body.theme-light .pricing-card {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+body.theme-light .pricing-card-header h3 {
+  color: #111827 !important;
+}
+body.theme-light .pricing-card-header .price {
+  color: #111827 !important;
+}
+body.theme-light .pricing-features li {
+  color: #4b5563 !important;
+}
+
+body.theme-light .sales-pricing-grid > div {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+body.theme-light .sales-pricing-grid > div h3,
+body.theme-light .sales-pricing-grid > div div[style*="font-size: 36px"] {
+  color: #111827 !important;
+}
+body.theme-light .sales-pricing-grid > div p,
+body.theme-light .sales-pricing-grid > div li {
+  color: #4b5563 !important;
+}
+
+body.theme-light .sales-footer-cta p {
+  color: #4b5563 !important;
+}
+
+body.theme-light .sales-marquee-img {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+}
+body.theme-light .sales-marquee-container {
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+/* ══════════════════════════════════════════════════════════
+   21. TABULAR ENGINE OVERRIDES
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .supplier-tabular-engine {
+  background: rgba(245, 245, 247, 0.95) !important;
+  backdrop-filter: blur(20px);
+}
+
+body.theme-light .tabular-header h1 {
+  color: #111827 !important;
+}
+
+body.theme-light .tabular-header p {
+  color: #4b5563 !important;
+}
+
+body.theme-light .tabular-header {
+  border-bottom-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+body.theme-light .tabular-search input,
+body.theme-light .filter-group select {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #111827 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+body.theme-light .tabular-search input:focus,
+body.theme-light .filter-group select:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+body.theme-light .filter-group label {
+  color: #374151 !important;
+}
+
+body.theme-light .segment-pill {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #4b5563 !important;
+}
+
+body.theme-light .segment-pill.active {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+  border-color: #3b82f6 !important;
+}
+
+body.theme-light .tabular-info {
+  border-bottom-color: rgba(0, 0, 0, 0.1) !important;
+  color: #4b5563 !important;
+}
+
+body.theme-light .tabular-table thead {
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+body.theme-light .tabular-table th {
+  color: #374151 !important;
+  border-bottom-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+body.theme-light .tabular-table td {
+  color: #111827 !important;
+  border-bottom-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+body.theme-light .tabular-table tbody tr:hover {
+  background: rgba(0, 0, 0, 0.03) !important;
+}
+
+body.theme-light .view-toggle-pill {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+body.theme-light .view-toggle-btn {
+  color: #4b5563 !important;
+}
+
+body.theme-light .view-toggle-btn.active {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+body.theme-light .tabular-shortlist-btn {
+  color: #9ca3af !important;
+}
+
+body.theme-light .tabular-shortlist-btn.added {
+  color: #f59e0b !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   22. AUTH MODAL OVERRIDES
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .auth-modal {
+  background: rgba(255, 255, 255, 0.85) !important;
+}
+
+body.theme-light .auth-modal-glass {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1) !important;
+}
+
+body.theme-light .auth-header h2 {
+  color: #111827 !important;
+}
+
+body.theme-light .auth-header p {
+  color: #4b5563 !important;
+}
+
+body.theme-light .close-auth-modal {
+  color: #9ca3af !important;
+}
+body.theme-light .close-auth-modal:hover {
+  color: #111827 !important;
+}
+
+body.theme-light .auth-input-group label {
+  color: #4b5563 !important;
+}
+
+body.theme-light .auth-input-group input,
+body.theme-light .auth-input-group select {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #111827 !important;
+}
+
+body.theme-light .auth-input-group input:focus,
+body.theme-light .auth-input-group select:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+}
+
+body.theme-light .auth-toggle-link {
+  color: #6b7280 !important;
+}
+
+body.theme-light .auth-input-group p {
+  color: #6b7280 !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   23. SEARCH RESULT GROUPS & BOTTOM GRADIENT
+   ══════════════════════════════════════════════════════════ */
+body.theme-light .bottom-results-container {
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.6) 60%, transparent 100%) !important;
+}
+
+body.theme-light .bottom-results-container .see-all-results-btn {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(0, 153, 255, 0.3);
+  color: #0088cc;
+}
+
+body.theme-light .bottom-results-container .see-all-results-btn:hover {
+  background: #ffffff !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+body.theme-light .see-all-results-btn__count {
+  background: rgba(0, 153, 255, 0.15) !important;
+  color: #0088cc !important;
+}
+
+body.theme-light .stacked-group {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.theme-light .stacked-group:hover {
+  background: #ffffff !important;
+}
+
+body.theme-light .stacked-group__title {
+  color: #111827 !important;
+}
+
+body.theme-light .stacked-group__count {
+  color: #6b7280 !important;
+}
+
+body.theme-light .stacked-group__line {
+  border-bottom-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+body.theme-light .stacked-group__name {
+  color: #374151 !important;
+}
+
+body.theme-light .stacked-group__city {
+  color: #9ca3af !important;
+}
+
+body.theme-light .stacked-group__add-btn {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #6b7280 !important;
+}
+
+body.theme-light .stacked-group__add-btn:hover {
+  background: var(--color-electric) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}

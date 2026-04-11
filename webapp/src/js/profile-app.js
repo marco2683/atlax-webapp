@@ -74,6 +74,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
+  // Handle URL tab param
+  const urlParams = new URLSearchParams(window.location.search);
+  const startTab = urlParams.get('tab');
+  if (startTab) {
+    const tabEl = document.querySelector(`.profile-tab[data-tab="${startTab}"]`);
+    if (tabEl) {
+      setTimeout(() => tabEl.click(), 50);
+    }
+  }
+
   
   // ── Persistent Global Save Logic ─────────────────────────────────
   const globalSaveBtn = document.getElementById('global-save-btn');
@@ -101,7 +111,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         linkedin_url: getVal('prof-linkedin'),
         work_history: getVal('prof-work-history'),
         experience_years: getVal('prof-experience') ? parseInt(getVal('prof-experience')) : null,
-        methodologies: getVal('prof-methodologies')
+        methodologies: getVal('prof-methodologies'),
+        company: getVal('comp-name') || getVal('prof-company'),
+        address: getVal('comp-address') || getVal('prof-address'),
+        tax_id: getVal('comp-tax-id')
       };
 
       // Filter out nulls/undefineds for partial saves
@@ -277,6 +290,80 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
       } catch(e) { console.error('Failed to parse portfolio assets', e); }
     }
+
+    // Company
+    const compName = document.getElementById('comp-name');
+    if (compName) compName.value = profile.company || '';
+    const compTax = document.getElementById('comp-tax-id');
+    if (compTax) compTax.value = profile.tax_id || '';
+    const compAddress = document.getElementById('comp-address');
+    if (compAddress) compAddress.value = profile.address || '';
+
+    if (profile.company_logo_url) {
+      document.getElementById('company-logo-preview').style.display = 'block';
+      document.getElementById('company-logo-img').src = profile.company_logo_url;
+      document.getElementById('company-logo-label-text').innerText = "Change Logo";
+    }
+    if (profile.company_hero_url) {
+      document.getElementById('company-hero-preview').style.display = 'block';
+      document.getElementById('company-hero-img').src = profile.company_hero_url;
+      document.getElementById('company-hero-label-text').innerText = "Change Image";
+    }
+  }
+
+  // Handle Company Uploads
+  const companyLogoInput = document.getElementById('company-logo-input');
+  if (companyLogoInput) {
+    companyLogoInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      document.getElementById('company-logo-label-text').innerText = "Uploading...";
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}_logo_${Date.now()}.${fileExt}`;
+      const { error } = await supabase.storage.from('user_portfolios').upload(fileName, file);
+
+      if (!error) {
+        const { data: { publicUrl } } = supabase.storage.from('user_portfolios').getPublicUrl(fileName);
+        await updateMyProfile({ company_logo_url: publicUrl });
+        document.getElementById('company-logo-preview').style.display = 'block';
+        document.getElementById('company-logo-img').src = publicUrl;
+        document.getElementById('company-logo-label-text').innerText = "Change Logo";
+      } else {
+        alert("Upload Error: " + error.message);
+        document.getElementById('company-logo-label-text').innerText = "Upload Transparent PNG/SVG";
+      }
+    });
+  }
+
+  const companyHeroInput = document.getElementById('company-hero-input');
+  if (companyHeroInput) {
+    companyHeroInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      document.getElementById('company-hero-label-text').innerText = "Uploading...";
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}_hero_${Date.now()}.${fileExt}`;
+      const { error } = await supabase.storage.from('user_portfolios').upload(fileName, file);
+
+      if (!error) {
+        const { data: { publicUrl } } = supabase.storage.from('user_portfolios').getPublicUrl(fileName);
+        await updateMyProfile({ company_hero_url: publicUrl });
+        document.getElementById('company-hero-preview').style.display = 'block';
+        document.getElementById('company-hero-img').src = publicUrl;
+        document.getElementById('company-hero-label-text').innerText = "Change Image";
+      } else {
+        alert("Upload Error: " + error.message);
+        document.getElementById('company-hero-label-text').innerText = "Upload Office/Factory Image";
+      }
+    });
   }
 
   // Stripe Integration Triggers

@@ -10,7 +10,9 @@ import { getMyProfile, updateMyProfile } from './js/services/profile.js';
 import {
   getShortlists, deleteShortlist, renameShortlist,
   getRFQs, cancelRFQ, solicitRFQ, updateRFQStatus,
-  getFiles, uploadFile, deleteFile, updateFileMeta
+  getFiles, uploadFile, deleteFile, updateFileMeta,
+  getProjects, updateProjectStatus, addProject,
+  getSandboxItems, addSandboxItem
 } from './js/services/workspace.js';
 
 // ── State ────────────────────────────────────────────────
@@ -32,9 +34,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   profileCache = await getMyProfile();
+  initTheme();
   initSidebar();
   switchTab('shortlists');
 });
+
+// ── Theme State ──────────────────────────────────────────
+function initTheme() {
+  const savedTheme = localStorage.getItem('atlas-theme') || 'dark';
+  const isLight = savedTheme === 'light';
+  document.body.classList.toggle('theme-light', isLight);
+  
+  const toggleBtn = document.getElementById('ws-theme-toggle');
+  if (toggleBtn) {
+    toggleBtn.querySelector('.theme-icon-sun').style.display = isLight ? 'none' : 'block';
+    toggleBtn.querySelector('.theme-icon-moon').style.display = isLight ? 'block' : 'none';
+    
+    toggleBtn.addEventListener('click', () => {
+      const currentlyLight = document.body.classList.contains('theme-light');
+      const newTheme = currentlyLight ? 'dark' : 'light';
+      localStorage.setItem('atlas-theme', newTheme);
+      document.body.classList.toggle('theme-light', newTheme === 'light');
+      toggleBtn.querySelector('.theme-icon-sun').style.display = newTheme === 'light' ? 'none' : 'block';
+      toggleBtn.querySelector('.theme-icon-moon').style.display = newTheme === 'light' ? 'block' : 'none';
+    });
+  }
+}
 
 // ── Sidebar Navigation ──────────────────────────────────
 function initSidebar() {
@@ -53,6 +78,11 @@ function initSidebar() {
 }
 
 async function switchTab(tab) {
+  if (tab === 'settings') {
+    window.location.href = '/profile.html?tab=company';
+    return;
+  }
+
   currentTab = tab;
 
   // Update sidebar active state
@@ -69,7 +99,10 @@ async function switchTab(tab) {
   const titles = {
     shortlists: ['Saved Shortlists', 'Your curated lists of manufacturing partners'],
     rfqs:       ['RFQ Management', 'Track, manage, and follow up on your requests for quotation'],
+    projects:   ['Projects Board', 'Manage product development lifecycles'],
+    sandbox:    ['Taxonomy Sandbox', 'Saved technologies and materials'],
     files:      ['File Vault', 'Your CAD drawings, specs, NDAs, and certificates in one place'],
+    templates:  ['Document Generator', 'Auto-generating legal and contracting documents'],
     settings:   ['Account Settings', 'Manage your profile and preferences']
   };
   const [title, subtitle] = titles[tab] || ['Workspace', ''];
@@ -81,7 +114,10 @@ async function switchTab(tab) {
   switch (tab) {
     case 'shortlists': await loadShortlists(); break;
     case 'rfqs':       await loadRFQs(); break;
+    case 'projects':   await loadProjects(); break;
+    case 'sandbox':    await loadSandbox(); break;
     case 'files':      await loadFiles(); break;
+    case 'templates':  await loadTemplates(); break;
     case 'settings':   await loadSettings(); break;
   }
 }
@@ -1248,54 +1284,253 @@ function closeFilePreview() {
 
 
 
-// ── Settings Tab ────────────────────────────────────────
-async function loadSettings() {
-  if (!profileCache) profileCache = await getMyProfile();
-  if (!profileCache) return;
+// ── Projects Tab (Kanban) ─────────────────────────────
+async function loadProjects() {
+  const defaultProjects = [
+    { id: '1', title: 'Injection Molding Tooling', desc: 'Sourcing P20 steel mold for main shell.', status: 'planning', tag: 'Tooling' },
+    { id: '2', title: 'PCB Assembly Prototype', desc: 'V1 board fabrication and assembly.', status: 'design', tag: 'Electronics' },
+    { id: '3', title: 'Packaging Design', desc: 'Eco-friendly retail box design.', status: 'production', tag: 'Packaging' }
+  ];
 
-  const fields = {
-    'settings-first-name': profileCache.first_name || '',
-    'settings-last-name':  profileCache.last_name || '',
-    'settings-company':    profileCache.company || '',
-    'settings-job-title':  profileCache.job_title || '',
-    'settings-phone':      profileCache.phone || '',
-    'settings-industry':   profileCache.industry || '',
-    'settings-country':    profileCache.country || ''
-  };
-
-  for (const [id, value] of Object.entries(fields)) {
-    const el = document.getElementById(id);
-    if (el) el.value = value;
+  let projects = await getProjects();
+  if (projects.length === 0) {
+    projects = defaultProjects;
   }
 
-  // Save button
-  const saveBtn = document.getElementById('settings-save');
-  const feedback = document.getElementById('settings-feedback');
-  if (saveBtn && !saveBtn.dataset.bound) {
-    saveBtn.dataset.bound = 'true';
-    saveBtn.addEventListener('click', async () => {
-      saveBtn.disabled = true;
-      saveBtn.textContent = 'Saving...';
+  // Clear columns
+  ['planning', 'design', 'production', 'completed'].forEach(col => {
+    const el = document.getElementById(`kanban-${col}`);
+    if (el) el.innerHTML = '';
+  });
 
-      const updates = {
-        first_name: document.getElementById('settings-first-name')?.value,
-        last_name:  document.getElementById('settings-last-name')?.value,
-        company:    document.getElementById('settings-company')?.value,
-        job_title:  document.getElementById('settings-job-title')?.value,
-        phone:      document.getElementById('settings-phone')?.value,
-        industry:   document.getElementById('settings-industry')?.value,
-        country:    document.getElementById('settings-country')?.value
-      };
+  // Render cards
+  projects.forEach(p => {
+    const col = document.getElementById(`kanban-${p.status}`);
+    if (col) {
+      col.innerHTML += `
+        <div class="ws-kanban-card" draggable="true" data-id="${p.id}">
+          <span class="ws-kanban-card__tag">${p.tag || 'General'}</span>
+          <h4>${p.title}</h4>
+          <p>${p.description || p.desc}</p>
+        </div>
+      `;
+    }
+  });
 
-      const { error } = await updateMyProfile(updates);
-      saveBtn.disabled = false;
-      saveBtn.textContent = 'Save Changes';
+  // Update counts
+  ['planning', 'design', 'production', 'completed'].forEach(col => {
+    const columnDiv = document.querySelector(`.ws-kanban-column[data-status="${col}"]`);
+    if (columnDiv) {
+      const cnt = columnDiv.querySelectorAll('.ws-kanban-card').length;
+      const badge = columnDiv.querySelector('.ws-badge');
+      if (badge) badge.textContent = cnt;
+    }
+  });
 
-      if (feedback) {
-        feedback.textContent = error ? `Error: ${error.message}` : 'Profile updated successfully!';
-        feedback.style.color = error ? '#f87171' : '#34d399';
-        setTimeout(() => { feedback.textContent = ''; }, 3000);
+  // Simple drag & drop
+  const cards = document.querySelectorAll('.ws-kanban-card');
+  const columns = document.querySelectorAll('.ws-kanban-column');
+
+  cards.forEach(card => {
+    card.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', card.dataset.id);
+      setTimeout(() => card.style.opacity = '0.5', 0);
+    });
+    card.addEventListener('dragend', () => {
+      card.style.opacity = '1';
+    });
+  });
+
+  columns.forEach(col => {
+    col.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      col.style.background = 'rgba(255,255,255,0.05)';
+    });
+    col.addEventListener('dragleave', () => {
+      col.style.background = '';
+    });
+    col.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      col.style.background = '';
+      const id = e.dataTransfer.getData('text/plain');
+      const draggedCard = document.querySelector(`.ws-kanban-card[data-id="${id}"]`);
+      if (draggedCard) {
+        const container = col.querySelector('.ws-kanban-cards');
+        if (container) container.appendChild(draggedCard);
+
+        // Update stored status
+        const proj = projects.find(p => p.id === id);
+        if (proj) {
+          proj.status = col.dataset.status;
+          
+          // Only hit Supabase if it's a real record with a UUID
+          if (id.length > 5) {
+            await updateProjectStatus(id, col.dataset.status);
+          }
+        }
+
+        // Re-count
+        ['planning', 'design', 'production', 'completed'].forEach(c => {
+          const colDiv = document.querySelector(`.ws-kanban-column[data-status="${c}"]`);
+          if (colDiv) {
+            const cnt = colDiv.querySelectorAll('.ws-kanban-card').length;
+            const badge = colDiv.querySelector('.ws-badge');
+            if (badge) badge.textContent = cnt;
+          }
+        });
       }
+    });
+  });
+}
+
+// ── Taxonomy Sandbox ──────────────────────────────────
+async function loadSandbox() {
+  const defaultItems = [
+    { title: 'CNC Machining', desc: 'Subtractive manufacturing process', icon: '⚙️' },
+    { title: '6061 Aluminum', desc: 'Aerospace grade material', icon: '🔩' },
+    { title: 'Anodizing (Type II)', desc: 'Surface finishing', icon: '✨' }
+  ];
+
+  let items = await getSandboxItems();
+  if (items.length === 0) {
+    items = defaultItems;
+  }
+
+  const grid = document.getElementById('sandbox-grid');
+  if (!grid) return;
+
+  grid.innerHTML = items.map(item => `
+    <div class="ws-sandbox-item">
+      <div class="ws-sandbox-item__icon">${item.icon || '📌'}</div>
+      <div class="ws-sandbox-item__info">
+        <h5>${item.title}</h5>
+        <p>${item.description || item.desc}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Document Templates ──────────────────────────────────
+const TEMPLATES = {
+  nda: `
+    [Company_Logo]
+    <h1>Mutual Non-Disclosure Agreement</h1>
+    <p>This NON-DISCLOSURE AGREEMENT (the "Agreement") is entered into on <span class="ws-document-var">[Date]</span>, by and between:</p>
+    <p><strong>Party A:</strong> <span class="ws-document-var">[Company_Name]</span>, located at <span class="ws-document-var">[Address]</span></p>
+    <p><strong>Party B:</strong> The Receiving Party</p>
+    <h2>1. Definition of Confidential Information</h2>
+    <p>For purposes of this Agreement, "Confidential Information" shall include all information or material that has or could have commercial value or other utility in the business in which Disclosing Party is engaged.</p>
+    <h2>2. Obligations of Receiving Party</h2>
+    <p>Receiving Party shall hold and maintain the Confidential Information in strictest confidence for the sole and exclusive benefit of the Disclosing Party.</p>
+    <div class="ws-document-signature-block">
+      <div class="ws-document-signature">
+        <div class="ws-document-signature-line"></div>
+        <div class="ws-document-signature-title">Signature: <span class="ws-document-var">[User_Name]</span></div>
+        <div class="ws-document-signature-title">Title: <span class="ws-document-var">[Job_Title]</span></div>
+      </div>
+      <div class="ws-document-signature">
+        <div class="ws-document-signature-line"></div>
+        <div class="ws-document-signature-title">Signature: [Receiving Party]</div>
+        <div class="ws-document-signature-title">Title: _______________________</div>
+      </div>
+    </div>
+  `,
+  tooling: `
+    [Company_Logo]
+    <h1>Tooling & Molding Ownership Agreement</h1>
+    <p>This Tooling Agreement is made effective on <span class="ws-document-var">[Date]</span> between <span class="ws-document-var">[Company_Name]</span> ("Buyer") and the Manufacturer.</p>
+    <h2>1. Tooling Ownership</h2>
+    <p>The Buyer asserts full ownership of all molds, dies, fixtures, and tooling specifically paid for and created for the manufacture of the Buyer's products.</p>
+    <div class="ws-document-signature-block">
+      <div class="ws-document-signature">
+        <div class="ws-document-signature-line"></div>
+        <div class="ws-document-signature-title"><span class="ws-document-var">[Company_Name]</span></div>
+      </div>
+    </div>
+  `,
+  manufacturing: `
+    [Company_Logo]
+    <h1>Standard Manufacturing Contract</h1>
+    <p>This agreement governs the manufacturing relationship between <span class="ws-document-var">[Company_Name]</span> and its supply chain partners.</p>
+    <p>Industry Segment: <span class="ws-document-var">[Industry]</span></p>
+  `,
+  rfp: `
+    [Company_Logo]
+    <h1>Project Request for Proposal (RFP)</h1>
+    <p>Prepared by: <span class="ws-document-var">[User_Name]</span>, <span class="ws-document-var">[Company_Name]</span></p>
+    <p>Contact: <span class="ws-document-var">[Phone]</span></p>
+  `
+};
+
+async function loadTemplates() {
+  if (!profileCache) profileCache = await getMyProfile();
+  
+  const safeStr = (str) => str || '_________';
+  const dataMap = {
+    '[Company_Logo]': profileCache?.company_logo_url ? `<img src="${profileCache.company_logo_url}" style="max-height: 80px; max-width: 250px; display: block; margin: 0 auto 20px auto;">` : '',
+    '[Company_Name]': safeStr(profileCache?.company),
+    '[User_Name]': `${safeStr(profileCache?.first_name)} ${safeStr(profileCache?.last_name)}`.trim(),
+    '[Address]': safeStr(profileCache?.address) || safeStr(profileCache?.country), // fallback to country
+    '[Job_Title]': safeStr(profileCache?.job_title),
+    '[Phone]': safeStr(profileCache?.phone),
+    '[Industry]': safeStr(profileCache?.industry),
+    '[Date]': new Date().toLocaleDateString()
+  };
+
+  const renderTemplate = (type) => {
+    let raw = TEMPLATES[type] || '';
+    Object.keys(dataMap).forEach(key => {
+      // Need to string replace all instances
+      raw = raw.split(key).join(dataMap[key]);
+    });
+    const paper = document.getElementById('template-paper-content');
+    if (paper) paper.innerHTML = raw;
+  };
+
+  // Setup click listeners
+  const items = document.querySelectorAll('.ws-template-item');
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      items.forEach(i => i.classList.remove('ws-template-item--active'));
+      item.classList.add('ws-template-item--active');
+      renderTemplate(item.dataset.template);
+    });
+  });
+
+  // Render initial
+  const active = document.querySelector('.ws-template-item--active');
+  if (active) renderTemplate(active.dataset.template);
+
+  // Print bind
+  const printBtn = document.getElementById('btn-print-template');
+  if (printBtn && !printBtn.dataset.bound) {
+    printBtn.dataset.bound = 'true';
+    printBtn.addEventListener('click', () => {
+      const content = document.getElementById('template-paper-content').innerHTML;
+      const win = window.open('', '_blank');
+      win.document.write(`
+        <html>
+          <head>
+            <title>Printed Document</title>
+            <style>
+              body { font-family: "Times New Roman", Times, serif; line-height: 1.6; padding: 40px; }
+              h1 { text-align: center; text-transform: uppercase; font-size: 24px; margin-bottom: 30px;}
+              h2 { font-size: 16px; margin-top: 24px; }
+              .ws-document-signature-block { margin-top: 60px; display: flex; justify-content: space-between; }
+              .ws-document-signature { width: 45%; }
+              .ws-document-signature-line { border-bottom: 1px solid #000; margin-bottom: 8px; height: 40px; }
+              .ws-document-signature-title { font-size: 12px; }
+              .ws-document-var { color: #000; font-weight: normal; }
+              @media print { body { padding: 0; } }
+            </style>
+          </head>
+          <body>${content}</body>
+        </html>
+      `);
+      win.document.close();
+      setTimeout(() => {
+        win.print();
+      }, 250);
     });
   }
 }

@@ -70,6 +70,11 @@
             document.documentElement.classList.add('is-basic-tier');
           }
         }
+        // Anti-flash for light theme
+        var savedTheme = localStorage.getItem('atlas-theme');
+        if (savedTheme === 'light') {
+          document.documentElement.classList.add('theme-light-preload');
+        }
       } catch(e) {}
     })();
   </script>
@@ -147,6 +152,11 @@
       </ul>
 
       <div class="navbar__actions">
+        <!-- Theme Toggle -->
+        <button class="navbar__theme-toggle" id="theme-toggle-btn" title="Toggle light/dark theme">
+          <svg class="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
         <a href="/workspace.html" class="navbar__workspace-link" id="btn-workspace" title="My Workspace">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1474,18 +1484,8 @@
        TAXONOMY ENGINE (iframed visualizer)
        ═══════════════════════════════════════════════════ -->
   <section class="taxonomy-engine hidden" id="taxonomy-engine"
-    style="position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:500; background:var(--color-midnight);">
-    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 24px; background:rgba(13,17,23,0.95); border-bottom:1px solid rgba(255,255,255,0.08); position:relative; z-index:501;">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <span style="font-size:18px;">🔬</span>
-        <span style="font-weight:700; color:#fff; font-size:15px; letter-spacing:0.3px;">Hardware Manufacturing Taxonomy</span>
-        <span style="font-size:11px; color:rgba(255,255,255,0.4); padding:3px 8px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:12px;">Visual Intelligence Engine</span>
-      </div>
-      <button id="taxonomy-close" style="background:transparent; border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.6); border-radius:6px; padding:6px 14px; font-size:13px; cursor:pointer; transition:all .2s;"
-        onmouseover="this.style.borderColor='rgba(255,255,255,0.3)'; this.style.color='#fff'"
-        onmouseout="this.style.borderColor='rgba(255,255,255,0.15)'; this.style.color='rgba(255,255,255,0.6)'">✕ Close</button>
-    </div>
-    <iframe id="taxonomy-iframe" style="width:100%; height:calc(100vh - 48px); border:none;" src="" loading="lazy"></iframe>
+    style="position:fixed; top:56px; left:0; width:100vw; height:calc(100vh - 56px); z-index:90; background:var(--color-midnight);">
+    <iframe id="taxonomy-iframe" style="width:100%; height:100%; border:none;" src="" loading="lazy"></iframe>
   </section>
 
   <script src="//unpkg.com/globe.gl"></script>

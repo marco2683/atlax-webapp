@@ -7,11 +7,11 @@ import './css/components.css';
 import './css/layout.css';
 import './css/rfq-engine.css';
 import './css/profile.css';
-import './css/light-theme.css';
 import './css/designers-engine.css';
 import './css/product-builder.css';
 import './css/supplier-modal-light.css';
 import './css/responsive.css';
+import './css/light-theme.css'; /* Must be last — overrides all others */
 
 import { initGlobe } from './js/globe/globe-engine.js';
 import { initNavbar } from './js/components/navbar.js';
@@ -82,8 +82,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 2. 3D Globe
   const globe = initGlobe('globe-container', appState.suppliersData);
 
-  // Theme Toggle temporarily disabled (dark theme enforced)
-  // document.body.classList.remove('theme-light');
+  // 3. Theme Toggle
+  setupThemeToggle(globe);
 
   // 2b. Restore shortlist from workspace (if navigating via "Open in Engine")
   try {
@@ -518,12 +518,18 @@ function switchView(view, globe) {
       iframe.src = '/visualizer/visualizer.html';
     }
 
-    // Close button
-    document.getElementById('taxonomy-close')?.addEventListener('click', () => {
-      taxonomyEngine?.classList.add('hidden');
-      hero?.classList.remove('hidden');
-      switchView('suppliers', globe);
-    });
+    // Sync theme with iframe once loaded
+    if (iframe) {
+      const syncTheme = () => {
+        const isLight = document.body.classList.contains('theme-light');
+        iframe.contentWindow?.postMessage({ type: 'theme-change', theme: isLight ? 'light' : 'dark' }, '*');
+      };
+      if (iframe.contentWindow && iframe.src.includes('visualizer')) {
+        syncTheme();
+      } else {
+        iframe.addEventListener('load', syncTheme, { once: true });
+      }
+    }
 
   } else if (view === 'suppliers') {
     appState.searchType = 'suppliers';
@@ -538,6 +544,46 @@ function switchView(view, globe) {
     bottomResults?.classList.add('hidden');
     // Maybe dim the globe or something?
   }
+}
+
+// ── Theme Toggle ─────────────────────────────────────────
+function setupThemeToggle(globe) {
+  const toggleBtn = document.getElementById('theme-toggle-btn');
+  const savedTheme = localStorage.getItem('atlas-theme') || 'dark';
+  
+  function applyTheme(theme) {
+    const isLight = theme === 'light';
+    document.body.classList.toggle('theme-light', isLight);
+    document.documentElement.classList.remove('theme-light-preload'); // Remove anti-flash class
+    
+    // Update toggle button icon visibility
+    if (toggleBtn) {
+      toggleBtn.querySelector('.theme-icon-sun').style.display = isLight ? 'none' : 'block';
+      toggleBtn.querySelector('.theme-icon-moon').style.display = isLight ? 'block' : 'none';
+    }
+    
+    // Sync globe textures
+    if (globe && globe.setGlobeTheme) {
+      globe.setGlobeTheme(isLight);
+    }
+    
+    // Sync taxonomy iframe if loaded
+    const iframe = document.getElementById('taxonomy-iframe');
+    if (iframe && iframe.contentWindow && iframe.src.includes('visualizer')) {
+      iframe.contentWindow.postMessage({ type: 'theme-change', theme }, '*');
+    }
+  }
+  
+  // Apply saved theme on boot
+  applyTheme(savedTheme);
+  
+  // Toggle on click
+  toggleBtn?.addEventListener('click', () => {
+    const isCurrentlyLight = document.body.classList.contains('theme-light');
+    const newTheme = isCurrentlyLight ? 'dark' : 'light';
+    localStorage.setItem('atlas-theme', newTheme);
+    applyTheme(newTheme);
+  });
 }
 
 // ── Entrance Animations ──────────────────────────────────

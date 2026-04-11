@@ -270,3 +270,101 @@ export async function uploadFile(file, category = 'general') {
     { storage_status: 'uploaded' }
   );
 }
+
+// ── Projects Board (Kanban) ────────────────────────────────
+
+/**
+ * Get all projects for current user
+ */
+export async function getProjects() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from('workspace_projects')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
+
+  if (error) { console.error('[Workspace] Projects fetch error:', error.message); return []; }
+  return data || [];
+}
+
+/**
+ * Add a new project
+ */
+export async function addProject(project) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: new Error('Not authenticated') };
+
+  const { data, error } = await supabase
+    .from('workspace_projects')
+    .insert({
+      user_id: user.id,
+      title: project.title,
+      description: project.description,
+      status: project.status || 'planning',
+      tag: project.tag
+    })
+    .select()
+    .single();
+
+  if (error) { console.error('[Workspace] Add project error:', error.message); return { data: null, error }; }
+  return { data, error: null };
+}
+
+/**
+ * Update project status (for drag/drop)
+ */
+export async function updateProjectStatus(projectId, newStatus) {
+  const { data, error } = await supabase
+    .from('workspace_projects')
+    .update({ status: newStatus, updated_at: new Date().toISOString() })
+    .eq('id', projectId)
+    .select()
+    .single();
+
+  if (error) { console.error('[Workspace] Update project status error:', error.message); return { data: null, error }; }
+  return { data, error: null };
+}
+
+// ── Taxonomy Sandbox ───────────────────────────────────────
+
+/**
+ * Get all taxonomy sandbox items for user
+ */
+export async function getSandboxItems() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from('workspace_sandbox')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
+
+  if (error) { console.error('[Workspace] Sandbox fetch error:', error.message); return []; }
+  return data || [];
+}
+
+/**
+ * Add taxonomy item to sandbox
+ */
+export async function addSandboxItem(item) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: new Error('Not authenticated') };
+
+  const { data, error } = await supabase
+    .from('workspace_sandbox')
+    .insert({
+      user_id: user.id,
+      title: item.title,
+      description: item.description,
+      icon: item.icon
+    })
+    .select()
+    .single();
+
+  if (error) { console.error('[Workspace] Add sandbox item error:', error.message); return { data: null, error }; }
+  return { data, error: null };
+}
