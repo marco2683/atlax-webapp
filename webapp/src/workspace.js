@@ -183,7 +183,7 @@ async function loadShortlists() {
         </div>
         <div class="ws-card__detail" id="detail-${list.id}" style="display:none;">
           <div class="ws-card__detail-header">SUPPLIERS IN THIS LIST</div>
-          ${supplierRows || '<div style="color:rgba(255,255,255,0.3); font-size:12px; padding:8px 0;">Supplier details not available — re-save to capture data</div>'}
+          ${supplierRows || '<div class="ws-td-muted" style="font-size:12px; padding:8px 0;">Supplier details not available — re-save to capture data</div>'}
         </div>
         <div class="ws-card__actions">
           <button class="ws-card__btn ws-card__btn--primary" data-action="open-engine" data-id="${list.id}">
@@ -309,7 +309,7 @@ async function loadRFQs() {
   const container = document.getElementById('rfqs-table-body');
   if (!container) return;
 
-  container.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:rgba(255,255,255,0.3);">Loading...</td></tr>';
+  container.innerHTML = '<tr><td colspan="6" class="ws-td-muted" style="text-align:center; padding:40px;">Loading...</td></tr>';
 
   rfqsCache = await getRFQs();
 
@@ -349,8 +349,8 @@ async function loadRFQs() {
     return `
       <tr data-rfq-id="${rfq.id}">
         <td style="max-width: 200px;">
-          <div style="font-weight: 500; color: #fff;">${supplier}</div>
-          <div style="font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px;">${shortDesc}</div>
+          <div class="ws-td-primary" style="font-weight: 500;">${supplier}</div>
+          <div class="ws-td-muted" style="font-size: 11px; margin-top: 2px;">${shortDesc}</div>
         </td>
         <td>${date}</td>
         <td>
@@ -359,7 +359,7 @@ async function loadRFQs() {
             ${statusText}
           </span>
         </td>
-        <td style="font-size: 12px; color: rgba(255,255,255,0.3);">
+        <td class="ws-td-muted" style="font-size: 12px;">
           ${solicitCount > 0 ? `Nudged ${solicitCount}×` : '—'}
         </td>
         <td>
@@ -599,7 +599,7 @@ async function renderFiles() {
   const grid = document.getElementById('files-grid');
   if (!grid) return;
 
-  grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:rgba(255,255,255,0.3);">Loading files...</div>';
+  grid.innerHTML = '<div class="ws-td-muted" style="grid-column:1/-1; text-align:center; padding:40px;">Loading files...</div>';
 
   filesCache = await getFiles();
 
@@ -723,9 +723,9 @@ function renderFilesList(container) {
         <tr class="ws-file-row ws-file-row--folder" data-folder-name="${fname}">
           <td></td>
           <td style="font-size:18px;">📂</td>
-          <td style="font-weight:600; color:#fff; cursor:pointer;" class="ws-folder-link" data-folder-name="${fname}">${fname}</td>
-          <td style="color:rgba(255,255,255,0.3);">Folder</td>
-          <td style="color:rgba(255,255,255,0.3);">${count} item${count !== 1 ? 's' : ''}</td>
+          <td style="font-weight:600; cursor:pointer;" class="ws-folder-link ws-td-primary" data-folder-name="${fname}">${fname}</td>
+          <td class="ws-td-muted">Folder</td>
+          <td class="ws-td-muted">${count} item${count !== 1 ? 's' : ''}</td>
           <td></td>
           <td></td>
           <td>
@@ -765,9 +765,9 @@ function renderFilesList(container) {
         <td>
           <span class="ws-file-row__name ${is3D ? 'ws-file-row__name--viewable' : ''}" ${is3D ? `data-viewable="true" data-file-id="${file.id}"` : ''}>${file.file_name}</span>
         </td>
-        <td style="color:rgba(255,255,255,0.3); text-transform:uppercase; font-size:11px;">${ext || '—'}</td>
-        <td style="color:rgba(255,255,255,0.4); font-size:12px;">${size}</td>
-        <td style="color:rgba(255,255,255,0.3); font-size:12px;">${date}</td>
+        <td class="ws-td-muted" style="text-transform:uppercase; font-size:11px;">${ext || '—'}</td>
+        <td class="ws-td-muted" style="font-size:12px;">${size}</td>
+        <td class="ws-td-muted" style="font-size:12px;">${date}</td>
         <td>
           <select class="ws-folder-select" data-file-id="${file.id}">
             <option value="">— None —</option>

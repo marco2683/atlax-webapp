@@ -1,6 +1,7 @@
 
 import { MOCK_DESIGNERS } from './data/mock-designers.js';
 import { supabase } from './supabase.js';
+import { renderPricingConfigurator } from './admin-pricing.js';
 
 /* ================================================================
    Atlas DT Admin Panel — Full CRM with Add/Edit Forms
@@ -193,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (t === 'customers') { pageTitle.textContent = 'Customers Data CRM';       renderCustomersTable(); }
         if (t === 'designers') { pageTitle.textContent = 'Talent Hub (Designers)';   renderDesignersTable(); }
         if (t === 'rfqs')      { pageTitle.textContent = 'RFQ \u0026 Project Tracker';    renderRFQs(); }
+        if (t === 'pricing') { pageTitle.textContent = 'Pricing Engine Configurator'; renderPricingConfigurator(contentRouting); }
         if (t === 'website')   { pageTitle.textContent = 'Website Content Manager';  renderWebsiteContent(); }
         if (t === 'staff')     { pageTitle.textContent = 'Staff Directory';  renderStaffTable(); }
         if (t === 'taxonomy-images') { pageTitle.textContent = 'Taxonomy Image Curator'; renderTaxonomyImages(); }
@@ -242,7 +244,9 @@ document.addEventListener('DOMContentLoaded', () => {
         match = match && (
           (s.name && s.name.toLowerCase().includes(q)) ||
           (s.nameZh && s.nameZh.includes(q)) ||
-          (s.id && s.id.toLowerCase().includes(q))
+          (s.id && s.id.toLowerCase().includes(q)) ||
+          (s.tags && (Array.isArray(s.tags) ? s.tags.join(' ') : String(s.tags)).toLowerCase().includes(q)) ||
+          (s.technologies && (Array.isArray(s.technologies) ? s.technologies.join(' ') : String(s.technologies)).toLowerCase().includes(q))
         );
       }
       if (adminSupplierFilters.techGroup) {
@@ -326,6 +330,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (preserveUI && document.getElementById('admin-sup-table-wrapper')) {
       document.getElementById('admin-sup-table-wrapper').innerHTML = tableHTML;
+      
+      // Dynamically update the tech dropdown options based on the newly selected segment
+      const techSelect = document.getElementById('admin-filter-tech');
+      if (techSelect) {
+        let dynamicSupList = loadedSuppliers;
+        if (adminSupplierFilters.segment) {
+          const seg = adminSupplierFilters.segment;
+          dynamicSupList = dynamicSupList.filter(s => (s.segment || '').toUpperCase().includes(seg));
+        }
+        const availableTechGroups = [...new Set(dynamicSupList.map(s=>s.techGroup).filter(Boolean))].sort();
+        if (adminSupplierFilters.techGroup && !availableTechGroups.includes(adminSupplierFilters.techGroup)) {
+          adminSupplierFilters.techGroup = '';
+        }
+        techSelect.innerHTML = `<option value="">All Technologies...</option>` + availableTechGroups.map(t => `<option value="${t}" ${adminSupplierFilters.techGroup === t ? 'selected':''}>${t}</option>`).join('');
+      }
     } else {
       contentRouting.innerHTML = `
         <div style="margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;">
@@ -356,6 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <input type="checkbox" id="admin-filter-hide-disabled" ${adminSupplierFilters.hideDisabled ? 'checked' : ''} style="cursor:pointer; accent-color:var(--color-electric);">
               Hide Disabled
             </label>
+            <button class="btn btn-secondary" id="admin-filter-clear" style="padding: 6px 12px; font-size:12px; margin-left:8px;">Clear All</button>
           </div>
           <div style="display:flex;gap:12px;align-items:center;">
              <div id="admin-bulk-actions" style="display:none; gap:8px; align-items:center;">
@@ -380,6 +400,17 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('admin-filter-tech')?.addEventListener('change', e => { adminSupplierFilters.techGroup = e.target.value; renderSuppliersTable(true); });
       document.getElementById('admin-filter-country')?.addEventListener('change', e => { adminSupplierFilters.country = e.target.value; renderSuppliersTable(true); });
       document.getElementById('admin-filter-hide-disabled')?.addEventListener('change', e => { adminSupplierFilters.hideDisabled = e.target.checked; renderSuppliersTable(true); });
+
+      document.getElementById('admin-filter-clear')?.addEventListener('click', () => {
+        adminSupplierFilters = {
+          search: '',
+          techGroup: '',
+          country: '',
+          segment: '',
+          hideDisabled: true
+        };
+        renderSuppliersTable(false);
+      });
 
       document.getElementById('admin-bulk-deactivate')?.addEventListener('click', async () => {
         const selectedIds = Array.from(document.querySelectorAll('.admin-sup-row-select:checked')).map(cb => cb.dataset.id);
@@ -774,16 +805,8 @@ document.addEventListener('DOMContentLoaded', () => {
               <input type="number" name="outsourcingRatio" value="${s.outsourcingRatio || ''}" placeholder="10">
             </div>
             <div class="admin-field">
-              <label title="Technical Capabilities (0=No, 1=Moderate, 2=Excellent)">Tech Capab. (0-2)</label>
-              <input type="number" name="scoreTc" min="0" max="2" value="${s.scoreTc || 0}">
-            </div>
-            <div class="admin-field">
-              <label title="Ownership Ethos (0=No, 1=Moderate, 2=Excellent)">Owner Ethos (0-2)</label>
-              <input type="number" name="scoreOe" min="0" max="2" value="${s.scoreOe || 0}">
-            </div>
-            <div class="admin-field">
-              <label title="Quality System (0=No, 1=Moderate, 2=Excellent)">Quality Sys. (0-2)</label>
-              <input type="number" name="scoreQs" min="0" max="2" value="${s.scoreQs || 0}">
+              <label>Outsourcing Ratio (%)</label>
+              <input type="number" name="outsourcingRatio" value="${s.outsourcingRatio || ''}" placeholder="10">
             </div>
             <div class="admin-field">
               <label title="Verified Status (0=No, 1=Partial, 2=Yes)">Verified (0-2)</label>
@@ -792,10 +815,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="admin-field">
               <label>Speed Score (0-10)</label>
               <input type="number" name="scoreSpeed" min="0" max="10" value="${s.scoreSpeed || 0}">
-            </div>
-            <div class="admin-field">
-              <label>Cost Score (0-10)</label>
-              <input type="number" name="scoreCost" min="0" max="10" value="${s.scoreCost || 0}">
             </div>
             <div class="admin-field">
               <label>Complexity Score (0-10)</label>
@@ -809,6 +828,52 @@ document.addEventListener('DOMContentLoaded', () => {
               <label>High Precision (0-10)</label>
               <input type="number" name="scorePrecision" min="0" max="10" value="${s.scorePrecision || 0}">
             </div>
+          </div>
+        </div>
+
+        <!-- ─── SECTION 3.5: Atlas Factory Qualification Matrix ─── -->
+        <div class="admin-form-section">
+          <div class="admin-form-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Atlas Qualification Matrix
+          </div>
+          <div class="admin-form-grid cols-4">
+            <div class="admin-field">
+              <label>Technical Capability (0-2)</label>
+              <input type="number" name="scoreTc" min="0" max="2" value="${s.scoreTc || 0}">
+            </div>
+            <div class="admin-field">
+              <label>Ownership Ethos (0-2)</label>
+              <input type="number" name="scoreOe" min="0" max="2" value="${s.scoreOe || 0}">
+            </div>
+            <div class="admin-field">
+              <label>Quality Assurance (0-2)</label>
+              <input type="number" name="scoreQs" min="0" max="2" value="${s.scoreQs || 0}">
+            </div>
+            <div class="admin-field">
+              <label>Cost Competitiveness (0-10)</label>
+              <input type="number" name="scoreCost" min="0" max="10" value="${s.scoreCost || 0}">
+            </div>
+          </div>
+          <div class="admin-form-grid cols-2" style="margin-top: 12px;">
+            <div class="admin-field">
+              <label>Primary Advantage Type</label>
+              <select name="primaryAdvantageType">
+                <option value="none" ${(!s.primaryAdvantageType || s.primaryAdvantageType === 'none') ? 'selected' : ''}>Not Specified</option>
+                <option value="technical" ${s.primaryAdvantageType === 'technical' ? 'selected' : ''}>Technical Capability</option>
+                <option value="ethos" ${s.primaryAdvantageType === 'ethos' ? 'selected' : ''}>Ownership Ethos</option>
+                <option value="quality" ${s.primaryAdvantageType === 'quality' ? 'selected' : ''}>Quality Assurance</option>
+                <option value="cost" ${s.primaryAdvantageType === 'cost' ? 'selected' : ''}>Cost & Speed Profile</option>
+              </select>
+            </div>
+            <div class="admin-field">
+              <label>Best For (Product Type / Fit)</label>
+              <input type="text" name="bestFor" value="${s.bestFor || ''}" placeholder="e.g. Consumer Electronics, Medical Plastics...">
+            </div>
+          </div>
+          <div class="admin-field" style="margin-top: 12px;">
+            <label>Main Advantage Summary</label>
+            <textarea name="mainAdvantage" rows="2" placeholder="e.g. We selected them for their excellent balance of rapid tooling deployment...">${s.mainAdvantage || ''}</textarea>
           </div>
         </div>
 
@@ -961,6 +1026,22 @@ document.addEventListener('DOMContentLoaded', () => {
               `).join('')}
             </div>
             <button type="button" class="admin-add-row-btn" data-target="admin-sup-img-equipment" data-name="img_equipment" data-accept="image/*">+ Add Equipment Image</button>
+          </div>
+
+          <div class="admin-image-category">
+            <h5>Certificates Images</h5>
+            <div class="admin-image-url-list" id="admin-sup-img-certs">
+              ${(s.certificates?.length ? s.certificates : ['']).map(url => `
+                <div class="admin-img-url-row">
+                  <input type="text" name="img_certificate" value="${url}" placeholder="Paste an image here (Ctrl+V) or type URL">
+                  <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
+                    📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="image/*">
+                  </label>
+                  <button type="button" class="admin-remove-row-btn">✕</button>
+                </div>
+              `).join('')}
+            </div>
+            <button type="button" class="admin-add-row-btn" data-target="admin-sup-img-certs" data-name="img_certificate" data-accept="image/*">+ Add Certificate Image</button>
           </div>
           
           <div class="admin-field" style="margin-top:24px;">
@@ -1131,6 +1212,9 @@ document.addEventListener('DOMContentLoaded', () => {
         scoreV: parseInt(fd.get('scoreV') || 0),
         scoreSpeed: parseInt(fd.get('scoreSpeed') || 0),
         scoreCost: parseInt(fd.get('scoreCost') || 0),
+        primaryAdvantageType: fd.get('primaryAdvantageType'),
+        mainAdvantage: fd.get('mainAdvantage'),
+        bestFor: fd.get('bestFor'),
         scoreLowVol: parseInt(fd.get('scoreLowVol') || 0),
         scoreComplexity: parseInt(fd.get('scoreComplexity') || 0),
         scorePrecision: parseInt(fd.get('scorePrecision') || 0),
@@ -1175,7 +1259,8 @@ document.addEventListener('DOMContentLoaded', () => {
           product: fd.getAll('img_product').filter(Boolean),
           facility: fd.getAll('img_facility').filter(Boolean),
           equipment: fd.getAll('img_equipment').filter(Boolean)
-        }
+        },
+        certificates: fd.getAll('img_certificate').filter(Boolean)
       };
 
       try {
@@ -1603,6 +1688,70 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     wireS3Uploaders();
+
+    // Global Paste Listener for Image Uploads
+    document.querySelectorAll('.admin-image-url-list').forEach(list => {
+      // Prevent multiple listeners
+      const _list = list.cloneNode(true);
+      list.parentNode.replaceChild(_list, list);
+      _list.addEventListener('paste', async (e) => {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (const item of items) {
+          if (item.type.indexOf('image') === 0) {
+            e.preventDefault();
+            const file = item.getAsFile();
+            if (!file) continue;
+            
+            const target = e.target;
+            const row = target.closest('.admin-img-url-row');
+            if (!row) return;
+            const textInput = row.querySelector('input[type="text"], input[type="url"]');
+            if (textInput) {
+              const ext = file.type.split('/')[1] || 'png';
+              const fileName = `admin_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
+              textInput.value = 'Uploading...';
+              textInput.disabled = true;
+              try {
+                if (!window.supabase) throw new Error('Supabase client not found.');
+                const { data, error } = await supabase.storage.from('supplier-assets').upload(fileName, file);
+                if (error) throw error;
+                const { data: publicData } = supabase.storage.from('supplier-assets').getPublicUrl(fileName);
+                textInput.value = publicData.publicUrl;
+              } catch(err) {
+                console.error(err);
+                textInput.value = '';
+                alert('Pasted Image Upload failed: ' + err.message);
+              } finally {
+                textInput.disabled = false;
+              }
+            }
+          }
+        }
+      });
+      
+      // Re-wire add buttons which map to this new list
+      document.querySelectorAll('.admin-add-row-btn[data-target="' + _list.id + '"]').forEach(btn => {
+        const freshBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(freshBtn, btn);
+        freshBtn.addEventListener('click', () => {
+          const targetList = document.getElementById(freshBtn.dataset.target);
+          if (!targetList) return;
+          const row = document.createElement('div');
+          row.className = 'admin-img-url-row';
+          row.innerHTML = `<input type="text" name="${freshBtn.dataset.name}" placeholder="https://example.com/image.jpg">
+            <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
+              📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="${freshBtn.dataset.accept || 'image/*'}">
+            </label>
+            <button type="button" class="admin-remove-row-btn">✕</button>`;
+          targetList.appendChild(row);
+          wireRemoveButtons(row);
+          wireS3Uploaders();
+        });
+      });
+      
+      // Wire remove buttons exactly within the new list
+      wireRemoveButtons(_list);
+    });
   }
 
   function wireRemoveButtons(container) {

@@ -17,7 +17,7 @@ import { supabase } from '../utils/supabaseClient.js';
 
 // ── State ───────────────────────────────────────────────
 let partCount = 1;
-let currentMode = 'bulk'; // Default to 'bulk'
+let currentMode = 'detailed'; // Default to 'detailed' (bulk is now in Project Quote)
 const partState = new Map();
 
 // Accumulated quotes for the right panel
@@ -150,6 +150,36 @@ function createPartPanelHTML(partIdx) {
             </div>
           </div>
 
+          <!-- Tooling Details (Dynamically shown based on Process) -->
+          <div class="rfq-tooling-details hidden" data-part="${partIdx}" style="margin-top: 16px; padding: 12px; background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.4); border-radius: var(--radius-md); transition: all 0.3s ease;">
+            <div class="rfq-tooling-status-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: #ef4444; transition: color 0.3s ease;">
+              <svg class="rfq-tooling-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <h4 class="rfq-tooling-title" style="margin: 0; font-size: 13px; font-weight: 600;">Tooling Details Required</h4>
+            </div>
+            <div class="rfq-fields-grid rfq-fields-grid--1x2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="rfq-field" style="margin-bottom: 0;">
+                <label style="color: var(--color-steel-200);">Tooling Tier</label>
+                <select class="rfq-tooling-type" data-part="${partIdx}">
+                  <option value="" disabled selected>Select Tier...</option>
+                  <option value="prototype">Prototype (Soft Tooling, < 1k parts)</option>
+                  <option value="low_volume">Low Volume (P20 Steel, < 10k parts)</option>
+                  <option value="high_volume">High Volume (Hardened H13, 100k+ parts)</option>
+                </select>
+              </div>
+              <div class="rfq-field" style="margin-bottom: 0;">
+                <label style="color: var(--color-steel-200);">Cavitation</label>
+                <select class="rfq-tooling-cavities" data-part="${partIdx}">
+                  <option value="auto" selected>Auto-calculate</option>
+                  <option value="1">1-Cavity</option>
+                  <option value="2">2-Cavity</option>
+                  <option value="4">4-Cavity</option>
+                  <option value="8">8-Cavity</option>
+                </select>
+                <div class="rfq-throughput-estimate" style="font-size: 10px; color: var(--color-steel-400); margin-top: 6px; display: none;">Est. Throughput: --</div>
+              </div>
+            </div>
+          </div>
+
           <!-- 2D Drawing Note -->
           <div class="rfq-drawing-note">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -222,11 +252,11 @@ export function initRFQController() {
     return;
   }
 
-  // Set initial visibility based on default 'bulk' mode
-  detailedPanel?.classList.add('hidden');
-  bulkPanel?.classList.remove('hidden');
-  ctaDetailed?.classList.add('hidden');
-  ctaBulk?.classList.remove('hidden');
+  // Set initial visibility — detailed mode by default (bulk is in Project Quote view)
+  detailedPanel?.classList.remove('hidden');
+  bulkPanel?.classList.add('hidden');
+  ctaDetailed?.classList.remove('hidden');
+  ctaBulk?.classList.add('hidden');
 
   // Wire up initial part (part 0) + populate dynamic dropdowns
   wirePartPanel(0);
@@ -410,18 +440,30 @@ function appendBulkFiles(fileList) {
 
 /**
  * Enable/disable the Calculate Instant Quote button
- * based on whether any part has a valid file analysis.
+ * based on whether any part has a valid file analysis and all required fields are filled.
  */
 function updateSubmitButtonState() {
   const submitBtn = document.getElementById('rfq-submit-btn');
   if (!submitBtn) return;
 
   let hasAnyAnalysis = false;
-  partState.forEach((ps) => {
-    if (ps.analysis) hasAnyAnalysis = true;
+  let allToolingValid = true;
+
+  partState.forEach((ps, idx) => {
+    if (ps.analysis) {
+      hasAnyAnalysis = true;
+      const panel = document.querySelector(`.rfq-part-panel[data-part="${idx}"]`);
+      if (panel) {
+        const process = panel.querySelector('.rfq-process')?.value;
+        if (process && techHasTooling(process)) {
+          const toolingTier = panel.querySelector('.rfq-tooling-type')?.value;
+          if (!toolingTier) allToolingValid = false;
+        }
+      }
+    }
   });
 
-  submitBtn.disabled = !hasAnyAnalysis;
+  submitBtn.disabled = !(hasAnyAnalysis && allToolingValid);
 }
 
 function wirePartPanel(partIdx) {
@@ -438,7 +480,88 @@ function wirePartPanel(partIdx) {
     const techKey = processSelect.value;
     populateMaterialDropdown(partIdx, techKey);
     populateFinishDropdown(partIdx, techKey);
+    
+    // Toggle tooling details block visibility
+    const toolingBlock = panel.querySelector('.rfq-tooling-details');
+    if (toolingBlock) {
+      if (techHasTooling(techKey)) {
+        toolingBlock.classList.remove('hidden');
+      } else {
+        toolingBlock.classList.add('hidden');
+      }
+      updateSubmitButtonState();
+    }
   });
+
+  const updateToolingStatus = () => {
+    const toolingBlock = panel.querySelector('.rfq-tooling-details');
+    const toolingTier = panel.querySelector('.rfq-tooling-type')?.value;
+    const cavities = panel.querySelector('.rfq-tooling-cavities')?.value || '1';
+    
+    if (toolingBlock && toolingTier) {
+      // Transition to Green / Success State
+      toolingBlock.style.background = 'rgba(16, 185, 129, 0.05)';
+      toolingBlock.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+      const header = toolingBlock.querySelector('.rfq-tooling-status-header');
+      if (header) header.style.color = '#10b981';
+      const icon = toolingBlock.querySelector('.rfq-tooling-icon');
+      if (icon) {
+        icon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>';
+      }
+      const title = toolingBlock.querySelector('.rfq-tooling-title');
+      if (title) title.textContent = 'Tooling Details Configured';
+      
+      // Update Throughput Estimate (Assuming 60 seconds cycle time = 60 shots/hr = 1440/day)
+      const tp = toolingBlock.querySelector('.rfq-throughput-estimate');
+      if (tp) {
+        tp.style.display = 'block';
+        let cavNum = parseInt(cavities);
+        // If Auto, we replicate the estimation engine logic
+        if (isNaN(cavNum) || cavities === 'auto') {
+          const qty = parseInt(panel.querySelector('.rfq-quantity')?.value) || 1;
+          if (qty < 1000) cavNum = 1;
+          else if (qty < 10000) cavNum = 2;
+          else if (qty < 50000) cavNum = 4;
+          else cavNum = 8;
+        }
+
+        // Apply physical boundary limits based on bounding box if analyzed
+        const ps = partState[partIdx];
+        let maxCavs = 8;
+        if (ps && ps.analysis && ps.analysis.geometry && ps.analysis.geometry.boundingBox) {
+          const bb = ps.analysis.geometry.boundingBox;
+          const bboxVolCm3 = (bb.x * bb.y * bb.z) / 1000;
+          if (bboxVolCm3 > 15000) maxCavs = 1;
+          else if (bboxVolCm3 > 4000) maxCavs = 2;
+          else if (bboxVolCm3 > 1000) maxCavs = 4;
+          
+          if (cavNum > maxCavs) {
+            cavNum = maxCavs;
+            // Provide feedback if user manually selected impossible cavities
+            const cavSelect = panel.querySelector('.rfq-tooling-cavities');
+            if (cavSelect && cavities !== 'auto') {
+               cavSelect.value = cavNum.toString();
+               tp.style.color = '#ef4444'; // Red warning momentarily
+               setTimeout(() => { if (tp) tp.style.color = 'var(--color-steel-400)'; }, 1500);
+               tp.textContent = `Physical limit: reduced to ${cavNum}-Cavity`;
+            }
+          }
+        }
+
+        const partsPerDay = 1440 * cavNum;
+        tp.textContent = (tp.textContent.includes('Physical limit')) ? tp.textContent : `Est. Throughput: ${partsPerDay.toLocaleString()} parts/day (${cavNum}-Cav tool)`;
+      }
+    }
+    updateSubmitButtonState();
+  };
+
+  const toolingTypeSelect = panel.querySelector('.rfq-tooling-type');
+  const toolingCavitiesSelect = panel.querySelector('.rfq-tooling-cavities');
+  const qtyInput = panel.querySelector('.rfq-quantity');
+  
+  toolingTypeSelect?.addEventListener('change', updateToolingStatus);
+  toolingCavitiesSelect?.addEventListener('change', updateToolingStatus);
+  qtyInput?.addEventListener('input', updateToolingStatus);
 
   selectBtn?.addEventListener('click', (e) => { e.stopPropagation(); fileInput?.click(); });
   uploadZone?.querySelector('.upload-link')?.addEventListener('click', (e) => { e.stopPropagation(); fileInput?.click(); });
@@ -655,6 +778,8 @@ function calculateAndDisplayQuote() {
     threads:   getField(activePanel, '.rfq-threads'),
     customDetails: getField(activePanel, '.rfq-custom-notes'),
     contactMe: document.getElementById('rfq-contact-me')?.checked || false,
+    toolingType: getField(activePanel, '.rfq-tooling-type'),
+    toolingCavities: getField(activePanel, '.rfq-tooling-cavities'),
   };
 
   const quote = calculateQuote(state.analysis, config);
@@ -974,4 +1099,99 @@ function formatFileSize(bytes) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / 1048576).toFixed(1)} MB`;
+}
+
+/**
+ * Initialize the Project Quote controller (bulk upload only view).
+ * Wires the pq-bulk-* elements inside project-quote-engine.
+ */
+export function initProjectQuoteController() {
+  const pqBulkSelectBtn = document.getElementById('pq-bulk-select-btn');
+  const pqBulkFileInput = document.getElementById('pq-bulk-file-input');
+  const pqBulkFileList  = document.getElementById('pq-bulk-file-list');
+  const pqBulkUploadZone = document.getElementById('pq-bulk-upload-zone');
+  const pqBulkSubmitBtn = document.getElementById('pq-bulk-submit-btn');
+  const pqBulkFolderBtn = document.getElementById('pq-bulk-folder-btn');
+  const pqBulkFolderInput = document.getElementById('pq-bulk-folder-input');
+
+  if (!pqBulkUploadZone) {
+    console.warn('[PQ] Project Quote elements not found.');
+    return;
+  }
+
+  let pqFiles = [];
+
+  function appendPQFiles(fileList) {
+    if (!pqBulkFileList) return;
+    const files = Array.from(fileList);
+    pqBulkFileList.classList.remove('hidden');
+    files.forEach(file => {
+      pqFiles.push(file);
+      const item = document.createElement('div');
+      item.className = 'upload-file-item';
+      const displayName = file.webkitRelativePath || file.name;
+      item.innerHTML = `
+        <span class="upload-file-item__name">📄 ${displayName}</span>
+        <span class="upload-file-item__size">${formatFileSize(file.size)}</span>
+        <button class="upload-file-item__remove" title="Remove">&times;</button>
+      `;
+      pqBulkFileList.appendChild(item);
+    });
+  }
+
+  pqBulkSelectBtn?.addEventListener('click', (e) => { e.stopPropagation(); pqBulkFileInput?.click(); });
+  pqBulkFolderBtn?.addEventListener('click', (e) => { e.stopPropagation(); pqBulkFolderInput?.click(); });
+
+  pqBulkUploadZone?.addEventListener('click', (e) => {
+    if (e.target === pqBulkUploadZone || e.target.closest('.upload-icon') || e.target.closest('.upload-text')) {
+      pqBulkFileInput?.click();
+    }
+  });
+
+  pqBulkUploadZone?.addEventListener('dragover', (e) => { e.preventDefault(); pqBulkUploadZone.classList.add('drag-over'); });
+  pqBulkUploadZone?.addEventListener('dragleave', () => pqBulkUploadZone.classList.remove('drag-over'));
+  pqBulkUploadZone?.addEventListener('drop', (e) => {
+    e.preventDefault(); pqBulkUploadZone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length > 0) appendPQFiles(e.dataTransfer.files);
+  });
+
+  pqBulkFileInput?.addEventListener('change', () => {
+    if (pqBulkFileInput.files.length > 0) appendPQFiles(pqBulkFileInput.files);
+  });
+  pqBulkFolderInput?.addEventListener('change', () => {
+    if (pqBulkFolderInput.files.length > 0) appendPQFiles(pqBulkFolderInput.files);
+  });
+
+  pqBulkFileList?.addEventListener('click', (e) => {
+    const removeBtn = e.target.closest('.upload-file-item__remove');
+    if (removeBtn) {
+      const fileName = removeBtn.closest('.upload-file-item')?.querySelector('.upload-file-item__name')?.textContent?.replace('📄 ', '').trim();
+      removeBtn.closest('.upload-file-item').remove();
+      pqFiles = pqFiles.filter(f => (f.webkitRelativePath || f.name) !== fileName);
+      if (pqBulkFileList.children.length === 0) pqBulkFileList.classList.add('hidden');
+    }
+  });
+
+  // Rich text editor for project quote notes
+  const pqEditorTools = document.querySelectorAll('#project-quote-engine .rfq-editor__tool');
+  pqEditorTools.forEach(tool => {
+    tool.addEventListener('click', (e) => {
+      if (tool.classList.contains('rfq-editor__tool--color')) return;
+      e.preventDefault();
+      const command = tool.dataset.command;
+      document.execCommand(command, false, null);
+      document.getElementById('pq-bulk-notes')?.focus();
+    });
+  });
+
+  pqBulkSubmitBtn?.addEventListener('click', () => {
+    if (pqFiles.length === 0) {
+      alert('Please upload at least one file before submitting.');
+      return;
+    }
+    bulkFiles = pqFiles;
+    handleBulkSubmit();
+  });
+
+  console.log('[PQ] Project Quote controller initialized.');
 }

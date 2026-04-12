@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/src/css/auth.css">
   <link rel="stylesheet" href="/src/css/responsive.css">
   <link rel="stylesheet" href="/src/css/contact-modal.css">
+  <link rel="stylesheet" href="/src/css/product-builder.css">
   <script type="module" src="/src/js/contact-modal.js"></script>
   <script defer src="/src/js/cms-loader.js"></script>
 </head>
@@ -18,7 +19,7 @@
 
   <!-- ── Navbar ────────────────────────────────────────── -->
   <nav class="navbar" id="navbar"
-    style="position: fixed; width: 100%; top: 0; z-index: 100; transition: background 0.3s; padding: var(--space-4) var(--space-6); background: rgba(12,12,12,0.8); backdrop-filter: blur(20px);">
+    style="position: fixed; width: 100%; top: 0; z-index: 100; transition: background 0.3s; padding: var(--space-4) var(--space-6); background: transparent; backdrop-filter: blur(12px);">
     <div
       style="display: flex; justify-content: space-between; align-items: center; max-width: 95%; margin: 0 auto; width: 100%;">
       <div class="navbar__brand" style="display: flex; align-items: center; gap: 12px;">
@@ -41,21 +42,20 @@
       <div class="nav-links-container" style="display: flex; gap: var(--space-6); align-items: center;">
         <a href="index.html" class="nav-link"
           style="color: white; border-bottom: 2px solid var(--color-electric);">Home</a>
-        <a href="services.html" class="nav-link">Capabilities</a>
+        <a href="services.html" class="nav-link">Our Services</a>
         <a href="portfolio.html" class="nav-link">Portfolio</a>
         <a href="about.html" class="nav-link">About Us</a>
         <a href="/app.html" class="btn-marketing btn-marketing--primary"
           style="padding: 10px 24px; font-size: 13px;">Manufacturing Engine</a>
-        <a href="#" id="nav-login-btn" class="nav-link" style="font-weight: 500; color: var(--color-electric);">Log
-          In</a>
+        <a href="#" id="nav-login-btn" class="nav-link" style="font-weight: 500; color: var(--color-electric);">Log In</a>
         <!-- Dynamic User Dropdown (Hidden initially) -->
         <div id="nav-user-menu" class="nav-user-menu">
           <div class="nav-avatar" id="nav-avatar">PR</div>
           <div class="dropdown-content">
-            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter
-              Platform</a>
+            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter Platform</a>
             <a href="/profile.html" class="dropdown-item">Profile Settings</a>
-            <a href="#" class="dropdown-item" id="nav-notifications-link" style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="#" class="dropdown-item" id="nav-notifications-link"
+              style="display: flex; justify-content: space-between; align-items: center;">
               Notifications
               <span style="background:var(--color-electric); color:white; border-radius:10px; padding:2px 6px; font-size:10px;">3</span>
             </a>
@@ -67,136 +67,217 @@
     </div>
   </nav>
 
-  <!-- ── Hero Section (DARK) ────────────────────────────────── -->
-  <header class="m-hero" style="background: var(--color-void);">
-    <div class="m-hero__content m-fade-up">
-      <div class="m-hero__chip">Competitive by Design. Global by Execution.</div>
-      <br><br>
-      <div class="m-hero__text-group">
-        <h1 class="m-hero__title">Strategic Product Realization</h1>
-        <h2>Product Design | Strategic Sourcing | Competitive Manufacturing</h2>
+  <!-- ── Hero Section (DARK, CENTRED, 100vh) ──────────────── -->
+  <header class="m-hero m-hero--centered"
+    style="background: radial-gradient(circle at 50% 0%, rgba(20,25,35,1) 0%, rgba(10,10,15,1) 100%); display: flex; flex-direction: column; align-items: center; min-height: 100vh; position: relative; overflow: hidden;">
+    <!-- Infinity Grid Background -->
+    <div class="hero-grid-bg"></div>
+    <div class="hero-grid-flash hero-grid-flash--1"></div>
+    <div class="hero-grid-flash hero-grid-flash--2"></div>
+    <div class="hero-grid-flash hero-grid-flash--3"></div>
+    <div class="m-hero__content m-fade-up"
+      style="text-align: center; align-items: center; max-width: 900px; margin: 0 auto; padding-top: 10vh;">
+
+      <div class="hero-headline">
+        <span class="hero-headline__west">Western Design</span>
+        <span class="hero-headline__east">Asian Manufacturing</span>
       </div>
-      <br><br>
-      <p class="m-hero__subtitle">
-        Western design wins users. Asian manufacturing wins margins. We setup your project for success.
-        Vetted and managed Supply Chain, Instant Quotes, Design and PLM services all in one platform.
-      </p>
-      <br><br>
-      <div class="m-hero__cta-group">
-        <a href="/app.html" class="btn-marketing btn-marketing--primary">Access Manufacturing Engine</a>
-        <a href="services.html" class="btn-marketing btn-marketing--secondary">Capabilities</a>
-      </div>
+      <p class="hero-headline__sub">One seamless engine — from concept to mass production.</p>
+
     </div>
 
-    <div id="hero-merger" class="m-hero__merger-comp m-fade-up" style="transition-delay: 200ms; --bg-flag: url();">
-      <div class="m-merger-card m-merger-card--west">
-        <div class="m-merger-card__image" style="background-image: url('/assets/images/prd_western_design.png');"></div>
-        <div class="m-merger-card__content">
-          <div class="m-merger-card__tag">AUS &bull; USA</div>
-          <h4>Front-End Innovation</h4>
-          <p>Industrial Design, Mechanical & Electrical Engineering</p>
-          <p>Systems Architecture & Integration</p>
-        </div>
+    <!-- Phase Gate Cards -->
+    <div class="pb-stages-container" style="max-width: 90%; margin: 60px auto 0; width: 100%;">
+      <div class="hero-prompt">
+        <span class="hero-prompt__line"></span>
+        <span class="hero-prompt__text">Where is your product? We can help at every stage.</span>
+        <span class="hero-prompt__line"></span>
       </div>
+      <div class="pb-stages-grid" style="grid-template-columns: repeat(5, 1fr); padding-bottom: 18vh;">
 
-      <div class="m-merger-card m-merger-card--east">
-        <div class="m-merger-card__image" style="background-image: url('/assets/images/prd_hero_factory.png');"></div>
-        <div class="m-merger-card__content">
-          <div class="m-merger-card__tag">CHINA (PRD)</div>
-          <h4>Manufacturing Engine</h4>
-          <p>Engineering for Manufacturing</p>
-          <p>High-Velocity Execution & Supply Chain</p>
+        <!-- STAGE 1: I HAVE AN IDEA -->
+        <div class="pb-stage-card" data-color="purple">
+          <div class="pb-stage-content">
+            <div class="pb-stage-title-row">
+              <div class="pb-stage-avatar" style="background-image: url('/assets/images/phases/idea.png');"></div>
+              <h3 class="pb-stage-title">I have an idea</h3>
+              <div class="pb-stage-subtitle">Phase 1</div>
+            </div>
+            <p class="pb-stage-prompt">...and I want to:</p>
+            <div class="pb-stage-expand-panel">
+              <ul class="pb-stage-list">
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Generate a Concept Design</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Prepare a Business Plan</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Evaluate Development Costs</li>
+              </ul>
+              <button class="pb-stage-cta" onclick="document.querySelector('.nav-contact-trigger')?.click();">Talk to Our Experts</button>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="m-merger-connection">
-        <div class="m-merger-pulse"></div>
-        <span>SEAMLESS<br>INTEGRATION</span>
+        <!-- STAGE 2: I HAVE A CONCEPT DESIGN -->
+        <div class="pb-stage-card" data-color="blue">
+          <div class="pb-stage-content">
+            <div class="pb-stage-title-row">
+              <div class="pb-stage-avatar" style="background-image: url('/assets/images/phases/concept.png');"></div>
+              <h3 class="pb-stage-title">I have a Concept Design</h3>
+              <div class="pb-stage-subtitle">Phase 2</div>
+            </div>
+            <p class="pb-stage-prompt">...and I want to:</p>
+            <div class="pb-stage-expand-panel">
+              <ul class="pb-stage-list">
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Make Prototypes</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Assess Technology Feasibility</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Run Early Stage Cost Analysis</li>
+              </ul>
+              <button class="pb-stage-cta" onclick="window.location.href='/app.html#designers'">Find Designers</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STAGE 3: I HAVE A PROTOTYPE -->
+        <div class="pb-stage-card" data-color="teal">
+          <div class="pb-stage-content">
+            <div class="pb-stage-title-row">
+              <div class="pb-stage-avatar" style="background-image: url('/assets/images/phases/prototype.png');"></div>
+              <h3 class="pb-stage-title">I have a Prototype</h3>
+              <div class="pb-stage-subtitle">Phase 3</div>
+            </div>
+            <p class="pb-stage-prompt">...and I need:</p>
+            <div class="pb-stage-expand-panel">
+              <ul class="pb-stage-list">
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Detailed Engineering Design</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> DFM &amp; Cost Analysis</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Architecture &amp; Compliance Review</li>
+              </ul>
+              <button class="pb-stage-cta" onclick="window.location.href='/app.html#rfq'">Get Instant Quote</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STAGE 4: I WANT TO MANUFACTURE -->
+        <div class="pb-stage-card" data-color="orange">
+          <div class="pb-stage-content">
+            <div class="pb-stage-title-row">
+              <div class="pb-stage-avatar" style="background-image: url('/assets/images/phases/manufacture.png');"></div>
+              <h3 class="pb-stage-title">I want to Manufacture</h3>
+              <div class="pb-stage-subtitle">Phase 4</div>
+            </div>
+            <p class="pb-stage-prompt">...and I need:</p>
+            <div class="pb-stage-expand-panel">
+              <ul class="pb-stage-list">
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Manufacturing Readiness Analysis</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Supply Chain Setup & Management</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Production Transfer & Oversight</li>
+              </ul>
+              <button class="pb-stage-cta" onclick="window.location.href='/app.html#suppliers'">Supplier Network</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STAGE 5: MY PRODUCT IS IN THE MARKET -->
+        <div class="pb-stage-card" data-color="green">
+          <div class="pb-stage-content">
+            <div class="pb-stage-title-row">
+              <div class="pb-stage-avatar" style="background-image: url('/assets/images/phases/market.png');"></div>
+              <h3 class="pb-stage-title">My product is in the Market</h3>
+              <div class="pb-stage-subtitle">Phase 5</div>
+            </div>
+            <p class="pb-stage-prompt">...and I want to:</p>
+            <div class="pb-stage-expand-panel">
+              <ul class="pb-stage-list">
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Drive Cost Down & Optimization</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Improve Quality & Reliability</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Develop Next Generation</li>
+              </ul>
+              <button class="pb-stage-cta" onclick="window.location.href='/app.html#suppliers'">Supply Chain Manager</button>
+            </div>
+          </div>
+        </div>
+
+
       </div>
     </div>
   </header>
 
-  <!-- SECTION: Precision Capabilities (INDUSTRIAL BENTO) -->
+
   <section id="services" class="m-bento-section" style="background: #eef2f6;">
     <div class="m-section-header m-fade-up" style="text-align: center; max-width: 800px; margin: 0 auto 80px auto;">
-      <h2 class="m-section-title" style="color: var(--color-void);">Core Capabilities.</h2>
-      <p class="m-section-desc" style="color: #444;">Your trusted partner in tooling, molding, and contract
-        manufacturing. We uphold respect, transparency, and equality in every collaboration.</p>
+      <h2 class="m-section-title" style="color: var(--color-void);">Our Services.</h2>
+      <p class="m-section-desc" style="color: #444;">Western product design rigour meets Asian manufacturing efficiency. From first sketch to scaled production, we deliver end-to-end solutions that bridge the gap between innovation and execution.</p>
     </div>
 
     <div class="m-bento-grid m-fade-up">
-      <!-- Card 1: Mold Manufacturing (Large) -->
+      <!-- Card 1: Product Design & Development (Large) -->
       <div class="m-bento-card m-bento-card--large" style="background: #fff; border-color: #d1d5db;">
         <div class="m-bento-image"
-          style="background-image: url('/assets/images/manufacturing/20161202_165041.jpg'); filter: contrast(1.1) brightness(0.9); background-size: cover; background-position: center; border-radius: 6px 6px 0 0;">
+          style="background-image: url('/assets/images/services/product-design.png'); background-size: cover; background-position: center; border-radius: 6px 6px 0 0;">
         </div>
         <div class="m-bento-content" style="background: #fff; z-index: 1;">
-          <h3 style="color: #0b0f19;">Mold Manufacturing</h3>
-          <p style="color: #4b5563;">With over 15 years of international mold making experience, our team delivers
-            precise, reliable molds that keep your production running smoothly.</p>
+          <h3 style="color: #0b0f19;">Product Design & Development</h3>
+          <p style="color: #4b5563;">Western-trained industrial designers and mechanical engineers take your idea from napkin sketch to production-ready 3D CAD — with DFM baked in from day one.</p>
         </div>
       </div>
 
-      <!-- Card 2: Plastic Injection -->
+      <!-- Card 2: Rapid Prototyping -->
       <div class="m-bento-card" style="background: #fff; border-color: #d1d5db;">
         <div class="m-bento-image"
-          style="background-image: url('/assets/images/manufacturing/IMG_1518.JPG'); filter: contrast(1.1) brightness(0.9); background-size: cover; background-position: center; border-radius: 6px 6px 0 0;">
+          style="background-image: url('/assets/images/services/rapid-prototyping.png'); background-size: cover; background-position: center; border-radius: 6px 6px 0 0;">
         </div>
         <div class="m-bento-content" style="background: #fff; z-index: 1;">
-          <h3 style="color: #0b0f19;">Plastic Injection</h3>
-          <p style="color: #4b5563;">High-precision molding for medical and high-performance applications.</p>
+          <h3 style="color: #0b0f19;">Rapid Prototyping</h3>
+          <p style="color: #4b5563;">SLA, SLS, CNC, and soft tooling — validate form, fit, and function in days, not months. Iterate fast with our in-house and partner facilities across Asia.</p>
         </div>
       </div>
 
-      <!-- Card 3: Contract Manufacturing -->
+      <!-- Card 3: Strategic Sourcing & Supply Chain -->
       <div class="m-bento-card" style="background: #fff; border-color: #d1d5db;">
         <div class="m-bento-image"
-          style="background-image: url('/assets/images/manufacturing/IMG_5367.JPG'); filter: contrast(1.1) brightness(0.9); background-size: cover; background-position: center; border-radius: 6px 6px 0 0;">
+          style="background-image: url('/assets/images/services/supply-chain.png'); background-size: cover; background-position: center; border-radius: 6px 6px 0 0;">
         </div>
         <div class="m-bento-content" style="background: #fff; z-index: 1;">
-          <h3 style="color: #0b0f19;">Contract Mfg</h3>
-          <p style="color: #4b5563;">Flexible, efficient, one-stop manufacturing for a complete end-to-end service.</p>
+          <h3 style="color: #0b0f19;">Strategic Sourcing & Supply Chain</h3>
+          <p style="color: #4b5563;">Leverage our vetted supplier network across the Pearl River Delta. We handle procurement, vendor qualification, logistics, and quality audits so you don't have to.</p>
         </div>
       </div>
 
-      <!-- Card 4: Medical Solutions (Wide) -->
+      <!-- Card 4: Contract Manufacturing (Wide) -->
       <div class="m-bento-card m-bento-card--wide" style="background: #fff; border-color: #d1d5db;">
         <div class="m-bento-image"
-          style="background-image: url('/assets/images/manufacturing/IMG_4365.JPG'); filter: contrast(1.1) brightness(0.9); background-size: cover; background-position: center; border-radius: 6px 6px 0 0;">
+          style="background-image: url('/assets/images/services/contract-mfg.png'); background-size: cover; background-position: center; border-radius: 6px 6px 0 0;">
         </div>
         <div class="m-bento-content" style="background: #fff; z-index: 1;">
-          <h3 style="color: #0b0f19;">Medical Solutions</h3>
-          <p style="color: #4b5563;">Certified cleanroom production complying with ISO 13485 for rigorous regulatory
-            requirements and high-end diagnostics.</p>
+          <h3 style="color: #0b0f19;">Contract Manufacturing</h3>
+          <p style="color: #4b5563;">Full-service production management — injection molding, die casting, CNC, finishing, assembly, and packaging. Western project methodology; Asian production efficiency and cost structure.</p>
         </div>
       </div>
 
-      <!-- Card 5: Engineering Support -->
+      <!-- Card 5: Electronics Development -->
       <div class="m-bento-card" style="background: #fff; border-color: #d1d5db;">
         <div class="m-bento-image"
-          style="background-image: url('/assets/images/manufacturing/IMG_1903.JPG'); background-size: cover; background-position: center; border-radius: 6px 6px 0 0;">
+          style="background-image: url('/assets/images/services/electronics.png'); background-size: cover; background-position: center; border-radius: 6px 6px 0 0;">
         </div>
         <div class="m-bento-content" style="background: #fff;">
-          <h3 style="color: #0b0f19;">Engineering</h3>
-          <p style="color: #4b5563;">Advanced DFM checking and tooling architecture.</p>
+          <h3 style="color: #0b0f19;">Electronics Development</h3>
+          <p style="color: #4b5563;">PCB layout, firmware, PCBA assembly and testing. From IoT sensor modules to complex control systems — designed to international standards, manufactured at scale.</p>
         </div>
       </div>
 
-      <!-- Card 6: PCBA Development -->
+      <!-- Card 6: Factory Automation -->
       <div class="m-bento-card" style="background: #fff; border-color: #d1d5db;">
         <div class="m-bento-image"
-          style="background-image: url('/assets/images/manufacturing/smt.jpg'); background-size: cover; background-position: center; border-radius: 6px 6px 0 0;">
+          style="background-image: url('/assets/images/services/factory-automation.png'); background-size: cover; background-position: center; border-radius: 6px 6px 0 0;">
         </div>
         <div class="m-bento-content" style="background: #fff;">
-          <h3 style="color: #0b0f19;">PCBA Development</h3>
-          <p style="color: #4b5563;">High-density circuit board design and custom firmware orchestration.</p>
+          <h3 style="color: #0b0f19;">Factory Automation</h3>
+          <p style="color: #4b5563;">Custom jigs, fixtures, robotic cells, and production line automation. Reduce cycle times and labour costs while maintaining consistent, repeatable quality.</p>
         </div>
       </div>
     </div>
     <div class="m-fade-up" style="text-align: center; margin-top: 60px;">
-      <a href="app.html#rfq" class="btn-marketing btn-marketing--primary"
+      <a href="services.html" class="btn-marketing btn-marketing--primary"
         style="display: inline-flex; align-items: center; gap: 8px;">
-        Instant RFQ
+        Explore All Services
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2">
           <path d="M5 12h14"></path>
@@ -714,7 +795,7 @@
                   style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">About
                   Us</a></li>
               <li><a href="services.html"
-                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Capabilities</a></li>
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Our Services</a></li>
               <li><a href="services.html"
                   style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Privacy Policy</a></li>
               <li><a href="services.html"
@@ -738,7 +819,8 @@
         <div style="margin-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
           <p style="font-size: 11px; color: var(--color-steel-400); margin-bottom: 8px;">Atlas DT is part of the Paniani
             group.</p>
-          <img src="/logos/paniani-logo.png" alt="Paniani Products" style="height: 16px; width: auto; opacity: 0.6; filter: grayscale(1) invert(1) brightness(2); vertical-align: middle;">
+          <img src="/logos/paniani-logo.png" alt="Paniani Products"
+            style="height: 16px; width: auto; opacity: 0.6; filter: grayscale(1) invert(1) brightness(2); vertical-align: middle;">
         </div>
       </div>
 
@@ -796,7 +878,8 @@
               <input type="password" id="login-password" required
                 placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
             </div>
-            <div style="text-align:right; margin-top:-10px; margin-bottom:15px;"><a id="toggle-to-reset" style="font-size:12px; color:var(--color-electric); cursor:pointer;">Forgot password?</a></div>
+            <div style="text-align:right; margin-top:-10px; margin-bottom:15px;"><a id="toggle-to-reset"
+                style="font-size:12px; color:var(--color-electric); cursor:pointer;">Forgot password?</a></div>
             <div id="login-error" class="auth-error-msg"></div>
             <button type="submit" class="auth-btn" id="login-submit-btn">Log In</button>
           </form>
@@ -806,7 +889,7 @@
         </div>
 
         <!-- SIGN UP FORM -->
-        
+
         <!-- RESET PASSWORD FORM -->
         <div class="auth-form-wrapper" id="form-reset" style="display: none;">
           <div class="auth-header">
@@ -825,7 +908,7 @@
             Remembered it? <a id="toggle-reset-to-login" style="cursor:pointer">Log In instead</a>
           </div>
         </div>
-        
+
         <div class="auth-form-wrapper" id="form-signup" style="display: none;">
           <div class="auth-header">
             <h2>Request Access.</h2>
@@ -854,7 +937,8 @@
               <label for="signup-password">Password</label>
               <input type="password" id="signup-password" required
                 placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
-              <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars: 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
+              <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars:
+                1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
             </div>
             <div id="signup-error" class="auth-error-msg"></div>
             <button type="submit" class="auth-btn" id="signup-submit-btn">Create Account</button>
@@ -978,5 +1062,3 @@
 </body>
 
 </html>
-
-

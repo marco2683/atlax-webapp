@@ -24,8 +24,7 @@ export function initGlobe(containerId, suppliers = []) {
   const globe = Globe()
     .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
     .backgroundColor('rgba(0,0,0,0)')
-    .showAtmosphere(true)
-    .atmosphereAltitude(0.15)
+    .showAtmosphere(false)
 
     // Points (supplier dots only — clean, small)
     .pointsData([])
@@ -68,20 +67,58 @@ export function initGlobe(containerId, suppliers = []) {
 
     (container);
 
+  // ── Country borders GeoJSON (cached) ──────────────────
+  let countriesGeoJson = null;
+  const GEOJSON_URL = 'https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson';
+
+  function loadCountryBorders() {
+    if (countriesGeoJson) return Promise.resolve(countriesGeoJson);
+    return fetch(GEOJSON_URL)
+      .then(r => r.json())
+      .then(data => {
+        countriesGeoJson = data;
+        return data;
+      })
+      .catch(err => {
+        console.warn('[Globe] Failed to load country borders:', err);
+        return null;
+      });
+  }
+
+  function applyCountryBorders(isLight) {
+    loadCountryBorders().then(data => {
+      if (!data) return;
+      
+      globe
+        .polygonsData(data.features)
+        .polygonGeoJsonGeometry(d => d.geometry)
+        .polygonCapColor(() => isLight 
+          ? 'rgba(255, 255, 255, 0.01)'   // Nearly invisible cap in light mode
+          : 'rgba(30, 40, 80, 0.25)')      // Subtle dark fill in dark mode
+        .polygonSideColor(() => 'rgba(0,0,0,0)')
+        .polygonStrokeColor(() => isLight 
+          ? 'rgba(100, 116, 139, 0.45)'    // Cool slate border lines
+          : 'rgba(59, 130, 246, 0.25)')     // Subtle blue borders
+        .polygonAltitude(0.002)             // Slight lift for clean rendering
+        .polygonCapMaterial(null);           // Use default material
+    });
+  }
+
   function updateGlobeMaterial(isLight) {
     if (isLight) {
-      globe.globeImageUrl('//unpkg.com/three-globe/example/img/earth-day.jpg');
-      globe.bumpImageUrl(null); // Remove 3D shadows for a flat/cartoon feel
+      globe.globeImageUrl('//cdn.jsdelivr.net/npm/three-globe/example/img/earth-blue-marble.jpg');
+      globe.bumpImageUrl('//cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png');
       globe.backgroundImageUrl(null);
-      globe.showAtmosphere(true);
-      globe.atmosphereColor('#87CEEB'); // Softer sky blue atmosphere
+      globe.showAtmosphere(false);
     } else {
       globe.globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg');
       globe.bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png');
       globe.backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png');
-      globe.showAtmosphere(true);
-      globe.atmosphereColor('#3b82f6');
+      globe.showAtmosphere(false);
     }
+    
+    // Apply country borders
+    applyCountryBorders(isLight);
     
     // Reset material properties
     setTimeout(() => {
@@ -89,9 +126,9 @@ export function initGlobe(containerId, suppliers = []) {
       if (mat) {
         if (isLight) {
           mat.color = new THREE.Color('#ffffff');
-          mat.emissive = new THREE.Color('#000000'); // Remove foggy overlay
+          mat.emissive = new THREE.Color('#000000');
           mat.emissiveIntensity = 0.0; 
-          mat.shininess = 0.0; // Flat matte cartoon look
+          mat.shininess = 8;   // Slight sheen for premium feel
         } else {
           mat.color = new THREE.Color('#ffffff');
           mat.emissive = new THREE.Color('#000000');

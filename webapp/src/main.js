@@ -395,15 +395,15 @@ function updateStackedResultsOnly(globe) {
 function switchView(view, globe) {
   // ZERO-TRUST AUTHORIZATION GUARD
   const sysTier = sessionStorage.getItem('atlasdt_tier') || 'basic';
-  const restrictedViews = ['suppliers', 'product-builder', 'tariff', 'taxonomy'];
+  const restrictedViews = ['suppliers', 'tariff', 'taxonomy'];
   if (sysTier === 'basic' && restrictedViews.includes(view)) {
     console.warn(`[Auth] Blocked restricted view attempt: ${view} on ${sysTier} tier.`);
     return;
   }
   const rfqEngine = document.getElementById('rfq-engine');
   const rfqRight = document.getElementById('rfq-engine-right');
+  const projectQuoteEngine = document.getElementById('project-quote-engine');
   const designersEngine = document.getElementById('designers-engine');
-  const productBuilderEngine = document.getElementById('product-builder-engine');
   const tariffEngine = document.getElementById('tariff-engine');
   const taxonomyEngine = document.getElementById('taxonomy-engine');
   const searchBar = document.getElementById('search-bar');
@@ -423,8 +423,8 @@ function switchView(view, globe) {
   // Reset defaults
   rfqEngine?.classList.add('hidden');
   rfqRight?.classList.add('hidden');
+  projectQuoteEngine?.classList.add('hidden');
   designersEngine?.classList.add('hidden');
-  productBuilderEngine?.classList.add('hidden');
   tariffEngine?.classList.add('hidden');
   taxonomyEngine?.classList.add('hidden');
   hero?.classList.remove('hidden');
@@ -464,7 +464,20 @@ function switchView(view, globe) {
     heroTitleContainer?.classList.add('hidden');
   }
 
-  if (view === 'rfq') {
+  if (view === 'project-quote') {
+    appState.searchType = 'project-quote';
+    hero?.classList.add('hidden');
+    bottomResults?.classList.add('hidden');
+    projectQuoteEngine?.classList.remove('hidden');
+
+    // Wire bulk upload handlers if not already done
+    if (!appState._projectQuoteInitialized) {
+      import('./js/components/rfq-controller.js').then(m => {
+        m.initProjectQuoteController?.();
+        appState._projectQuoteInitialized = true;
+      });
+    }
+  } else if (view === 'rfq') {
     appState.searchType = 'rfq';
     rfqEngine?.classList.remove('hidden');
     rfqRight?.classList.remove('hidden');
@@ -476,6 +489,16 @@ function switchView(view, globe) {
         appState._rfqInitialized = true;
       });
     }
+
+    // Force detailed mode — hide bulk, show detailed
+    const detailedPanel = document.getElementById('rfq-detailed-panel');
+    const bulkPanel = document.getElementById('rfq-bulk-panel');
+    const ctaDetailed = document.getElementById('rfq-cta-detailed');
+    const ctaBulk = document.getElementById('rfq-cta-bulk');
+    detailedPanel?.classList.remove('hidden');
+    bulkPanel?.classList.add('hidden');
+    ctaDetailed?.classList.remove('hidden');
+    ctaBulk?.classList.add('hidden');
   } else if (view === 'designers') {
     appState.searchType = 'designers';
     hero?.classList.add('hidden');
@@ -486,18 +509,6 @@ function switchView(view, globe) {
       import('./js/components/designers-controller.js').then(m => {
         m.initDesignersController();
         appState._designersInitialized = true;
-      });
-    }
-  } else if (view === 'product-builder') {
-    appState.searchType = 'product-builder';
-    hero?.classList.add('hidden');
-    bottomResults?.classList.add('hidden');
-    productBuilderEngine?.classList.remove('hidden');
-
-    if (!appState._productBuilderInitialized) {
-      import('./js/components/product-builder-controller.js').then(m => {
-        m.initProductBuilder();
-        appState._productBuilderInitialized = true;
       });
     }
   } else if (view === 'tariff') {

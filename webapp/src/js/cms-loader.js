@@ -111,26 +111,8 @@
       }
     }
 
-    // Core Capabilities section
-    if (h.capabilities) {
-      const capTitle = document.querySelector('#services .m-section-title');
-      const capDesc = document.querySelector('#services .m-section-desc');
-      if (capTitle && h.capabilities.sectionTitle) capTitle.textContent = h.capabilities.sectionTitle;
-      if (capDesc && h.capabilities.sectionDescription) capDesc.textContent = h.capabilities.sectionDescription;
-
-      // Patch bento cards
-      const bentoCards = document.querySelectorAll('.m-bento-card');
-      (h.capabilities.cards || []).forEach((card, i) => {
-        const el = bentoCards[i];
-        if (!el) return;
-        const img = el.querySelector('.m-bento-image');
-        const title = el.querySelector('.m-bento-content h3');
-        const desc = el.querySelector('.m-bento-content p');
-        if (img && card.image) img.style.backgroundImage = `url('${card.image}')`;
-        if (title && card.title) title.textContent = card.title;
-        if (desc && card.description) desc.textContent = card.description;
-      });
-    }
+    // Services section — managed directly in HTML now (skip CMS patching)
+    // if (h.capabilities) { ... }
 
     // One-Stop Shop
     if (h.oneStopShop) {
@@ -205,52 +187,12 @@
 
   /**
    * Patch the services/capabilities page from CMS data.
+   * DISABLED — services page is now managed directly in HTML.
    */
   function patchServicesPage(data) {
-    if (!data?.pages?.services) return;
-    const svc = data.pages.services;
-
-    // Hero
-    const heroTitle = document.querySelector('.services-hero h1');
-    const heroDesc = document.querySelector('.services-hero p');
-    if (heroTitle && svc.hero?.title) heroTitle.textContent = svc.hero.title;
-    if (heroDesc && svc.hero?.description) heroDesc.textContent = svc.hero.description;
-
-    // Service blocks
-    const blockEls = document.querySelectorAll('.service-block');
-    (svc.blocks || []).forEach((block, bIdx) => {
-      const el = blockEls[bIdx];
-      if (!el) return;
-
-      const img = el.querySelector('.service-block__image img');
-      const title = el.querySelector('.service-block__content h2');
-      const desc = el.querySelector('.service-block__content > p');
-      if (img && block.image) img.src = block.image;
-      if (title && block.title) title.textContent = block.title;
-      if (desc && block.description) desc.textContent = block.description;
-
-      // Bullet items
-      const listItems = el.querySelectorAll('.service-list li');
-      (block.listItems || []).forEach((li, liIdx) => {
-        const liEl = listItems[liIdx];
-        if (!liEl) return;
-        const strong = liEl.querySelector('strong');
-        if (strong && li.bold) strong.textContent = li.bold;
-        // Set remaining text
-        if (li.text) {
-          const textNode = liEl.childNodes[liEl.childNodes.length - 1];
-          if (textNode && textNode.nodeType === 3) {
-            textNode.textContent = ' ' + li.text;
-          }
-        }
-      });
-
-      // Result
-      const resultTitle = el.querySelector('.service-result h4');
-      const resultText = el.querySelector('.service-result p');
-      if (resultTitle && block.resultTitle) resultTitle.textContent = block.resultTitle;
-      if (resultText && block.resultText) resultText.textContent = block.resultText;
-    });
+    // Services page content is now maintained in services.html directly.
+    // CMS patching disabled to prevent stale localStorage data from overwriting.
+    return;
   }
 
   /**

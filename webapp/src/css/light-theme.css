@@ -529,12 +529,12 @@ body.theme-light .rfq-editor__content {
    5. RFQ RIGHT PANEL (Quote Summary)
    ══════════════════════════════════════════════════════════ */
 body.theme-light .rfq-engine__right {
-  background: rgba(255, 255, 255, 0.92);
+  background: transparent !important;
 }
 body.theme-light .rfq-summary-card {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 body.theme-light .rfq-summary-card h3 {
   color: #111827;

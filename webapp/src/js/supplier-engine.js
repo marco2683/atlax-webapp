@@ -242,6 +242,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
   
+  // Tabular Reset Filters
+  document.getElementById('tabular-reset-filters')?.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    if (tagInput) tagInput.value = '';
+    if (countryFilter) countryFilter.value = '';
+    
+    // Reset segment pills
+    document.querySelectorAll('#tabular-segment-pills .segment-pill').forEach(p => p.classList.remove('active'));
+    const allSegment = document.querySelector('#tabular-segment-pills .segment-pill[data-segment="ALL"]');
+    if (allSegment) allSegment.classList.add('active');
+    
+    // Reset cert pills
+    document.querySelectorAll('#tabular-cert-pills .segment-pill').forEach(p => p.classList.remove('active'));
+    const allCerts = document.querySelector('#tabular-cert-pills .segment-pill[data-segment="ALL"]');
+    if (allCerts) allCerts.classList.add('active');
+    
+    // Uncheck shortlist toggle
+    const shortToggle = document.getElementById('tabular-shortlist-toggle');
+    if (shortToggle) shortToggle.checked = false;
+
+    // We must rebuild tech filter after resetting country, then apply
+    rebuildTechGroupFilter();
+    if (techGroupFilter) techGroupFilter.value = '';
+    
+    applyFilters();
+  });
+
   document.getElementById('tabular-shortlist-export')?.addEventListener('click', () => {
     if (tabularShortlist.size === 0) return;
     const items = Array.from(tabularShortlist.values());
@@ -600,6 +627,7 @@ function sortTable(column, isAsc) {
 
 function renderTable(data) {
   if(!tableBody) return;
+  console.log('[Tabular Engine] Rendering', data.length, 'suppliers (v2 layout: segment under name)');
   tableBody.innerHTML = '';
   
   const resultsCountSpan = document.getElementById('tabular-results-count');
@@ -651,14 +679,30 @@ function renderTable(data) {
       </div>
     `;
 
-    // Technologies styling
-    const maxTechs = 3;
+    // Technologies styling - dynamic wrap calculation
     const techs = supplier.technologies || [];
-    let techsHtml = techs.slice(0, maxTechs).map(t => 
-      `<span style="display:inline-block; margin-right: 4px; color: #8b949e; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; font-size: 11px;">${t}</span>`
-    ).join('');
-    if(techs.length > maxTechs) {
-      techsHtml += `<span style="font-size: 11px; color: #58a6ff;">+${techs.length - maxTechs} more</span>`;
+    let techsHtml = '';
+    let currentEstWidth = 0;
+    // 320px column width * ~2 lines = roughly 600px of linear pill space
+    const maxRunningWidth = 560; 
+    let shownCount = 0;
+
+    for (let i = 0; i < techs.length; i++) {
+        const t = techs[i];
+        // Estimate px width: ~6.5px per char + 12px padding + 4px margin
+        const pillWidth = (t.length * 6.5) + 16; 
+        
+        if (currentEstWidth + pillWidth > maxRunningWidth && shownCount > 0) {
+            break;
+        }
+        
+        techsHtml += `<span style="display:inline-block; margin-right: 4px; margin-bottom: 4px; color: #8b949e; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; font-size: 11px; white-space: nowrap; text-transform: uppercase;">${t}</span>`;
+        currentEstWidth += pillWidth;
+        shownCount++;
+    }
+
+    if (techs.length > shownCount) {
+      techsHtml += `<span style="display:inline-block; margin-bottom: 4px; font-size: 11px; color: #58a6ff; white-space: nowrap; cursor: pointer;" title="${techs.slice(shownCount).join(', ')}">+${techs.length - shownCount} more</span>`;
     }
 
     const supplierId = supplier.id || supplier.name;
@@ -671,15 +715,20 @@ function renderTable(data) {
            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
          </button>`;
 
+    // Segment tier pill HTML
+    const segmentHtml = `<span class="tag-segment ${segClass}" style="transform: scale(0.7); transform-origin: left top; margin-top: 2px;">${supplier.segment || 'TIER 1'}</span>`;
+
     tr.innerHTML = `
       <td style="font-weight: 500;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          ${nameHtml}
-          ${!isAuthenticated ? '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>' : ''}
+        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+            ${nameHtml}
+            ${!isAuthenticated ? '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>' : ''}
+          </div>
+          ${segmentHtml}
         </div>
       </td>
       <td>${supplier.country || '—'}</td>
-      <td><span class="tag-segment ${segClass}">${supplier.segment || 'TIER 1'}</span></td>
       <td style="color: #7ee787;">${supplier.techGroup || '—'}</td>
       <td>${techsHtml || '—'}</td>
       <td style="text-align:center; padding:12px 2px;">${getTrafficLightSvg(supplier.scoreTc)}</td>
