@@ -2089,41 +2089,130 @@
   </section>
 
   <!-- ═══════════════════════════════════════════════════
-       COMPONENT CATALOG STOREFRONT (PHASE 4)
+       COMPONENT CATALOG STOREFRONT — DigiKey Clone
        ═══════════════════════════════════════════════════ -->
-  <section class="catalog-engine hidden" id="catalog-engine" style="position:fixed; top:56px; left:0; width:100vw; height:calc(100vh - 56px); z-index:90; background:var(--bg-main, #040814); overflow:hidden;">
-    <div style="display:flex; height:100%; width:100%;">
-      <!-- Left sidebar taxonomy / filters -->
-      <aside style="width:280px; background:rgba(255,255,255,0.02); border-right:1px solid rgba(255,255,255,0.05); display:flex; flex-direction:column; padding:20px; overflow-y:auto;" id="catalog-sidebar">
-        <h3 style="color:var(--color-electric); font-family:var(--font-mono); margin:0 0 16px 0; font-size:12px; letter-spacing:1px; text-transform:uppercase;">Taxonomy</h3>
-        <div id="catalog-taxonomy-tree" style="margin-bottom:24px;"></div>
-        
-        <h3 style="color:var(--color-emerald); font-family:var(--font-mono); margin:0 0 16px 0; font-size:12px; letter-spacing:1px; text-transform:uppercase;">Parametric Filters</h3>
-        <div id="catalog-filters-container">
-          <p style="font-size:12px; color:var(--color-steel-500);">Select a specific category to load technical filters.</p>
-        </div>
+  <section class="catalog-engine hidden" id="catalog-engine" style="position:fixed; top:56px; left:0; width:100vw; height:calc(100vh - 56px); z-index:90;">
+    <div class="dk-layout">
+
+      <!-- Category Sidebar -->
+      <aside class="dk-sidebar" id="catalog-sidebar">
+        <div class="dk-sidebar-header">Product Index</div>
+        <div id="catalog-taxonomy-tree"></div>
       </aside>
 
-      <!-- Main Data Grid -->
-      <main style="flex:1; display:flex; flex-direction:column; padding:24px; overflow:hidden;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-           <h2 id="catalog-header-title" style="margin:0; font-family:var(--font-display); color:white; font-size:24px;">All Components</h2>
-           <div style="display:flex; gap:12px;">
-              <input type="text" id="catalog-search" class="neo-input" placeholder="Search MPN or Name..." style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:white; padding:8px 12px; border-radius:4px; font-size:14px; width:240px;">
-           </div>
+      <!-- Main Content -->
+      <div class="dk-main" id="catalog-main">
+
+        <!-- Breadcrumb -->
+        <nav class="dk-breadcrumb" id="catalog-breadcrumb">
+          <a data-action="reset">Product Index</a>
+        </nav>
+
+        <!-- Category Header -->
+        <div class="dk-category-header">
+          <div>
+            <h1 class="dk-category-title" id="catalog-header-title">All Components</h1>
+          </div>
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div class="dk-search-within">
+              <label>Search Within</label>
+              <input type="text" id="catalog-search" placeholder="Enter keyword or part #">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" style="cursor:pointer;" id="catalog-search-btn"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <div class="dk-results-count" id="catalog-results-count">
+              Results: <strong id="catalog-total-count">0</strong>
+            </div>
+          </div>
         </div>
 
-        <!-- The Spreadsheet -->
-        <div style="flex:1; overflow:auto; background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.05); border-radius:8px;">
-          <table class="tabular-table" style="width:100%; border-collapse:collapse;">
-            <thead style="position:sticky; top:0; background:rgba(4,8,20,0.9); backdrop-filter:blur(10px); z-index:10;">
+        <!-- Filter Toggle -->
+        <div class="dk-filter-toggle-bar">
+          <span style="font-size:11px; color:#666; margin-right:6px;">Filters:</span>
+          <button class="dk-filter-toggle-btn active" id="dk-filter-stacked">Stacked</button>
+          <button class="dk-filter-toggle-btn" id="dk-filter-sorting">Sorting</button>
+        </div>
+
+        <!-- Parametric Filter Boxes Grid -->
+        <div class="dk-filters-section" id="catalog-filters-section">
+          <div class="dk-filters-grid" id="catalog-filters-grid">
+            <!-- Dynamically generated filter columns -->
+            <div style="padding:20px; color:#999; font-size:12px; text-align:center; width:100%;">
+              Select a category from the sidebar to load parametric filters.
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Filter Bar -->
+        <div class="dk-bottom-filters" id="catalog-bottom-filters">
+          <div class="dk-bottom-filter-group">
+            <div class="dk-bottom-filter-title">Stocking Options</div>
+            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-in-stock"> In Stock</label>
+            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-normally-stocking"> Normally Stocking</label>
+            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-new-product"> New Product</label>
+          </div>
+          <div class="dk-bottom-filter-group">
+            <div class="dk-bottom-filter-title">Environmental Options</div>
+            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-rohs"> RoHS Compliant</label>
+            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-non-rohs"> Non-RoHS Compliant</label>
+          </div>
+          <div class="dk-bottom-filter-group">
+            <div class="dk-bottom-filter-title">Media</div>
+            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-datasheet"> Datasheet</label>
+            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-photo"> Photo</label>
+            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-cad"> EDA/CAD Models</label>
+          </div>
+          <div class="dk-bottom-filter-group">
+            <div class="dk-bottom-filter-title">Exclude</div>
+            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-exclude-marketplace"> Marketplace Products</label>
+          </div>
+          <div class="dk-apply-section">
+            <button class="dk-apply-btn" id="catalog-apply-filters">Apply All</button>
+            <div class="dk-apply-results"><strong id="catalog-filtered-count">0</strong> Results</div>
+          </div>
+        </div>
+
+        <!-- Pagination / Sort / Download Bar -->
+        <div class="dk-table-controls" id="catalog-table-controls">
+          <div class="dk-table-controls-left">
+            <span class="dk-showing-text" id="catalog-showing-text">Showing 0 of 0</span>
+            <div class="dk-sort-by">
+              <label>Sort By</label>
+              <select id="catalog-sort-select">
+                <option value="featured">Featured</option>
+                <option value="mpn-asc">MPN A→Z</option>
+                <option value="mpn-desc">MPN Z→A</option>
+                <option value="price-asc">Price Low→High</option>
+                <option value="price-desc">Price High→Low</option>
+                <option value="stock-desc">Stock High→Low</option>
+              </select>
+            </div>
+          </div>
+          <button class="dk-download-btn" id="catalog-download-btn">Download Table</button>
+        </div>
+
+        <!-- Data Table -->
+        <div class="dk-table-wrapper" id="catalog-table-wrapper">
+          <table class="dk-table" id="catalog-table">
+            <thead>
               <tr id="catalog-table-head">
-                <th style="padding:12px; text-align:left; color:var(--color-steel-400); font-size:12px; border-bottom:1px solid rgba(255,255,255,0.1);">MPN</th>
-                <th style="padding:12px; text-align:left; color:var(--color-steel-400); font-size:12px; border-bottom:1px solid rgba(255,255,255,0.1);">Category</th>
-                <th style="padding:12px; text-align:left; color:var(--color-steel-400); font-size:12px; border-bottom:1px solid rgba(255,255,255,0.1);">Base Price</th>
-                <th style="padding:12px; text-align:left; color:var(--color-steel-400); font-size:12px; border-bottom:1px solid rgba(255,255,255,0.1);">Supplier</th>
-                <th style="padding:12px; text-align:left; color:var(--color-steel-400); font-size:12px; border-bottom:1px solid rgba(255,255,255,0.1);">Specs Snapshot</th>
-                <th style="padding:12px; text-align:left; color:var(--color-steel-400); font-size:12px; border-bottom:1px solid rgba(255,255,255,0.1);">Assets</th>
+                <th class="dk-col-checkbox"><input type="checkbox" id="catalog-select-all"></th>
+                <th class="dk-col-image"></th>
+                <th data-sort="mpn">Mfr Part # <span class="dk-sort-arrows"><span class="sort-up">▲</span><span class="sort-down">▼</span></span></th>
+                <th data-sort="stock">Quantity Available <span class="dk-sort-arrows"><span class="sort-up">▲</span><span class="sort-down">▼</span></span></th>
+                <th data-sort="price">Price <span class="dk-sort-arrows"><span class="sort-up">▲</span><span class="sort-down">▼</span></span></th>
+                <th data-sort="supplier">Supplier <span class="dk-sort-arrows"><span class="sort-up">▲</span><span class="sort-down">▼</span></span></th>
+                <th>Product Status</th>
+                <!-- Dynamic spec columns injected by JS -->
+              </tr>
+              <tr class="dk-filter-row" id="catalog-filter-row">
+                <th class="dk-col-checkbox"></th>
+                <th class="dk-col-image"></th>
+                <th><input type="text" placeholder="▲ ▼" data-col-filter="mpn"></th>
+                <th></th>
+                <th></th>
+                <th><input type="text" placeholder="▲ ▼" data-col-filter="supplier"></th>
+                <th></th>
+                <!-- Dynamic spec filter inputs injected by JS -->
               </tr>
             </thead>
             <tbody id="catalog-table-body">
@@ -2131,7 +2220,16 @@
             </tbody>
           </table>
         </div>
-      </main>
+
+        <!-- Bottom Pagination -->
+        <div class="dk-table-controls" id="catalog-bottom-controls">
+          <span class="dk-showing-text" id="catalog-bottom-showing">Showing 0 of 0</span>
+          <div class="dk-pagination" id="catalog-pagination">
+            <!-- Pagination buttons injected by JS -->
+          </div>
+        </div>
+
+      </div>
     </div>
   </section>
 

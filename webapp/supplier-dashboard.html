@@ -4,139 +4,40 @@
   <meta charset="UTF-8">
   <link rel="icon" type="image/svg+xml" href="/logo-mark.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Atlas DT — Supplier Portal</title>
+  <title>Amazon Seller Central clone — Supplier Portal</title>
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Amazon fonts approximations -->
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/css/supplier-amazon.css">
 
-  <link rel="stylesheet" href="/src/css/design-system.css">
-  <link rel="stylesheet" href="/src/css/layout.css">
-  <link rel="stylesheet" href="/src/css/components.css">
-  <link rel="stylesheet" href="/src/css/auth.css">
-
-  <style>
-    body { background-color: var(--bg-main, #040814); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
-    
-    .supplier-navbar {
-      height: 48px;
-      padding: 0 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.05));
-      background: var(--bg-main, rgba(4, 8, 20, 0.8));
-      backdrop-filter: blur(12px);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .supplier-main {
-      display: flex;
-      flex: 1;
-      height: calc(100vh - 48px);
-    }
-
-    .supplier-sidebar {
-      width: 220px;
-      background: var(--bg-panel, rgba(255,255,255,0.01));
-      border-right: 1px solid var(--border-subtle, rgba(255,255,255,0.05));
-      display: flex;
-      flex-direction: column;
-      padding: 24px 0;
-    }
-
-    .supplier-nav-item {
-      padding: 10px 20px;
-      color: var(--text-muted, var(--color-steel-300));
-      font-weight: 400;
-      font-size: 13px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-left: 3px solid transparent;
-      transition: all 0.2s;
-      background: transparent;
-      border-top: none; border-right: none; border-bottom: none;
-      text-align: left;
-      width: 100%;
-    }
-
-    .supplier-nav-item:hover { background: var(--bg-surface-hover, rgba(255,255,255,0.02)); color: var(--text-main, #fff); }
-    .supplier-nav-item.active {
-      color: var(--color-electric);
-      background: rgba(43,90,255,0.05);
-      border-left-color: var(--color-electric);
-      font-weight: 500;
-    }
-
-    .supplier-content {
-      flex: 1;
-      padding: 24px 40px;
-      overflow-y: auto;
-    }
-
-    .onboarding-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: var(--bg-main, rgba(4, 8, 20, 0.95));
-      backdrop-filter: blur(10px);
-      z-index: 999;
-      display: flex; justify-content: center; align-items: center;
-    }
-
-    .onboarding-card {
-      background: var(--bg-panel, rgba(255,255,255,0.03));
-      border: 1px solid var(--border-subtle, rgba(255,255,255,0.1));
-      border-radius: 12px;
-      width: 440px; padding: 32px; text-align: center;
-    }
-
-    .prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 16px; }
-    .prod-card {
-      background: var(--bg-panel, rgba(255,255,255,0.02)); border: 1px solid var(--border-subtle, rgba(255,255,255,0.05)); border-radius: 6px; padding: 12px;
-      display: flex; flex-direction: column; gap: 6px; cursor: pointer; transition: 0.2s;
-    }
-    .prod-card:hover { border-color: var(--color-electric); background: var(--bg-surface-hover, rgba(255,255,255,0.04)); }
-  </style>
 </head>
 <body>
-<script>
-  if (localStorage.getItem('themeManager_mode') === 'light' || localStorage.getItem('themeManager_mode') === 'auto' && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.body.classList.add('theme-light');
-  }
-</script>
-
   <!-- Loading State / Fallback -->
-  <div id="supplier-loading" class="onboarding-overlay" style="display: flex;">
-    <div style="text-align: center; color: var(--color-electric);">
-      <svg width="40" height="40" viewBox="0 0 50 50" class="spinner"><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="31.4 31.4" stroke-linecap="round"><animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/></circle></svg>
-      <p style="margin-top: 16px; font-family: var(--font-mono);">Authenticating Connection...</p>
+  <div id="supplier-loading" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.9); z-index: 999; display: flex; justify-content: center; align-items: center;">
+    <div style="text-align: center; color: var(--amz-text-dark);">
+      <p style="margin-top: 16px; font-weight:700;">Loading Seller Central...</p>
     </div>
   </div>
 
   <!-- Onboarding Link Mode -->
-  <div id="supplier-onboarding" class="onboarding-overlay" style="display: none;">
-    <div class="onboarding-card glass-panel">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-electric)" stroke-width="2" style="margin-bottom: 16px;"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-      <h2 style="margin: 0 0 8px 0; font-family: var(--font-display); font-weight:500;">Factory Onboarding</h2>
-      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Link your account to an existing factory or register a new facility to access the product catalog engine.</p>
+  <div id="supplier-onboarding" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.9); z-index: 999; display: none; justify-content: center; align-items: center;">
+    <div style="background: #FFF; border: 1px solid var(--amz-border); box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 440px; padding: 32px; text-align: center;">
+      <h2 style="margin: 0 0 8px 0; font-size:18px;">Register as a Seller</h2>
+      <p style="color: #666; font-size: 13px; margin-bottom: 24px;">Link your account to an existing seller profile or register a new facility.</p>
       <form id="onboarding-form" style="text-align: left;">
-        <div class="input-group" style="margin-bottom: 12px;">
-          <label style="color: var(--text-muted); font-size:13px; font-weight:500;">Company Legal Name</label>
-          <input type="text" id="onboard-factory-name" required placeholder="Shenzhen Precision Manufacturing Ltd." class="neo-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; background: var(--input-bg); border: 1px solid var(--border-subtle); border-radius: 4px; color: var(--text-main); font-size:13px;">
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700;">Legal Business Name</label>
+          <input type="text" id="onboard-factory-name" required placeholder="Shenzhen Precision Manufacturing Ltd." class="amz-form-input">
         </div>
-        <div class="input-group" style="margin-bottom: 24px;">
-          <label style="color: var(--text-muted); font-size:13px; font-weight:500;">Primary Focus</label>
-          <select id="onboard-factory-focus" required class="neo-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; background: var(--input-bg); border: 1px solid var(--border-subtle); border-radius: 4px; color: var(--text-main); font-size:13px;">
+        <div style="margin-bottom: 24px;">
+          <label style="display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700;">Primary Focus</label>
+          <select id="onboard-factory-focus" required class="amz-form-input">
             <option value="OEM">Original Equipment Manufacturer (OEM)</option>
             <option value="DISTRIBUTOR">Component Distributor</option>
             <option value="CM">Contract Manufacturer</option>
           </select>
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%; font-weight:500;">Create & Link Factory Profile</button>
+        <button type="submit" class="amz-btn amz-btn-yellow" style="width: 100%;">Agree and Create Profile</button>
       </form>
     </div>
   </div>
@@ -144,41 +45,30 @@
   <!-- Main Authenticated Portal -->
   <div id="supplier-app" style="display: none; height: 100%; width: 100%; flex-direction: column;">
     
-    <nav class="supplier-navbar">
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <svg width="24" height="24" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="var(--color-electric)" stroke-width="4"/><path d="M50 20 L80 80 L20 80 Z" fill="none" stroke="var(--color-electric)" stroke-width="4" stroke-linejoin="round"/></svg>
-        <div>
-          <div style="font-size: 13px; font-weight: 700; color: white; line-height: 1.1;" data-i18n="supplierHub">Supplier Hub</div>
-          <div style="font-size: 10px; color: var(--color-steel-400);">Atlas DT Network</div>
+    <header class="amz-header">
+      <div class="amz-header-left">
+        <div class="amz-header-logo">
+          <span style="color:#FFF;">AtlasDT</span>
+          <span style="font-weight:400; color:#4FD1C5;"> Seller Platform <span style="font-size:12px; opacity: 0.8;">(卖家平台)</span></span>
         </div>
+        <div style="color: #94A3B8; font-size: 13px; margin-left: 16px;" id="sidebar-factory-name">My Factory | Global</div>
       </div>
-      <div style="display: flex; gap: 8px;">
-        <button class="btn btn-secondary" id="lang-toggle-btn" style="font-size: 12px; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.2);">中 / EN</button>
-        <button class="btn btn-secondary" id="supplier-logout-btn" style="font-size: 12px; padding: 6px 16px;" data-i18n="disconnect">Disconnect</button>
+      <div class="amz-header-nav">
+        <a class="amz-header-link" id="nav-inventory">Inventory Details</a>
+        <a class="amz-header-link">Publish Product</a>
+        <a class="amz-header-link">Order Management</a>
+        <a class="amz-header-link">Analytics</a>
       </div>
-    </nav>
+      <div class="amz-header-right">
+        <a class="amz-header-link" style="font-size: 12px;" id="lang-toggle-btn">EN / 中</a>
+        <a class="amz-header-link" style="font-size: 12px;" id="supplier-logout-btn" data-i18n="disconnect">Logout</a>
+      </div>
+    </header>
 
-    <div class="supplier-main">
-      <aside class="supplier-sidebar">
-        <div style="padding: 0 24px 24px 24px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 16px;">
-          <div style="font-family: var(--font-display); font-size: 18px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="sidebar-factory-name">My Factory</div>
-          <div style="font-family: var(--font-mono); font-size: 10px; color: var(--color-electric);" id="sidebar-factory-segment">OEM</div>
-        </div>
+    <main id="supplier-content-routing">
+      <!-- Injected via JS -->
+    </main>
 
-        <button class="supplier-nav-item active" data-tab="catalog">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 16V8l-8-4-8 4v8l8 4 8-4z"/><polyline points="12 4 12 22"/><polyline points="4 8 12 12 20 8"/></svg>
-          <span data-i18n="navProdManager">Product Manager</span>
-        </button>
-        <button class="supplier-nav-item" data-tab="profile">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <span data-i18n="navProfile">Company Profile</span>
-        </button>
-      </aside>
-
-      <main class="supplier-content" id="supplier-content-routing">
-        <!-- Injected via JS -->
-      </main>
-    </div>
   </div>
 
   <script type="module" src="/src/js/supplier-dashboard.js"></script>

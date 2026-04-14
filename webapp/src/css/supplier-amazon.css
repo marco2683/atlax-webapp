@@ -1,0 +1,463 @@
+/* 
+  Modernized Seller Platform Theme for Supplier Dashboard
+*/
+
+:root {
+  --amz-font: "Inter", "Open Sans", Arial, sans-serif;
+  --amz-header-bg: #0F172A; /* Deep Slate (modernized from Amazon Teal) */
+  --amz-body-bg: #F8FAFC;   /* Very light slate */
+  --amz-text-dark: #0F172A; /* Slate 900 */
+  --amz-text-light: #64748B; /* Slate 500 */
+  --amz-link: #2563EB;       /* Blue 600 */
+  --amz-border: #E2E8F0;     /* Slate 200 */
+  
+  --amz-btn-teal: #0F172A;   /* Primary Dark */
+  --amz-btn-teal-hover: #1E293B;
+  --amz-btn-secondary: #FFFFFF;
+  --amz-btn-border: #CBD5E1;
+
+  /* Form Elements */
+  --amz-live-bg: #F1F5F9;
+  --amz-input-bg: #FFFFFF;
+  --amz-input-border: #CBD5E1;
+  --amz-input-focus: #3B82F6;
+  --amz-input-focus-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+body {
+  font-family: var(--amz-font);
+  background-color: var(--amz-body-bg);
+  color: var(--amz-text-dark);
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+/* Header */
+.amz-header {
+  background-color: var(--amz-header-bg);
+  color: #FFF;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.amz-header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.amz-header-logo {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.amz-header-nav {
+  display: flex;
+  gap: 16px;
+}
+
+.amz-header-link {
+  color: #FFF;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.amz-header-link:hover {
+  text-decoration: underline;
+}
+
+.amz-header-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Buttons */
+.amz-btn {
+  background: var(--amz-btn-secondary);
+  border: 1px solid var(--amz-btn-border);
+  color: var(--amz-text-dark);
+  box-shadow: 0 1px 2px rgba(15,23,42,0.05); /* Softer Slate shadow */
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  line-height: 20px;
+  font-family: inherit;
+  transition: all 0.15s ease-in-out;
+}
+
+.amz-btn:hover {
+  background: #F8FAFC;
+  border-color: #94A3B8;
+}
+
+.amz-btn-teal {
+  background: var(--amz-btn-teal);
+  border-color: var(--amz-btn-teal);
+  color: #FFF;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(15,23,42,0.1);
+}
+
+.amz-btn-teal:hover {
+  background: var(--amz-btn-teal-hover);
+  border-color: var(--amz-btn-teal-hover);
+  color: #FFF;
+}
+
+.amz-btn-yellow {
+  background: #3B82F6; /* Switch yellow out for SaaS Blue */
+  border-color: #2563EB;
+  color: #FFF;
+  box-shadow: 0 1px 2px rgba(59,130,246,0.2);
+}
+.amz-btn-yellow:hover {
+  background: #2563EB;
+  color: #FFF;
+}
+
+
+/* Layout Container */
+.amz-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 32px 40px;
+}
+
+.amz-page-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 24px 0;
+  color: var(--amz-text-dark);
+  letter-spacing: -0.5px;
+}
+
+/* Sub-Navigation Tabs */
+.amz-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--amz-border);
+  margin-bottom: 24px;
+  gap: 32px;
+}
+
+.amz-tab {
+  padding: 12px 4px;
+  color: var(--amz-text-light);
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.amz-tab:hover {
+  color: var(--amz-text-dark);
+}
+
+.amz-tab.active {
+  color: var(--amz-link);
+  font-weight: 600;
+  border-bottom-color: var(--amz-link);
+}
+
+/* Inventory Table */
+.amz-toolbar {
+  background: #FFF;
+  border: 1px solid var(--amz-border);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.amz-search-bar {
+  display: flex;
+  border: 1px solid var(--amz-input-border);
+  border-radius: 6px;
+  overflow: hidden;
+  width: 500px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.amz-search-bar:focus-within {
+  border-color: var(--amz-input-focus);
+  box-shadow: var(--amz-input-focus-shadow);
+}
+
+.amz-search-select {
+  background: #F8FAFC;
+  border: none;
+  border-right: 1px solid var(--amz-border);
+  padding: 8px 16px;
+  outline: none;
+  color: var(--amz-text-light);
+}
+
+.amz-search-input {
+  border: none;
+  padding: 8px 16px;
+  flex: 1;
+  outline: none;
+  font-size: 14px;
+}
+
+.amz-table {
+  width: 100%;
+  background: #FFF;
+  border-collapse: collapse;
+  border: 1px solid var(--amz-border);
+  border-radius: 0 0 8px 8px;
+  margin-bottom: 40px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.amz-table th {
+  background: #F8FAFC;
+  border-bottom: 1px solid var(--amz-border);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--amz-text-light);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.amz-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--amz-border);
+  vertical-align: top;
+}
+
+.amz-inline-input {
+  border: 1px solid var(--amz-input-border);
+  border-radius: 4px;
+  padding: 6px 10px;
+  width: 80px;
+  text-align: right;
+  font-family: inherit;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+.amz-inline-input:focus {
+  border-color: var(--amz-input-focus);
+  box-shadow: var(--amz-input-focus-shadow);
+  outline: none;
+}
+
+.amz-badge {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.amz-badge-red { color: #C40000; }
+.amz-badge-gray { color: var(--amz-text-light); }
+
+.amz-product-meta {
+  display: flex;
+  gap: 16px;
+}
+
+.amz-product-thumb {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border: 1px solid var(--amz-border);
+}
+
+.amz-product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.amz-product-title {
+  color: var(--amz-link);
+  font-weight: 400;
+  cursor: pointer;
+}
+.amz-product-title:hover { text-decoration: underline; color: #E47911; }
+
+.amz-product-sub {
+  color: var(--amz-text-light);
+  font-size: 12px;
+}
+
+.amz-metrics {
+  display: grid;
+  grid-template-columns: 120px 80px;
+  row-gap: 4px;
+  font-size: 12px;
+}
+.amz-metric-label { color: var(--amz-text-light); }
+.amz-metric-val { text-align: right; font-weight: 700;}
+
+/* Edit Product Interface */
+
+.amz-edit-header {
+  background: #FFF;
+  padding: 32px;
+  border-bottom: 1px solid var(--amz-border);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+}
+
+.amz-edit-thumb {
+  width: 80px; height: 80px; object-fit: contain;
+  border: 1px solid var(--amz-border);
+  border-radius: 8px;
+  padding: 4px;
+}
+.amz-edit-summary {
+  max-width: 600px;
+}
+.amz-edit-title {
+  font-size: 16px; font-weight: 500; margin-bottom: 8px; line-height: 1.4;
+}
+
+.amz-edit-tabs {
+  background: #FFF;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  border-bottom: 1px solid var(--amz-border);
+}
+.amz-edit-tab {
+  padding: 16px 8px;
+  font-weight: 500;
+  color: var(--amz-text-light);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+.amz-edit-tab.active {
+  font-weight: 600;
+  border-bottom-color: var(--amz-btn-teal);
+  color: var(--amz-btn-teal);
+}
+
+.amz-edit-main {
+  display: flex;
+  max-width: 1200px;
+  margin: 40px auto 0 auto;
+  min-height: 600px;
+  background: #FFF;
+  border: 1px solid var(--amz-border);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.amz-edit-sidebar {
+  width: 260px;
+  background: #F8FAFC;
+  border-right: 1px solid var(--amz-border);
+  border-radius: 8px 0 0 8px;
+  padding: 32px 24px;
+}
+
+.amz-sidebar-nav {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.amz-radio-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--amz-text-dark);
+}
+
+.amz-edit-content {
+  flex: 1;
+  background: #FFF;
+  padding: 40px 48px;
+  padding-bottom: 100px; /* Space for footer */
+  border-radius: 0 8px 8px 0;
+}
+
+/* Form Groups and Inputs */
+.amz-form-group {
+  margin-bottom: 32px;
+  display: flex;
+  gap: 32px;
+}
+
+.amz-label-col {
+  width: 220px;
+  text-align: right;
+  font-weight: 600;
+  color: var(--amz-text-dark);
+  padding-top: 8px;
+}
+.amz-label-col .required { color: #DC2626; margin-right:4px;} /* Tailwind Red 600 */
+
+.amz-input-col {
+  flex: 1;
+  max-width: 600px;
+}
+
+.amz-live-value {
+  background: var(--amz-live-bg);
+  border: 1px solid var(--amz-border);
+  border-bottom: none;
+  padding: 10px 14px;
+  color: var(--amz-text-light);
+  border-radius: 6px 6px 0 0;
+  font-size: 13px;
+  min-height: 20px;
+}
+
+.amz-form-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--amz-input-border);
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  border-radius: 0 0 6px 6px;
+  transition: all 0.15s;
+}
+.amz-form-input:focus {
+  border-color: var(--amz-input-focus);
+  box-shadow: var(--amz-input-focus-shadow);
+  outline: none;
+}
+textarea.amz-form-input {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.amz-form-input-single {
+  border-radius: 6px;
+}
+
+.amz-sticky-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #FFF;
+  border-top: 1px solid var(--amz-border);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+  z-index: 100;
+}

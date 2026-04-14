@@ -9,6 +9,7 @@ import './css/rfq-engine.css';
 import './css/profile.css';
 import './css/designers-engine.css';
 import './css/product-builder.css';
+import './css/marketplace.css';
 import './css/supplier-modal-light.css';
 import './css/responsive.css';
 import './css/light-theme.css'; /* Must be last — overrides all others */
