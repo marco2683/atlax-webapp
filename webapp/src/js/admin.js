@@ -2,6 +2,7 @@
 import { MOCK_DESIGNERS } from './data/mock-designers.js';
 import { supabase } from './supabase.js';
 import { renderPricingConfigurator } from './admin-pricing.js';
+import { renderMarketplaceTaxonomy } from './admin-taxonomy.js';
 
 /* ================================================================
    Atlas DT Admin Panel — Full CRM with Add/Edit Forms
@@ -198,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (t === 'website')   { pageTitle.textContent = 'Website Content Manager';  renderWebsiteContent(); }
         if (t === 'staff')     { pageTitle.textContent = 'Staff Directory';  renderStaffTable(); }
         if (t === 'taxonomy-images') { pageTitle.textContent = 'Taxonomy Image Curator'; renderTaxonomyImages(); }
+        if (t === 'marketplace-taxonomy') { pageTitle.textContent = 'Marketplace Taxonomy'; renderMarketplaceTaxonomy(contentRouting); }
       });
     });
   }

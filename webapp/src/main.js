@@ -417,6 +417,7 @@ function switchView(view, globe) {
 
   const selectionScreen = document.getElementById('sales-funnel');
   const tabularEngine = document.getElementById('supplier-tabular-engine');
+  const catalogEngine = document.getElementById('catalog-engine');
 
   console.log('[PRD] Switching to view:', view);
 
@@ -430,6 +431,7 @@ function switchView(view, globe) {
   hero?.classList.remove('hidden');
   tabularEngine?.classList.add('hidden');
   selectionScreen?.classList.add('hidden');
+  catalogEngine?.classList.add('hidden');
 
   // Clean up global nav states
   document.querySelectorAll('.navbar__menu-item').forEach(item => {
@@ -540,6 +542,19 @@ function switchView(view, globe) {
       } else {
         iframe.addEventListener('load', syncTheme, { once: true });
       }
+    }
+
+  } else if (view === 'catalog') {
+    appState.searchType = 'catalog';
+    hero?.classList.add('hidden');
+    bottomResults?.classList.add('hidden');
+    catalogEngine?.classList.remove('hidden');
+
+    if (!appState._catalogInitialized) {
+      import('./js/components/marketplace-catalog.js').then(m => {
+        m.initMarketplaceCatalog();
+        appState._catalogInitialized = true;
+      });
     }
 
   } else if (view === 'suppliers') {
