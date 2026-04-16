@@ -11,8 +11,8 @@
   --amz-link: #2563EB;       /* Blue 600 */
   --amz-border: #E2E8F0;     /* Slate 200 */
   
-  --amz-btn-teal: #0F172A;   /* Primary Dark */
-  --amz-btn-teal-hover: #1E293B;
+  --amz-btn-teal: #2563EB;   /* Atlas Primary Blue */
+  --amz-btn-teal-hover: #1D4ED8;
   --amz-btn-secondary: #FFFFFF;
   --amz-btn-border: #CBD5E1;
 
@@ -35,49 +35,96 @@ body {
 
 /* Header */
 .amz-header {
-  background-color: var(--amz-header-bg);
-  color: #FFF;
-  height: 56px;
+  background-color: #FFFFFF;
+  color: var(--amz-text-dark);
+  height: 60px;
+  border-bottom: 1px solid var(--amz-border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.amz-header-inner {
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  font-size: 14px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-sizing: border-box;
 }
 
 .amz-header-left {
   display: flex;
   align-items: center;
-  gap: 20px;
 }
 
 .amz-header-logo {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 20px;
   letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
 }
 
 .amz-header-nav {
   display: flex;
-  gap: 16px;
+  gap: 24px;
+  margin-left: 20px;
 }
 
 .amz-header-link {
-  color: #FFF;
+  color: var(--amz-text-dark);
   text-decoration: none;
-  font-size: 13px;
   cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  font-weight: 500;
 }
 
 .amz-header-link:hover {
-  text-decoration: underline;
+  background: var(--amz-live-bg);
 }
 
 .amz-header-right {
   display: flex;
-  gap: 12px;
   align-items: center;
+  gap: 16px;
+}
+
+.amz-header-icon {
+  color: var(--amz-text-light);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+}
+.amz-header-icon:hover {
+  color: var(--amz-text-dark);
+}
+
+.amz-header-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-left: 1px solid var(--amz-border);
+  padding-left: 16px;
+}
+
+.amz-avatar {
+  background: var(--amz-btn-teal);
+  color: #FFF;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 /* Buttons */
@@ -131,7 +178,9 @@ body {
 .amz-container {
   max-width: 1600px;
   margin: 0 auto;
-  padding: 32px 40px;
+  width: 100%;
+  padding: 32px 24px;
+  box-sizing: border-box;
 }
 
 .amz-page-title {
@@ -351,8 +400,8 @@ body {
 .amz-edit-main {
   display: flex;
   max-width: 1200px;
-  margin: 40px auto 0 auto;
-  min-height: 600px;
+  margin: 20px auto 0 auto;
+  min-height: 500px;
   background: #FFF;
   border: 1px solid var(--amz-border);
   border-radius: 8px;
@@ -364,7 +413,7 @@ body {
   background: #F8FAFC;
   border-right: 1px solid var(--amz-border);
   border-radius: 8px 0 0 8px;
-  padding: 32px 24px;
+  padding: 24px 20px;
 }
 
 .amz-sidebar-nav {
@@ -386,16 +435,16 @@ body {
 .amz-edit-content {
   flex: 1;
   background: #FFF;
-  padding: 40px 48px;
-  padding-bottom: 100px; /* Space for footer */
+  padding: 24px 32px;
+  padding-bottom: 80px; /* Space for footer */
   border-radius: 0 8px 8px 0;
 }
 
 /* Form Groups and Inputs */
 .amz-form-group {
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   display: flex;
-  gap: 32px;
+  gap: 24px;
 }
 
 .amz-label-col {
@@ -403,7 +452,7 @@ body {
   text-align: right;
   font-weight: 600;
   color: var(--amz-text-dark);
-  padding-top: 8px;
+  padding-top: 6px;
 }
 .amz-label-col .required { color: #DC2626; margin-right:4px;} /* Tailwind Red 600 */
 
@@ -416,21 +465,21 @@ body {
   background: var(--amz-live-bg);
   border: 1px solid var(--amz-border);
   border-bottom: none;
-  padding: 10px 14px;
-  color: var(--amz-text-light);
-  border-radius: 6px 6px 0 0;
+  padding: 6px 10px;
+  color: var(--amz-text-dark);
+  border-radius: 4px 4px 0 0;
   font-size: 13px;
-  min-height: 20px;
+  min-height: 18px;
 }
 
 .amz-form-input {
   width: 100%;
   box-sizing: border-box;
   border: 1px solid var(--amz-input-border);
-  padding: 10px 14px;
+  padding: 6px 10px;
   font-family: inherit;
-  font-size: 14px;
-  border-radius: 0 0 6px 6px;
+  font-size: 13px;
+  border-radius: 0 0 4px 4px;
   transition: all 0.15s;
 }
 .amz-form-input:focus {
@@ -444,7 +493,7 @@ textarea.amz-form-input {
 }
 
 .amz-form-input-single {
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .amz-sticky-footer {
@@ -460,4 +509,19 @@ textarea.amz-form-input {
   gap: 12px;
   box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
   z-index: 100;
+}
+
+/* ── Element14 PDP Overlay ── */
+.element14-pdp-overlay {
+  flex: 1;
+  overflow-y: auto;
+  background: #FFF;
+  width: 100%;
+}
+.element14-pdp-container {
+  max-width: 1500px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 24px 24px;
+  box-sizing: border-box;
 }

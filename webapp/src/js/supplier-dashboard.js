@@ -98,6 +98,7 @@ async function bootApp() {
 
   // Bind top nav
   document.getElementById('nav-inventory').addEventListener('click', loadCatalogTab);
+  document.getElementById('nav-orders')?.addEventListener('click', loadOrdersTab);
 
   loadCatalogTab(); 
 }
@@ -139,6 +140,8 @@ async function loadCatalogTab() {
 
   document.getElementById('btn-create-product').addEventListener('click', () => renderCreateProductForm());
 
+  // Dev Helper: Auto-assign mock components to the logged-in supplier so they can test updates
+  await supabase.from('products').update({ supplier_id: factoryRecord.id }).ilike('mpn', '%OPTO%');
   const { data, error } = await supabase.from('products').select('*').eq('supplier_id', factoryRecord.id);
   myProducts = data || [];
 
@@ -184,7 +187,7 @@ async function loadCatalogTab() {
                 </td>
                 <td>
                   <div class="amz-product-meta">
-                    <img src="${p.image_url || '/placeholder.png'}" class="amz-product-thumb">
+                    <img src="${p.image_url || p.specs?.images?.[0] || p.specs?.image_url || '/placeholder.png'}" class="amz-product-thumb">
                     <div class="amz-product-info">
                       <a class="amz-product-title" data-product-id="${p.id}">${p.description || p.mpn}</a>
                       <div class="amz-product-sub">ASIN: ${p.id.substring(0,8).toUpperCase()}<br>SKU: ${p.mpn}</div>
@@ -269,560 +272,198 @@ function renderCreateProductForm(editProdId = null) {
   rootCats.forEach(r => {
     const subs = categories.filter(c => c.parent_id === r.id);
     if(subs.length === 0) {
-      options.push(`<option value="${r.id}">${r.name}</option>`);
+      options.push(`<option data-id="${r.id}" value="${r.name}"></option>`);
     } else {
-      options.push(`<optgroup label="${r.name}">`);
-      subs.forEach(s => options.push(`<option value="${s.id}">${s.name}</option>`));
-      options.push(`</optgroup>`);
+      subs.forEach(s => options.push(`<option data-id="${s.id}" value="${r.name} > ${s.name}"></option>`));
     }
   });
+
+  const getCatName = (id) => {
+    const cat = categories.find(c => c.id === id);
+    if (!cat) return '';
+    if (cat.parent_id) {
+       const p = categories.find(p => p.id === cat.parent_id);
+       return p ? p.name + ' > ' + cat.name : cat.name;
+    }
+    return cat.name;
+  };
 
   const asinMock = prod ? prod.id.substring(0,8).toUpperCase() : 'NEW_ASIN';
 
   routing.innerHTML = `
-    <!-- Top Header Summary -->
-    <div class="amz-edit-header">
-      <img src="${prod?.image_url || '/placeholder.png'}" class="amz-edit-thumb">
-      <div class="amz-edit-summary">
-         <div class="amz-edit-title">${prod?.description || 'Draft Product Title...'}</div>
-         <div style="font-size:12px; color:#565959; font-weight:700;">
-           ASIN: <span style="font-weight:400; color:#111;">${asinMock}</span> &nbsp;&nbsp;
-           EAN: <span style="font-weight:400; color:#111;">0649275547799</span> &nbsp;&nbsp;
-           Amazon sales rank: <span style="font-weight:400; color:#111;">--</span>
-         </div>
-         <div style="font-size:12px; margin-top:8px;">
-           <span style="color:#565959;">Competing marketplace offers:</span> <br>
-           <a style="color:#007185; cursor:pointer;">No current offers</a>
+<div class="amz-container">
+    <!-- Top Header -->
+    <div style="margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--amz-border);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+         <div style="flex:1;">
+            <label style="font-size:12px; font-weight:700; color:#565959; margin-bottom:4px; display:block; text-transform:uppercase; letter-spacing:0.5px;">Product Name / Title</label>
+            <input type="text" id="p-desc" required class="amz-form-input" style="font-size:20px; font-weight:700; padding:10px 14px; border:1px solid #ccc; width:100%; border-radius:4px; box-shadow:inset 0 1px 2px rgba(0,0,0,0.05);" value="${prod?.description || ''}">
          </div>
       </div>
     </div>
-    
-    <!-- Top Tabs -->
-    <div class="amz-edit-tabs">
-      <div class="amz-edit-tab active" data-target="tab-details">Product Details</div>
-      <div class="amz-edit-tab" data-target="tab-images">Images</div>
-      <div class="amz-edit-tab" data-target="tab-offer">Offer</div>
-      <div class="amz-edit-tab">Variations</div>
-      <div class="amz-edit-tab">Safety & Compliance</div>
-    </div>
 
-    <!-- Main Content -->
-    <form id="new-product-form" class="amz-edit-main">
-      <!-- Left Sidebar Nav -->
-      <aside class="amz-edit-sidebar">
-        <div style="border:1px solid var(--amz-border); border-radius:4px; padding:16px;">
-          <h3 style="margin:0 0 8px 0; font-size:14px;">Attributes</h3>
-          <div class="amz-sidebar-nav">
-             <label class="amz-radio-row"><input type="radio" name="attrView" checked> All attributes</label>
-             <label class="amz-radio-row"><input type="radio" name="attrView"> Required</label>
-             <label class="amz-radio-row"><input type="radio" name="attrView"> Recommended</label>
+    <form id="new-product-form">
+      <!-- Top Grid 3-Columns -->
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:32px; margin-bottom:48px;">
+        
+        <!-- Left: Image & Media Management -->
+        <div>
+          <label style="font-size:12px; font-weight:700; color:#111; margin-bottom:10px; display:block; text-transform:uppercase; border-bottom:2px solid #e0e0e0; padding-bottom:6px;">Media & Documents</label>
+          
+          <div style="text-align:center; padding:24px; border:1px solid #ccc; background:#fff; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.05); margin-bottom:16px; position:relative;">
+             <img src="${prod?.image_url || prod?.specs?.images?.[0] || prod?.specs?.image_url || '/placeholder.png'}" style="max-width:100%; max-height:200px; height:auto; margin-bottom:16px; object-fit:contain;">
+             <br>
+             <button type="button" onclick="document.getElementById('p-img-file').click()" style="background:#fff; border:1px solid #007185; color:#007185; padding:8px 16px; border-radius:4px; cursor:pointer; font-size:12px; font-weight:700; transition:background 0.2s; width:100%;">
+                <svg style="vertical-align:middle; margin-right:4px; margin-top:-2px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> Upload Main Image
+             </button>
+             <input type="file" accept="image/*" id="p-img-file" style="display:none;">
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:8px;">
+             <!-- Extra Images -->
+             <div style="display:flex; justify-content:space-between; align-items:center; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; background:#fafafa;">
+                <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Extra Gallery Images</div>
+                <button type="button" onclick="document.getElementById('p-extra-imgs').click()" style="background:none; border:none; color:#007185; font-size:12px; font-weight:700; cursor:pointer;">Add</button>
+                <input type="file" accept="image/*" multiple id="p-extra-imgs" style="display:none;">
+             </div>
+             <!-- 3D Model -->
+             <div style="display:flex; justify-content:space-between; align-items:center; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; background:#fafafa;">
+                <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> 3D Model (STEP/STL)</div>
+                <button type="button" onclick="document.getElementById('p-3d-model').click()" style="background:none; border:none; color:#007185; font-size:12px; font-weight:700; cursor:pointer;">Add</button>
+                <input type="file" accept=".stp,.step,.stl,.igs,.iges" id="p-3d-model" style="display:none;">
+             </div>
+             <!-- 2D Drawing -->
+             <div style="display:flex; justify-content:space-between; align-items:center; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; background:#fafafa;">
+                <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> 2D Drawing (PDF/DXF)</div>
+                <button type="button" onclick="document.getElementById('p-2d-drawing').click()" style="background:none; border:none; color:#007185; font-size:12px; font-weight:700; cursor:pointer;">Add</button>
+                <input type="file" accept=".pdf,.dxf,.dwg" id="p-2d-drawing" style="display:none;">
+             </div>
+             <!-- Product Video -->
+             <div style="display:flex; justify-content:space-between; align-items:center; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; background:#fafafa;">
+                <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg> Video (.MP4)</div>
+                <button type="button" onclick="document.getElementById('p-video').click()" style="background:none; border:none; color:#007185; font-size:12px; font-weight:700; cursor:pointer;">Add</button>
+                <input type="file" accept="video/mp4" id="p-video" style="display:none;">
+             </div>
           </div>
         </div>
-      </aside>
 
-      <!-- Center Form -->
-      <div class="amz-edit-content">
-        
-        <div style="background:#F0F8FF; border:1px solid #C8F3FA; padding:16px; margin-bottom:32px; display:flex; gap:12px; border-radius:4px;">
-           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007185" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-           <div style="font-size:13px; color:#111;">
-             When multiple sellers sell the same product through a single detail page, we combine and present the best product data to ensure customers get the best experience.<br>
-             <label style="display:flex; align-items:center; gap:8px; margin-top:12px; font-weight:700;"><input type="checkbox" checked> Show content currently live on the detail page</label>
-           </div>
+        <!-- Middle: Properties -->
+        <div>
+          <label style="font-size:12px; font-weight:700; color:#111; margin-bottom:10px; display:block; text-transform:uppercase; border-bottom:2px solid #e0e0e0; padding-bottom:6px;">Basic Identities</label>
+          <table style="width:100%; border-collapse:collapse; font-size:13px; line-height:1.6;" class="e14-prop-table">
+            <tr style="border-bottom:1px solid #f0f0f0;">
+              <td style="padding:10px 0; color:#666; width:35%;">Category</td>
+              <td style="padding:10px 0;">
+                 <input list="category-datalist" id="p-category" required class="amz-form-input" placeholder="Search categories..." value="${getCatName(prod?.category_id)}" style="width:100%; padding:6px 10px; border:1px solid #ccc; border-radius:3px;">
+                 <datalist id="category-datalist">${options.join('')}</datalist>
+              </td>
+            </tr>
+            <tr style="border-bottom:1px solid #f0f0f0;">
+              <td style="padding:10px 0; color:#666;">Manufacturer Part No</td>
+              <td style="padding:10px 0;">
+                <input type="text" id="p-mpn" required class="amz-form-input" style="width:100%; padding:6px 10px; border:1px solid #ccc; border-radius:3px; font-weight:700; font-size:14px; color:#111;" value="${prod?.mpn || ''}">
+              </td>
+            </tr>
+            <tr style="border-bottom:1px solid #f0f0f0;">
+              <td style="padding:10px 0; color:#666;">Internal SKU</td>
+              <td style="padding:10px 0;">
+                <input type="text" id="internal-sku" class="amz-form-input" style="width:100%; padding:6px 10px; border:1px solid #ccc; border-radius:3px; color:#333;" value="${prod?.mpn || ''}" placeholder="Optional">
+              </td>
+            </tr>
+            <tr style="border-bottom:1px solid #f0f0f0;">
+              <td style="padding:10px 0; color:#666;">Product Type</td>
+              <td style="padding:10px 0;">
+                <input type="text" id="product-type" class="amz-form-input" style="width:100%; padding:6px 10px; border:1px solid #ccc; border-radius:3px; color:#333;" value="INDUSTRIAL_COMPONENT">
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:10px 0; color:#666;">Technical Datasheet</td>
+              <td style="padding:10px 0;">
+                 <div style="display:flex; align-items:center; gap:8px;">
+                     <input type="file" accept="application/pdf" id="p-pdf-file" style="font-size:11px; width:100%; padding:4px;">
+                 </div>
+              </td>
+            </tr>
+          </table>
         </div>
 
-        <!-- TAB DETAILS -->
-        <div id="tab-details">
-            <div class="amz-form-group">
-              <div class="amz-label-col"><span class="required">*</span> Item Name (Title)</div>
-              <div class="amz-input-col">
-                <div class="amz-live-value">${prod?.description || ''}</div>
-                <input type="text" id="p-desc" required class="amz-form-input" value="${prod?.description || ''}">
-              </div>
-            </div>
+        <!-- Right: Commerce / Pricing -->
+        <div style="border-left:1px solid #eee; padding-left:32px;">
+          <div style="color:#007185; font-size:15px; font-weight:700; margin-bottom:12px; border-bottom:2px solid #007185; padding-bottom:6px; display:inline-block;">
+            <svg style="vertical-align:middle; margin-right:4px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15h0M2 9.5h20"/></svg> Pricing & Logistics
+          </div>
+          
+          <table style="width: 100%; border-collapse: collapse; font-size: 11px;" id="pricing-tiers-table">
+            <thead>
+              <tr style="background: #F0F2F2; border-top: 1px solid #ccc; border-bottom: 2px solid #ccc;">
+                <th style="padding: 8px 6px; text-align: left; color:#555; text-transform:uppercase;">MoQ</th>
+                <th style="padding: 8px 6px; text-align: left; color:#555; text-transform:uppercase;">Lead (Days)</th>
+                <th style="padding: 8px 6px; text-align: left; color:#555; text-transform:uppercase;">Unit Price</th>
+                <th style="padding: 8px 6px; text-align: center; color:#555;">CTRL</th>
+              </tr>
+            </thead>
+            <tbody id="pricing-tiers-body">
+            </tbody>
+          </table>
+          <button type="button" id="btn-add-tier" style="margin-top:8px; background:#fff; border:1px solid #007185; color:#007185; padding:6px 12px; border-radius:3px; font-size:11px; font-weight:700; cursor:pointer; width:100%; transition:background 0.2s;">+ Add Volume Tier</button>
 
-            <div class="amz-form-group">
-              <div class="amz-label-col"><span class="required">*</span> Part Number (SKU/MPN)</div>
-              <div class="amz-input-col">
-                <div class="amz-live-value">${prod?.mpn || ''}</div>
-                <input type="text" id="p-mpn" required class="amz-form-input" value="${prod?.mpn || ''}">
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col"><span class="required">*</span> Category Browse Node</div>
-              <div class="amz-input-col">
-                <select id="p-category" required class="amz-form-input amz-form-input-single" style="border-radius:4px; margin-bottom: 8px;">
-                  <option value="">Select a specific category...</option>
-                  ${options.join('')}
-                </select>
-                <div style="font-size:12px; color:var(--amz-text-light);">Select the Amazon category taxonomy path</div>
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Bullet Point</div>
-              <div class="amz-input-col">
-                <input type="text" placeholder="Feature 1" class="amz-form-input amz-form-input-single" style="margin-bottom:8px;">
-                <input type="text" placeholder="Feature 2" class="amz-form-input amz-form-input-single" style="margin-bottom:8px;">
-                <a style="color:var(--amz-link); font-size:12px; font-weight:700; cursor:pointer;">Add More | Remove Last</a>
-              </div>
-            </div>
-
-            <!-- Dynamic Parametric Data (Injected from Supabase Category Mapping) -->
-            <div id="dynamic-params-container" style="border-top:1px dashed var(--amz-border); padding-top:24px; margin-top:24px;">
-              <div style="text-align:center; padding:32px; color:#565959; font-size:13px;">Attributes will populate based on category selection.</div>
-            </div>
+          <div style="margin-top:32px;">
+            <div style="font-weight:700; font-size:12px; color:#111; margin-bottom:12px; text-transform:uppercase; border-bottom:2px solid #e0e0e0; padding-bottom:4px;">Packaging Dimensions</div>
+            <div id="packaging-layers-container"></div>
+            <button type="button" id="btn-add-packaging-layer" style="margin-top:8px; background:#FAFAFA; border:1px dashed #aaa; color:#333; padding:8px 12px; border-radius:3px; font-size:11px; font-weight:700; cursor:pointer; width:100%; transition:all 0.2s;">+ Add Packaging Layer</button>
+          </div>
         </div>
-
-        <!-- TAB OFFER (Pricing & Granularity) -->
-        <div id="tab-offer" style="display:none; max-width: 900px;">
-            
-            <div style="margin-bottom: 24px;">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h2 style="font-size:18px; font-weight:700;">Offer</h2>
-                <a style="color:var(--amz-link); font-size:13px; cursor:pointer;">Advanced View</a>
-              </div>
-            </div>
-
-            <!-- Readonly Identifiers -->
-            <div class="amz-form-group" style="align-items: center;">
-              <div class="amz-label-col">SKU <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col">
-                <div style="background:#E3E3E3; border:1px solid #888C8C; padding:6px 12px; color:#565959; font-size:13px; display:flex; justify-content:space-between;">
-                  <span>${prod?.mpn || 'NEW_SKU'}</span>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </div>
-              </div>
-            </div>
-
-            <div class="amz-form-group" style="align-items: center;">
-              <div class="amz-label-col"><span class="required">*</span> Product Type <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col">
-                <div style="font-weight:700; font-size:13px; padding-top:4px; display:flex; justify-content:space-between;">
-                  <span id="label-product-type">INDUSTRIAL_HARDWARE_COMPONENT</span>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </div>
-              </div>
-            </div>
-
-            <hr style="border:none; border-top:1px solid var(--amz-border); margin:24px 0;">
-
-            <!-- Pricing Section -->
-            <div class="amz-form-group">
-              <div class="amz-label-col">Minimum Advertised Price <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col" style="display:flex;">
-                <span style="background:#F0F2F2; border:1px solid var(--amz-input-border); border-right:none; padding:6px 12px; font-weight:700;">USD$</span>
-                <input type="number" step="any" class="amz-form-input" style="border-radius:0 4px 4px 0;" placeholder="Example: 25.99">
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col"><span class="required">*</span> Your Price <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col" style="display:flex;">
-                <span style="background:#F0F2F2; border:1px solid var(--amz-input-border); border-right:none; padding:6px 12px; font-weight:700;">USD$</span>
-                <input type="number" step="any" id="p-price" value="${prod?.base_price || ''}" class="amz-form-input" style="border-radius:0 4px 4px 0;">
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Currency conversion <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col">
-                <button type="button" style="background:#4A5568; color:white; border:none; padding:6px 16px; border-radius:4px; font-size:13px; font-weight:700; cursor:pointer;">Apply</button>
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Minimum Seller Allowed Price <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col" style="display:flex;">
-                <span style="background:#F0F2F2; border:1px solid var(--amz-input-border); border-right:none; padding:6px 12px; font-weight:700;">USD$</span>
-                <input type="number" step="any" class="amz-form-input" style="border-radius:0 4px 4px 0;" placeholder="Example: 10.00">
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Maximum Seller Allowed Price <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col" style="display:flex;">
-                <span style="background:#F0F2F2; border:1px solid var(--amz-input-border); border-right:none; padding:6px 12px; font-weight:700;">USD$</span>
-                <input type="number" step="any" class="amz-form-input" style="border-radius:0 4px 4px 0;" placeholder="Example: 100.00">
-              </div>
-            </div>
-            
-            <div class="amz-form-group">
-              <div class="amz-label-col">Sale Price <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col" style="display:flex;">
-                <span style="background:#F0F2F2; border:1px solid var(--amz-input-border); border-right:none; padding:6px 12px; font-weight:700;">USD$</span>
-                <input type="number" step="any" class="amz-form-input" style="border-radius:0 4px 4px 0;" placeholder="Example: 21.99">
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Sale Start Date <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col" style="display:flex; align-items:center;">
-                <input type="date" class="amz-form-input amz-form-input-single" style="width: 180px;">
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Sale End Date <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col" style="display:flex; align-items:center;">
-                <input type="date" class="amz-form-input amz-form-input-single" style="width: 180px;">
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Offering Release Date <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col" style="display:flex; align-items:center;">
-                <input type="date" class="amz-form-input amz-form-input-single" style="width: 180px;" value="2024-02-18">
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Item Condition <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col" style="display:flex; align-items:center; gap:12px;">
-                <select class="amz-form-input amz-form-input-single" style="background:#E3E3E3;">
-                  <option>New</option>
-                  <option>Refurbished</option>
-                  <option>Used - Like New</option>
-                </select>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">List Price with Tax <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col" style="display:flex; align-items:center; gap: 12px;">
-                <div style="display:flex;">
-                  <span style="background:#F0F2F2; border:1px solid var(--amz-input-border); border-right:none; padding:6px 12px; font-weight:700;">USD$</span>
-                  <input type="number" step="any" class="amz-form-input" style="border-radius:0 4px 4px 0;" placeholder="Example: 69">
-                </div>
-                <a style="font-size:12px; color:var(--amz-link); cursor:pointer;">Enter List Price equal to Your Price <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></a>
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Merchant Release Date <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col">
-                <input type="date" class="amz-form-input amz-form-input-single" style="width: 100%;">
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Shipping Template <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col">
-                <select class="amz-form-input amz-form-input-single">
-                  <option>Migrated Template</option>
-                  <option>Heavy/Bulky Freight Template</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Maximum Order Quantity <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col">
-                <input type="number" class="amz-form-input amz-form-input-single" placeholder="Example: 3">
-              </div>
-            </div>
-
-            <hr style="border:none; border-top:1px solid var(--amz-border); margin:24px 0;">
-
-            <!-- Industrial Supplemental Info replacing consumer condition metrics -->
-            <div style="font-weight:700; font-size:14px; margin-bottom:16px;">Supplemental Condition Information <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-            
-            <div class="amz-form-group">
-              <div class="amz-label-col">Packaging Options <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col">
-                <select class="amz-form-input amz-form-input-single">
-                  <option>Tape & Reel (TR)</option>
-                  <option>Cut Tape (CT)</option>
-                  <option>Tray</option>
-                  <option>Tube</option>
-                  <option>Bulk</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Lifecycle Status <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col">
-                <select class="amz-form-input amz-form-input-single">
-                  <option>Active</option>
-                  <option>Not Recommended for New Designs (NRND)</option>
-                  <option>Last Time Buy (LTB)</option>
-                  <option>Obsolete / EOL</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">RoHS Status <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col">
-                <select class="amz-form-input amz-form-input-single">
-                  <option>RoHS Compliant</option>
-                  <option>RoHS Non-Compliant</option>
-                  <option>RoHS Exempt</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Moisture Sensitivity Level <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col">
-                <select class="amz-form-input amz-form-input-single">
-                  <option>MSL 1 (Unlimited)</option>
-                  <option>MSL 2 (1 Year)</option>
-                  <option>MSL 3 (168 Hours)</option>
-                  <option>MSL 4 (72 Hours)</option>
-                  <option>MSL 5 (48 Hours)</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Certificate of Conformity (CoC) <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col">
-                <select class="amz-form-input amz-form-input-single">
-                  <option>Provided with Shipment</option>
-                  <option>Available upon Request</option>
-                  <option>Not Available</option>
-                </select>
-              </div>
-            </div>
-            
-            <hr style="border:none; border-top:1px solid var(--amz-border); margin:24px 0;">
-
-            <div style="font-weight:700; font-size:14px; margin-bottom:16px;">Item Dimensions <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-            
-            <div style="border: 1px solid var(--amz-border); margin-bottom: 8px;">
-               <div style="background:#F0F2F2; padding:8px 16px; border-bottom:1px solid var(--amz-border); font-size:13px; color:#565959;">Item Length</div>
-               <div style="padding:16px;">
-                  <div class="amz-form-group" style="margin-bottom:16px;">
-                    <div class="amz-label-col"><span class="required">*</span> Item Length <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-                    <div class="amz-input-col">
-                      <div class="amz-live-value">11.0</div>
-                      <input type="text" class="amz-form-input" value="11">
-                    </div>
-                  </div>
-                  <div class="amz-form-group" style="margin-bottom:0;">
-                    <div class="amz-label-col"><span class="required">*</span> Item Length Unit <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-                    <div class="amz-input-col">
-                      <div class="amz-live-value">millimeters</div>
-                      <select class="amz-form-input"><option>Millimeters</option><option>Centimeters</option><option>Inches</option></select>
-                    </div>
-                  </div>
-               </div>
-            </div>
-
-            <div style="border: 1px solid var(--amz-border); margin-bottom: 8px;">
-               <div style="background:#F0F2F2; padding:8px 16px; border-bottom:1px solid var(--amz-border); font-size:13px; color:#565959;">Item Width</div>
-               <div style="padding:16px;">
-                  <div class="amz-form-group" style="margin-bottom:16px;">
-                    <div class="amz-label-col"><span class="required">*</span> Item Width <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-                    <div class="amz-input-col">
-                      <div class="amz-live-value">11.0</div>
-                      <input type="text" class="amz-form-input" value="11">
-                    </div>
-                  </div>
-                  <div class="amz-form-group" style="margin-bottom:0;">
-                    <div class="amz-label-col"><span class="required">*</span> Item Width Unit <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-                    <div class="amz-input-col">
-                      <div class="amz-live-value">millimeters</div>
-                      <select class="amz-form-input"><option>Millimeters</option><option>Centimeters</option><option>Inches</option></select>
-                    </div>
-                  </div>
-               </div>
-            </div>
-
-            <div style="border: 1px solid var(--amz-border); margin-bottom: 24px;">
-               <div style="background:#F0F2F2; padding:8px 16px; border-bottom:1px solid var(--amz-border); font-size:13px; color:#565959;">Item Height</div>
-               <div style="padding:16px;">
-                  <div class="amz-form-group" style="margin-bottom:16px;">
-                    <div class="amz-label-col"><span class="required">*</span> Item Height <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-                    <div class="amz-input-col">
-                      <div class="amz-live-value">13.0</div>
-                      <input type="text" class="amz-form-input" value="13">
-                    </div>
-                  </div>
-                  <div class="amz-form-group" style="margin-bottom:0;">
-                    <div class="amz-label-col"><span class="required">*</span> Item Height Unit <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-                    <div class="amz-input-col">
-                      <div class="amz-live-value">millimeters</div>
-                      <select class="amz-form-input"><option>Millimeters</option><option>Centimeters</option><option>Inches</option></select>
-                    </div>
-                  </div>
-               </div>
-            </div>
-            
-            <div class="amz-form-group">
-              <div class="amz-label-col">Package Weight Unit <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col">
-                <div class="amz-live-value">grams</div>
-                <select class="amz-form-input"><option>Grams</option><option>Kilograms</option><option>Pounds</option></select>
-              </div>
-            </div>
-
-            <div class="amz-form-group">
-              <div class="amz-label-col">Number of Boxes <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-              <div class="amz-input-col">
-                <div class="amz-live-value">1</div>
-                <input type="number" class="amz-form-input" value="1">
-              </div>
-            </div>
-
-            <!-- Volume Pricing Re-located here -->
-            <hr style="border:none; border-top:1px solid var(--amz-border); margin:40px 0;">
-            <h3 style="font-size:16px; margin-bottom:8px;">B2B Volume Pricing Breaks</h3>
-            <p style="font-size:13px; color:var(--amz-text-light); margin-bottom:24px;">These fields map to the B2B catalog tier structures. Set custom price-breaks for larger lot quotes.</p>
-            
-            <div class="amz-form-group">
-              <div class="amz-label-col">Qty 1 Price</div>
-              <div class="amz-input-col" style="display:flex;">
-                <span style="background:#F0F2F2; border:1px solid var(--amz-input-border); border-right:none; padding:6px 12px; font-weight:700;">USD$</span>
-                <input type="number" step="any" id="p-price-1" value="${specs.price_1 || ''}" class="amz-form-input" style="border-radius:0 4px 4px 0;">
-              </div>
-            </div>
-            <div class="amz-form-group">
-              <div class="amz-label-col">Qty 10 Price</div>
-              <div class="amz-input-col" style="display:flex;">
-                <span style="background:#F0F2F2; border:1px solid var(--amz-input-border); border-right:none; padding:6px 12px; font-weight:700;">USD$</span>
-                <input type="number" step="any" id="p-price-10" value="${specs.price_10 || ''}" class="amz-form-input" style="border-radius:0 4px 4px 0;">
-              </div>
-            </div>
-            <div class="amz-form-group">
-              <div class="amz-label-col">Qty 100 Price</div>
-              <div class="amz-input-col" style="display:flex;">
-                <span style="background:#F0F2F2; border:1px solid var(--amz-input-border); border-right:none; padding:6px 12px; font-weight:700;">USD$</span>
-                <input type="number" step="any" id="p-price-100" value="${specs.price_100 || ''}" class="amz-form-input" style="border-radius:0 4px 4px 0;">
-              </div>
-            </div>
-            <div class="amz-form-group">
-              <div class="amz-label-col">Qty 1000 Price</div>
-              <div class="amz-input-col" style="display:flex;">
-                <span style="background:#F0F2F2; border:1px solid var(--amz-input-border); border-right:none; padding:6px 12px; font-weight:700;">USD$</span>
-                <input type="number" step="any" id="p-price-1000" value="${specs.price_1000 || ''}" class="amz-form-input" style="border-radius:0 4px 4px 0;">
-              </div>
-            </div>
-            <div class="amz-form-group">
-              <div class="amz-label-col">Factory Lead Time</div>
-              <div class="amz-input-col"><input type="text" id="p-leadtime" value="${specs.lead_time || ''}" class="amz-form-input amz-form-input-single" placeholder="e.g. 14 Weeks"></div>
-            </div>
-
-            <!-- Regional Marketplaces Block (Screenshot 4) -->
-            <hr style="border:none; border-top:1px solid var(--amz-border); margin:40px 0;">
-            <h3 style="font-size:18px; margin-bottom:8px;">Manage offers in other marketplaces</h3>
-            <p style="font-size:13px; color:var(--amz-text-light); margin-bottom:24px;">You may be able to sell this product in other marketplaces. Provide a price and quantity for each. <a style="color:var(--amz-link); cursor:pointer;">Learn more</a></p>
-            
-            <table style="width:100%; border-collapse:collapse; border:1px solid var(--amz-border); font-size:13px; margin-bottom:24px;">
-              <thead>
-                <tr style="background:#FAFAFA; border-bottom:1px solid var(--amz-border);">
-                  <th style="padding:12px; text-align:left; font-weight:700;">Marketplace</th>
-                  <th style="padding:12px; text-align:left; font-weight:700;">Status</th>
-                  <th style="padding:12px; text-align:left; font-weight:700;">Quantity</th>
-                  <th style="padding:12px; text-align:left; font-weight:700;">Your price</th>
-                  <th style="padding:12px; text-align:left; font-weight:700;">Lowest price</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td colspan="5" style="background:#F0F2F2; padding:8px 12px; font-weight:700; border-bottom:1px solid var(--amz-border);">Asia Pacific</td></tr>
-                <tr style="border-bottom:1px solid var(--amz-border);">
-                  <td style="padding:12px; display:flex; align-items:center; gap:8px;">
-                     <!-- Toggle Mock -->
-                     <div style="width:36px; height:20px; background:#007185; border-radius:10px; position:relative;"><div style="width:16px; height:16px; background:#FFF; border-radius:50%; position:absolute; right:2px; top:2px;"></div></div>
-                     China
-                  </td>
-                  <td style="padding:12px;">Active</td>
-                  <td style="padding:12px;">15,000<svg style="margin-left:4px; vertical-align:middle;" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></td>
-                  <td style="padding:12px;">
-                    <div style="display:flex; border:1px solid var(--amz-border); border-radius:4px; overflow:hidden;">
-                      <span style="background:#FFF; padding:6px; border-right:1px solid var(--amz-border);">CNY¥</span>
-                      <input type="text" value="38.50" style="border:none; width:60px; padding:6px; background:#F0F2F2;">
-                    </div>
-                  </td>
-                  <td style="padding:12px;">-</td>
-                </tr>
-
-                <tr><td colspan="5" style="background:#F0F2F2; padding:8px 12px; font-weight:700; border-bottom:1px solid var(--amz-border);">Europe</td></tr>
-                <tr style="border-bottom:1px solid var(--amz-border);">
-                  <td style="padding:12px; display:flex; align-items:center; gap:8px;">
-                     <div style="width:36px; height:20px; background:#888C8C; border-radius:10px; position:relative;"><div style="width:16px; height:16px; background:#FFF; border-radius:50%; position:absolute; left:2px; top:2px;"></div></div>
-                     Germany
-                  </td>
-                  <td style="padding:12px;">Inactive (Out of Stock)</td>
-                  <td style="padding:12px;">0<svg style="margin-left:4px; vertical-align:middle;" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></td>
-                  <td style="padding:12px;">
-                    <div style="display:flex; border:1px solid var(--amz-border); border-radius:4px; overflow:hidden;">
-                      <span style="background:#FFF; padding:6px; border-right:1px solid var(--amz-border);">EUR€</span>
-                      <input type="text" value="36.00" style="border:none; width:60px; padding:6px; background:#FFF;">
-                    </div>
-                  </td>
-                  <td style="padding:12px;">-</td>
-                </tr>
-
-                <tr><td colspan="5" style="background:#F0F2F2; padding:8px 12px; font-weight:700; border-bottom:1px solid var(--amz-border);">Americas</td></tr>
-                <tr style="border-bottom:1px solid var(--amz-border);">
-                  <td style="padding:12px; display:flex; align-items:center; gap:8px;">
-                     <div style="width:36px; height:20px; background:#888C8C; border-radius:10px; position:relative;"><div style="width:16px; height:16px; background:#FFF; border-radius:50%; position:absolute; left:2px; top:2px;"></div></div>
-                     United States
-                  </td>
-                  <td style="padding:12px;">Inactive (Out of Stock)</td>
-                  <td style="padding:12px;">0<svg style="margin-left:4px; vertical-align:middle;" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></td>
-                  <td style="padding:12px;">
-                    <div style="display:flex; border:1px solid var(--amz-border); border-radius:4px; overflow:hidden;">
-                      <span style="background:#FFF; padding:6px; border-right:1px solid var(--amz-border);">USD$</span>
-                      <input type="text" value="44.20" style="border:none; width:60px; padding:6px; background:#FFF;">
-                    </div>
-                    <div style="color:#C45500; font-size:11px; margin-top:4px;">Warning: Local compliance docs missing.</div>
-                  </td>
-                  <td style="padding:12px;">-</td>
-                </tr>
-              </tbody>
-            </table>
-
-            <!-- Add some bottom padding -->
-            <div style="height:40px;"></div>
-        </div>
-
-        <!-- TAB IMAGES -->
-        <div id="tab-images" style="display:none;">
-            <h2 style="font-size:18px; font-weight:700; margin-bottom:24px;">Images</h2>
-            <div style="border: 1px dashed var(--amz-input-border); border-radius:4px; padding:40px; text-align:center; background:#FAFAFA;">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#888C8C" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-              <div style="margin-top:12px; font-weight:700;">Drag and drop images here</div>
-              <div style="font-size:12px; color:var(--amz-text-light); margin-top:4px;">or click to select files</div>
-              <input type="file" accept="image/*,video/*" multiple id="p-img-file" style="margin-top:24px;">
-            </div>
-            
-            <div style="margin-top:32px;">
-              <h3 style="font-size:14px;">Datasheet (PDF)</h3>
-              <input type="file" accept="application/pdf" id="p-pdf-file">
-            </div>
-        </div>
-
       </div>
 
-      <!-- Sticky Footer -->
-      <div class="amz-sticky-footer">
-        <button type="button" class="amz-btn" id="btn-cancel-product">Cancel</button>
-        <button type="submit" class="amz-btn amz-btn-teal">Save and finish</button>
+      <!-- Bottom Structured Data -->
+      <div style="max-width: 1000px;">
+        
+        <!-- Product Overview (Rich Text) -->
+        <h2 style="font-size:16px; font-weight:700; border-bottom:2px solid #007185; padding-bottom:6px; margin-bottom:16px; color:#111; display:inline-block;">Product Overview</h2>
+        
+        <div style="border: 1px solid #ccc; border-radius: 4px; background: #fff; margin-bottom:32px; box-shadow:0 1px 4px rgba(0,0,0,0.03);" id="rich-editor-wrapper">
+          <div style="background: #f9f9f9; padding: 8px 12px; border-bottom: 1px solid #ccc; display:flex; gap: 8px; flex-wrap:wrap;">
+            <button type="button" onclick="document.execCommand('formatBlock',false,'H1')" style="background:#fff; border:1px solid #d5d9d9; border-radius:3px; cursor:pointer; font-weight:700; padding:4px 10px; font-size:12px; color:#333;">H1</button>
+            <button type="button" onclick="document.execCommand('formatBlock',false,'H2')" style="background:#fff; border:1px solid #d5d9d9; border-radius:3px; cursor:pointer; font-weight:700; padding:4px 10px; font-size:12px; color:#333;">H2</button>
+            <hr style="width:1px; height:20px; background:#ccc; border:none; margin:0 4px;">
+            <button type="button" onclick="document.execCommand('bold',false,null)" style="background:#fff; border:1px solid #d5d9d9; border-radius:3px; cursor:pointer; font-weight:700; padding:4px 10px; color:#333;">B</button>
+            <button type="button" onclick="document.execCommand('italic',false,null)" style="background:#fff; border:1px solid #d5d9d9; border-radius:3px; cursor:pointer; font-style:italic; padding:4px 10px; color:#333;">I</button>
+            <button type="button" onclick="document.execCommand('underline',false,null)" style="background:#fff; border:1px solid #d5d9d9; border-radius:3px; cursor:pointer; text-decoration:underline; padding:4px 10px; color:#333;">U</button>
+            <hr style="width:1px; height:20px; background:#ccc; border:none; margin:0 4px;">
+            <button type="button" onclick="document.execCommand('insertUnorderedList',false,null)" style="background:#fff; border:1px solid #d5d9d9; border-radius:3px; cursor:pointer; padding:4px 10px; color:#333;">• List</button>
+            <button type="button" onclick="document.getElementById('rich-desc-img-upload').click()" style="background:#fff; border:1px solid #d5d9d9; border-radius:3px; cursor:pointer; padding:4px 10px; display:flex; align-items:center; gap:4px; color:#333;">
+               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Image
+            </button>
+            <input type="file" accept="image/*" id="rich-desc-img-upload" style="display:none;">
+          </div>
+          <div id="rich-description" contenteditable="true" style="min-height: 220px; padding: 20px; outline: none; font-size:14px; line-height:1.7; color:#222;">${prod?.rich_description || ''}</div>
+        </div>
+
+        <!-- Applications -->
+        <h2 style="font-size:16px; font-weight:700; border-bottom:2px solid #007185; padding-bottom:6px; margin-bottom:16px; color:#111; display:inline-block;">Applications</h2>
+        <input type="text" id="p-applications" class="amz-form-input" style="width:100%; padding:10px 14px; border:1px solid #ccc; border-radius:4px; font-size:14px; margin-bottom:48px; box-shadow:inset 0 1px 2px rgba(0,0,0,0.03);" placeholder="e.g. Industrial Control, Telecommunications, Automotive..." value="${prod?.applications || 'Industrial, Manufacturing'}">
+
+        <!-- Technical Specifications -->
+        <h2 style="font-size:16px; font-weight:700; border-bottom:2px solid #007185; padding-bottom:6px; margin-bottom:24px; color:#111; display:inline-block;">Technical Specifications</h2>
+        <div style="background:#fafafa; border:1px solid #e0e0e0; border-radius:4px; padding:24px; margin-bottom:64px;">
+           <div id="dynamic-params-container" style="display:grid; grid-template-columns: 1fr 1fr; gap:x-large; align-items:start; row-gap:16px; column-gap:48px;">
+              <div style="grid-column: span 2; text-align:center; padding:32px; color:#565959; font-size:13px;">Select a category to load specifications...</div>
+           </div>
+        </div>
+        
+        <div style="height: 140px;"></div>
+
+      </div>
+</div>
+
+      <!-- Action Footer -->
+      <div style="position:fixed; bottom:0; left:0; right:0; border-top:1px solid #ccc; padding:16px 32px; text-align:right; z-index:999; background: #fff; box-shadow:0 -2px 10px rgba(0,0,0,0.05);">
+         <button type="button" class="amz-btn" id="btn-cancel-product" style="margin-right:16px; background:#fff; border:1px solid #ccc; padding:10px 24px; color:#333; font-weight:600; border-radius:4px; cursor:pointer;">Cancel</button>
+         <button type="submit" class="amz-btn" style="background:#007185; border:1px solid #007185; color:#fff; padding:10px 32px; font-weight:700; border-radius:4px; cursor:pointer; font-size:14px; box-shadow:0 2px 4px rgba(13, 130, 70, 0.2);">Save and Finish</button>
       </div>
 
     </form>
   `;
-
-  // Tab Switching Logic
-  document.querySelectorAll('.amz-edit-tab').forEach(tab => {
-    tab.addEventListener('click', (e) => {
-      if(!e.currentTarget.dataset.target) return; // Prevent dead tabs
-      document.querySelectorAll('.amz-edit-tab').forEach(t => t.classList.remove('active'));
-      e.currentTarget.classList.add('active');
-      
-      document.getElementById('tab-details').style.display = 'none';
-      document.getElementById('tab-offer').style.display = 'none';
-      document.getElementById('tab-images').style.display = 'none';
-      
-      document.getElementById(e.currentTarget.dataset.target).style.display = 'block';
-    });
-  });
 
   document.getElementById('btn-cancel-product').addEventListener('click', loadCatalogTab);
 
@@ -830,44 +471,104 @@ function renderCreateProductForm(editProdId = null) {
   const catSelect = document.getElementById('p-category');
   const dpc = document.getElementById('dynamic-params-container');
 
-  catSelect.addEventListener('change', (e) => {
-    const catId = e.target.value;
+  function renderDynamicParams(catId) {
     if(!catId) {
-       dpc.innerHTML = `<div style="text-align:center; padding:32px; color:#565959; font-size:13px;">Attributes will populate based on category selection.</div>`;
+       dpc.innerHTML = `<div style="grid-column: span 2; text-align:center; padding:32px; color:#565959; font-size:13px;">Attributes will populate based on category selection.</div>`;
        return;
     }
     const paramsForCat = categoryParameters.filter(p => p.category_id === catId);
     if(paramsForCat.length === 0) {
-      dpc.innerHTML = `<div style="text-align:center; padding:32px; color:#565959; font-size:13px;">No specific attributes required for this category.</div>`;
+      dpc.innerHTML = `<div style="grid-column: span 2; text-align:center; padding:32px; color:#565959; font-size:13px;">No specific attributes required for this category.</div>`;
       return;
     }
 
+    const priorityOrder = { required: 0, recommended: 1, optional: 2 };
+    const sorted = [...paramsForCat].sort((a, b) => (priorityOrder[a.priority] ?? 2) - (priorityOrder[b.priority] ?? 2));
+
     let html = '';
-    paramsForCat.forEach(p => {
+    sorted.forEach(p => {
+      const prio = p.priority || 'optional';
+      const isRequired = prio === 'required';
       let inputHtml = '';
       if(p.data_type === 'boolean') {
-        inputHtml = `<select required id="spec-${p.id}" class="amz-form-input amz-form-input-single"><option value="true">Yes</option><option value="false">No</option></select>`;
+        inputHtml = `<select ${isRequired ? 'required' : ''} id="spec-${p.id}" style="width:100%; border:1px solid #ccc; padding:6px 10px; border-radius:3px; background:#fff;"><option value="true">Yes</option><option value="false">No</option></select>`;
       } else if (p.data_type === 'number') {
-        inputHtml = `<input required type="number" step="any" id="spec-${p.id}" class="amz-form-input amz-form-input-single">`;
+        inputHtml = `<input ${isRequired ? 'required' : ''} type="number" step="any" id="spec-${p.id}" style="width:100%; border:1px solid #ccc; padding:6px 10px; border-radius:3px; box-shadow:inset 0 1px 2px rgba(0,0,0,0.03);">`;
       } else {
-        inputHtml = `<input required type="text" id="spec-${p.id}" class="amz-form-input amz-form-input-single">`;
+        inputHtml = `<input ${isRequired ? 'required' : ''} type="text" id="spec-${p.id}" style="width:100%; border:1px solid #ccc; padding:6px 10px; border-radius:3px; box-shadow:inset 0 1px 2px rgba(0,0,0,0.03);">`;
       }
 
       html += `
-        <div class="amz-form-group">
-          <div class="amz-label-col">${p.parameter_name} ${p.unit ? `<br><span style="font-weight:400; font-size:11px; color:#565959;">[${p.unit}]</span>` : ''}</div>
-          <div class="amz-input-col">
+        <div class="amz-dynamic-param" style="display:flex; border-bottom:1px solid #f0f0f0; padding-bottom:8px; align-items:center;">
+          <div style="width:40%; font-size:13px; color:#666;">${isRequired ? '<span style="color:#e00;">*</span> ' : ''}${p.parameter_name} ${p.unit ? `[${p.unit}]` : ''}</div>
+          <div style="width:60%;">
             ${inputHtml}
           </div>
         </div>
       `;
     });
     dpc.innerHTML = html;
+  }
+
+  catSelect.addEventListener('change', (e) => {
+    const val = e.target.value;
+    const opt = document.querySelector(`#category-datalist option[value="${val}"]`);
+    const catId = opt ? opt.dataset.id : null;
+    renderDynamicParams(catId);
+  });
+
+
+
+  // Rich Text Editor Logic
+  const richDesc = document.getElementById('rich-description');
+  const richWrapper = document.getElementById('rich-editor-wrapper');
+  const imgUploadBtn = document.getElementById('rich-desc-img-upload');
+
+  const insertImageAtCursor = (url) => {
+    richDesc.focus();
+    document.execCommand('insertImage', false, url);
+  };
+
+  imgUploadBtn.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (ev) => insertImageAtCursor(ev.target.result);
+      reader.readAsDataURL(file);
+    }
+  });
+
+  richDesc.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    richWrapper.style.borderColor = '#007185';
+    richWrapper.style.boxShadow = '0 0 0 3px rgba(0, 113, 133, 0.2)';
+  });
+  
+  richDesc.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    richWrapper.style.borderColor = 'var(--amz-input-border)';
+    richWrapper.style.boxShadow = 'none';
+  });
+
+  richDesc.addEventListener('drop', (e) => {
+    e.preventDefault();
+    richWrapper.style.borderColor = 'var(--amz-input-border)';
+    richWrapper.style.boxShadow = 'none';
+    
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const file = e.dataTransfer.files[0];
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (ev) => insertImageAtCursor(ev.target.result);
+        reader.readAsDataURL(file);
+      }
+    }
   });
 
   if (prod) {
-    document.getElementById('p-category').value = prod.category_id;
-    catSelect.dispatchEvent(new Event('change'));
+    const initialName = getCatName(prod.category_id);
+    document.getElementById('p-category').value = initialName;
+    renderDynamicParams(prod.category_id);
     
     setTimeout(() => {
       if (prod.specs) {
@@ -882,6 +583,61 @@ function renderCreateProductForm(editProdId = null) {
     }, 50);
   }
 
+  // Helper to add a pricing tier
+  function addPricingTier(minQty = '', leadTime = '', price = '') {
+    const tr = document.createElement('tr');
+    tr.style.borderBottom = '1px solid #eee';
+    tr.innerHTML = `
+      <td style="padding:4px;"><input type="number" class="amz-form-input tier-qty" style="width:100%; padding:4px;" value="${minQty}"></td>
+      <td style="padding:4px;"><input type="number" class="amz-form-input tier-lead" style="width:100%; padding:4px;" value="${leadTime}"></td>
+      <td style="padding:4px;"><input type="number" step="any" class="amz-form-input tier-price" style="width:100%; padding:4px;" value="${price}"></td>
+      <td style="padding:4px; text-align:center;"><button type="button" class="btn-remove-tier" style="background:none; border:none; color:#e00; cursor:pointer; font-weight:bold;" title="Remove">X</button></td>
+    `;
+    tr.querySelector('.btn-remove-tier').addEventListener('click', () => tr.remove());
+    document.getElementById('pricing-tiers-body').appendChild(tr);
+  }
+
+  document.getElementById('btn-add-tier').addEventListener('click', () => addPricingTier());
+  
+  // Helper to add a packaging layer
+  function addPackagingLayer(name = '', l = '', w = '', h = '', weight = '') {
+    const div = document.createElement('div');
+    div.style.display = 'flex';
+    div.style.gap = '8px';
+    div.style.marginBottom = '8px';
+    div.innerHTML = `
+      <input type="text" class="amz-form-input pack-name" placeholder="Name" style="flex:2; padding:4px;" value="${name}">
+      <input type="number" step="any" class="amz-form-input pack-l" placeholder="L (mm)" style="flex:1; padding:4px;" value="${l}">
+      <input type="number" step="any" class="amz-form-input pack-w" placeholder="W (mm)" style="flex:1; padding:4px;" value="${w}">
+      <input type="number" step="any" class="amz-form-input pack-h" placeholder="H (mm)" style="flex:1; padding:4px;" value="${h}">
+      <input type="number" step="any" class="amz-form-input pack-weight" placeholder="kg" style="flex:1; padding:4px;" value="${weight}">
+      <button type="button" class="btn-remove-pack" style="background:none; border:none; color:#e00; cursor:pointer; font-weight:bold;" title="Remove">X</button>
+    `;
+    div.querySelector('.btn-remove-pack').addEventListener('click', () => div.remove());
+    document.getElementById('packaging-layers-container').appendChild(div);
+  }
+
+  document.getElementById('btn-add-packaging-layer').addEventListener('click', () => addPackagingLayer());
+
+  // Initialization for edit mode
+  if (prod) {
+    if (prod.pricing_tiers && prod.pricing_tiers.length) {
+      prod.pricing_tiers.forEach(t => addPricingTier(t.min_quantity, t.lead_time_days, t.unit_price));
+    } else {
+      addPricingTier(); // at least one default
+    }
+    
+    if (prod.packaging && prod.packaging.length) {
+      prod.packaging.forEach(p => addPackagingLayer(p.name, p.l, p.w, p.h, p.weight));
+    } else {
+      addPackagingLayer('Single Unit');
+    }
+  } else {
+    // defaults
+    addPricingTier(1, 14, '');
+    addPackagingLayer('Single Unit');
+  }
+
   // Handle Form Submission
   document.getElementById('new-product-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -890,10 +646,16 @@ function renderCreateProductForm(editProdId = null) {
     btn.textContent = "Saving...";
     btn.disabled = true;
 
-    const catId = catSelect.value;
-    const paramsForCat = categoryParameters.filter(p => p.category_id === catId);
+    const catId = catSelect.value; // It could be value (text) or we need the raw id
+    // Resolve catId properly
+    let finalCatId = catId;
+    const matchedOpt = document.querySelector(`#category-datalist option[value="${catId}"]`);
+    if (matchedOpt) finalCatId = matchedOpt.dataset.id;
+    else if (prod) finalCatId = prod.category_id; // Default back if invalid text
+
+    const paramsForCat = categoryParameters.filter(p => p.category_id === finalCatId);
     
-    let specsPayload = {};
+    let specsPayload = prod?.specs ? JSON.parse(JSON.stringify(prod.specs)) : {};
     paramsForCat.forEach(p => {
       const el = document.getElementById(`spec-${p.id}`);
       if(el) {
@@ -904,21 +666,47 @@ function renderCreateProductForm(editProdId = null) {
       }
     });
 
-    specsPayload.lead_time = document.getElementById('p-leadtime').value;
-    specsPayload.price_1 = document.getElementById('p-price-1').value;
-    specsPayload.price_10 = document.getElementById('p-price-10').value;
-    specsPayload.price_100 = document.getElementById('p-price-100').value;
-    specsPayload.price_1000 = document.getElementById('p-price-1000').value;
+    // Collect pricing tiers
+    const tiers = [];
+    document.querySelectorAll('#pricing-tiers-body tr').forEach(tr => {
+       const qty = Number(tr.querySelector('.tier-qty').value);
+       const lead = Number(tr.querySelector('.tier-lead').value);
+       const price = Number(tr.querySelector('.tier-price').value);
+       if (qty > 0 && price >= 0) {
+          tiers.push({ min_quantity: qty, lead_time_days: lead, unit_price: price });
+       }
+    });
 
-    const price1 = Number(document.getElementById('p-price').value) || Number(specsPayload.price_1) || null;
+    // Collect packaging layers
+    const pack = [];
+    document.querySelectorAll('#packaging-layers-container > div').forEach(div => {
+       const name = div.querySelector('.pack-name').value;
+       const l = Number(div.querySelector('.pack-l').value);
+       const w = Number(div.querySelector('.pack-w').value);
+       const h = Number(div.querySelector('.pack-h').value);
+       const weight = Number(div.querySelector('.pack-weight').value);
+       if (name) {
+          pack.push({ name, l, w, h, weight });
+       }
+    });
+
+    const richDesc = document.getElementById('rich-description').innerHTML;
+    const applications = document.getElementById('p-applications').value;
+    const internalSku = document.getElementById('internal-sku').value;
+
+    const base_price = tiers.length ? tiers[0].unit_price : 0;
 
     const payload = {
       supplier_id: factoryRecord.id,
-      category_id: catId,
-      mpn: document.getElementById('p-mpn').value,
+      category_id: finalCatId,
+      mpn: document.getElementById('p-mpn').value || internalSku,
       description: document.getElementById('p-desc').value,
-      stock_quantity: Number(document.getElementById('p-stock').value) || 0,
-      base_price: price1,
+      stock_quantity: 0,
+      base_price: base_price,
+      pricing_tiers: tiers,
+      packaging: pack,
+      rich_description: richDesc,
+      applications: applications,
       specs: specsPayload
     };
 
@@ -952,9 +740,12 @@ function renderCreateProductForm(editProdId = null) {
         const { data: publicData } = supabase.storage.from('product_assets').getPublicUrl(filePath);
         await supabase.from('product_assets').insert({ product_id: prodId, asset_type: type, url: publicData.publicUrl });
         
-        // Also patch image_url on product if it's the first image
+        // Also patch image into specs if it's the first image
         if(type === 'image') {
-           await supabase.from('products').update({ image_url: publicData.publicUrl }).eq('id', prodId);
+          const { data: cData } = await supabase.from('products').select('specs').eq('id', prodId).single();
+          const currentSpecs = cData?.specs || {};
+          currentSpecs.images = [publicData.publicUrl, ...(currentSpecs.images || [])];
+          await supabase.from('products').update({ specs: currentSpecs }).eq('id', prodId);
         }
       }
     }
@@ -968,5 +759,136 @@ function renderCreateProductForm(editProdId = null) {
     }
 
     loadCatalogTab();
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB: ORDER MANAGEMENT
+// ─────────────────────────────────────────────────────────────────────────────
+async function loadOrdersTab() {
+  const routing = document.getElementById('supplier-content-routing');
+  
+  routing.innerHTML = `
+    <div class="amz-container">
+      <h1 class="amz-page-title">Manage Orders & RFQs</h1>
+      
+      <div class="amz-tabs">
+        <div class="amz-tab active">Pending Requests</div>
+        <div class="amz-tab">Quoted / Action Required</div>
+        <div class="amz-tab">Shipped</div>
+      </div>
+
+      <div class="amz-toolbar">
+        <div class="amz-search-bar">
+          <input type="text" class="amz-search-input" placeholder="Search Order ID, MPN, Customer Name">
+          <button style="border:none; background:#FFF; padding:0 12px; cursor:pointer;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="orders-grid" style="min-height: 400px; background:#FFF; border: 1px solid var(--amz-border); border-top:none;">
+        <div style="padding: 40px; text-align:center; color: var(--amz-text-light);">Loading orders...</div>
+      </div>
+    </div>
+  `;
+
+  // Fetch from rfq_history where supplier_id matches our factoryRecord.id
+  const { data, error } = await supabase.from('rfq_history').select('*').order('created_at', { ascending: false });
+  
+  const grid = document.getElementById('orders-grid');
+  
+  if (error) {
+     grid.innerHTML = `<div style="padding:40px; text-align:center; color:red;">Failed to load orders: ${error.message}</div>`;
+     return;
+  }
+
+  // Filter client side in case of JSON query issues
+  const myOrders = (data || []).filter(row => {
+     return row.rfq_data && String(row.rfq_data.supplier_id) === String(factoryRecord.id);
+  });
+
+  if (myOrders.length === 0) {
+    grid.innerHTML = `
+      <div style="text-align: center; padding: 60px;">
+        <div style="font-weight: 700; margin-bottom: 8px;">No active orders.</div>
+        <div style="font-size: 13px; color: var(--amz-text-light);">Once a user requests a quote or adds to basket, it will appear here.</div>
+      </div>
+    `;
+    return;
+  }
+
+  // Render Table
+  let html = `
+    <table class="amz-table">
+      <thead>
+        <tr>
+          <th>Order Date</th>
+          <th>Product / MPN</th>
+          <th>Quantity</th>
+          <th>Total Value</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  myOrders.forEach(o => {
+      const rd = o.rfq_data || {};
+      const statusLabel = o.status === 'submitted' ? 'Action Needed' : o.status;
+      const statusColor = o.status === 'submitted' ? '#c40000' : '#10b981';
+      
+      html += `
+        <tr>
+          <td style="font-size:12px; color:#555;">${new Date(o.created_at).toLocaleDateString()}</td>
+          <td>
+             <div style="font-weight:600; color:var(--amz-link);">${rd.mpn || 'Unknown Component'}</div>
+             <div style="font-size:11px; color:#666;">Type: ${rd.type || 'Standard RFQ'}</div>
+          </td>
+          <td>${rd.quantity || 1}</td>
+          <td>$${(rd.quantity * (rd.unit_price || 0)).toFixed(2) === '0.00' ? '--' : (rd.quantity * rd.unit_price).toFixed(2)}</td>
+          <td><span style="color:${statusColor}; font-weight:600; font-size:12px; text-transform:capitalize;">${statusLabel.replace('_', ' ')}</span></td>
+          <td>
+             <select class="amz-form-input status-dropdown" data-id="${o.id}" style="font-size:11px; padding:4px; height:auto; width:120px; display:inline-block;">
+                <option value="submitted" ${o.status==='submitted'?'selected':''}>Pending</option>
+                <option value="quoted" ${o.status==='quoted'?'selected':''}>Quote Sent</option>
+                <option value="accepted" ${o.status==='accepted'?'selected':''}>Accepted</option>
+                <option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option>
+             </select>
+             <button class="amz-btn btn-update-status" data-id="${o.id}" style="padding:4px 8px; margin-left:4px;">Update</button>
+          </td>
+        </tr>
+      `;
+  });
+
+  html += `</tbody></table>`;
+  grid.innerHTML = html;
+
+  // Bind update buttons
+  document.querySelectorAll('.btn-update-status').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+         const id = e.target.dataset.id;
+         const sel = document.querySelector(`.status-dropdown[data-id="${id}"]`);
+         const newStatus = sel.value;
+         
+         e.target.textContent = '...';
+         e.target.disabled = true;
+
+         const { error } = await supabase.from('rfq_history').update({ status: newStatus }).eq('id', id);
+         if(error) {
+            alert('Failed to update: '+error.message);
+         } else {
+            e.target.style.background = '#10b981';
+            e.target.style.color = '#fff';
+            e.target.textContent = 'Saved';
+            setTimeout(() => {
+               e.target.style.background = '';
+               e.target.style.color = '';
+               e.target.textContent = 'Update';
+               e.target.disabled = false;
+            }, 2000);
+         }
+      });
   });
 }

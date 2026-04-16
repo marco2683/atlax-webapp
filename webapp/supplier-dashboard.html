@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <link rel="icon" type="image/svg+xml" href="/logo-mark.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Amazon Seller Central clone — Supplier Portal</title>
+  <title>Atlas DT — Supplier Portal</title>
 
-  <!-- Amazon fonts approximations -->
+  <!-- Web fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/css/supplier-amazon.css">
 
@@ -46,22 +46,30 @@
   <div id="supplier-app" style="display: none; height: 100%; width: 100%; flex-direction: column;">
     
     <header class="amz-header">
-      <div class="amz-header-left">
-        <div class="amz-header-logo">
-          <span style="color:#FFF;">AtlasDT</span>
-          <span style="font-weight:400; color:#4FD1C5;"> Seller Platform <span style="font-size:12px; opacity: 0.8;">(卖家平台)</span></span>
+      <div class="amz-header-inner">
+        <div class="amz-header-left">
+          <div class="amz-header-logo" style="display:flex; align-items:center;">
+            <img src="/logos/atlax-logo-original.png" alt="AtlasDT" style="height: 24px; vertical-align: middle;">
+            <span style="color:#333; margin-left:12px; font-weight:500; font-size:14px; position:relative; top:2px;">Seller Platform 卖家平台</span>
+          </div>
+          <div style="color: #64748B; font-size: 13px; margin-left: 20px; border-left: 1px solid #CBD5E1; padding-left:20px;" id="sidebar-factory-name">My Factory | Global</div>
         </div>
-        <div style="color: #94A3B8; font-size: 13px; margin-left: 16px;" id="sidebar-factory-name">My Factory | Global</div>
-      </div>
-      <div class="amz-header-nav">
-        <a class="amz-header-link" id="nav-inventory">Inventory Details</a>
-        <a class="amz-header-link">Publish Product</a>
-        <a class="amz-header-link">Order Management</a>
-        <a class="amz-header-link">Analytics</a>
-      </div>
-      <div class="amz-header-right">
-        <a class="amz-header-link" style="font-size: 12px;" id="lang-toggle-btn">EN / 中</a>
-        <a class="amz-header-link" style="font-size: 12px;" id="supplier-logout-btn" data-i18n="disconnect">Logout</a>
+        <div class="amz-header-nav">
+          <a class="amz-header-link" id="nav-inventory">Inventory Details</a>
+          <a class="amz-header-link" id="nav-publish">Publish Product</a>
+          <a class="amz-header-link" id="nav-orders">Order Management</a>
+          <a class="amz-header-link" id="nav-analytics">Analytics</a>
+        </div>
+        <div class="amz-header-right">
+          <a class="amz-header-icon" title="Notifications">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          </a>
+          <a class="amz-header-link" style="font-size: 13px; font-weight:500;" id="lang-toggle-btn">EN / 中</a>
+          <div class="amz-header-profile" title="Profile & Settings">
+            <div class="amz-avatar">SR</div>
+            <a class="amz-header-link" style="font-size: 13px;" id="supplier-logout-btn" data-i18n="disconnect">Logout</a>
+          </div>
+        </div>
       </div>
     </header>
 

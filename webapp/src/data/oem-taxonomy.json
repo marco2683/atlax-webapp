@@ -1,0 +1,2553 @@
+{
+  "schema_version": "1.0",
+  "taxonomy_name": "antigravity_industrial_oem_marketplace",
+  "parameter_object_definition": {
+    "id": "machine_readable_key",
+    "label": "display name",
+    "data_type": "enum | number | boolean | text | range | multienum",
+    "unit": "optional engineering unit",
+    "filter_ui": "multi_select | single_select | range_slider | min_max | toggle | text_search",
+    "supplier_required": false,
+    "facetable": true
+  },
+  "global_product_fields": [
+    {
+      "id": "manufacturer",
+      "label": "Manufacturer",
+      "data_type": "text",
+      "filter_ui": "text_search",
+      "supplier_required": true,
+      "facetable": true
+    },
+    {
+      "id": "brand",
+      "label": "Brand",
+      "data_type": "text",
+      "filter_ui": "text_search",
+      "supplier_required": true,
+      "facetable": true
+    },
+    {
+      "id": "series",
+      "label": "Series",
+      "data_type": "text",
+      "filter_ui": "text_search",
+      "supplier_required": false,
+      "facetable": true
+    },
+    {
+      "id": "mpn",
+      "label": "Manufacturer Part Number",
+      "data_type": "text",
+      "filter_ui": "text_search",
+      "supplier_required": true,
+      "facetable": true
+    },
+    {
+      "id": "sku",
+      "label": "Marketplace SKU",
+      "data_type": "text",
+      "filter_ui": "text_search",
+      "supplier_required": true,
+      "facetable": false
+    },
+    {
+      "id": "short_description",
+      "label": "Short Description",
+      "data_type": "text",
+      "filter_ui": "text_search",
+      "supplier_required": true,
+      "facetable": false
+    },
+    {
+      "id": "country_of_origin",
+      "label": "Country of Origin",
+      "data_type": "enum",
+      "filter_ui": "multi_select",
+      "supplier_required": true,
+      "facetable": true
+    },
+    {
+      "id": "hs_code",
+      "label": "HS Code",
+      "data_type": "text",
+      "filter_ui": "text_search",
+      "supplier_required": false,
+      "facetable": false
+    },
+    {
+      "id": "industry_application",
+      "label": "Industry Application",
+      "data_type": "multienum",
+      "filter_ui": "multi_select",
+      "supplier_required": false,
+      "facetable": true
+    },
+    {
+      "id": "compliance",
+      "label": "Compliance / Certifications",
+      "data_type": "multienum",
+      "filter_ui": "multi_select",
+      "supplier_required": false,
+      "facetable": true
+    },
+    {
+      "id": "datasheet_url",
+      "label": "Datasheet URL",
+      "data_type": "text",
+      "filter_ui": "text_search",
+      "supplier_required": true,
+      "facetable": false
+    },
+    {
+      "id": "cad_files_available",
+      "label": "CAD Files Available",
+      "data_type": "boolean",
+      "filter_ui": "toggle",
+      "supplier_required": false,
+      "facetable": true
+    },
+    {
+      "id": "manual_url",
+      "label": "Manual URL",
+      "data_type": "text",
+      "filter_ui": "text_search",
+      "supplier_required": false,
+      "facetable": false
+    },
+    {
+      "id": "image_count",
+      "label": "Image Count",
+      "data_type": "number",
+      "filter_ui": "range_slider",
+      "supplier_required": true,
+      "facetable": false
+    },
+    {
+      "id": "lead_time_days",
+      "label": "Lead Time",
+      "data_type": "number",
+      "unit": "days",
+      "filter_ui": "range_slider",
+      "supplier_required": true,
+      "facetable": true
+    },
+    {
+      "id": "moq",
+      "label": "Minimum Order Quantity",
+      "data_type": "number",
+      "filter_ui": "range_slider",
+      "supplier_required": true,
+      "facetable": true
+    },
+    {
+      "id": "stock_status",
+      "label": "Stock Status",
+      "data_type": "enum",
+      "filter_ui": "multi_select",
+      "supplier_required": true,
+      "facetable": true
+    },
+    {
+      "id": "price_breaks",
+      "label": "Price Breaks",
+      "data_type": "text",
+      "filter_ui": "text_search",
+      "supplier_required": true,
+      "facetable": false
+    },
+    {
+      "id": "warranty_months",
+      "label": "Warranty",
+      "data_type": "number",
+      "unit": "months",
+      "filter_ui": "range_slider",
+      "supplier_required": false,
+      "facetable": true
+    }
+  ],
+  "categories": [
+    {
+      "id": "pneumatic_cylinders",
+      "label": "Pneumatic Cylinders",
+      "common_parameters": [
+        {
+          "id": "cylinder_type",
+          "label": "Cylinder Type",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "bore_size",
+          "label": "Bore Size",
+          "data_type": "number",
+          "unit": "mm",
+          "filter_ui": "min_max",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "stroke_length",
+          "label": "Stroke Length",
+          "data_type": "number",
+          "unit": "mm",
+          "filter_ui": "min_max",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "action_type",
+          "label": "Action Type",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "mount_type",
+          "label": "Mount Type",
+          "data_type": "multienum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "cushioning_type",
+          "label": "Cushioning Type",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "body_material",
+          "label": "Body Material",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "rod_material",
+          "label": "Rod Material",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "port_thread",
+          "label": "Port Thread",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "operating_pressure_min",
+          "label": "Min Operating Pressure",
+          "data_type": "number",
+          "unit": "bar",
+          "filter_ui": "min_max",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "operating_pressure_max",
+          "label": "Max Operating Pressure",
+          "data_type": "number",
+          "unit": "bar",
+          "filter_ui": "min_max",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "operating_temperature_min",
+          "label": "Min Operating Temperature",
+          "data_type": "number",
+          "unit": "C",
+          "filter_ui": "min_max",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "operating_temperature_max",
+          "label": "Max Operating Temperature",
+          "data_type": "number",
+          "unit": "C",
+          "filter_ui": "min_max",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "auto_switch_capable",
+          "label": "Auto Switch Capable",
+          "data_type": "boolean",
+          "filter_ui": "toggle",
+          "supplier_required": false,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "compact_cylinders",
+          "label": "Compact Cylinders",
+          "parameters": [
+            {
+              "id": "compact_standard",
+              "label": "Compact Standard",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "iso_profile_cylinders",
+          "label": "ISO Profile Cylinders",
+          "parameters": [
+            {
+              "id": "iso_standard",
+              "label": "ISO Standard",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "roundline_cylinders",
+          "label": "Roundline Cylinders",
+          "parameters": [
+            {
+              "id": "barrel_style",
+              "label": "Barrel Style",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "guided_cylinders",
+          "label": "Guided Cylinders",
+          "parameters": [
+            {
+              "id": "guide_type",
+              "label": "Guide Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "allowable_side_load",
+              "label": "Allowable Side Load",
+              "data_type": "number",
+              "unit": "N",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "rodless_cylinders",
+          "label": "Rodless Cylinders",
+          "parameters": [
+            {
+              "id": "rodless_type",
+              "label": "Rodless Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pneumatic_solenoid_valves",
+      "label": "Pneumatic Solenoid Valves",
+      "common_parameters": [
+        {
+          "id": "valve_function",
+          "label": "Valve Function",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "actuation_type",
+          "label": "Actuation Type",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "return_type",
+          "label": "Return Type",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "port_size",
+          "label": "Port Size",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "thread_standard",
+          "label": "Thread Standard",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "orifice_size",
+          "label": "Orifice Size",
+          "data_type": "number",
+          "unit": "mm",
+          "filter_ui": "min_max",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "flow_rate_cv",
+          "label": "Flow Coefficient Cv",
+          "data_type": "number",
+          "filter_ui": "min_max",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "operating_pressure_min",
+          "label": "Min Operating Pressure",
+          "data_type": "number",
+          "unit": "bar",
+          "filter_ui": "min_max",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "operating_pressure_max",
+          "label": "Max Operating Pressure",
+          "data_type": "number",
+          "unit": "bar",
+          "filter_ui": "min_max",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "coil_voltage",
+          "label": "Coil Voltage",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "electrical_connection",
+          "label": "Electrical Connection",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "manual_override",
+          "label": "Manual Override",
+          "data_type": "boolean",
+          "filter_ui": "toggle",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "body_material",
+          "label": "Body Material",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "seal_material",
+          "label": "Seal Material",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "ip_rating",
+          "label": "IP Rating",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "directional_control_valves",
+          "label": "Directional Control Valves",
+          "parameters": [
+            {
+              "id": "positions",
+              "label": "Positions",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "ways",
+              "label": "Ways",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "process_solenoid_valves",
+          "label": "Process Solenoid Valves",
+          "parameters": [
+            {
+              "id": "media_type",
+              "label": "Media Type",
+              "data_type": "multienum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "normally_state",
+              "label": "Normally State",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "valve_manifolds_and_valve_islands",
+      "label": "Valve Manifolds and Valve Islands",
+      "common_parameters": [
+        {
+          "id": "platform_type",
+          "label": "Platform Type",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "station_count",
+          "label": "Number of Stations",
+          "data_type": "number",
+          "filter_ui": "range_slider",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "compatible_valve_series",
+          "label": "Compatible Valve Series",
+          "data_type": "text",
+          "filter_ui": "text_search",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "port_size",
+          "label": "Port Size",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "supply_pressure_max",
+          "label": "Max Supply Pressure",
+          "data_type": "number",
+          "unit": "bar",
+          "filter_ui": "min_max",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "electrical_interface",
+          "label": "Electrical Interface",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "communication_protocol",
+          "label": "Communication Protocol",
+          "data_type": "multienum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "mounting_style",
+          "label": "Mounting Style",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "protection_rating",
+          "label": "Protection Rating",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "manifolds",
+          "label": "Manifolds",
+          "parameters": [
+            {
+              "id": "manifold_material",
+              "label": "Manifold Material",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "valve_islands",
+          "label": "Valve Islands",
+          "parameters": [
+            {
+              "id": "fieldbus_ready",
+              "label": "Fieldbus Ready",
+              "data_type": "boolean",
+              "filter_ui": "toggle",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "accessories",
+          "label": "Accessories",
+          "parameters": [
+            {
+              "id": "accessory_type",
+              "label": "Accessory Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "air_prep_units",
+      "label": "Air Preparation Units",
+      "common_parameters": [
+        {
+          "id": "air_prep_type",
+          "label": "Air Prep Type",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "port_size",
+          "label": "Port Size",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "flow_rate",
+          "label": "Rated Flow Rate",
+          "data_type": "number",
+          "unit": "L/min",
+          "filter_ui": "min_max",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "filtration_grade",
+          "label": "Filtration Grade",
+          "data_type": "number",
+          "unit": "um",
+          "filter_ui": "min_max",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "pressure_adjustment_range",
+          "label": "Pressure Adjustment Range",
+          "data_type": "text",
+          "filter_ui": "text_search",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "max_operating_pressure",
+          "label": "Max Operating Pressure",
+          "data_type": "number",
+          "unit": "bar",
+          "filter_ui": "min_max",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "bowl_material",
+          "label": "Bowl Material",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "drain_type",
+          "label": "Drain Type",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "filters",
+          "label": "Filters",
+          "parameters": [
+            {
+              "id": "filter_type",
+              "label": "Filter Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "regulators",
+          "label": "Regulators",
+          "parameters": [
+            {
+              "id": "relieving_type",
+              "label": "Relieving Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "lubricators",
+          "label": "Lubricators",
+          "parameters": [
+            {
+              "id": "lubrication_type",
+              "label": "Lubrication Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "frl_combinations",
+          "label": "FRL Combinations",
+          "parameters": [
+            {
+              "id": "assembly_configuration",
+              "label": "Assembly Configuration",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "soft_start_dump_valves",
+          "label": "Soft Start / Dump Valves",
+          "parameters": [
+            {
+              "id": "safe_exhaust_function",
+              "label": "Safe Exhaust Function",
+              "data_type": "boolean",
+              "filter_ui": "toggle",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pneumatic_fittings_and_connectors",
+      "label": "Pneumatic Fittings and Connectors",
+      "common_parameters": [
+        {
+          "id": "fitting_type",
+          "label": "Fitting Type",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "tube_od",
+          "label": "Tube Outside Diameter",
+          "data_type": "number",
+          "unit": "mm",
+          "filter_ui": "min_max",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "thread_size",
+          "label": "Thread Size",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "thread_standard",
+          "label": "Thread Standard",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "material",
+          "label": "Material",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "seal_material",
+          "label": "Seal Material",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "max_pressure",
+          "label": "Max Pressure",
+          "data_type": "number",
+          "unit": "bar",
+          "filter_ui": "min_max",
+          "supplier_required": false,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "push_in_fittings",
+          "label": "Push-In Fittings",
+          "parameters": [
+            {
+              "id": "body_shape",
+              "label": "Body Shape",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "threaded_fittings",
+          "label": "Threaded Fittings",
+          "parameters": [
+            {
+              "id": "connection_gender",
+              "label": "Connection Gender",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "banjo_fittings",
+          "label": "Banjo Fittings",
+          "parameters": [
+            {
+              "id": "swivel_type",
+              "label": "Swivel Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pneumatic_tubing_couplers_and_flow_accessories",
+      "label": "Pneumatic Tubing, Couplers and Flow Accessories",
+      "common_parameters": [
+        {
+          "id": "accessory_family",
+          "label": "Accessory Family",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "pneumatic_tubing",
+          "label": "Pneumatic Tubing",
+          "parameters": [
+            {
+              "id": "tube_od",
+              "label": "Tube Outside Diameter",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "tube_id",
+              "label": "Tube Inside Diameter",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "tube_material",
+              "label": "Tube Material",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "tube_color",
+              "label": "Tube Color",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "working_pressure",
+              "label": "Working Pressure",
+              "data_type": "number",
+              "unit": "bar",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "bend_radius",
+              "label": "Minimum Bend Radius",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "quick_couplers",
+          "label": "Quick Couplers",
+          "parameters": [
+            {
+              "id": "coupler_type",
+              "label": "Coupler Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "connection_size",
+              "label": "Connection Size",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "shutoff_style",
+              "label": "Shutoff Style",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "flow_control_valves",
+          "label": "Flow Control Valves",
+          "parameters": [
+            {
+              "id": "control_direction",
+              "label": "Control Direction",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "metering_type",
+              "label": "Metering Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "silencers",
+          "label": "Silencers / Mufflers",
+          "parameters": [
+            {
+              "id": "noise_reduction_db",
+              "label": "Noise Reduction",
+              "data_type": "number",
+              "unit": "dB",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "silencer_material",
+              "label": "Silencer Material",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vacuum_components",
+      "label": "Vacuum Components",
+      "common_parameters": [
+        {
+          "id": "vacuum_component_type",
+          "label": "Vacuum Component Type",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "vacuum_ejectors",
+          "label": "Vacuum Ejectors",
+          "parameters": [
+            {
+              "id": "nozzle_diameter",
+              "label": "Nozzle Diameter",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "vacuum_level_max",
+              "label": "Max Vacuum Level",
+              "data_type": "number",
+              "unit": "kPa",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "suction_flow",
+              "label": "Suction Flow",
+              "data_type": "number",
+              "unit": "L/min",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "air_consumption",
+              "label": "Air Consumption",
+              "data_type": "number",
+              "unit": "L/min",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "vacuum_pads",
+          "label": "Vacuum Pads",
+          "parameters": [
+            {
+              "id": "pad_shape",
+              "label": "Pad Shape",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "pad_diameter",
+              "label": "Pad Diameter",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "pad_material",
+              "label": "Pad Material",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "lip_type",
+              "label": "Lip Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "vacuum_switches",
+          "label": "Vacuum Switches",
+          "parameters": [
+            {
+              "id": "pressure_range",
+              "label": "Pressure Range",
+              "data_type": "text",
+              "filter_ui": "text_search",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "output_type",
+              "label": "Output Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "vacuum_filters",
+          "label": "Vacuum Filters",
+          "parameters": [
+            {
+              "id": "filtration_grade",
+              "label": "Filtration Grade",
+              "data_type": "number",
+              "unit": "um",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "servo_systems",
+      "label": "Servo Systems",
+      "common_parameters": [
+        {
+          "id": "servo_family",
+          "label": "Servo Family",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "servo_motors",
+          "label": "Servo Motors",
+          "parameters": [
+            {
+              "id": "rated_power",
+              "label": "Rated Power",
+              "data_type": "number",
+              "unit": "W",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "rated_torque",
+              "label": "Rated Torque",
+              "data_type": "number",
+              "unit": "Nm",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "rated_speed",
+              "label": "Rated Speed",
+              "data_type": "number",
+              "unit": "rpm",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "peak_torque",
+              "label": "Peak Torque",
+              "data_type": "number",
+              "unit": "Nm",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "encoder_type",
+              "label": "Encoder Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "brake",
+              "label": "Holding Brake",
+              "data_type": "boolean",
+              "filter_ui": "toggle",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "shaft_type",
+              "label": "Shaft Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "frame_size",
+              "label": "Frame Size",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "ip_rating",
+              "label": "IP Rating",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "servo_drives",
+          "label": "Servo Drives",
+          "parameters": [
+            {
+              "id": "input_voltage",
+              "label": "Input Voltage",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "phase",
+              "label": "Phase",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "continuous_output_current",
+              "label": "Continuous Output Current",
+              "data_type": "number",
+              "unit": "A",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "supported_feedback",
+              "label": "Supported Feedback",
+              "data_type": "multienum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "communication_protocol",
+              "label": "Communication Protocol",
+              "data_type": "multienum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "safe_torque_off",
+              "label": "Safe Torque Off",
+              "data_type": "boolean",
+              "filter_ui": "toggle",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "servo_kits",
+          "label": "Servo Motor + Drive Kits",
+          "parameters": [
+            {
+              "id": "matched_set",
+              "label": "Matched Set",
+              "data_type": "boolean",
+              "filter_ui": "toggle",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vfds",
+      "label": "Variable Frequency Drives",
+      "common_parameters": [
+        {
+          "id": "drive_type",
+          "label": "Drive Type",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "rated_power",
+          "label": "Rated Power",
+          "data_type": "number",
+          "unit": "kW",
+          "filter_ui": "min_max",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "input_voltage",
+          "label": "Input Voltage",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "output_voltage",
+          "label": "Output Voltage",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "phase",
+          "label": "Phase",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "output_current",
+          "label": "Output Current",
+          "data_type": "number",
+          "unit": "A",
+          "filter_ui": "min_max",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "output_frequency_max",
+          "label": "Max Output Frequency",
+          "data_type": "number",
+          "unit": "Hz",
+          "filter_ui": "min_max",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "motor_type_compatibility",
+          "label": "Compatible Motor Type",
+          "data_type": "multienum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "control_mode",
+          "label": "Control Mode",
+          "data_type": "multienum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "communication_protocol",
+          "label": "Communication Protocol",
+          "data_type": "multienum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "mounting_type",
+          "label": "Mounting Type",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "ip_rating",
+          "label": "IP Rating",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "micro_drives",
+          "label": "Micro Drives",
+          "parameters": [
+            {
+              "id": "integrated_keypad",
+              "label": "Integrated Keypad",
+              "data_type": "boolean",
+              "filter_ui": "toggle",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "general_purpose_drives",
+          "label": "General Purpose Drives",
+          "parameters": [
+            {
+              "id": "built_in_pid",
+              "label": "Built-in PID",
+              "data_type": "boolean",
+              "filter_ui": "toggle",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "heavy_duty_drives",
+          "label": "Heavy Duty Drives",
+          "parameters": [
+            {
+              "id": "overload_rating",
+              "label": "Overload Rating",
+              "data_type": "number",
+              "unit": "%",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "plcs_and_remote_io",
+      "label": "PLCs and Remote I/O",
+      "common_parameters": [
+        {
+          "id": "controller_family",
+          "label": "Controller Family",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "plc_cpus",
+          "label": "PLC CPUs",
+          "parameters": [
+            {
+              "id": "onboard_inputs",
+              "label": "Onboard Inputs",
+              "data_type": "number",
+              "filter_ui": "range_slider",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "onboard_outputs",
+              "label": "Onboard Outputs",
+              "data_type": "number",
+              "filter_ui": "range_slider",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "input_type",
+              "label": "Input Type",
+              "data_type": "multienum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "output_type",
+              "label": "Output Type",
+              "data_type": "multienum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "expandability",
+              "label": "Expandability",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "max_expansion_modules",
+              "label": "Max Expansion Modules",
+              "data_type": "number",
+              "filter_ui": "range_slider",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "supply_voltage",
+              "label": "Supply Voltage",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "display_type",
+              "label": "Display Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "communication_ports",
+              "label": "Communication Ports",
+              "data_type": "multienum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "memory_size",
+              "label": "Memory Size",
+              "data_type": "text",
+              "filter_ui": "text_search",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "mounting_type",
+              "label": "Mounting Type",
+              "data_type": "multienum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "programming_standard",
+              "label": "Programming Standard",
+              "data_type": "multienum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "plc_io_modules",
+          "label": "PLC I/O Modules",
+          "parameters": [
+            {
+              "id": "module_type",
+              "label": "Module Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "channel_count",
+              "label": "Channel Count",
+              "data_type": "number",
+              "filter_ui": "range_slider",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "signal_type",
+              "label": "Signal Type",
+              "data_type": "multienum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "terminal_type",
+              "label": "Terminal Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "remote_io",
+          "label": "Remote I/O",
+          "parameters": [
+            {
+              "id": "network_protocol",
+              "label": "Network Protocol",
+              "data_type": "multienum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "io_capacity",
+              "label": "I/O Capacity",
+              "data_type": "number",
+              "filter_ui": "range_slider",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "plc_accessories",
+          "label": "PLC Accessories",
+          "parameters": [
+            {
+              "id": "accessory_type",
+              "label": "Accessory Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hmis",
+      "label": "Human Machine Interfaces",
+      "common_parameters": [
+        {
+          "id": "hmi_family",
+          "label": "HMI Family",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "touch_panels",
+          "label": "Touch Panels",
+          "parameters": [
+            {
+              "id": "display_size",
+              "label": "Display Size",
+              "data_type": "number",
+              "unit": "in",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "resolution",
+              "label": "Resolution",
+              "data_type": "text",
+              "filter_ui": "text_search",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "touch_type",
+              "label": "Touch Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "screen_orientation",
+              "label": "Screen Orientation",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "brightness",
+              "label": "Brightness",
+              "data_type": "number",
+              "unit": "cd/m2",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "memory",
+              "label": "Memory",
+              "data_type": "text",
+              "filter_ui": "text_search",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "communication_ports",
+              "label": "Communication Ports",
+              "data_type": "multienum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "software_platform",
+              "label": "Software Platform",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "front_panel_ip_rating",
+              "label": "Front Panel IP Rating",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "mounting_cutout",
+              "label": "Mounting Cutout",
+              "data_type": "text",
+              "filter_ui": "text_search",
+              "supplier_required": false,
+              "facetable": false
+            }
+          ]
+        },
+        {
+          "id": "text_panels",
+          "label": "Text Panels",
+          "parameters": [
+            {
+              "id": "display_lines",
+              "label": "Display Lines",
+              "data_type": "number",
+              "filter_ui": "range_slider",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "hmi_accessories",
+          "label": "HMI Accessories",
+          "parameters": [
+            {
+              "id": "accessory_type",
+              "label": "Accessory Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "industrial_sensors",
+      "label": "Industrial Sensors",
+      "common_parameters": [
+        {
+          "id": "sensor_family",
+          "label": "Sensor Family",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "output_type",
+          "label": "Output Type",
+          "data_type": "multienum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "supply_voltage",
+          "label": "Supply Voltage",
+          "data_type": "text",
+          "filter_ui": "text_search",
+          "supplier_required": true,
+          "facetable": true
+        },
+        {
+          "id": "electrical_connection",
+          "label": "Electrical Connection",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "housing_material",
+          "label": "Housing Material",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        },
+        {
+          "id": "ip_rating",
+          "label": "IP Rating",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": false,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "inductive_proximity_sensors",
+          "label": "Inductive Proximity Sensors",
+          "parameters": [
+            {
+              "id": "sensing_distance",
+              "label": "Sensing Distance",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "shielding",
+              "label": "Shielding",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "housing_size",
+              "label": "Housing Size",
+              "data_type": "text",
+              "filter_ui": "text_search",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "photoelectric_sensors",
+          "label": "Photoelectric Sensors",
+          "parameters": [
+            {
+              "id": "detection_method",
+              "label": "Detection Method",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "sensing_distance",
+              "label": "Sensing Distance",
+              "data_type": "number",
+              "unit": "m",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "light_source",
+              "label": "Light Source",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "capacitive_sensors",
+          "label": "Capacitive Sensors",
+          "parameters": [
+            {
+              "id": "flush_mountable",
+              "label": "Flush Mountable",
+              "data_type": "boolean",
+              "filter_ui": "toggle",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "limit_switches",
+          "label": "Limit Switches",
+          "parameters": [
+            {
+              "id": "actuator_style",
+              "label": "Actuator Style",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "contact_configuration",
+              "label": "Contact Configuration",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "magnetic_cylinder_switches",
+          "label": "Magnetic Cylinder Switches",
+          "parameters": [
+            {
+              "id": "compatible_cylinder_slot",
+              "label": "Compatible Cylinder Slot",
+              "data_type": "text",
+              "filter_ui": "text_search",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "ultrasonic_sensors",
+          "label": "Ultrasonic Sensors",
+          "parameters": [
+            {
+              "id": "dead_band",
+              "label": "Dead Band",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "process_instrumentation",
+      "label": "Process Instrumentation",
+      "common_parameters": [
+        {
+          "id": "instrument_family",
+          "label": "Instrument Family",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "pressure_transmitters",
+          "label": "Pressure Transmitters",
+          "parameters": [
+            {
+              "id": "pressure_type",
+              "label": "Pressure Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "pressure_range",
+              "label": "Pressure Range",
+              "data_type": "text",
+              "filter_ui": "text_search",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "output_signal",
+              "label": "Output Signal",
+              "data_type": "multienum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "process_connection",
+              "label": "Process Connection",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "accuracy",
+              "label": "Accuracy",
+              "data_type": "number",
+              "unit": "%",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "wetted_material",
+              "label": "Wetted Material",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "pressure_switches",
+          "label": "Pressure Switches",
+          "parameters": [
+            {
+              "id": "switch_type",
+              "label": "Switch Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "temperature_sensors",
+          "label": "Temperature Sensors",
+          "parameters": [
+            {
+              "id": "sensor_type",
+              "label": "Sensor Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "probe_length",
+              "label": "Probe Length",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "temperature_range",
+              "label": "Temperature Range",
+              "data_type": "text",
+              "filter_ui": "text_search",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "temperature_transmitters",
+          "label": "Temperature Transmitters",
+          "parameters": [
+            {
+              "id": "mounting_form",
+              "label": "Mounting Form",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "flow_meters",
+          "label": "Flow Meters",
+          "parameters": [
+            {
+              "id": "flow_meter_type",
+              "label": "Flow Meter Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "flow_range",
+              "label": "Flow Range",
+              "data_type": "text",
+              "filter_ui": "text_search",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "line_size",
+              "label": "Line Size",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "level_sensors",
+          "label": "Level Sensors",
+          "parameters": [
+            {
+              "id": "measurement_principle",
+              "label": "Measurement Principle",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hydraulics",
+      "label": "Hydraulic Components",
+      "common_parameters": [
+        {
+          "id": "hydraulic_family",
+          "label": "Hydraulic Family",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "hydraulic_valves",
+          "label": "Hydraulic Valves",
+          "parameters": [
+            {
+              "id": "valve_type",
+              "label": "Valve Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "max_flow_rate",
+              "label": "Max Flow Rate",
+              "data_type": "number",
+              "unit": "L/min",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "max_pressure",
+              "label": "Max Pressure",
+              "data_type": "number",
+              "unit": "bar",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "port_size",
+              "label": "Port Size",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "spool_type",
+              "label": "Spool Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "hydraulic_manifolds",
+          "label": "Hydraulic Manifolds",
+          "parameters": [
+            {
+              "id": "station_count",
+              "label": "Station Count",
+              "data_type": "number",
+              "filter_ui": "range_slider",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "manifold_material",
+              "label": "Manifold Material",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "hydraulic_cylinders",
+          "label": "Hydraulic Cylinders",
+          "parameters": [
+            {
+              "id": "bore_size",
+              "label": "Bore Size",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "stroke_length",
+              "label": "Stroke Length",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "rod_diameter",
+              "label": "Rod Diameter",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "mounting_style",
+              "label": "Mounting Style",
+              "data_type": "multienum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "rated_pressure",
+              "label": "Rated Pressure",
+              "data_type": "number",
+              "unit": "bar",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "hydraulic_hoses_and_fittings",
+          "label": "Hydraulic Hoses and Fittings",
+          "parameters": [
+            {
+              "id": "hose_id",
+              "label": "Hose Inside Diameter",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "working_pressure",
+              "label": "Working Pressure",
+              "data_type": "number",
+              "unit": "bar",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "hose_standard",
+              "label": "Hose Standard",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "end_connection",
+              "label": "End Connection",
+              "data_type": "multienum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "instrumentation_fittings_and_small_bore_valves",
+      "label": "Instrumentation Fittings and Small Bore Valves",
+      "common_parameters": [
+        {
+          "id": "instrumentation_family",
+          "label": "Instrumentation Family",
+          "data_type": "enum",
+          "filter_ui": "multi_select",
+          "supplier_required": true,
+          "facetable": true
+        }
+      ],
+      "subcategories": [
+        {
+          "id": "tube_fittings",
+          "label": "Tube Fittings",
+          "parameters": [
+            {
+              "id": "tube_od",
+              "label": "Tube Outside Diameter",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "fitting_style",
+              "label": "Fitting Style",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "material",
+              "label": "Material",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "thread_size",
+              "label": "Thread Size",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "thread_standard",
+              "label": "Thread Standard",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "pressure_rating",
+              "label": "Pressure Rating",
+              "data_type": "number",
+              "unit": "bar",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "adapters",
+          "label": "Adapters",
+          "parameters": [
+            {
+              "id": "end_a_connection",
+              "label": "End A Connection",
+              "data_type": "text",
+              "filter_ui": "text_search",
+              "supplier_required": true,
+              "facetable": true
+            },
+            {
+              "id": "end_b_connection",
+              "label": "End B Connection",
+              "data_type": "text",
+              "filter_ui": "text_search",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "needle_valves",
+          "label": "Needle Valves",
+          "parameters": [
+            {
+              "id": "orifice_size",
+              "label": "Orifice Size",
+              "data_type": "number",
+              "unit": "mm",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "panel_mountable",
+              "label": "Panel Mountable",
+              "data_type": "boolean",
+              "filter_ui": "toggle",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "ball_valves",
+          "label": "Ball Valves",
+          "parameters": [
+            {
+              "id": "bore_type",
+              "label": "Bore Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            },
+            {
+              "id": "handle_type",
+              "label": "Handle Type",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "check_valves",
+          "label": "Check Valves",
+          "parameters": [
+            {
+              "id": "cracking_pressure",
+              "label": "Cracking Pressure",
+              "data_type": "number",
+              "unit": "bar",
+              "filter_ui": "min_max",
+              "supplier_required": false,
+              "facetable": true
+            }
+          ]
+        },
+        {
+          "id": "instrument_manifolds",
+          "label": "Instrument Manifolds",
+          "parameters": [
+            {
+              "id": "manifold_way_count",
+              "label": "Manifold Way Count",
+              "data_type": "enum",
+              "filter_ui": "multi_select",
+              "supplier_required": true,
+              "facetable": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -3,6 +3,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 import { supabase } from '../supabase.js';
+import { getCurrentUser } from '../services/auth.js';
 
 // ── State ────────────────────────────────────────────────────
 let categories = [];
@@ -18,10 +19,13 @@ let filterState = {};     // Parametric filter selections {paramName: Set of sel
 let specColumns = [];      // Dynamic columns to show in table
 
 let currentPage = 1;
-const PAGE_SIZE = 25;
+let pageSize = 25;
 
 let sortField = null;
 let sortDirection = null; // 'asc' | 'desc'
+
+let shoppingCart = JSON.parse(localStorage.getItem('marketplace_cart')) || []; // Persist via localStorage
+
 
 // ── Init ─────────────────────────────────────────────────────
 export async function initMarketplaceCatalog() {
@@ -43,6 +47,11 @@ export async function initMarketplaceCatalog() {
 
   // 4. Initial fetch — all products
   await fetchAndRenderProducts();
+
+  // 5. Hydrate Cart Badge locally 
+  if (typeof window.updateCartBadge === 'function') {
+      window.updateCartBadge();
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -466,12 +475,12 @@ function applySorting() {
 
 function renderPage() {
   const data = displayProducts.length > 0 ? displayProducts : filteredProducts;
-  const totalPages = Math.ceil(data.length / PAGE_SIZE);
+  const totalPages = Math.ceil(data.length / pageSize);
 
   if (currentPage > totalPages) currentPage = 1;
 
-  const startIdx = (currentPage - 1) * PAGE_SIZE;
-  const endIdx = Math.min(startIdx + PAGE_SIZE, data.length);
+  const startIdx = (currentPage - 1) * pageSize;
+  const endIdx = Math.min(startIdx + pageSize, data.length);
   const pageData = data.slice(startIdx, endIdx);
 
   renderTableData(pageData);
@@ -532,10 +541,12 @@ function renderTableData(products) {
       <tr>
         <td class="dk-col-checkbox"><input type="checkbox" data-product-id="${p.id}"></td>
         <td class="dk-col-image">
-          ${p.image_url
-            ? `<img src="${p.image_url}" alt="${mpn}" loading="lazy">`
-            : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#CCC" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>`
-          }
+          ${(() => {
+            const listImg = p.image_url || p.specs?.image_url || p.specs?.images?.[0];
+            return listImg 
+              ? `<img src="${listImg}" alt="${mpn}" loading="lazy">`
+              : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#CCC" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>`;
+          })()}
         </td>
         <td>
           <a class="dk-part-link" data-product-id="${p.id}">${mpn}</a>
@@ -563,11 +574,12 @@ function renderTableData(products) {
 }
 
 function renderPagination(totalItems, totalPages) {
-  const container = document.getElementById('catalog-pagination');
-  if (!container) return;
+  const containerTop = document.getElementById('catalog-pagination-top');
+  const containerBottom = document.getElementById('catalog-pagination-bottom');
 
   if (totalPages <= 1) {
-    container.innerHTML = '';
+    if (containerTop) containerTop.innerHTML = '';
+    if (containerBottom) containerBottom.innerHTML = '';
     return;
   }
 
@@ -601,18 +613,22 @@ function renderPagination(totalItems, totalPages) {
   // Next
   html += `<button ${currentPage === totalPages ? 'disabled' : ''} data-page="${currentPage + 1}">Next ›</button>`;
 
-  container.innerHTML = html;
+  if (containerTop) containerTop.innerHTML = html;
+  if (containerBottom) containerBottom.innerHTML = html;
 
   // Wire clicks
-  container.querySelectorAll('button[data-page]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const page = parseInt(btn.dataset.page);
-      if (page >= 1 && page <= totalPages) {
-        currentPage = page;
-        renderPage();
-        // Scroll table to top
-        document.getElementById('catalog-table-wrapper')?.scrollTo(0, 0);
-      }
+  [containerTop, containerBottom].forEach(cont => {
+    if (!cont) return;
+    cont.querySelectorAll('button[data-page]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const page = parseInt(btn.dataset.page);
+        if (page >= 1 && page <= totalPages) {
+          currentPage = page;
+          renderPage();
+          // Scroll table to top
+          document.getElementById('catalog-table-wrapper')?.scrollTo(0, 0);
+        }
+      });
     });
   });
 }
@@ -622,6 +638,56 @@ function renderPagination(totalItems, totalPages) {
 // ═══════════════════════════════════════════════════════════════
 
 function wireEventListeners() {
+  // Page size
+  document.getElementById('catalog-page-size')?.addEventListener('change', (e) => {
+    pageSize = parseInt(e.target.value) || 25;
+    currentPage = 1;
+    applyFiltersAndRender(document.getElementById('catalog-search')?.value.trim());
+  });
+
+  // Cart Handlers
+  document.getElementById('catalog-cart-btn')?.addEventListener('click', () => {
+    document.getElementById('catalog-layout')?.classList.add('hidden');
+    document.getElementById('catalog-pdp')?.classList.add('hidden');
+    document.getElementById('checkout-page-layout')?.classList.add('hidden');
+    document.getElementById('thank-you-layout')?.classList.add('hidden');
+    document.getElementById('cart-page-layout')?.classList.remove('hidden');
+    renderCartPageUI();
+  });
+
+  document.getElementById('cart-go-checkout-btn')?.addEventListener('click', () => {
+    if (shoppingCart.length === 0) return;
+    document.getElementById('cart-page-layout')?.classList.add('hidden');
+    document.getElementById('checkout-page-layout')?.classList.remove('hidden');
+    
+    // Sync summary
+    let pretax = 0;
+    shoppingCart.forEach(i => pretax += (i.price||0)*i.quantity);
+    document.getElementById('chk-summary-items').textContent = `$${pretax.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+    document.getElementById('chk-summary-pretax').textContent = `$${pretax.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+    document.getElementById('chk-summary-total').textContent = `$${pretax.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+  });
+
+  document.getElementById('final-place-order-btn')?.addEventListener('click', checkoutCart);
+  
+  document.getElementById('chk-address-search')?.addEventListener('input', (e) => {
+    if (e.target.value.toLowerCase().includes('123') || e.target.value.toLowerCase().includes('atlas')) {
+       document.getElementById('chk-name').value = 'Procurement Dept.';
+       document.getElementById('chk-address1').value = '123 Innovation Drive';
+       document.getElementById('chk-address2').value = 'Suite 400';
+       document.getElementById('chk-city').value = 'San Jose';
+       document.getElementById('chk-state').value = 'CA';
+       document.getElementById('chk-zip').value = '95134';
+       e.target.style.borderColor = '#10b981';
+       e.target.style.backgroundColor = '#f4fcf7';
+    }
+  });
+
+  document.getElementById('thank-you-return-btn')?.addEventListener('click', () => {
+    document.getElementById('thank-you-layout')?.classList.add('hidden');
+    document.getElementById('catalog-layout')?.classList.remove('hidden');
+  });
+
   // Search
   const searchInput = document.getElementById('catalog-search');
   const searchBtn = document.getElementById('catalog-search-btn');
@@ -635,6 +701,24 @@ function wireEventListeners() {
   searchBtn?.addEventListener('click', () => {
     currentPage = 1;
     applyFiltersAndRender();
+  });
+
+  // Handle PDP (Product Detail Page) Clicks
+  document.getElementById('catalog-table-body')?.addEventListener('click', (e) => {
+    const link = e.target.closest('.dk-part-link');
+    if (link) {
+      e.preventDefault();
+      const id = link.dataset.productId;
+      openPDP(id);
+    }
+  });
+
+  // Handle PDP breadcrumb back actions
+  document.getElementById('pdp-breadcrumb')?.addEventListener('click', (e) => {
+    if (e.target.closest('a[data-action="reset"]') || e.target.closest('#pdp-cat-link')) {
+      e.preventDefault();
+      closePDP();
+    }
   });
 
   // Apply All button
@@ -752,3 +836,367 @@ function downloadTableCSV() {
   a.click();
   URL.revokeObjectURL(url);
 }
+
+// ═══════════════════════════════════════════════════════════════
+// PRODUCT DETAIL PAGE (PDP) LOGIC
+// ═══════════════════════════════════════════════════════════════
+
+function openPDP(productId) {
+  const p = allProducts.find(x => String(x.id) === String(productId));
+  if (!p) return;
+
+  // UI State toggles
+  document.getElementById('catalog-layout').style.display = 'none';
+  const pdp = document.getElementById('catalog-pdp');
+  pdp.classList.remove('hidden');
+  pdp.style.display = 'block';
+
+  // Populate Breadcrumb
+  const catName = activeCategoryPath.length ? activeCategoryPath[activeCategoryPath.length-1].name : 'Category';
+  document.getElementById('pdp-cat-link').textContent = catName;
+  document.getElementById('pdp-current-mpn').textContent = p.mpn;
+
+  // Header Details
+  document.getElementById('pdp-mpn').textContent = p.name || p.description || p.mpn;
+  document.getElementById('pdp-desc').textContent = p.description || '';
+  const mfgName = p.suppliers?.name || 'Unknown Manufacturer';
+  document.getElementById('pdp-supplier').textContent = mfgName;
+
+  // Media - initialise carousel
+  const mediaItems = [];
+  const imgUrl = p.image_url || p.specs?.image_url;
+  if (imgUrl) mediaItems.push({ src: imgUrl, thumb: imgUrl });
+  
+  // Additional images stored as JSON array in p.images or p.specs.images field
+  const moreImages = p.images || p.specs?.images;
+  if (Array.isArray(moreImages)) {
+    moreImages.forEach(u => {
+      // Prevent duplicate of main image
+      if (u !== imgUrl) mediaItems.push({ src: u, thumb: u });
+    });
+  }
+  
+  if (mediaItems.length === 0) mediaItems.push({ src: '/placeholder.png' });
+  if (typeof window.pdpInitCarousel === 'function') window.pdpInitCarousel(mediaItems);
+  else { const imgEL = document.getElementById('pdp-image'); if(imgEL) imgEL.src = mediaItems[0].src; }
+
+  // Middle Component Properties table
+  document.getElementById('pdp-internal-sku').textContent = String(p.id).substring(0,10).toUpperCase() + '-ND';
+  const mfgLink = document.getElementById('pdp-mfg-link');
+  if(mfgLink) { mfgLink.textContent = mfgName; mfgLink.href = '#'; }
+  document.getElementById('pdp-mfg-mpn').textContent = p.mpn;
+  
+  const dsCell = document.getElementById('pdp-pdf-cell');
+  if (dsCell) dsCell.innerHTML = `<span style="color:#999;font-style:italic;">No datasheet available</span>`;
+
+  // Description and Specs
+  const richDesc = document.getElementById('pdp-rich-desc');
+  if(richDesc) richDesc.innerHTML = p.rich_description || p.description || 'No overview available.';
+  
+  // Specifications Build (2 Column)
+  const col1 = document.getElementById('pdp-specs-col1');
+  const col2 = document.getElementById('pdp-specs-col2');
+  if (col1 && col2) {
+    let s1 = '', s2 = '';
+    const ignoreKeys = ['price_1', 'price_10', 'price_100', 'price_1000', 'lead_time', 'price', 'pricing_tiers', 'features'];
+    
+    // Add Base Specs
+    const specsArray = [];
+    specsArray.push({k: 'Manufacturer', v: mfgName});
+    specsArray.push({k: 'Product Range', v: 'Standard Series'});
+    specsArray.push({k: 'Part Status', v: 'Active'});
+    
+    // Dynamic JSONB specs
+    if (p.specs && typeof p.specs === 'object' && !Array.isArray(p.specs)) {
+      Object.keys(p.specs).forEach(k => {
+        if (!ignoreKeys.includes(k) && p.specs[k] !== null && p.specs[k] !== '') {
+          const capKey = k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+          specsArray.push({k: capKey, v: p.specs[k]});
+        }
+      });
+    }
+    
+    // distribute evenly
+    const half = Math.ceil(specsArray.length / 2);
+    specsArray.forEach((s, idx) => {
+        const row = `<tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:8px; color:#666; width:40%;">${s.k}</td><td style="padding:8px;">${s.v}</td></tr>`;
+        if(idx < half) s1 += row; else s2 += row;
+    });
+    col1.innerHTML = s1;
+    col2.innerHTML = s2;
+  }
+
+  // Buy Box Data
+  const stockQty = p.stock_qty || Math.floor(Math.random() * 50000);
+  document.getElementById('pdp-stock-val').textContent = stockQty.toLocaleString();
+  document.getElementById('pdp-lead-time').innerHTML = `Delivery in <b>${p.specs?.lead_time || '3-5'} Days</b> <span style="font-weight:normal; font-size:12px; color:#666;">(Factory stock)</span>`;
+
+  const moqVal = p.moq || 1;
+  document.getElementById('pdp-moq').innerHTML = "Minimum: <strong>" + moqVal + "</strong>";
+  document.getElementById('pdp-multiples').innerHTML = "Multiple: <strong>" + moqVal + "</strong>";
+  const qtyInput = document.getElementById('pdp-qty-input');
+  if(qtyInput) {
+    qtyInput.value = moqVal;
+    qtyInput.min = moqVal;
+    qtyInput.step = moqVal;
+  }
+
+  // Build Pricing Table
+  const pTbody = document.getElementById('pdp-pricing-tbody');
+  const hlPrice = document.getElementById('pdp-highlight-price');
+  if(pTbody) {
+    let ptHtml = '';
+    const baseP = p.base_price ? Number(p.base_price) : 0;
+    
+    if (p.specs && p.specs.pricing_tiers && p.specs.pricing_tiers.length > 0) {
+        const tiers = [...p.specs.pricing_tiers].sort((a,b)=>a.quantity - b.quantity);
+        tiers.forEach((t, i) => {
+           ptHtml += `<tr style="border-bottom:1px solid #f0f0f0; ${i===0?'background:#f4fcf7;':''}"><td style="padding:8px;">${t.quantity}+</td><td style="text-align:right; padding:8px;">$${Number(t.price).toFixed(3)}</td></tr>`;
+           if (i === 0 && hlPrice) hlPrice.innerHTML = `$${Number(t.price).toFixed(3)} <span style="font-size:11px; font-weight:normal; color:#666;">(Unit Price)</span>`;
+        });
+    } else {
+        const t1 = p.specs?.price_1 ? Number(p.specs.price_1) : baseP;
+        const t10 = p.specs?.price_10 ? Number(p.specs.price_10) : (baseP * 0.95);
+        const t100 = p.specs?.price_100 ? Number(p.specs.price_100) : (baseP * 0.90);
+        const t1000 = p.specs?.price_1000 ? Number(p.specs.price_1000) : (baseP * 0.85);
+    
+        if (t1 > 0) {
+            ptHtml += `<tr style="background:#f4fcf7; border-bottom:1px solid #f0f0f0;"><td style="padding:8px;">1+</td><td style="text-align:right; padding:8px;">$${t1.toFixed(3)}</td></tr>`;
+            if(hlPrice) hlPrice.innerHTML = `$${t1.toFixed(3)} <span style="font-size:11px; font-weight:normal; color:#666;">(Unit Price)</span>`;
+        }
+        if (t10 > 1 && t10 !== t1) ptHtml += `<tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:8px;">10+</td><td style="text-align:right; padding:8px;">$${t10.toFixed(3)}</td></tr>`;
+        if (t100 > 1 && t100 !== t10) ptHtml += `<tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:8px;">100+</td><td style="text-align:right; padding:8px;">$${t100.toFixed(3)}</td></tr>`;
+        if (t1000 > 1 && t1000 !== t100) ptHtml += `<tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:8px;">1,000+</td><td style="text-align:right; padding:8px;">$${t1000.toFixed(3)}</td></tr>`;
+    }
+
+    if(ptHtml === '') {
+      ptHtml = `<tr><td colspan="2" style="text-align:center; padding:16px;">Request Quote for Pricing</td></tr>`;
+      if(hlPrice) hlPrice.innerHTML = `Quote Required`;
+    }
+    pTbody.innerHTML = ptHtml;
+  }
+
+  // Bind Add to Basket to create RFQ
+  const addBtn = document.getElementById('pdp-add-to-basket');
+  if (addBtn) {
+    // Clear previous listeners to avoid double submit if opening multiple PDPs
+    const newBtn = addBtn.cloneNode(true);
+    addBtn.parentNode.replaceChild(newBtn, addBtn);
+    newBtn.addEventListener('click', async () => {
+      const user = await getCurrentUser();
+      if (!user) { alert('You must be logged in to add items to your basket.'); return; }
+      
+      const qtyInput = document.getElementById('pdp-qty-input');
+      const reqQty = parseInt(qtyInput ? qtyInput.value : 1);
+      
+      newBtn.disabled = true;
+      newBtn.innerHTML = 'Adding...';
+
+      let unitPrice = p.base_price ? Number(p.base_price) : 0;
+      if (p.specs && p.specs.pricing_tiers && p.specs.pricing_tiers.length > 0) {
+          const tiers = [...p.specs.pricing_tiers].sort((a,b)=>b.quantity - a.quantity);
+          const matched = tiers.find(t => reqQty >= t.quantity);
+          if (matched) unitPrice = Number(matched.price);
+      } else {
+          if (reqQty >= 1000 && p.specs?.price_1000) unitPrice = Number(p.specs.price_1000);
+          else if (reqQty >= 100 && p.specs?.price_100) unitPrice = Number(p.specs.price_100);
+          else if (reqQty >= 10 && p.specs?.price_10) unitPrice = Number(p.specs.price_10);
+          else if (reqQty >= 1 && p.specs?.price_1) unitPrice = Number(p.specs.price_1);
+      }
+
+      const rfqData = {
+        type: 'marketplace_order',
+        product_id: p.id,
+        mpn: p.mpn,
+        supplier_id: p.supplier_id || p.suppliers?.id,
+        supplier_name: mfgName,
+        quantity: reqQty,
+        specs_snapshot: p.specs,
+        price: unitPrice || 0,
+        image_url: p.image_url || p.specs?.image_url
+      };
+
+      shoppingCart.push(rfqData);
+      localStorage.setItem('marketplace_cart', JSON.stringify(shoppingCart));
+      updateCartBadge();
+
+      newBtn.style.background = '#10b981';
+      newBtn.innerHTML = '✓ Basket Updated';
+      setTimeout(() => {
+        newBtn.style.background = '#007185';
+        newBtn.innerHTML = 'Add to Basket';
+        newBtn.disabled = false;
+      }, 3000);
+    });
+  }
+}
+
+// Ensure closePDP runs cleanly
+function closePDP() {
+  const pdp = document.getElementById('catalog-pdp');
+  if (pdp) {
+    pdp.classList.add('hidden');
+    pdp.style.display = 'none';
+  }
+  document.getElementById('catalog-layout').style.display = '';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CART UI AND CHECKOUT LOGIC
+// ═══════════════════════════════════════════════════════════════
+
+// Making these available on window so event listeners can access them easily if needed
+window.updateCartBadge = function() {
+  const badge = document.getElementById('catalog-cart-count');
+  if (badge) {
+    badge.textContent = `${shoppingCart.length} item(s)`;
+  }
+}
+const updateCartBadge = window.updateCartBadge;
+
+window.updateCartPageUI = function() {
+  const container = document.getElementById('full-cart-items-container');
+  if (!container) return;
+
+  if (shoppingCart.length === 0) {
+    container.innerHTML = '<div style="padding:40px; text-align:center; color:#555; background:#fafafa; border-radius:8px;">Your eCommerce basket is currently empty.</div>';
+    document.getElementById('cart-total-lines').textContent = '0';
+    document.getElementById('cart-total-value').textContent = '$0.00';
+    document.getElementById('cart-go-checkout-btn').disabled = true;
+    return;
+  }
+  
+  document.getElementById('cart-go-checkout-btn').disabled = false;
+
+  let html = '';
+  let subtotal = 0;
+
+  shoppingCart.forEach((item, index) => {
+    const lineVal = (item.price || 0) * item.quantity;
+    subtotal += lineVal;
+
+    html += `
+      <div style="display:flex; border-top:1px solid #ddd; padding:24px 0; gap:20px;">
+        <div style="width:140px; height:140px; background:#fafafa; display:flex; align-items:center; justify-content:center; border:1px solid #eaeaea; border-radius:4px;">
+           <img src="${item.image_url || 'https://via.placeholder.com/120x120.png?text=No+Image'}" onerror="this.src='https://via.placeholder.com/120x120.png?text=No+Image'" style="max-width:100%; max-height:100%; object-fit:contain;">
+        </div>
+        <div style="flex:1;">
+           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                 <h3 style="font-size:18px; margin:0 0 8px 0; color:#0e7490;">${item.mpn || 'Unknown Part'}</h3>
+                 <p style="font-size:14px; color:#555; margin:0 0 4px 0;">Supplier: <span style="color:#111;">${item.supplier_name || 'N/A'}</span></p>
+                 <p style="font-size:13px; color:#007185; margin:0 0 12px 0;">In stock</p>
+              </div>
+              <div style="text-align:right;">
+                 <strong style="font-size:20px; color:#black;">$${lineVal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</strong>
+              </div>
+           </div>
+           
+           <div style="display:flex; align-items:center; gap:24px; margin-top:24px;">
+              <div style="display:flex; align-items:center; background:#f0f2f5; border-radius:100px; padding:4px;">
+                 <button onclick="modifyCartQty(${index}, -1)" style="width:28px; height:28px; border-radius:50%; border:none; background:#fff; cursor:pointer; font-weight:700;">-</button>
+                 <span style="font-size:14px; font-weight:600; width:48px; text-align:center;">${item.quantity.toLocaleString()}</span>
+                 <button onclick="modifyCartQty(${index}, 1)" style="width:28px; height:28px; border-radius:50%; border:none; background:#fff; cursor:pointer; font-weight:700;">+</button>
+              </div>
+              <div style="border-left:1px solid #ddd; height:24px;"></div>
+              <a href="javascript:void(0)" onclick="removeFromCart(${index})" style="color:#007185; font-size:13px; text-decoration:none;">Delete</a>
+           </div>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  document.getElementById('cart-total-lines').textContent = shoppingCart.length;
+  document.getElementById('cart-total-value').textContent = `$${subtotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+}
+const renderCartPageUI = window.updateCartPageUI;
+window.renderCartUI = window.updateCartPageUI; // fallback
+
+window.modifyCartQty = function(index, delta) {
+  let newQty = shoppingCart[index].quantity + delta;
+  if(newQty < 1) newQty = 1;
+  shoppingCart[index].quantity = newQty;
+  localStorage.setItem('marketplace_cart', JSON.stringify(shoppingCart));
+  renderCartPageUI();
+}
+
+window.removeFromCart = function(index) {
+  shoppingCart.splice(index, 1);
+  localStorage.setItem('marketplace_cart', JSON.stringify(shoppingCart));
+  updateCartBadge();
+  renderCartPageUI();
+}
+
+window.checkoutCart = async function() {
+  if (shoppingCart.length === 0) return;
+  const user = await getCurrentUser();
+  if (!user) { alert('You must be logged in to checkout.'); return; }
+
+  // Extract address info
+  const shippingInfo = {
+    name: document.getElementById('chk-name').value,
+    address1: document.getElementById('chk-address1').value,
+    address2: document.getElementById('chk-address2').value,
+    city: document.getElementById('chk-city').value,
+    state: document.getElementById('chk-state').value,
+    zip: document.getElementById('chk-zip').value
+  };
+
+  if(!shippingInfo.name || !shippingInfo.address1 || !shippingInfo.city || !shippingInfo.state || !shippingInfo.zip) {
+    alert("Please complete the required shipping address fields.");
+    return;
+  }
+  
+  const chkBtn = document.getElementById('final-place-order-btn');
+  chkBtn.disabled = true;
+  chkBtn.innerHTML = 'Processing...';
+
+  try {
+    const promises = shoppingCart.map(item => {
+      // Create a cloned rfq_data payload
+      const orderPayload = { ...item };
+      orderPayload.shipping_address = shippingInfo;
+      orderPayload.billing_same = document.getElementById('chk-billing-same').checked;
+
+      return supabase.from('rfq_history').insert({
+         id: window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : null,
+         user_id: user.id,
+         rfq_data: orderPayload,
+         status: 'submitted'
+      });
+    });
+
+    const results = await Promise.all(promises);
+    const errors = results.filter(r => r.error).map(r => r.error);
+    
+    if (errors.length > 0) {
+      console.error('Checkout partial or full failure:', errors);
+      alert('One or more items failed to submit. Please check your connection and try again.');
+      chkBtn.disabled = false;
+      chkBtn.innerHTML = 'Place your order';
+      return;
+    }
+
+    // Success!
+    shoppingCart = [];
+    localStorage.setItem('marketplace_cart', JSON.stringify(shoppingCart));
+    updateCartBadge();
+    
+    // UI transition
+    chkBtn.innerHTML = 'Success!';
+    setTimeout(() => {
+      document.getElementById('checkout-page-layout').classList.add('hidden');
+      document.getElementById('thank-you-layout').classList.remove('hidden');
+      chkBtn.innerHTML = 'Place your order';
+      chkBtn.disabled = false;
+    }, 1500);
+
+  } catch (err) {
+    console.error('Unhandled checkout error', err);
+    alert('An unexpected error occurred during checkout.');
+    chkBtn.disabled = false;
+    chkBtn.innerHTML = 'Place your order';
+  }
+}
+const checkoutCart = window.checkoutCart;

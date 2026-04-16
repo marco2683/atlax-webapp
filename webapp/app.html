@@ -8,6 +8,9 @@
   <meta name="description"
     content="Discover, vet, and manage manufacturing suppliers through an interactive 3D globe. Build supply chains for hardware products with Atlas DT sourcing intelligence." />
   <link rel="icon" type="image/svg+xml" href="/prd-favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     /* Force scrollability for the manufacturing engine */
     html,
@@ -141,12 +144,10 @@
       <ul class="navbar__menu" id="navbar-menu">
         <li class="navbar__menu-item" data-view="home"><a href="index.html"
             style="color: inherit; text-decoration: none;">Home</a></li>
-        <li class="navbar__menu-item navbar__menu-item--active" data-view="catalog">Component Catalog</li>
-        <li class="navbar__menu-item" data-view="suppliers">Supply Chain</li>
+        <li class="navbar__menu-item navbar__menu-item--active" data-view="suppliers">Supply Chain</li>
         <li class="navbar__menu-item" data-view="project-quote">Project Quote</li>
         <li class="navbar__menu-item" data-view="rfq">Instant Quote</li>
-        <li class="navbar__menu-item" data-view="taxonomy" style="display: none;">Knowledge Base</li>
-        <li class="navbar__menu-item" data-view="designers">Jobs</li>
+        <li class="navbar__menu-item" data-view="catalog">OEM Marketplace</li>
         <li class="navbar__menu-item" data-view="tariff">HS Tariff Optimizer</li>
       </ul>
 
@@ -1259,7 +1260,10 @@
             <!-- ── Header Row: Mode Selector + Title ───────── -->
             <div class="rfq-engine__header">
               <h2>Instant Quote Engine</h2>
-              <p style="margin: 4px 0 0; font-size: 13px; color: rgba(255,255,255,0.45); font-weight: 400; letter-spacing: 0.01em;">Get instant pricing for individual parts and components — upload your CAD file, configure specs, and receive a quote in seconds</p>
+              <p
+                style="margin: 4px 0 0; font-size: 13px; color: rgba(255,255,255,0.45); font-weight: 400; letter-spacing: 0.01em;">
+                Get instant pricing for individual parts and components — upload your CAD file, configure specs, and
+                receive a quote in seconds</p>
             </div>
             <div class="rfq-engine__header-row" style="display: none;">
               <div class="rfq-mode-selector" id="rfq-mode-selector">
@@ -1786,7 +1790,10 @@
         <div class="rfq-engine__card">
           <div class="rfq-engine__header">
             <h2>Project Quote</h2>
-            <p style="margin: 4px 0 0; font-size: 13px; color: rgba(255,255,255,0.45); font-weight: 400; letter-spacing: 0.01em;">For complex assemblies, box builds, and multi-part projects — upload your full project package and our engineering team will prepare a detailed quote</p>
+            <p
+              style="margin: 4px 0 0; font-size: 13px; color: rgba(255,255,255,0.45); font-weight: 400; letter-spacing: 0.01em;">
+              For complex assemblies, box builds, and multi-part projects — upload your full project package and our
+              engineering team will prepare a detailed quote</p>
           </div>
 
           <!-- Bulk Upload Panel — always visible here -->
@@ -2091,8 +2098,53 @@
   <!-- ═══════════════════════════════════════════════════
        COMPONENT CATALOG STOREFRONT — DigiKey Clone
        ═══════════════════════════════════════════════════ -->
-  <section class="catalog-engine hidden" id="catalog-engine" style="position:fixed; top:56px; left:0; width:100vw; height:calc(100vh - 56px); z-index:90;">
-    <div class="dk-layout">
+  <section class="catalog-engine hidden" id="catalog-engine"
+    style="position:fixed; top:56px; left:0; width:100vw; height:calc(100vh - 56px); z-index:90; background:#FFF; display:flex; flex-direction:column;">
+
+    <!-- DigiKey Style Global Header -->
+    <header class="dk-global-header" style="flex-shrink:0;">
+      <div class="dk-gh-top">
+        <div class="dk-gh-logo" style="flex-direction:column; align-items:flex-start; gap:2px;">
+          <span style="font-family:'Outfit',sans-serif; font-weight:800; color:var(--dk-accent, #0e7490); font-size:28px; letter-spacing:-0.5px; line-height:1;">OEM Marketplace</span>
+          <span style="font-family:'Outfit',sans-serif; color:#888; font-size:11px; font-weight:400; letter-spacing:0.8px; text-transform:uppercase;">Competitive Quality OEM Products</span>
+        </div>
+        <div class="dk-gh-search-container">
+          <div class="dk-gh-search-box">
+            <input type="text" placeholder="Enter keyword or part #">
+            <button class="dk-gh-search-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </button>
+          </div>
+          <div class="dk-gh-links">
+            <a href="#">Products ▼</a>
+            <a href="#">Manufacturers ▼</a>
+            <a href="#">Resources ▼</a>
+            <a href="#">Request a Quote</a>
+          </div>
+        </div>
+        <div class="dk-gh-actions">
+          <div class="dk-gh-login" id="catalog-auth-btn" onclick="document.getElementById('auth-modal')?.classList.remove('hidden'); document.getElementById('auth-tab-login')?.click();" style="cursor:pointer;">
+            <span id="catalog-auth-label">Login or<br><strong>REGISTER</strong> ▼</span>
+          </div>
+          <div class="dk-gh-cart" id="catalog-cart-btn" style="cursor:pointer; position:relative;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
+            <span id="catalog-cart-count">0 item(s)</span>
+          </div>
+        </div>
+      </div>
+      <div class="dk-gh-banner">
+        ATTENTION: Due to high order volume, orders may require up to 3 additional business days to process.
+      </div>
+    </header>
+
+    <div class="dk-layout" id="catalog-layout" style="flex:1; overflow:hidden;">
 
       <!-- Category Sidebar -->
       <aside class="dk-sidebar" id="catalog-sidebar">
@@ -2117,7 +2169,11 @@
             <div class="dk-search-within">
               <label>Search Within</label>
               <input type="text" id="catalog-search" placeholder="Enter keyword or part #">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" style="cursor:pointer;" id="catalog-search-btn"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"
+                style="cursor:pointer;" id="catalog-search-btn">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
             </div>
             <div class="dk-results-count" id="catalog-results-count">
               Results: <strong id="catalog-total-count">0</strong>
@@ -2136,7 +2192,7 @@
         <div class="dk-filters-section" id="catalog-filters-section">
           <div class="dk-filters-grid" id="catalog-filters-grid">
             <!-- Dynamically generated filter columns -->
-            <div style="padding:20px; color:#999; font-size:12px; text-align:center; width:100%;">
+            <div style="padding:10px; color:#999; font-size:12px; text-align:center; width:100%;">
               Select a category from the sidebar to load parametric filters.
             </div>
           </div>
@@ -2147,13 +2203,15 @@
           <div class="dk-bottom-filter-group">
             <div class="dk-bottom-filter-title">Stocking Options</div>
             <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-in-stock"> In Stock</label>
-            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-normally-stocking"> Normally Stocking</label>
+            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-normally-stocking"> Normally
+              Stocking</label>
             <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-new-product"> New Product</label>
           </div>
           <div class="dk-bottom-filter-group">
             <div class="dk-bottom-filter-title">Environmental Options</div>
             <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-rohs"> RoHS Compliant</label>
-            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-non-rohs"> Non-RoHS Compliant</label>
+            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-non-rohs"> Non-RoHS
+              Compliant</label>
           </div>
           <div class="dk-bottom-filter-group">
             <div class="dk-bottom-filter-title">Media</div>
@@ -2163,7 +2221,8 @@
           </div>
           <div class="dk-bottom-filter-group">
             <div class="dk-bottom-filter-title">Exclude</div>
-            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-exclude-marketplace"> Marketplace Products</label>
+            <label class="dk-bottom-filter-option"><input type="checkbox" id="filter-exclude-marketplace"> Marketplace
+              Products</label>
           </div>
           <div class="dk-apply-section">
             <button class="dk-apply-btn" id="catalog-apply-filters">Apply All</button>
@@ -2173,8 +2232,16 @@
 
         <!-- Pagination / Sort / Download Bar -->
         <div class="dk-table-controls" id="catalog-table-controls">
-          <div class="dk-table-controls-left">
+          <div class="dk-table-controls-left" style="align-items: center;">
             <span class="dk-showing-text" id="catalog-showing-text">Showing 0 of 0</span>
+            <div class="dk-sort-by">
+              <label>Show</label>
+              <select id="catalog-page-size">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select>
+            </div>
             <div class="dk-sort-by">
               <label>Sort By</label>
               <select id="catalog-sort-select">
@@ -2187,6 +2254,11 @@
               </select>
             </div>
           </div>
+          
+          <div class="dk-pagination" id="catalog-pagination-top" style="display:flex; gap:4px; align-items:center;">
+             <!-- Top Pagination buttons injected by JS -->
+          </div>
+          
           <button class="dk-download-btn" id="catalog-download-btn">Download Table</button>
         </div>
 
@@ -2197,10 +2269,14 @@
               <tr id="catalog-table-head">
                 <th class="dk-col-checkbox"><input type="checkbox" id="catalog-select-all"></th>
                 <th class="dk-col-image"></th>
-                <th data-sort="mpn">Mfr Part # <span class="dk-sort-arrows"><span class="sort-up">▲</span><span class="sort-down">▼</span></span></th>
-                <th data-sort="stock">Quantity Available <span class="dk-sort-arrows"><span class="sort-up">▲</span><span class="sort-down">▼</span></span></th>
-                <th data-sort="price">Price <span class="dk-sort-arrows"><span class="sort-up">▲</span><span class="sort-down">▼</span></span></th>
-                <th data-sort="supplier">Supplier <span class="dk-sort-arrows"><span class="sort-up">▲</span><span class="sort-down">▼</span></span></th>
+                <th data-sort="mpn">Mfr Part # <span class="dk-sort-arrows"><span class="sort-up">▲</span><span
+                      class="sort-down">▼</span></span></th>
+                <th data-sort="stock">Quantity Available <span class="dk-sort-arrows"><span
+                      class="sort-up">▲</span><span class="sort-down">▼</span></span></th>
+                <th data-sort="price">Price <span class="dk-sort-arrows"><span class="sort-up">▲</span><span
+                      class="sort-down">▼</span></span></th>
+                <th data-sort="supplier">Supplier <span class="dk-sort-arrows"><span class="sort-up">▲</span><span
+                      class="sort-down">▼</span></span></th>
                 <th>Product Status</th>
                 <!-- Dynamic spec columns injected by JS -->
               </tr>
@@ -2224,13 +2300,549 @@
         <!-- Bottom Pagination -->
         <div class="dk-table-controls" id="catalog-bottom-controls">
           <span class="dk-showing-text" id="catalog-bottom-showing">Showing 0 of 0</span>
-          <div class="dk-pagination" id="catalog-pagination">
-            <!-- Pagination buttons injected by JS -->
+          <div class="dk-pagination" id="catalog-pagination-bottom" style="display:flex; gap:4px; align-items:center;">
+            <!-- Bottom Pagination buttons injected by JS -->
           </div>
+        </div>
+
+        <!-- Advertisement / Promo Banner Section -->
+        <div class="dk-promo-section" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #E2E8F0; display:flex; gap: 20px; flex-shrink: 0; margin-bottom: 32px;">
+           <div class="dk-promo-card" style="flex:1; background: linear-gradient(135deg, #0e7490, #0369a1); border-radius: 8px; padding: 24px; color: #FFF; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
+              <h3 style="margin:0 0 8px 0; font-size:18px; font-weight:700;">Accelerate Your Prototyping</h3>
+              <p style="margin:0 0 16px 0; font-size:14px; opacity:0.9;">Get next-day shipping on select Micro-OLED and sensor modules.</p>
+              <button style="background:#FFF; color:#0e7490; border:none; padding:8px 16px; border-radius:4px; font-weight:600; cursor:pointer;">Shop In-Stock</button>
+           </div>
+           <div class="dk-promo-card" style="flex:1; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 24px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
+              <span style="font-size:11px; text-transform:uppercase; font-weight:700; color:#64748b; margin-bottom:4px;">Sponsored Content</span>
+              <h3 style="margin:0 0 8px 0; font-size:18px; font-weight:700; color:#0F172A;">Design with SST Precision</h3>
+              <p style="margin:0 0 16px 0; font-size:14px; color:#475569;">Explore the latest optical engine development kits featured by SST Sensing.</p>
+              <button style="background:transparent; color:#2563eb; border:1px solid #2563eb; padding:8px 16px; border-radius:4px; font-weight:600; cursor:pointer;">Learn More</button>
+           </div>
+        </div>
+
         </div>
 
       </div>
     </div>
+  </div>
+
+      <!-- Product Detail Page (PDP) Overlay -->
+      <div id="catalog-pdp" class="element14-pdp-overlay hidden">
+        <div class="element14-pdp-container" style="padding: 24px 2.5vw; box-sizing:border-box; width:100%;">
+          
+          <!-- Breadcrumb -->
+          <div id="pdp-breadcrumb" style="display:flex; justify-content:space-between; align-items:center; padding:16px 0; font-size:12px; color:#007185;">
+            <div>
+              <a data-action="reset" style="cursor:pointer; color:#007185; font-weight:600;">Home</a> <span style="margin:0 8px; color:#666;">/</span>
+              <a id="pdp-cat-link" style="cursor:pointer; color:#007185; font-weight:600;">Category</a> <span style="margin:0 8px; color:#666;">/</span>
+              <strong style="color:#111;" id="pdp-current-mpn"></strong>
+            </div>
+            <div style="cursor:pointer; display:flex; align-items:center; gap:4px; font-weight:600;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg> Print Page
+            </div>
+          </div>
+
+          <!-- Title Bar -->
+          <div style="margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--amz-border);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+              <div>
+                 <h1 id="pdp-mpn" style="font-size:28px; font-weight:700; margin:0 0 4px 0; color:#111;"></h1>
+                 <div id="pdp-desc" style="font-size:14px; color:#565959; font-weight:500;"></div>
+              </div>
+              <div id="pdp-supplier" style="font-weight:700; color:#007185; font-size:16px;"></div>
+            </div>
+          </div>
+
+          <!-- Top Grid 3-Columns -->
+          <div style="display:grid; grid-template-columns: 2.5fr 3fr 2.5fr; gap:32px; margin-bottom:48px;">
+            
+            <!-- Left: Image & Media -->
+            <div>
+              <label style="font-size:12px; font-weight:700; color:#111; margin-bottom:10px; display:block; text-transform:uppercase; border-bottom:2px solid #e0e0e0; padding-bottom:6px;">Media &amp; Documents</label>
+              
+              <!-- Image Carousel -->
+              <div id="pdp-carousel" style="border:1px solid #ccc; border-radius:6px; overflow:hidden; background:#fff; box-shadow:0 1px 6px rgba(0,0,0,0.07); margin-bottom:12px;">
+                <!-- Main view -->
+                <div id="pdp-carousel-main" style="aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; background:#fafafa; position:relative; overflow:hidden;">
+                  <img id="pdp-image" src="/placeholder.png" style="width:100%; height:100%; object-fit:contain;" alt="Product Image">
+                  <!-- Prev/Next arrows (shown only when >1 image) -->
+                  <button id="pdp-carousel-prev" onclick="pdpCarouselStep(-1)" style="display:none; position:absolute; left:8px; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.9); border:1px solid #ddd; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:16px; line-height:1;">‹</button>
+                  <button id="pdp-carousel-next" onclick="pdpCarouselStep(1)" style="display:none; position:absolute; right:8px; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.9); border:1px solid #ddd; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:16px; line-height:1;">›</button>
+                </div>
+                <!-- Thumbnails strip (hidden until multiple media) -->
+                <div id="pdp-carousel-thumbs" style="display:none; gap:6px; padding:8px; border-top:1px solid #eee; background:#f9f9f9; overflow-x:auto;"></div>
+                <div style="font-size:10px; color:#999; text-align:center; padding:6px;">
+                  Image is for illustrative purposes only.
+                </div>
+              </div>
+
+              <!-- Extra Media Links -->
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                 <a href="#" style="display:flex; justify-content:space-between; align-items:center; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; background:#fafafa; text-decoration:none;">
+                    <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> 3D Model (STEP)</div>
+                    <span style="color:#007185; font-size:12px; font-weight:700;">Download</span>
+                 </a>
+                 <a href="#" style="display:flex; justify-content:space-between; align-items:center; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; background:#fafafa; text-decoration:none;">
+                    <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> 2D Drawing (PDF)</div>
+                    <span style="color:#007185; font-size:12px; font-weight:700;">Download</span>
+                 </a>
+                 <a href="#" style="display:flex; justify-content:space-between; align-items:center; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; background:#fafafa; text-decoration:none;">
+                    <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg> Video (.MP4)</div>
+                    <span style="color:#007185; font-size:12px; font-weight:700;">Watch</span>
+                 </a>
+              </div>
+            </div>
+
+            <!-- Middle: Properties -->
+            <div>
+              <label style="font-size:12px; font-weight:700; color:#111; margin-bottom:10px; display:block; text-transform:uppercase; border-bottom:2px solid #e0e0e0; padding-bottom:6px;">Basic Identities</label>
+              <table style="width:100%; border-collapse:collapse; font-size:13px; line-height:1.6;" class="e14-prop-table">
+                <tr style="border-bottom:1px solid #f0f0f0;">
+                  <td style="padding:10px 0; color:#666; width:35%;">Manufacturer</td>
+                  <td style="padding:10px 0;"><a id="pdp-mfg-link" style="color:#007185; cursor:pointer; font-weight:700;"></a></td>
+                </tr>
+                <tr style="border-bottom:1px solid #f0f0f0;">
+                  <td style="padding:10px 0; color:#666;">Manufacturer Part No</td>
+                  <td style="padding:10px 0;"><strong id="pdp-mfg-mpn" style="font-size:14px; color:#111;"></strong></td>
+                </tr>
+                <tr style="border-bottom:1px solid #f0f0f0;">
+                  <td style="padding:10px 0; color:#666;">Order Code</td>
+                  <td style="padding:10px 0;"><span id="pdp-internal-sku" style="color:#333;"></span></td>
+                </tr>
+                <tr style="border-bottom:1px solid #f0f0f0;">
+                  <td style="padding:10px 0; color:#666;">Product Range</td>
+                  <td style="padding:10px 0;"><a href="#" style="color:#007185;">Standard Series</a></td>
+                </tr>
+                <tr style="border-bottom:1px solid #f0f0f0;">
+                  <td style="padding:10px 0; color:#666;">Your Part Number</td>
+                  <td style="padding:10px 0;">
+                    <input type="text" placeholder="Enter your part number" style="width:100%; padding:6px 10px; border:1px solid #ccc; border-radius:3px; font-size:12px; background:#fff; box-shadow:inset 0 1px 2px rgba(0,0,0,0.03);">
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 0; color:#666;">Technical Datasheet</td>
+                  <td style="padding:10px 0; color:#007185;" id="pdp-pdf-cell">
+                    <span style="color:#999;font-style:italic;">No datasheet available</span>
+                  </td>
+                </tr>
+              </table>
+
+              <div style="margin-top:32px; text-align:right;">
+                <button style="background:#fff; border:1px solid #007185; color:#007185; padding:6px 16px; border-radius:3px; font-size:12px; font-weight:700; cursor:pointer; transition:background 0.2s;">
+                  + Add to compare
+                </button>
+              </div>
+            </div>
+
+            <!-- Right: Commerce -->
+            <div style="border-left:1px solid #eee; padding-left:32px;">
+              <div style="color:#007185; font-size:15px; font-weight:700; margin-bottom:12px; border-bottom:2px solid #007185; padding-bottom:6px; display:inline-block;">
+                <svg style="vertical-align:middle; margin-right:4px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> 
+                <span id="pdp-stock-val"></span> <span style="color:#111;">total stock globally</span>
+              </div>
+              <div style="font-size:11px; margin-bottom:16px;">
+                <span style="color:#666;">Inventory available worldwide.</span> <a href="#" style="color:#007185; text-decoration:none; font-weight:600;">Reserve stock now</a>
+              </div>
+              
+              <div id="pdp-lead-time" style="font-weight:700; font-size:13px; margin-bottom:24px; color:#333;"></div>
+
+              <table style="width:100%; border-collapse:collapse; font-size:11px; margin-bottom:24px;">
+                <thead>
+                  <tr style="background: #F0F2F2; border-top: 1px solid #ccc; border-bottom: 2px solid #ccc;">
+                    <th style="padding: 8px 6px; text-align: left; color:#555; text-transform:uppercase;">Quantity</th>
+                    <th style="padding: 8px 6px; text-align: right; color:#555; text-transform:uppercase;">Price (Unit)</th>
+                  </tr>
+                </thead>
+                <tbody id="pdp-pricing-tbody">
+                  <!-- JS Injected -->
+                </tbody>
+              </table>
+
+              <div style="font-size:12px; margin-bottom:8px; color:#333;">Price for: <strong>Each</strong></div>
+              
+              <div style="display:flex; align-items:stretch; gap:16px; margin-bottom:12px;">
+                <div style="flex:1;">
+                  <input type="number" id="pdp-qty-input" value="1" min="1" style="width:100%; height:100%; padding:10px; border:1px solid #ccc; border-radius:4px; text-align:center; font-size:15px; font-weight:700; color:#111; box-shadow:inset 0 1px 2px rgba(0,0,0,0.05);">
+                </div>
+                <div style="flex:2;">
+                  <button id="pdp-add-to-basket" style="width:100%; height:100%; background:#007185; color:#fff; border:none; padding:10px 16px; border-radius:4px; font-weight:700; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 2px 4px rgba(13, 130, 70, 0.2);">
+                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                     Add to Basket
+                  </button>
+                </div>
+              </div>
+
+              <div style="font-size:11px; color:#666; display:flex; justify-content:space-between; margin-bottom:16px;">
+                <span id="pdp-moq">Minimum: <strong style="color:#111;">1</strong></span>
+                <span id="pdp-multiples">Multiple: <strong style="color:#111;">1</strong></span>
+              </div>
+              
+              <!-- Temporary display of first tier price to mimic screenshot -->
+              <div style="text-align:right; font-size:22px; font-weight:700; color:#b12704;" id="pdp-highlight-price"></div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Structured Data -->
+          <div style="max-width: 1000px;">
+            <!-- Product Overview -->
+            <h2 style="font-size:16px; font-weight:700; border-bottom:2px solid #007185; padding-bottom:6px; margin-bottom:16px; color:#111; display:inline-block;">Product Overview</h2>
+            <div id="pdp-rich-desc" style="font-size:14px; color:#222; line-height:1.7; margin-bottom:24px;"></div>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:64px; font-size:13px; color:#333;">
+               <!-- Features bullets will map here if any -->
+            </div>
+
+            <!-- Applications -->
+            <h2 style="font-size:16px; font-weight:700; border-bottom:2px solid #007185; padding-bottom:6px; margin-bottom:16px; color:#111; display:inline-block;">Applications</h2>
+            <div id="pdp-applications" style="font-size:14px; color:#333; margin-bottom:64px;">
+               Industrial, Manufacturing, Telecommunications
+            </div>
+
+            <!-- Technical Specifications -->
+            <h2 style="font-size:16px; font-weight:700; border-bottom:2px solid #007185; padding-bottom:6px; margin-bottom:24px; color:#111; display:inline-block;">Technical Specifications</h2>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:48px; margin-bottom:64px; background:#fafafa; border:1px solid #e0e0e0; border-radius:4px; padding:24px;">
+               <div>
+                  <table style="width:100%; border-collapse:collapse; font-size:13px;" id="pdp-specs-col1"></table>
+               </div>
+               <div>
+                  <table style="width:100%; border-collapse:collapse; font-size:13px;" id="pdp-specs-col2"></table>
+               </div>
+            </div>
+
+            <!-- Alternatives -->
+            <h2 style="font-size:16px; font-weight:700; border-bottom:2px solid #007185; padding-bottom:6px; margin-bottom:16px; color:#111; display:inline-block;">Alternatives <span id="pdp-alt-title"></span></h2>
+            <div style="margin-bottom:80px;">
+                <strong style="color:#007185; font-size:14px;">0 Product Found</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- MARKETPLACE FOOTER -->
+        <div class="marketplace-footer" style="background:#111; color:#fff; padding:48px 24px; margin-top:auto; font-family:'Inter', sans-serif;">
+          <div style="max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; flex-wrap:wrap; gap:40px;">
+            <div style="flex:2;">
+               <h3 style="font-size:24px; font-weight:800; margin:0 0 16px 0; color:#fff; font-family:'Outfit', sans-serif;">AtlasDT <span style="font-weight:400; color:#0e7490;">Marketplace</span></h3>
+               <p style="font-size:14px; line-height:1.6; color:#999; max-width:300px;">The definitive B2B procurement network for OEM manufacturing and component sourcing globally.</p>
+            </div>
+            <div style="flex:1;">
+               <h4 style="font-size:14px; font-weight:700; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:1px; color:#fff;">Platform</h4>
+               <ul style="list-style:none; padding:0; margin:0; line-height:2.4; font-size:13px; color:#999;">
+                 <li><a href="#" style="color:#999; text-decoration:none;">Browse Components</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Supplier Portal</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Instant Quotations</a></li>
+               </ul>
+            </div>
+            <div style="flex:1;">
+               <h4 style="font-size:14px; font-weight:700; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:1px; color:#fff;">Company</h4>
+               <ul style="list-style:none; padding:0; margin:0; line-height:2.4; font-size:13px; color:#999;">
+                 <li><a href="#" style="color:#999; text-decoration:none;">About Us</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Privacy Policy</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Terms of Service</a></li>
+               </ul>
+            </div>
+          </div>
+          <div style="max-width:1200px; margin:40px auto 0 auto; padding-top:24px; border-top:1px solid #333; display:flex; justify-content:space-between; font-size:12px; color:#666;">
+            <span>&copy; 2026 AtlasDT Marketplace. All rights reserved.</span>
+            <span>Secure B2B Operations</span>
+          </div>
+        </div>
+
+      </div>
+      
+      <!-- CART SUMMARY PAGE -->
+      <div id="cart-page-layout" class="hidden" style="flex:1; overflow-y:auto; background:#f0f2f5; display:flex; flex-direction:column;">
+        <div style="flex:1; padding:40px 20px;">
+          <div style="max-width:1200px; margin:0 auto; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.1); border-radius:8px; display:flex; min-height:600px;">
+            
+            <div style="flex:1; padding:32px; border-right:1px solid #e2e8f0;">
+               <h1 style="font-size:24px; font-weight:700; border-bottom:2px solid #007185; padding-bottom:12px; margin-top:0; color:#111 !important;">Requisition Basket</h1>
+               <div id="full-cart-items-container" style="margin-top:24px;">
+                <!-- Filled via JS -->
+             </div>
+          </div>
+
+          <div style="width:340px; padding:32px; background:#fafafa; border-radius:0 8px 8px 0;">
+              <h2 style="font-size:18px; font-weight:700; margin-top:0; color:#111 !important;">Order Summary</h2>
+              <div style="display:flex; justify-content:space-between; margin-top:24px; font-size:14px; padding-bottom:12px; border-bottom:1px solid #ddd;">
+                 <span>Total Lines:</span> <span id="cart-total-lines">0</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:14px; padding-bottom:12px; border-bottom:1px solid #ddd;">
+                 <span>Estimated Value:</span> <strong id="cart-total-value" style="font-size:16px;">$0.00</strong>
+              </div>
+              <p style="font-size:12px; color:#666; margin-top:12px;">Shipping and taxes calculated during checkout.</p>
+              <button id="cart-go-checkout-btn" style="width:100%; margin-top:24px; background:#ffd814; color:#111; border:1px solid #fcd200; padding:12px; border-radius:8px; font-weight:600; cursor:pointer; font-size:15px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">Proceed to Checkout</button>
+              <button style="width:100%; margin-top:12px; background:#fff; color:#333; border:1px solid #d5d9d9; padding:12px; border-radius:8px; font-weight:600; cursor:pointer; font-size:15px; box-shadow:0 1px 2px rgba(0,0,0,0.05);" onclick="alert('Link copied to clipboard')">Share Basket</button>
+            </div>
+            <!-- /Order Summary Column -->
+
+          </div>
+          <!-- /Flex Card -->
+        </div>
+        <!-- /Padding Wrapper -->
+
+        <!-- Advertisement / Promo Banner Section -->
+        <div class="dk-promo-section" style="max-width:1200px; width:100%; margin: 60px auto; padding: 0 20px; display:flex; gap: 20px; flex-shrink: 0; box-sizing: border-box;">
+           <div class="dk-promo-card" style="flex:1; background: linear-gradient(135deg, #0e7490, #0369a1); border-radius: 8px; padding: 24px; color: #FFF; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
+              <h3 style="margin:0 0 8px 0; font-size:18px; font-weight:700;">Accelerate Your Prototyping</h3>
+              <p style="margin:0 0 16px 0; font-size:14px; opacity:0.9;">Get next-day shipping on select Micro-OLED and sensor modules.</p>
+              <button style="background:#FFF; color:#0e7490; border:none; padding:8px 16px; border-radius:4px; font-weight:600; cursor:pointer;">Shop In-Stock</button>
+           </div>
+           <div class="dk-promo-card" style="flex:1; background: #FFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 24px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
+              <span style="font-size:11px; text-transform:uppercase; font-weight:700; color:#64748b; margin-bottom:4px;">Sponsored Content</span>
+              <h3 style="margin:0 0 8px 0; font-size:18px; font-weight:700; color:#0F172A;">Design with SST Precision</h3>
+              <p style="margin:0 0 16px 0; font-size:14px; color:#475569;">Explore the latest optical engine development kits featured by SST Sensing.</p>
+              <button style="background:transparent; color:#2563eb; border:1px solid #2563eb; padding:8px 16px; border-radius:4px; font-weight:600; cursor:pointer;">Learn More</button>
+           </div>
+        </div>
+
+        <!-- MARKETPLACE FOOTER -->
+        <div class="marketplace-footer" style="background:#111; color:#fff; padding:48px 24px; margin-top:auto; font-family:'Inter', sans-serif;">
+          <div style="max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; flex-wrap:wrap; gap:40px;">
+            <div style="flex:2;">
+               <h3 style="font-size:24px; font-weight:800; margin:0 0 16px 0; color:#fff; font-family:'Outfit', sans-serif;">AtlasDT <span style="font-weight:400; color:#0e7490;">Marketplace</span></h3>
+               <p style="font-size:14px; line-height:1.6; color:#999; max-width:300px;">The definitive B2B procurement network for OEM manufacturing and component sourcing globally.</p>
+            </div>
+            <div style="flex:1;">
+               <h4 style="font-size:14px; font-weight:700; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:1px; color:#fff;">Platform</h4>
+               <ul style="list-style:none; padding:0; margin:0; line-height:2.4; font-size:13px; color:#999;">
+                 <li><a href="#" style="color:#999; text-decoration:none;">Browse Components</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Supplier Portal</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Instant Quotations</a></li>
+               </ul>
+            </div>
+            <div style="flex:1;">
+               <h4 style="font-size:14px; font-weight:700; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:1px; color:#fff;">Company</h4>
+               <ul style="list-style:none; padding:0; margin:0; line-height:2.4; font-size:13px; color:#999;">
+                 <li><a href="#" style="color:#999; text-decoration:none;">About Us</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Privacy Policy</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Terms of Service</a></li>
+               </ul>
+            </div>
+          </div>
+          <div style="max-width:1200px; margin:40px auto 0 auto; padding-top:24px; border-top:1px solid #333; display:flex; justify-content:space-between; font-size:12px; color:#666;">
+            <span>&copy; 2026 AtlasDT Marketplace. All rights reserved.</span>
+            <span>Secure B2B Operations</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHECKOUT FORM PAGE -->
+      <div id="checkout-page-layout" class="hidden" style="flex:1; overflow-y:auto; background:#f0f2f5; display:flex; flex-direction:column;">
+        <div style="flex:1; padding:40px 20px;">
+          <!-- Progress / Workflow Graphic -->
+          <div style="max-width:800px; margin:0 auto 40px auto; display:flex; justify-content:space-between; position:relative;">
+             <div style="position:absolute; top:12px; left:0; width:100%; height:2px; background:#ddd; z-index:1;"></div>
+             <div style="position:relative; z-index:2; background:#f0f2f5; padding:0 8px; text-align:center; flex:1;">
+                <div style="width:24px; height:24px; background:#10b981; color:#fff; border-radius:50%; line-height:24px; font-size:12px; font-weight:bold; margin:0 auto;">✓</div>
+                <div style="font-size:12px; font-weight:600; color:#555; margin-top:8px;">Review Basket</div>
+             </div>
+             <div style="position:relative; z-index:2; background:#f0f2f5; padding:0 8px; text-align:center; flex:1;">
+                <div style="width:24px; height:24px; background:#007185; color:#fff; border-radius:50%; line-height:24px; font-size:12px; font-weight:bold; margin:0 auto;">2</div>
+                <div style="font-size:12px; font-weight:700; color:#111; margin-top:8px;">Shipping & Billing</div>
+             </div>
+             <div style="position:relative; z-index:2; background:#f0f2f5; padding:0 8px; text-align:center; flex:1;">
+                <div style="width:24px; height:24px; background:#ccc; color:#fff; border-radius:50%; line-height:24px; font-size:12px; font-weight:bold; margin:0 auto;">3</div>
+                <div style="font-size:12px; font-weight:600; color:#888; margin-top:8px;">Confirm Purchase</div>
+             </div>
+          </div>
+
+          <div style="max-width:1200px; margin:0 auto; display:flex; gap:24px;">
+             
+             <div style="flex:1; display:flex; flex-direction:column; gap:24px;">
+                
+                <div style="background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.1); border-radius:8px; padding:32px;">
+                   <h2 style="font-size:20px; font-weight:700; margin-top:0; border-bottom:2px solid #007185; padding-bottom:12px; display:flex; align-items:center; gap:8px; color:#111 !important;">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007185" stroke-width="2"><rect x="3" y="10" width="18" height="10" rx="2" ry="2"></rect><circle cx="12" cy="15" r="1"></circle><path d="M5 10V7A7 7 0 0 1 19 7v3"></path></svg>
+                      1. Shipping Address
+                   </h2>
+                   <p style="font-size:13px; color:#555; margin-bottom:20px;">Start typing to search globally, or enter manually below.</p>
+                 
+                 <input type="text" id="chk-address-search" placeholder="Search for an address..." style="width:100%; padding:12px; border:1px solid #888c8c; border-radius:4px; font-size:14px; margin-bottom:16px;">
+                 
+                 <div id="chk-manual-address">
+                    <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Full Name / Department</label>
+                    <input type="text" id="chk-name" style="width:100%; padding:8px; border:1px solid #888c8c; border-radius:4px; margin-bottom:12px;" required>
+
+                    <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Address Line 1</label>
+                    <input type="text" id="chk-address1" style="width:100%; padding:8px; border:1px solid #888c8c; border-radius:4px; margin-bottom:12px;" required>
+
+                    <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Address Line 2 (Optional)</label>
+                    <input type="text" id="chk-address2" style="width:100%; padding:8px; border:1px solid #888c8c; border-radius:4px; margin-bottom:12px;">
+
+                    <div style="display:flex; gap:12px;">
+                       <div style="flex:1;">
+                          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">City</label>
+                          <input type="text" id="chk-city" style="width:100%; padding:8px; border:1px solid #888c8c; border-radius:4px; margin-bottom:12px;" required>
+                       </div>
+                       <div style="width:100px;">
+                          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">State</label>
+                          <input type="text" id="chk-state" style="width:100%; padding:8px; border:1px solid #888c8c; border-radius:4px; margin-bottom:12px;" required>
+                       </div>
+                       <div style="width:120px;">
+                          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">ZIP / Postal</label>
+                          <input type="text" id="chk-zip" style="width:100%; padding:8px; border:1px solid #888c8c; border-radius:4px; margin-bottom:12px;" required>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+
+              <div style="background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.1); border-radius:8px; padding:32px;">
+                 <h2 style="font-size:20px; font-weight:700; margin-top:0; border-bottom:2px solid #007185; padding-bottom:12px; display:flex; align-items:center; gap:8px; color:#111 !important;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007185" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                    2. Payment Method
+                 </h2>
+                 <p style="font-size:13px; color:#555; margin-bottom:20px;">All transactions are secure and encrypted. Choose how you would like to be invoiced below.</p>
+
+                 <div style="border:1px solid #007185; background:#f0fbff; border-radius:6px; padding:16px; margin-bottom:20px;">
+                    <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:#111;">
+                       <input type="radio" name="payment-method" checked style="accent-color:#007185; width:16px; height:16px;"> 
+                       Use Corporate Account (NET30)
+                    </label>
+                    <p style="font-size:12px; color:#555; margin:8px 0 0 24px;">Requisitions will be processed according to your corporate procurement limits and invoiced post-supplier approval.</p>
+                 </div>
+
+                 <div style="border:1px solid #e2e8f0; border-radius:6px; padding:16px; margin-bottom:24px; opacity:0.6;">
+                    <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:#555;">
+                       <input type="radio" name="payment-method" disabled style="width:16px; height:16px;"> 
+                       Credit / Debit Card (Coming Soon)
+                    </label>
+                    <div style="margin:12px 0 0 24px; display:flex; gap:8px;">
+                       <div style="background:#fff; border:1px solid #ccc; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:bold; color:#1a1f36; box-shadow:0 1px 2px rgba(0,0,0,0.05);">VISA</div>
+                       <div style="background:#fff; border:1px solid #ccc; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:bold; color:#ff5f00; box-shadow:0 1px 2px rgba(0,0,0,0.05);">MASTERCARD</div>
+                       <div style="background:#fff; border:1px solid #ccc; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:bold; color:#2e77bc; box-shadow:0 1px 2px rgba(0,0,0,0.05);">AMEX</div>
+                    </div>
+                 </div>
+
+                 <h3 style="font-size:14px; font-weight:700; margin:0 0 12px 0;">Billing Address</h3>
+                 <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:500;">
+                    <input type="checkbox" id="chk-billing-same" checked style="width:16px; height:16px; accent-color:#007185;"> Billing address is same as shipping
+                 </label>
+              </div>
+
+           </div>
+
+           <div style="width:340px; display:flex; flex-direction:column; gap:24px;">
+              <div style="background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.1); border-radius:8px; padding:24px; position:sticky; top:24px;">
+                 <button id="final-place-order-btn" style="width:100%; background:#ffd814; color:#111; border:1px solid #fcd200; padding:16px; border-radius:8px; font-weight:700; cursor:pointer; font-size:16px; box-shadow:0 1px 2px rgba(0,0,0,0.05); margin-bottom:16px;">Place your order</button>
+                 <p style="font-size:11px; color:#555; text-align:center; line-height:1.4;">By placing your order, you agree to our privacy notice and conditions of use.</p>
+                 
+                 <h3 style="font-size:16px; font-weight:700; margin-top:24px; border-top:1px solid #ddd; padding-top:16px;">Order Summary</h3>
+                 <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:13px; color:#333;">
+                    <span>Items:</span> <strong id="chk-summary-items">$0.00</strong>
+                 </div>
+                 <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:13px; color:#333;">
+                    <span>Shipping & handling:</span> <strong>TBD</strong>
+                 </div>
+                 <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:13px; color:#333; padding-bottom:12px; border-bottom:1px solid #ddd;">
+                    <span>Total before tax:</span> <strong id="chk-summary-pretax">$0.00</strong>
+                 </div>
+                 <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:18px; font-weight:700; color:#b12704;">
+                    <span>Order total:</span> <span id="chk-summary-total">$0.00</span>
+                 </div>
+                 
+                 <div style="display:flex; align-items:center; gap:8px; justify-content:center; margin-top:24px; padding-top:16px; border-top:1px solid #eee; font-size:12px; color:#10b981; font-weight:600;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    Secure SSL Checkout
+                 </div>
+              </div>
+           </div>
+        </div>
+        </div>
+
+        <!-- Advertisement / Promo Banner Section -->
+        <div class="dk-promo-section" style="max-width:1200px; width:100%; margin: 60px auto; padding: 0 20px; display:flex; gap: 20px; flex-shrink: 0; box-sizing: border-box;">
+           <div class="dk-promo-card" style="flex:1; background: linear-gradient(135deg, #0e7490, #0369a1); border-radius: 8px; padding: 24px; color: #FFF; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
+              <h3 style="margin:0 0 8px 0; font-size:18px; font-weight:700;">Accelerate Your Prototyping</h3>
+              <p style="margin:0 0 16px 0; font-size:14px; opacity:0.9;">Get next-day shipping on select Micro-OLED and sensor modules.</p>
+              <button style="background:#FFF; color:#0e7490; border:none; padding:8px 16px; border-radius:4px; font-weight:600; cursor:pointer;">Shop In-Stock</button>
+           </div>
+           <div class="dk-promo-card" style="flex:1; background: #FFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 24px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
+              <span style="font-size:11px; text-transform:uppercase; font-weight:700; color:#64748b; margin-bottom:4px;">Sponsored Content</span>
+              <h3 style="margin:0 0 8px 0; font-size:18px; font-weight:700; color:#0F172A;">Design with SST Precision</h3>
+              <p style="margin:0 0 16px 0; font-size:14px; color:#475569;">Explore the latest optical engine development kits featured by SST Sensing.</p>
+              <button style="background:transparent; color:#2563eb; border:1px solid #2563eb; padding:8px 16px; border-radius:4px; font-weight:600; cursor:pointer;">Learn More</button>
+           </div>
+        </div>
+
+        <!-- MARKETPLACE FOOTER -->
+        <div class="marketplace-footer" style="background:#111; color:#fff; padding:48px 24px; margin-top:auto; font-family:'Inter', sans-serif;">
+          <div style="max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; flex-wrap:wrap; gap:40px;">
+            <div style="flex:2;">
+               <h3 style="font-size:24px; font-weight:800; margin:0 0 16px 0; color:#fff; font-family:'Outfit', sans-serif;">AtlasDT <span style="font-weight:400; color:#0e7490;">Marketplace</span></h3>
+               <p style="font-size:14px; line-height:1.6; color:#999; max-width:300px;">The definitive B2B procurement network for OEM manufacturing and component sourcing globally.</p>
+            </div>
+            <div style="flex:1;">
+               <h4 style="font-size:14px; font-weight:700; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:1px; color:#fff;">Platform</h4>
+               <ul style="list-style:none; padding:0; margin:0; line-height:2.4; font-size:13px; color:#999;">
+                 <li><a href="#" style="color:#999; text-decoration:none;">Browse Components</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Supplier Portal</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Instant Quotations</a></li>
+               </ul>
+            </div>
+            <div style="flex:1;">
+               <h4 style="font-size:14px; font-weight:700; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:1px; color:#fff;">Company</h4>
+               <ul style="list-style:none; padding:0; margin:0; line-height:2.4; font-size:13px; color:#999;">
+                 <li><a href="#" style="color:#999; text-decoration:none;">About Us</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Privacy Policy</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Terms of Service</a></li>
+               </ul>
+            </div>
+          </div>
+          <div style="max-width:1200px; margin:40px auto 0 auto; padding-top:24px; border-top:1px solid #333; display:flex; justify-content:space-between; font-size:12px; color:#666;">
+            <span>&copy; 2026 AtlasDT Marketplace. All rights reserved.</span>
+            <span>Secure B2B Operations</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- THANK YOU PAGE -->
+      <div id="thank-you-layout" class="hidden" style="flex:1; overflow-y:auto; background:#f0f2f5; display:flex; flex-direction:column;">
+         <div style="flex:1; padding:80px 20px; display:flex; justify-content:center; align-items:center;">
+            <div style="max-width:600px; width:100%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.1); border-radius:8px; padding:48px; text-align:center;">
+               <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" style="margin-bottom:24px; margin-inline:auto;">
+                 <circle cx="12" cy="12" r="10" />
+                 <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                 <line x1="9" y1="9" x2="9.01" y2="9" />
+                 <line x1="15" y1="9" x2="15.01" y2="9" />
+               </svg>
+               <h1 style="font-size:28px; font-weight:700; margin-top:0; color:#111;">Order submitted.</h1>
+               <p style="font-size:16px; color:#555; line-height:1.6; margin-top:16px;">Thank you! Your requisitions have been routed directly to the manufacturers. You will receive an email confirmation with standard NET30 invoices as suppliers approve the lines.</p>
+               <button id="thank-you-return-btn" style="margin-top:32px; background:#007185; color:#fff; border:none; padding:12px 24px; border-radius:4px; font-weight:700; font-size:16px; cursor:pointer;">Return to Marketplace</button>
+            </div>
+         </div>
+        
+        <!-- MARKETPLACE FOOTER -->
+        <div class="marketplace-footer" style="background:#111; color:#fff; padding:48px 24px; margin-top:auto; font-family:'Inter', sans-serif;">
+          <div style="max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; flex-wrap:wrap; gap:40px;">
+            <div style="flex:2;">
+               <h3 style="font-size:24px; font-weight:800; margin:0 0 16px 0; color:#fff; font-family:'Outfit', sans-serif;">AtlasDT <span style="font-weight:400; color:#0e7490;">Marketplace</span></h3>
+               <p style="font-size:14px; line-height:1.6; color:#999; max-width:300px;">The definitive B2B procurement network for OEM manufacturing and component sourcing globally.</p>
+            </div>
+            <div style="flex:1;">
+               <h4 style="font-size:14px; font-weight:700; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:1px; color:#fff;">Platform</h4>
+               <ul style="list-style:none; padding:0; margin:0; line-height:2.4; font-size:13px; color:#999;">
+                 <li><a href="#" style="color:#999; text-decoration:none;">Browse Components</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Supplier Portal</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Instant Quotations</a></li>
+               </ul>
+            </div>
+            <div style="flex:1;">
+               <h4 style="font-size:14px; font-weight:700; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:1px; color:#fff;">Company</h4>
+               <ul style="list-style:none; padding:0; margin:0; line-height:2.4; font-size:13px; color:#999;">
+                 <li><a href="#" style="color:#999; text-decoration:none;">About Us</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Privacy Policy</a></li>
+                 <li><a href="#" style="color:#999; text-decoration:none;">Terms of Service</a></li>
+               </ul>
+            </div>
+          </div>
+          <div style="max-width:1200px; margin:40px auto 0 auto; padding-top:24px; border-top:1px solid #333; display:flex; justify-content:space-between; font-size:12px; color:#666;">
+            <span>&copy; 2026 AtlasDT Marketplace. All rights reserved.</span>
+            <span>Secure B2B Operations</span>
+          </div>
+        </div>
+      </div>
+      
   </section>
 
   <script src="//unpkg.com/globe.gl"></script>
@@ -2344,6 +2956,80 @@
       </div>
     </div>
   </div>
-</body>
+  <!-- PDP Carousel + Auth Sync -->
+  <script>
+    // ── PDP Image Carousel ──────────────────────────────────────
+    let _pdpMedia = [];
+    let _pdpIdx = 0;
 
+    window.pdpInitCarousel = function(mediaArr) {
+      _pdpMedia = mediaArr || [];
+      _pdpIdx = 0;
+      const mainImg = document.getElementById('pdp-image');
+      const prev = document.getElementById('pdp-carousel-prev');
+      const next = document.getElementById('pdp-carousel-next');
+      const thumbsEl = document.getElementById('pdp-carousel-thumbs');
+
+      if (!mainImg) return;
+
+      if (_pdpMedia.length <= 1) {
+        if (mainImg && _pdpMedia[0]) mainImg.src = _pdpMedia[0].src || '/placeholder.png';
+        if (prev) prev.style.display = 'none';
+        if (next) next.style.display = 'none';
+        if (thumbsEl) thumbsEl.style.display = 'none';
+        return;
+      }
+
+      // Show arrows & thumbs strip
+      if (prev) prev.style.display = 'flex';
+      if (next) next.style.display = 'flex';
+      if (thumbsEl) {
+        thumbsEl.style.display = 'flex';
+        thumbsEl.innerHTML = '';
+        _pdpMedia.forEach((m, i) => {
+          const t = document.createElement('img');
+          t.src = m.thumb || m.src || '/placeholder.png';
+          t.style.cssText = 'width:52px; height:52px; object-fit:cover; border:2px solid transparent; border-radius:4px; cursor:pointer; flex-shrink:0;';
+          t.addEventListener('click', () => { _pdpIdx = i; pdpCarouselRender(); });
+          thumbsEl.appendChild(t);
+        });
+      }
+      pdpCarouselRender();
+    };
+
+    window.pdpCarouselStep = function(dir) {
+      if (!_pdpMedia.length) return;
+      _pdpIdx = (_pdpIdx + dir + _pdpMedia.length) % _pdpMedia.length;
+      pdpCarouselRender();
+    };
+
+    function pdpCarouselRender() {
+      const m = _pdpMedia[_pdpIdx];
+      const mainImg = document.getElementById('pdp-image');
+      if (mainImg && m) mainImg.src = m.src || '/placeholder.png';
+      // Highlight active thumb
+      const thumbsEl = document.getElementById('pdp-carousel-thumbs');
+      if (thumbsEl) {
+        [...thumbsEl.children].forEach((t, i) => {
+          t.style.borderColor = i === _pdpIdx ? '#007185' : 'transparent';
+        });
+      }
+    }
+
+    // ── Marketplace Auth Label Sync ─────────────────────────────
+    // Re-use the site-wide Supabase auth state to update the login label
+    import('/src/js/services/auth.js').then(({ getCurrentUser }) => {
+      getCurrentUser().then(user => {
+        const label = document.getElementById('catalog-auth-label');
+        if (!label) return;
+        if (user) {
+          const name = user.user_metadata?.first_name || user.email?.split('@')[0] || 'Account';
+          label.innerHTML = `<strong style="color:#007185">${name}</strong><br><span style="font-size:11px; color:#555">My Account ▼</span>`;
+        }
+      });
+    }).catch(() => {});
+  </script>
+
+
+</body>
 </html>
