@@ -631,7 +631,7 @@ function renderCreateProductForm(editProdId = null) {
       <!-- Action Footer -->
       <div style="position:fixed; bottom:0; left:0; right:0; border-top:1px solid #ccc; padding:16px 32px; text-align:right; z-index:999; background: #fff; box-shadow:0 -2px 10px rgba(0,0,0,0.05);">
          <button type="button" class="amz-btn" id="btn-cancel-product" style="margin-right:16px; background:#fff; border:1px solid #ccc; padding:10px 24px; color:#333; font-weight:600; border-radius:4px; cursor:pointer;">Cancel</button>
-         <button type="submit" class="amz-btn" style="background:#007185; border:1px solid #007185; color:#fff; padding:10px 32px; font-weight:700; border-radius:4px; cursor:pointer; font-size:14px; box-shadow:0 2px 4px rgba(13, 130, 70, 0.2);">Save and Finish</button>
+         <button type="button" id="btn-save-product" class="amz-btn" style="background:#007185; border:1px solid #007185; color:#fff; padding:10px 32px; font-weight:700; border-radius:4px; cursor:pointer; font-size:14px; box-shadow:0 2px 4px rgba(13, 130, 70, 0.2);">Save and Finish</button>
       </div>
 
     </form>
@@ -870,12 +870,16 @@ function renderCreateProductForm(editProdId = null) {
   }
 
   // Handle Form Submission
-  document.getElementById('new-product-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = e.target.querySelector('button[type="submit"]');
+  // NOTE: The Save button is outside <form> (fixed footer), so we use a click
+  // listener on the button directly instead of the form's submit event.
+  const saveBtn = document.getElementById('btn-save-product');
+  saveBtn.addEventListener('click', async () => {
+    const btn = saveBtn;
     const ogText = btn.textContent;
-    btn.textContent = "Saving...";
+    btn.textContent = 'Saving...';
     btn.disabled = true;
+    // Wrap everything so a crash re-enables the button
+    try {
 
     const catId = catSelect.value; // It could be value (text) or we need the raw id
     // Resolve catId properly
@@ -1052,7 +1056,13 @@ function renderCreateProductForm(editProdId = null) {
       console.error('Upload error:', e);
     }
 
-    loadCatalogTab();
+      loadCatalogTab();
+    } catch (globalErr) {
+      console.error('Save error:', globalErr);
+      alert('An unexpected error occurred. Check the browser console for details.');
+      btn.textContent = ogText;
+      btn.disabled = false;
+    }
   });
 }
 
