@@ -483,7 +483,7 @@ function renderCreateProductForm(editProdId = null) {
           <label style="font-size:12px; font-weight:700; color:#111; margin-bottom:10px; display:block; text-transform:uppercase; border-bottom:2px solid #e0e0e0; padding-bottom:6px;">Media & Documents</label>
           
           <div style="text-align:center; padding:24px; border:1px solid #ccc; background:#fff; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.05); margin-bottom:16px; position:relative;">
-             <img src="${prod?.image_url || prod?.specs?.images?.[0] || prod?.specs?.image_url || '/placeholder.png'}" style="max-width:100%; max-height:200px; height:auto; margin-bottom:16px; object-fit:contain;">
+             <img id="prod-main-img-preview" src="${prod?.image_url || prod?.specs?.images?.[0] || prod?.specs?.image_url || '/placeholder.png'}" style="max-width:100%; max-height:200px; height:auto; margin-bottom:16px; object-fit:contain;">
              <br>
              <button type="button" onclick="document.getElementById('p-img-file').click()" style="background:#fff; border:1px solid #007185; color:#007185; padding:8px 16px; border-radius:4px; cursor:pointer; font-size:12px; font-weight:700; transition:background 0.2s; width:100%;">
                 <svg style="vertical-align:middle; margin-right:4px; margin-top:-2px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> Upload Main Image
@@ -608,7 +608,7 @@ function renderCreateProductForm(editProdId = null) {
             </button>
             <input type="file" accept="image/*" id="rich-desc-img-upload" style="display:none;">
           </div>
-          <div id="rich-description" contenteditable="true" style="min-height: 220px; padding: 20px; outline: none; font-size:14px; line-height:1.7; color:#222;">${prod?.rich_description || ''}</div>
+          <div id="rich-description" contenteditable="true" style="min-height: 220px; padding: 20px; outline: none; font-size:14px; line-height:1.7; color:#222; overflow:hidden;">${prod?.rich_description || ''}</div>
         </div>
 
         <!-- Applications -->
@@ -638,6 +638,47 @@ function renderCreateProductForm(editProdId = null) {
   `;
 
   document.getElementById('btn-cancel-product').addEventListener('click', loadCatalogTab);
+  // ── Live file-input feedback ─────────────────────────────────────────────
+  // Main image: show thumbnail preview immediately on file select
+  document.getElementById('p-img-file')?.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const preview = document.getElementById('prod-main-img-preview');
+      if (preview) preview.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Extra images: show count badge
+  document.getElementById('p-extra-imgs')?.addEventListener('change', (e) => {
+    const n = e.target.files.length;
+    const row = e.target.closest('div[style]');
+    if (!row) return;
+    let badge = row.querySelector('.file-badge');
+    if (!badge) { badge = document.createElement('span'); badge.className='file-badge'; badge.style.cssText='font-size:11px;color:#10b981;font-weight:700;margin-left:6px;'; row.querySelector('div').appendChild(badge); }
+    badge.textContent = n + ' file' + (n > 1 ? 's' : '') + ' selected';
+  });
+
+  // Generic filename feedback for 3D model, 2D drawing, video, PDF
+  ['p-3d-model', 'p-2d-drawing', 'p-video', 'p-pdf-file'].forEach(inputId => {
+    document.getElementById(inputId)?.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const row = e.target.closest('div[style]') || e.target.closest('td');
+      if (!row) return;
+      let badge = row.querySelector('.file-badge');
+      if (!badge) {
+        badge = document.createElement('div');
+        badge.className = 'file-badge';
+        badge.style.cssText = 'font-size:11px;color:#10b981;font-weight:700;margin-top:4px;word-break:break-all;';
+        e.target.insertAdjacentElement('afterend', badge);
+      }
+      badge.textContent = '✓ ' + file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
+    });
+  });
+
 
   // Dynamic Parameter Injection
   const catSelect = document.getElementById('p-category');
@@ -693,12 +734,30 @@ function renderCreateProductForm(editProdId = null) {
 
   // Rich Text Editor Logic
   const richDesc = document.getElementById('rich-description');
+  // Inject scoped CSS to constrain images inside the rich text editor
+  const richStyle = document.createElement('style');
+  richStyle.textContent = '#rich-description img { max-width:100% !important; width:auto !important; height:auto !important; display:block; margin:8px 0; border-radius:3px; }';
+  document.head.appendChild(richStyle);
+
+
   const richWrapper = document.getElementById('rich-editor-wrapper');
   const imgUploadBtn = document.getElementById('rich-desc-img-upload');
 
   const insertImageAtCursor = (url) => {
     richDesc.focus();
     document.execCommand('insertImage', false, url);
+    // Constrain all images in the editor to the container width
+    setTimeout(() => {
+      richDesc.querySelectorAll('img').forEach(img => {
+        img.style.maxWidth  = '100%';
+        img.style.width     = 'auto';
+        img.style.height    = 'auto';
+        img.style.display   = 'block';
+        img.style.marginTop = '8px';
+        img.style.marginBottom = '8px';
+        img.style.borderRadius = '3px';
+      });
+    }, 10);
   };
 
   imgUploadBtn.addEventListener('change', (e) => {
