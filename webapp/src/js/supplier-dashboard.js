@@ -1,5 +1,5 @@
 import { supabase } from './supabase.js';
-import { getCurrentUser, logoutUser } from './services/auth.js';
+import { getCurrentUser, logoutUser, loginUser, signUpUser } from './services/auth.js';
 
 let currentUser = null;
 let factoryRecord = null;
@@ -33,8 +33,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   currentUser = await getCurrentUser();
   if (!currentUser) {
-    alert("You must be logged in to access Seller Central.");
-    window.location.href = '/index.html?login=true';
+    // Show inline auth UI instead of redirecting away
+    loadingUi.style.display = 'none';
+    showSupplierAuthScreen();
     return;
   }
 
@@ -49,6 +50,177 @@ document.addEventListener('DOMContentLoaded', async () => {
     bootApp();
   }
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SUPPLIER SELF-SERVICE AUTH (Login / Register)
+// Shown when no session exists — suppliers don't need to leave this page
+// ─────────────────────────────────────────────────────────────────────────────
+function showSupplierAuthScreen() {
+  const onboardingUi = document.getElementById('supplier-onboarding');
+  const appUi        = document.getElementById('supplier-app');
+
+  // Replace the onboarding panel with the auth screen
+  document.body.innerHTML = `
+    <div style="min-height:100vh; background:linear-gradient(135deg,#0c1a2e 0%,#0e2640 50%,#0a1628 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Open Sans',sans-serif;">
+
+      <!-- Logo -->
+      <div style="margin-bottom:40px; text-align:center;">
+        <img src="/logos/atlax-logo-original.png" alt="AtlasDT" style="height:36px; filter:brightness(0) invert(1); margin-bottom:12px;">
+        <div style="color:rgba(255,255,255,0.6); font-size:13px; letter-spacing:2px; text-transform:uppercase;">Seller Platform · 卖家平台</div>
+      </div>
+
+      <!-- Card -->
+      <div style="background:#fff; border-radius:8px; box-shadow:0 24px 64px rgba(0,0,0,0.4); width:100%; max-width:440px; overflow:hidden;">
+
+        <!-- Tab switcher -->
+        <div id="auth-tabs" style="display:flex; border-bottom:1px solid #e2e8f0;">
+          <button id="tab-login" onclick="window._authTab('login')" style="flex:1; padding:16px; background:#fff; border:none; font-weight:700; font-size:14px; color:#007185; cursor:pointer; border-bottom:3px solid #007185; font-family:inherit;">Sign In</button>
+          <button id="tab-register" onclick="window._authTab('register')" style="flex:1; padding:16px; background:#f8fafc; border:none; font-weight:600; font-size:14px; color:#64748b; cursor:pointer; border-bottom:3px solid transparent; font-family:inherit;">Create Account</button>
+        </div>
+
+        <div id="auth-body" style="padding:32px;">
+
+          <!-- Login Form -->
+          <div id="auth-login">
+            <h2 style="margin:0 0 4px 0; font-size:20px; font-weight:700; color:#0f172a;">Welcome back</h2>
+            <p style="margin:0 0 24px 0; font-size:13px; color:#64748b;">Sign in to access your seller dashboard.</p>
+            <div id="auth-login-err" style="display:none; background:#fef2f2; border:1px solid #fecaca; border-radius:4px; padding:10px 14px; font-size:13px; color:#dc2626; margin-bottom:16px;"></div>
+            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;">Email address</label>
+            <input type="email" id="login-email" placeholder="you@company.com" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:16px; box-sizing:border-box; font-family:inherit;">
+            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;">Password</label>
+            <input type="password" id="login-password" placeholder="••••••••" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:24px; box-sizing:border-box; font-family:inherit;">
+            <button id="btn-login" onclick="window._doLogin()" style="width:100%; padding:12px; background:#007185; color:#fff; border:none; border-radius:4px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;">Sign In to Seller Central</button>
+            <p style="text-align:center; margin:16px 0 0 0; font-size:12px; color:#64748b;">
+              Don't have an account? <a href="#" onclick="window._authTab('register'); return false;" style="color:#007185; font-weight:700;">Register here</a>
+            </p>
+          </div>
+
+          <!-- Register Form -->
+          <div id="auth-register" style="display:none;">
+            <h2 style="margin:0 0 4px 0; font-size:20px; font-weight:700; color:#0f172a;">Create your seller account</h2>
+            <p style="margin:0 0 24px 0; font-size:13px; color:#64748b;">Join the AtlasDT B2B marketplace as a verified supplier.</p>
+            <div id="auth-reg-err" style="display:none; background:#fef2f2; border:1px solid #fecaca; border-radius:4px; padding:10px 14px; font-size:13px; color:#dc2626; margin-bottom:16px;"></div>
+            <div id="auth-reg-ok"  style="display:none; background:#f0fdf4; border:1px solid #86efac; border-radius:4px; padding:10px 14px; font-size:13px; color:#16a34a; margin-bottom:16px;"></div>
+            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;">Full name</label>
+            <input type="text" id="reg-name" placeholder="Zhang Wei" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:16px; box-sizing:border-box; font-family:inherit;">
+            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;">Work email</label>
+            <input type="email" id="reg-email" placeholder="you@factory.com" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:16px; box-sizing:border-box; font-family:inherit;">
+            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;">Password <span style="color:#9ca3af; font-weight:400;">(min. 8 characters)</span></label>
+            <input type="password" id="reg-password" placeholder="••••••••" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:16px; box-sizing:border-box; font-family:inherit;">
+            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;">Company name</label>
+            <input type="text" id="reg-company" placeholder="Shenzhen Precision Manufacturing Ltd." style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:24px; box-sizing:border-box; font-family:inherit;">
+            <button id="btn-register" onclick="window._doRegister()" style="width:100%; padding:12px; background:#f59e0b; color:#fff; border:none; border-radius:4px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;">Create Account & Continue</button>
+            <p style="text-align:center; margin:16px 0 0 0; font-size:12px; color:#64748b;">
+              Already registered? <a href="#" onclick="window._authTab('login'); return false;" style="color:#007185; font-weight:700;">Sign in</a>
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <p style="margin-top:24px; font-size:12px; color:rgba(255,255,255,0.4);">
+        By continuing you agree to the AtlasDT Platform Terms of Service.
+      </p>
+    </div>
+  `;
+
+  // ── Tab switcher ────────────────────────────────────────────────────────────
+  window._authTab = function(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('auth-login').style.display    = isLogin ? '' : 'none';
+    document.getElementById('auth-register').style.display = isLogin ? 'none' : '';
+    document.getElementById('tab-login').style.color       = isLogin ? '#007185' : '#64748b';
+    document.getElementById('tab-login').style.fontWeight  = isLogin ? '700' : '600';
+    document.getElementById('tab-login').style.borderBottom= isLogin ? '3px solid #007185' : '3px solid transparent';
+    document.getElementById('tab-login').style.background  = isLogin ? '#fff' : '#f8fafc';
+    document.getElementById('tab-register').style.color       = !isLogin ? '#007185' : '#64748b';
+    document.getElementById('tab-register').style.fontWeight  = !isLogin ? '700' : '600';
+    document.getElementById('tab-register').style.borderBottom= !isLogin ? '3px solid #007185' : '3px solid transparent';
+    document.getElementById('tab-register').style.background  = !isLogin ? '#fff' : '#f8fafc';
+  };
+
+  // ── Login handler ───────────────────────────────────────────────────────────
+  window._doLogin = async function() {
+    const btn   = document.getElementById('btn-login');
+    const errEl = document.getElementById('auth-login-err');
+    const email = document.getElementById('login-email').value.trim();
+    const pass  = document.getElementById('login-password').value;
+
+    if (!email || !pass) { errEl.textContent = 'Please enter your email and password.'; errEl.style.display=''; return; }
+
+    btn.textContent = 'Signing in...';
+    btn.disabled = true;
+    errEl.style.display = 'none';
+
+    const { data, error } = await loginUser(email, pass);
+    if (error) {
+      errEl.textContent = error.message || 'Login failed. Check your credentials.';
+      errEl.style.display = '';
+      btn.textContent = 'Sign In to Seller Central';
+      btn.disabled = false;
+    } else {
+      // Reload the page — DOMContentLoaded will re-run with the session now set
+      window.location.reload();
+    }
+  };
+
+  // ── Register handler ────────────────────────────────────────────────────────
+  window._doRegister = async function() {
+    const btn     = document.getElementById('btn-register');
+    const errEl   = document.getElementById('auth-reg-err');
+    const okEl    = document.getElementById('auth-reg-ok');
+    const name    = document.getElementById('reg-name').value.trim();
+    const email   = document.getElementById('reg-email').value.trim();
+    const pass    = document.getElementById('reg-password').value;
+    const company = document.getElementById('reg-company').value.trim();
+
+    errEl.style.display = 'none';
+    okEl.style.display  = 'none';
+
+    if (!name || !email || !pass || !company) {
+      errEl.textContent = 'Please fill in all fields.'; errEl.style.display=''; return;
+    }
+    if (pass.length < 8) {
+      errEl.textContent = 'Password must be at least 8 characters.'; errEl.style.display=''; return;
+    }
+
+    btn.textContent = 'Creating account...';
+    btn.disabled = true;
+
+    const { data, error } = await signUpUser(email, pass, { full_name: name, company });
+    if (error) {
+      errEl.textContent = error.message || 'Registration failed. Please try again.';
+      errEl.style.display = '';
+      btn.textContent = 'Create Account & Continue';
+      btn.disabled = false;
+    } else {
+      // Supabase may require email confirmation depending on project settings
+      const needsConfirm = !data?.session;
+      if (needsConfirm) {
+        okEl.innerHTML = `
+          <strong>✅ Account created!</strong><br>
+          Please check <strong>${email}</strong> for a confirmation email, then return here and sign in.
+        `;
+        okEl.style.display = '';
+        btn.textContent = 'Account Created — Check your email';
+        btn.disabled = true;
+      } else {
+        // Auto-confirmed (email confirm disabled in Supabase) — reload with session
+        window.location.reload();
+      }
+    }
+  };
+
+  // Allow Enter key on inputs
+  setTimeout(() => {
+    ['login-email','login-password'].forEach(id => {
+      document.getElementById(id)?.addEventListener('keydown', e => { if(e.key==='Enter') window._doLogin(); });
+    });
+    ['reg-name','reg-email','reg-password','reg-company'].forEach(id => {
+      document.getElementById(id)?.addEventListener('keydown', e => { if(e.key==='Enter') window._doRegister(); });
+    });
+  }, 100);
+}
 
 function bindOnboarding() {
   document.getElementById('onboarding-form').addEventListener('submit', async (e) => {
@@ -722,40 +894,103 @@ function renderCreateProductForm(editProdId = null) {
       prodId = prodData[0].id;
     }
 
-    // Media
-    const mediaFiles = document.getElementById('p-img-file').files;
-    const pdfFile = document.getElementById('p-pdf-file').files[0];
+    // ── Media Upload ────────────────────────────────────────────────────────────
+    // Collect all file inputs
+    const mainImageFiles  = document.getElementById('p-img-file').files;
+    const extraImageFiles = document.getElementById('p-extra-imgs').files;
+    const model3dFile     = document.getElementById('p-3d-model').files[0];
+    const drawing2dFile   = document.getElementById('p-2d-drawing').files[0];
+    const videoFile       = document.getElementById('p-video').files[0];
+    const pdfFile         = document.getElementById('p-pdf-file').files[0];
 
-    async function uploadAsset(file, defaultType) {
-      if (!file) return;
-      let type = defaultType;
-      if (file.type && file.type.startsWith('video')) type = 'video';
+    const uploadErrors = [];
+    let firstImageUrl = null; // track to patch product.image_url
 
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${prodId}_${type}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+    /**
+     * Upload a single file to the product_assets Supabase Storage bucket,
+     * register the row in product_assets table, and (for images) patch specs.images.
+     * Returns the public URL on success, null on failure.
+     */
+    async function uploadAsset(file, assetType) {
+      if (!file) return null;
+      const fileExt = file.name.split('.').pop().toLowerCase();
+      const safeType = assetType.replace(/[^a-z0-9_]/g, '_');
+      const fileName = `${prodId}_${safeType}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
       const filePath = `${factoryRecord.id}/${fileName}`;
-      
-      const { error: uploadError } = await supabase.storage.from('product_assets').upload(filePath, file);
-      if (!uploadError) {
-        const { data: publicData } = supabase.storage.from('product_assets').getPublicUrl(filePath);
-        await supabase.from('product_assets').insert({ product_id: prodId, asset_type: type, url: publicData.publicUrl });
-        
-        // Also patch image into specs if it's the first image
-        if(type === 'image') {
-          const { data: cData } = await supabase.from('products').select('specs').eq('id', prodId).single();
-          const currentSpecs = cData?.specs || {};
-          currentSpecs.images = [publicData.publicUrl, ...(currentSpecs.images || [])];
-          await supabase.from('products').update({ specs: currentSpecs }).eq('id', prodId);
-        }
+
+      const { error: uploadError } = await supabase.storage
+        .from('product_assets')
+        .upload(filePath, file, { upsert: false });
+
+      if (uploadError) {
+        console.error(`Upload failed [${assetType}]:`, uploadError.message);
+        uploadErrors.push(`${file.name}: ${uploadError.message}`);
+        return null;
       }
+
+      const { data: publicData } = supabase.storage.from('product_assets').getPublicUrl(filePath);
+      const publicUrl = publicData.publicUrl;
+
+      // Register in product_assets table
+      await supabase.from('product_assets').insert({
+        product_id: prodId,
+        asset_type: assetType,
+        url: publicUrl
+      });
+
+      // For images: update specs.images array and track first image for image_url
+      if (assetType === 'image') {
+        const { data: cData } = await supabase.from('products').select('specs').eq('id', prodId).single();
+        const currentSpecs = cData?.specs || {};
+        currentSpecs.images = [publicUrl, ...(currentSpecs.images || [])];
+        await supabase.from('products').update({ specs: currentSpecs }).eq('id', prodId);
+        if (!firstImageUrl) firstImageUrl = publicUrl;
+      }
+
+      return publicUrl;
     }
 
     try {
-      if (mediaFiles.length > 0 || pdfFile) btn.textContent = "Uploading assets...";
-      for(let i=0; i<mediaFiles.length; i++) await uploadAsset(mediaFiles[i], 'image');
+      const hasAnyFile = mainImageFiles.length || extraImageFiles.length ||
+                         model3dFile || drawing2dFile || videoFile || pdfFile;
+
+      if (hasAnyFile) btn.textContent = 'Uploading assets...';
+
+      // 1. Main product image (maps to catalog display)
+      for (let i = 0; i < mainImageFiles.length; i++) {
+        await uploadAsset(mainImageFiles[i], 'image');
+      }
+
+      // 2. Extra gallery images
+      for (let i = 0; i < extraImageFiles.length; i++) {
+        await uploadAsset(extraImageFiles[i], 'image');
+      }
+
+      // 3. Technical datasheet PDF
       if (pdfFile) await uploadAsset(pdfFile, 'datasheet');
+
+      // 4. 3D model (STEP/STL/IGES)
+      if (model3dFile) await uploadAsset(model3dFile, '3d_model');
+
+      // 5. 2D engineering drawing (PDF/DXF/DWG)
+      if (drawing2dFile) await uploadAsset(drawing2dFile, '2d_drawing');
+
+      // 6. Product video (MP4)
+      if (videoFile) await uploadAsset(videoFile, 'video');
+
+      // Patch product.image_url with the first uploaded image
+      // (this is what the marketplace catalog and cart read directly)
+      if (firstImageUrl) {
+        await supabase.from('products').update({ image_url: firstImageUrl }).eq('id', prodId);
+      }
+
+      if (uploadErrors.length > 0) {
+        alert('Product saved, but some files failed to upload:\n\n' + uploadErrors.join('\n') +
+              '\n\nThis is usually a storage permission issue. Contact the platform admin.');
+      }
+
     } catch (e) {
-      console.error(e);
+      console.error('Upload error:', e);
     }
 
     loadCatalogTab();
