@@ -58,10 +58,12 @@ body:has(.catalog-engine:not(.hidden)) .hero__globe-container {
   display: none !important;
 }
 
-/* PDP overlay also needs solid white coverage */
+/* PDP overlay also needs solid white coverage and must scroll independently */
 .element14-pdp-overlay {
   background: #FFFFFF !important;
   isolation: isolate;
+  overflow-y: auto !important;
+  flex: 1;
 }
 
 /* ── Global Header (DigiKey Replica) ────────────────────────── */

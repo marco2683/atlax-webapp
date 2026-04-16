@@ -645,27 +645,76 @@ function wireEventListeners() {
     applyFiltersAndRender(document.getElementById('catalog-search')?.value.trim());
   });
 
+  // ── Global Checkout Navigation Helpers ───────────────────────────────────
+  // Hide all catalog sub-pages and show only the requested one
+  function showCatalogPage(pageId) {
+    ['catalog-layout','catalog-pdp','cart-page-layout','checkout-page-layout','thank-you-layout']
+      .forEach(id => document.getElementById(id)?.classList.add('hidden'));
+    document.getElementById(pageId)?.classList.remove('hidden');
+  }
+
+  window.goBackToMarketplace = function() {
+    showCatalogPage('catalog-layout');
+  };
+
+  window.goToCart = function() {
+    showCatalogPage('cart-page-layout');
+    renderCartPageUI();
+  };
+
+  window.chkGoToStep = function(step) {
+    const dot1   = document.getElementById('chk-step-dot-1');
+    const dot2   = document.getElementById('chk-step-dot-2');
+    const label1 = document.getElementById('chk-step-label-1');
+    const label2 = document.getElementById('chk-step-label-2');
+    const fill   = document.getElementById('chk-progress-fill');
+    const crumb  = document.getElementById('chk-breadcrumb-step');
+    const CHECK  = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+
+    if (step === 1) {
+      if (dot1)   { dot1.textContent='2'; dot1.style.background='#007185'; dot1.style.borderColor='#007185'; dot1.style.color='#fff'; dot1.style.boxShadow='0 2px 6px rgba(0,113,133,0.3)'; }
+      if (dot2)   { dot2.textContent='3'; dot2.style.background='#fff'; dot2.style.borderColor='#d1d5db'; dot2.style.color='#9ca3af'; dot2.style.boxShadow='none'; }
+      if (label1) { label1.style.color='#007185'; label1.style.fontWeight='700'; }
+      if (label2) { label2.style.color='#9ca3af'; label2.style.fontWeight='600'; }
+      if (fill)   fill.style.width='0%';
+      if (crumb)  crumb.textContent='Shipping & Billing';
+      document.getElementById('checkout-page-layout')?.scrollTo({top:0, behavior:'smooth'});
+
+    } else if (step === 2) {
+      const name = document.getElementById('chk-name')?.value.trim();
+      const addr = document.getElementById('chk-address1')?.value.trim();
+      const city = document.getElementById('chk-city')?.value.trim();
+      if (!name || !addr || !city) {
+        const id = !name ? 'chk-name' : !addr ? 'chk-address1' : 'chk-city';
+        const el = document.getElementById(id);
+        if (el) { el.style.borderColor='#ef4444'; el.focus(); setTimeout(()=>el.style.borderColor='#888c8c', 2000); }
+        return;
+      }
+      if (dot1)   { dot1.innerHTML=CHECK; dot1.style.background='#10b981'; dot1.style.borderColor='#10b981'; dot1.style.boxShadow='0 2px 6px rgba(16,185,129,0.3)'; }
+      if (dot2)   { dot2.textContent='3'; dot2.style.background='#007185'; dot2.style.borderColor='#007185'; dot2.style.color='#fff'; dot2.style.boxShadow='0 2px 6px rgba(0,113,133,0.3)'; }
+      if (label1) { label1.style.color='#10b981'; }
+      if (label2) { label2.style.color='#007185'; label2.style.fontWeight='700'; }
+      if (fill)   fill.style.width='100%';
+      if (crumb)  crumb.textContent='Review & Confirm';
+      document.getElementById('checkout-page-layout')?.scrollTo({top:0, behavior:'smooth'});
+    }
+  };
+
   // Cart Handlers
   document.getElementById('catalog-cart-btn')?.addEventListener('click', () => {
-    document.getElementById('catalog-layout')?.classList.add('hidden');
-    document.getElementById('catalog-pdp')?.classList.add('hidden');
-    document.getElementById('checkout-page-layout')?.classList.add('hidden');
-    document.getElementById('thank-you-layout')?.classList.add('hidden');
-    document.getElementById('cart-page-layout')?.classList.remove('hidden');
-    renderCartPageUI();
+    window.goToCart();
   });
 
   document.getElementById('cart-go-checkout-btn')?.addEventListener('click', () => {
     if (shoppingCart.length === 0) return;
-    document.getElementById('cart-page-layout')?.classList.add('hidden');
-    document.getElementById('checkout-page-layout')?.classList.remove('hidden');
-    
-    // Sync summary
+    showCatalogPage('checkout-page-layout');
+    window.chkGoToStep(1);
     let pretax = 0;
     shoppingCart.forEach(i => pretax += (i.price||0)*i.quantity);
-    document.getElementById('chk-summary-items').textContent = `$${pretax.toLocaleString(undefined, {minimumFractionDigits:2})}`;
-    document.getElementById('chk-summary-pretax').textContent = `$${pretax.toLocaleString(undefined, {minimumFractionDigits:2})}`;
-    document.getElementById('chk-summary-total').textContent = `$${pretax.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+    const fmt = v => '$' + v.toLocaleString(undefined, {minimumFractionDigits:2});
+    document.getElementById('chk-summary-items').textContent  = fmt(pretax);
+    document.getElementById('chk-summary-pretax').textContent = fmt(pretax);
+    document.getElementById('chk-summary-total').textContent  = fmt(pretax);
   });
 
   document.getElementById('final-place-order-btn')?.addEventListener('click', checkoutCart);
