@@ -134,12 +134,12 @@ function renderTree() {
       
       html += `
         <li style="margin-bottom: 8px;">
-          <div class="tax-node ${isSelected ? 'active' : ''}" data-id="${node.id}" draggable="true" style="
-            display: flex; align-items: center; padding: 8px 12px; border-radius: 6px; cursor: move;
+          <div class="tax-node ${isSelected ? 'active' : ''}" data-id="${node.id}" style="
+            display: flex; align-items: center; padding: 8px 12px; border-radius: 6px; cursor: grab;
             background: ${isSelected ? 'rgba(43,90,255,0.1)' : 'transparent'};
             border: 1px solid ${isSelected ? 'var(--color-electric)' : 'transparent'};
             color: ${isSelected ? 'var(--color-electric)' : 'var(--color-white)'};
-            transition: all 0.2s; user-select: none; -webkit-user-select: none; -webkit-user-drag: element;
+            transition: all 0.2s; user-select: none;
             ${!isActive ? 'opacity: 0.5;' : ''}
           "
           onmouseover="if(!${isSelected}) { this.style.background='var(--color-slate-800)' }"
@@ -168,62 +168,141 @@ function renderTree() {
   container.innerHTML = buildHtml(rootNodes);
 
   container.querySelectorAll('.tax-node').forEach(el => {
-    el.addEventListener('dragstart', (e) => {
-      if (el.dataset.id === 'global') {
-        e.preventDefault();
-        return;
-      }
-      draggedNodeId = el.dataset.id;
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', el.dataset.id);
-      el.style.opacity = '0.4';
-      document.getElementById('root-dropzone').style.display = 'block';
-    });
+    // ── Custom mouse-based drag system ──────────────────────
+    let mouseDownTimer = null;
     
-    el.addEventListener('dragend', (e) => {
-      el.style.opacity = el.dataset.active !== 'false' ? '1' : '0.5';
-      document.getElementById('root-dropzone').style.display = 'none';
-      container.querySelectorAll('.tax-node').forEach(n => {
-        n.style.border = n.classList.contains('active') ? '1px solid var(--color-electric)' : '1px solid transparent';
-      });
-      draggedNodeId = null;
-    });
-
-    el.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      if (!draggedNodeId || draggedNodeId === el.dataset.id || el.dataset.id === 'global') return;
-      e.dataTransfer.dropEffect = 'move';
-      if (!el.classList.contains('active')) {
-        el.style.border = '1px solid var(--color-electric)';
-      }
-    });
-
-    el.addEventListener('dragleave', (e) => {
-      if (!draggedNodeId || draggedNodeId === el.dataset.id) return;
-      if (!el.classList.contains('active')) {
-        el.style.border = '1px solid transparent';
-      }
-    });
-
-    el.addEventListener('drop', async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const targetId = el.dataset.id;
-      if (!draggedNodeId || targetId === 'global' || draggedNodeId === targetId) return;
-
-      // Ensure we aren't dropping into our own children!
-      let current = categories.find(c => c.id === targetId);
-      while(current) {
-        if (current.id === draggedNodeId) {
-          alert('Cannot move a category inside its own child.');
-          return;
+    el.addEventListener('mousedown', (e) => {
+      // Don't drag from checkbox or toggle
+      if (e.target.classList.contains('tax-checkbox') || e.target.closest('.tax-toggle')) return;
+      if (el.dataset.id === 'global') return;
+      if (e.button !== 0) return; // left-click only
+      
+      const startX = e.clientX;
+      const startY = e.clientY;
+      let isDragging = false;
+      
+      const onMouseMove = (moveEvt) => {
+        const dx = moveEvt.clientX - startX;
+        const dy = moveEvt.clientY - startY;
+        
+        // Require 5px movement to start drag (prevents accidental drags on click)
+        if (!isDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+          isDragging = true;
+          draggedNodeId = el.dataset.id;
+          
+          // Show root dropzone
+          const dropzone = document.getElementById('root-dropzone');
+          if (dropzone) dropzone.style.display = 'block';
+          
+          // Create ghost element
+          let ghost = document.getElementById('drag-ghost');
+          if (!ghost) {
+            ghost = document.createElement('div');
+            ghost.id = 'drag-ghost';
+            document.body.appendChild(ghost);
+          }
+          const catName = categories.find(c => c.id === draggedNodeId)?.name || 'Category';
+          ghost.textContent = '⠿ ' + catName;
+          ghost.style.cssText = `
+            position: fixed; z-index: 99999; pointer-events: none;
+            background: var(--color-electric, #2b5aff); color: white;
+            padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 600;
+            font-family: var(--font-primary, sans-serif);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            white-space: nowrap;
+          `;
+          
+          el.style.opacity = '0.3';
         }
-        current = categories.find(c => c.id === current.parent_id);
-      }
-
-      await updateCategoryParent(draggedNodeId, targetId);
+        
+        if (isDragging) {
+          // Move ghost to cursor
+          const ghost = document.getElementById('drag-ghost');
+          if (ghost) {
+            ghost.style.left = (moveEvt.clientX + 12) + 'px';
+            ghost.style.top = (moveEvt.clientY - 10) + 'px';
+          }
+          
+          // Highlight drop target under cursor
+          const elemUnder = document.elementFromPoint(moveEvt.clientX, moveEvt.clientY);
+          const targetNode = elemUnder?.closest?.('.tax-node');
+          const dropzone = document.getElementById('root-dropzone');
+          
+          // Clear all highlights
+          container.querySelectorAll('.tax-node').forEach(n => {
+            if (!n.classList.contains('active')) {
+              n.style.border = '1px solid transparent';
+            }
+          });
+          if (dropzone) dropzone.style.background = 'rgba(43,90,255,0.1)';
+          
+          // Highlight the target
+          if (targetNode && targetNode.dataset.id !== draggedNodeId && targetNode.dataset.id !== 'global') {
+            targetNode.style.border = '2px solid var(--color-electric)';
+          }
+          if (dropzone && elemUnder?.closest?.('#root-dropzone')) {
+            dropzone.style.background = 'rgba(43,90,255,0.3)';
+          }
+        }
+      };
+      
+      const onMouseUp = async (upEvt) => {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        
+        if (!isDragging) return; // Was just a click, not a drag
+        
+        // Clean up ghost
+        const ghost = document.getElementById('drag-ghost');
+        if (ghost) ghost.remove();
+        
+        // Clean up highlights
+        el.style.opacity = '1';
+        container.querySelectorAll('.tax-node').forEach(n => {
+          if (!n.classList.contains('active')) {
+            n.style.border = '1px solid transparent';
+          }
+        });
+        
+        const dropzone = document.getElementById('root-dropzone');
+        if (dropzone) {
+          dropzone.style.display = 'none';
+          dropzone.style.background = 'rgba(43,90,255,0.1)';
+        }
+        
+        // Find drop target
+        const elemUnder = document.elementFromPoint(upEvt.clientX, upEvt.clientY);
+        const targetNode = elemUnder?.closest?.('.tax-node');
+        const isRootDrop = elemUnder?.closest?.('#root-dropzone');
+        
+        if (isRootDrop && draggedNodeId) {
+          // Drop to root level
+          await updateCategoryParent(draggedNodeId, null);
+        } else if (targetNode && targetNode.dataset.id !== draggedNodeId && targetNode.dataset.id !== 'global') {
+          const targetId = targetNode.dataset.id;
+          
+          // Prevent circular: can't drop into own descendant
+          let current = categories.find(c => c.id === targetId);
+          while (current) {
+            if (current.id === draggedNodeId) {
+              alert('Cannot move a category inside its own child.');
+              draggedNodeId = null;
+              return;
+            }
+            current = categories.find(c => c.id === current.parent_id);
+          }
+          
+          await updateCategoryParent(draggedNodeId, targetId);
+        }
+        
+        draggedNodeId = null;
+      };
+      
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
     });
 
+    // ── Click handler (unchanged) ───────────────────────────
     el.addEventListener('click', (e) => {
       // Do nothing if clicked the checkbox
       if (e.target.classList.contains('tax-checkbox')) return;
@@ -249,18 +328,6 @@ function renderTree() {
       renderParametersPane();
     });
   });
-
-  // Root dropzone events
-  const dropzone = document.getElementById('root-dropzone');
-  if (dropzone) {
-    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; dropzone.style.background = 'rgba(43,90,255,0.2)'; });
-    dropzone.addEventListener('dragleave', (e) => { dropzone.style.background = 'rgba(43,90,255,0.1)'; });
-    dropzone.addEventListener('drop', async (e) => {
-      e.preventDefault();
-      if (!draggedNodeId) return;
-      await updateCategoryParent(draggedNodeId, null);
-    });
-  }
 
   // Bind checkboxes
   container.querySelectorAll('.tax-checkbox').forEach(cb => {
