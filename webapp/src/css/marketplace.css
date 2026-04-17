@@ -182,7 +182,7 @@ body:has(.catalog-engine:not(.hidden)) .hero__globe-container {
   display: flex;
   height: 100%;
   width: 100%;
-  padding: 0 24px;
+  padding: 0 24px 0 0; /* No left padding, keep right padding */
   box-sizing: border-box;
 }
 
@@ -200,7 +200,7 @@ body:has(.catalog-engine:not(.hidden)) .hero__globe-container {
 .dk-sidebar-header {
   background: var(--dk-filter-header-bg);
   color: var(--dk-filter-header-text);
-  padding: 8px 12px;
+  padding: 8px 16px; /* ALign with tree node padding */
   font-size: var(--dk-font-size-sm);
   font-weight: 700;
   text-transform: uppercase;
@@ -220,7 +220,7 @@ body:has(.catalog-engine:not(.hidden)) .hero__globe-container {
 }
 
 .dk-tree-node {
-  padding: 6px 4px; /* Further reduced left padding */
+  padding: 6px 16px; /* Tab words in from left edge */
   font-size: 14px;
   font-weight: 500; /* Softer/bolder appearance */
   color: #555; /* Softer gray */
@@ -270,9 +270,9 @@ body:has(.catalog-engine:not(.hidden)) .hero__globe-container {
   display: block;
 }
 
-.dk-tree-depth-1 .dk-tree-node { padding-left: 12px; font-size: 13px; }
-.dk-tree-depth-2 .dk-tree-node { padding-left: 20px; font-size: 13px; }
-.dk-tree-depth-3 .dk-tree-node { padding-left: 28px; font-size: 12px; }
+.dk-tree-depth-1 .dk-tree-node { padding-left: 28px; font-size: 13px; }
+.dk-tree-depth-2 .dk-tree-node { padding-left: 40px; font-size: 13px; }
+.dk-tree-depth-3 .dk-tree-node { padding-left: 52px; font-size: 12px; }
 
 /* ── Main Content ───────────────────────────────────────────── */
 .dk-main {
