@@ -5,6 +5,7 @@ let parameters = [];
 let selectedCategoryId = null;
 let expandedCategories = new Set();
 let hideDisabled = false;
+let draggedNodeId = null;
 
 export async function renderMarketplaceTaxonomy(container) {
   container.innerHTML = `
@@ -28,7 +29,12 @@ export async function renderMarketplaceTaxonomy(container) {
           </div>
         </div>
         <div id="taxonomy-tree-container" style="flex: 1; overflow-y: auto; padding-right: 8px;">
-          <div style="color: var(--color-steel-400); text-align: center; padding: 20px;">Loading categories...</div>
+          <div id="root-dropzone" style="display: none; padding: 12px; border: 2px dashed var(--color-electric); background: rgba(43,90,255,0.1); text-align: center; color: var(--color-electric); border-radius: 8px; margin-bottom: 16px; font-weight: 600;">
+            Drop here to move to ROOT level
+          </div>
+          <div id="taxonomy-tree-inner">
+            <div style="color: var(--color-steel-400); text-align: center; padding: 20px;">Loading categories...</div>
+          </div>
         </div>
       </div>
 
@@ -79,7 +85,7 @@ async function loadTaxonomyData() {
 }
 
 function renderTree() {
-  const container = document.getElementById('taxonomy-tree-container');
+  const container = document.getElementById('taxonomy-tree-inner');
   if (!container) return;
 
   if (categories.length === 0) {
@@ -128,8 +134,8 @@ function renderTree() {
       
       html += `
         <li style="margin-bottom: 8px;">
-          <div class="tax-node ${isSelected ? 'active' : ''}" data-id="${node.id}" style="
-            display: flex; align-items: center; padding: 8px 12px; border-radius: 6px; cursor: pointer;
+          <div class="tax-node ${isSelected ? 'active' : ''}" data-id="${node.id}" draggable="true" style="
+            display: flex; align-items: center; padding: 8px 12px; border-radius: 6px; cursor: move;
             background: ${isSelected ? 'rgba(43,90,255,0.1)' : 'transparent'};
             border: 1px solid ${isSelected ? 'var(--color-electric)' : 'transparent'};
             color: ${isSelected ? 'var(--color-electric)' : 'var(--color-white)'};
@@ -162,6 +168,61 @@ function renderTree() {
   container.innerHTML = buildHtml(rootNodes);
 
   container.querySelectorAll('.tax-node').forEach(el => {
+    el.addEventListener('dragstart', (e) => {
+      if (el.dataset.id === 'global') {
+        e.preventDefault();
+        return;
+      }
+      draggedNodeId = el.dataset.id;
+      e.dataTransfer.effectAllowed = 'move';
+      el.style.opacity = '0.4';
+      document.getElementById('root-dropzone').style.display = 'block';
+    });
+    
+    el.addEventListener('dragend', (e) => {
+      el.style.opacity = el.dataset.active !== 'false' ? '1' : '0.5';
+      document.getElementById('root-dropzone').style.display = 'none';
+      container.querySelectorAll('.tax-node').forEach(n => {
+        n.style.border = n.classList.contains('active') ? '1px solid var(--color-electric)' : '1px solid transparent';
+      });
+      draggedNodeId = null;
+    });
+
+    el.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      if (!draggedNodeId || draggedNodeId === el.dataset.id || el.dataset.id === 'global') return;
+      e.dataTransfer.dropEffect = 'move';
+      if (!el.classList.contains('active')) {
+        el.style.border = '1px solid var(--color-electric)';
+      }
+    });
+
+    el.addEventListener('dragleave', (e) => {
+      if (!draggedNodeId || draggedNodeId === el.dataset.id) return;
+      if (!el.classList.contains('active')) {
+        el.style.border = '1px solid transparent';
+      }
+    });
+
+    el.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const targetId = el.dataset.id;
+      if (!draggedNodeId || targetId === 'global' || draggedNodeId === targetId) return;
+
+      // Ensure we aren't dropping into our own children!
+      let current = categories.find(c => c.id === targetId);
+      while(current) {
+        if (current.id === draggedNodeId) {
+          alert('Cannot move a category inside its own child.');
+          return;
+        }
+        current = categories.find(c => c.id === current.parent_id);
+      }
+
+      await updateCategoryParent(draggedNodeId, targetId);
+    });
+
     el.addEventListener('click', (e) => {
       // Do nothing if clicked the checkbox
       if (e.target.classList.contains('tax-checkbox')) return;
@@ -188,6 +249,18 @@ function renderTree() {
     });
   });
 
+  // Root dropzone events
+  const dropzone = document.getElementById('root-dropzone');
+  if (dropzone) {
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; dropzone.style.background = 'rgba(43,90,255,0.2)'; });
+    dropzone.addEventListener('dragleave', (e) => { dropzone.style.background = 'rgba(43,90,255,0.1)'; });
+    dropzone.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      if (!draggedNodeId) return;
+      await updateCategoryParent(draggedNodeId, null);
+    });
+  }
+
   // Bind checkboxes
   container.querySelectorAll('.tax-checkbox').forEach(cb => {
     cb.addEventListener('click', async (e) => {
@@ -207,6 +280,38 @@ function renderTree() {
       }
     });
   });
+}
+
+async function updateCategoryParent(nodeId, newParentId) {
+  try {
+    const container = document.getElementById('taxonomy-tree-inner');
+    container.style.opacity = '0.5';
+    container.style.pointerEvents = 'none';
+    
+    const { error } = await supabase.from('component_categories')
+      .update({ parent_id: newParentId })
+      .eq('id', nodeId);
+      
+    if (error) throw error;
+    
+    // Update local state
+    const node = categories.find(c => c.id === nodeId);
+    if (node) node.parent_id = newParentId;
+    
+    // Auto-expand new parent so user can see it
+    if (newParentId) expandedCategories.add(newParentId);
+    
+    renderTree();
+  } catch(err) {
+    console.error("D&D Error:", err);
+    alert("Error updating category parent: " + err.message);
+  } finally {
+    const container = document.getElementById('taxonomy-tree-inner');
+    if (container) {
+      container.style.opacity = '1';
+      container.style.pointerEvents = 'all';
+    }
+  }
 }
 
 // ── Priority badge helper ────────────────────────────────
