@@ -681,15 +681,7 @@ function wireEventListeners() {
       document.getElementById('checkout-page-layout')?.scrollTo({top:0, behavior:'smooth'});
 
     } else if (step === 2) {
-      const name = document.getElementById('chk-name')?.value.trim();
-      const addr = document.getElementById('chk-address1')?.value.trim();
-      const city = document.getElementById('chk-city')?.value.trim();
-      if (!name || !addr || !city) {
-        const id = !name ? 'chk-name' : !addr ? 'chk-address1' : 'chk-city';
-        const el = document.getElementById(id);
-        if (el) { el.style.borderColor='#ef4444'; el.focus(); setTimeout(()=>el.style.borderColor='#888c8c', 2000); }
-        return;
-      }
+      // For new single-page layout: just mark step 2 active and populate previews
       if (dot1)   { dot1.innerHTML=CHECK; dot1.style.background='#10b981'; dot1.style.borderColor='#10b981'; dot1.style.boxShadow='0 2px 6px rgba(16,185,129,0.3)'; }
       if (dot2)   { dot2.textContent='3'; dot2.style.background='#007185'; dot2.style.borderColor='#007185'; dot2.style.color='#fff'; dot2.style.boxShadow='0 2px 6px rgba(0,113,133,0.3)'; }
       if (label1) { label1.style.color='#10b981'; }
@@ -697,8 +689,32 @@ function wireEventListeners() {
       if (fill)   fill.style.width='100%';
       if (crumb)  crumb.textContent='Review & Confirm';
       document.getElementById('checkout-page-layout')?.scrollTo({top:0, behavior:'smooth'});
+
+      // Populate delivery address preview from Step 1 form values
+      const name  = document.getElementById('chk-name')?.value?.trim()    || '—';
+      const addr1 = document.getElementById('chk-address1')?.value?.trim() || '—';
+      const addr2 = document.getElementById('chk-address2')?.value?.trim() || '';
+      const city  = document.getElementById('chk-city')?.value?.trim()    || '—';
+      const state = document.getElementById('chk-state')?.value?.trim()   || '';
+      const zip   = document.getElementById('chk-zip')?.value?.trim()     || '';
+
+      const nameEl    = document.getElementById('chk-addr-preview-name');
+      const streetEl  = document.getElementById('chk-addr-preview-street');
+      const cityEl    = document.getElementById('chk-addr-preview-city');
+      const countryEl = document.getElementById('chk-addr-preview-country');
+      if (nameEl)    nameEl.textContent    = name;
+      if (streetEl)  streetEl.textContent  = addr1 + (addr2 ? ', ' + addr2 : '');
+      if (cityEl)    cityEl.textContent    = [city, state, zip].filter(Boolean).join(', ');
+      if (countryEl) countryEl.textContent = '';
+
+      // Mirror to billing preview
+      const billName = document.getElementById('chk-bill-name-preview');
+      const billAddr = document.getElementById('chk-bill-addr-preview');
+      if (billName) billName.textContent = name;
+      if (billAddr) billAddr.innerHTML = addr1 + (addr2 ? '<br>' + addr2 : '') + '<br>' + [city, state, zip].filter(Boolean).join(', ');
     }
   };
+
 
   // Cart Handlers
   document.getElementById('catalog-cart-btn')?.addEventListener('click', () => {
@@ -709,12 +725,58 @@ function wireEventListeners() {
     if (shoppingCart.length === 0) return;
     showCatalogPage('checkout-page-layout');
     window.chkGoToStep(1);
+
+    // ── Populate Order Summary ─────────────────────────────────────────────
     let pretax = 0;
     shoppingCart.forEach(i => pretax += (i.price||0)*i.quantity);
-    const fmt = v => '$' + v.toLocaleString(undefined, {minimumFractionDigits:2});
-    document.getElementById('chk-summary-items').textContent  = fmt(pretax);
-    document.getElementById('chk-summary-pretax').textContent = fmt(pretax);
-    document.getElementById('chk-summary-total').textContent  = fmt(pretax);
+    const fmt = v => '$' + v.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+    const gst = pretax * 0.1;
+
+    const itemLabel = document.getElementById('chk-summary-item-label');
+    if (itemLabel) itemLabel.textContent = shoppingCart.length + ' item' + (shoppingCart.length > 1 ? 's' : '');
+
+    const itemsEl = document.getElementById('chk-summary-items');
+    const gstEl   = document.getElementById('chk-summary-gst');
+    const totalEl = document.getElementById('chk-summary-total');
+    if (itemsEl) itemsEl.textContent = fmt(pretax);
+    if (gstEl)   gstEl.textContent   = fmt(gst);
+    if (totalEl) totalEl.textContent  = fmt(pretax + gst);
+
+    // ── Populate Product Count heading ─────────────────────────────────────
+    const countEl = document.getElementById('chk-product-count');
+    if (countEl) countEl.textContent = shoppingCart.length + ' item' + (shoppingCart.length > 1 ? 's' : '');
+
+    // ── Populate Product List rows ─────────────────────────────────────────
+    const listEl = document.getElementById('chk-product-list');
+    if (listEl) {
+      listEl.innerHTML = shoppingCart.map(item => `
+        <div style="display:flex; align-items:center; gap:16px; padding:16px; background:#f9f9f9; border-radius:4px; border:1px solid #e8e8e8;">
+          <img src="${item.image || '/placeholder.png'}" alt="${item.name}" style="width:64px; height:64px; object-fit:contain; border-radius:4px; background:#fff; border:1px solid #eee; flex-shrink:0;">
+          <div style="flex:1; min-width:0;">
+            <div style="display:inline-flex; align-items:center; gap:6px; margin-bottom:6px;">
+              <span style="background:#e8f5e9; color:#2e7d32; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap;">● In Stock</span>
+            </div>
+            <div style="font-size:14px; font-weight:600; color:#111; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
+            <div style="font-size:12px; color:#666;">MPN: ${item.mpn || '—'}</div>
+          </div>
+          <div style="text-align:right; flex-shrink:0;">
+            <div style="font-size:15px; font-weight:700; color:#111;">${fmt(item.price||0)}</div>
+            <div style="font-size:11px; color:#888; margin-bottom:4px;">each</div>
+            <div style="font-size:20px; font-weight:700; color:#333;">${item.quantity}</div>
+            <div style="font-size:11px; color:#888;">Qty</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ── Wire colleague email toggle ────────────────────────────────────────
+    const notifyChk = document.getElementById('chk-notify-colleague');
+    const colleagueEmail = document.getElementById('chk-colleague-email');
+    if (notifyChk && colleagueEmail) {
+      notifyChk.addEventListener('change', () => {
+        colleagueEmail.style.display = notifyChk.checked ? 'block' : 'none';
+      });
+    }
   });
 
   document.getElementById('final-place-order-btn')?.addEventListener('click', checkoutCart);

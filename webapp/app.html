@@ -2644,201 +2644,250 @@
       </div>
 
       <!-- CHECKOUT FORM PAGE -->
-      <div id="checkout-page-layout" class="hidden" style="flex:1; overflow-y:auto; background:#f0f2f5; display:flex; flex-direction:column;">
-        <div style="flex:1; padding:32px 20px 48px 20px;">
+      <div id="checkout-page-layout" class="hidden" style="flex:1; overflow-y:auto; background:#f4f4f4; display:flex; flex-direction:column;">
 
-          <!-- ── Checkout Nav Header ────────────────────────────── -->
+        <!-- ── Checkout Nav Header ── -->
+        <div style="background:#fff; border-bottom:1px solid #e2e8f0; padding:16px 32px;">
+          <div style="max-width:1280px; margin:0 auto; display:flex; align-items:center; gap:8px; font-size:13px;">
+            <button onclick="window.goBackToMarketplace()" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; gap:4px; color:#007185; font-size:13px; font-weight:600; padding:0; font-family:inherit;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              OEM Marketplace
+            </button>
+            <span style="color:#ccc;">/</span>
+            <button onclick="window.goToCart()" style="background:none; border:none; cursor:pointer; color:#007185; font-size:13px; font-weight:600; padding:0; font-family:inherit;">Requisition Basket</button>
+            <span style="color:#ccc;">/</span>
+            <span id="chk-breadcrumb-step" style="color:#333; font-weight:600;">Shipping &amp; Billing</span>
+          </div>
+        </div>
 
-          <div style="max-width:1200px; margin:0 auto 32px auto;">
-
-
-
-            <!-- Breadcrumb / Back Link -->
-
-            <div style="display:flex; align-items:center; gap:6px; margin-bottom:24px; font-size:13px;">
-
-              <button onclick="window.goBackToMarketplace()" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; gap:4px; color:#007185; font-size:13px; font-weight:600; padding:0; font-family:inherit;">
-
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
-
-                OEM Marketplace
-
-              </button>
-
-              <span style="color:#ccc; font-size:12px;">/</span>
-
-              <button onclick="window.goToCart()" style="background:none; border:none; cursor:pointer; color:#007185; font-size:13px; font-weight:600; padding:0; font-family:inherit;">Requisition Basket</button>
-
-              <span style="color:#ccc; font-size:12px;">/</span>
-
-              <span id="chk-breadcrumb-step" style="color:#333; font-weight:600;">Shipping &amp; Billing</span>
-
-            </div>
-
-
-
-            <!-- Multi-Step Progress Bar -->
-
-            <div style="position:relative; display:flex; align-items:flex-start; justify-content:space-between; max-width:500px;">
-
-              <!-- Track line background -->
-
+        <!-- ── Progress Bar ── -->
+        <div style="background:#fff; border-bottom:1px solid #e2e8f0; padding:20px 32px;">
+          <div style="max-width:1280px; margin:0 auto;">
+            <div style="position:relative; display:flex; align-items:flex-start; justify-content:flex-start; gap:0; max-width:520px;">
               <div style="position:absolute; top:13px; left:48px; right:48px; height:2px; background:#e2e8f0; z-index:0;"></div>
-
-              <!-- Active fill (updated by JS) -->
-
               <div id="chk-progress-fill" style="position:absolute; top:13px; left:48px; height:2px; background:#007185; z-index:0; width:0%; transition:width 0.4s ease;"></div>
-
-
-
-              <!-- Step 1: Basket (always done) -->
-
-              <div onclick="window.goToCart()" style="position:relative; z-index:1; text-align:center; cursor:pointer; min-width:100px;" title="Back to Basket">
-
+              <!-- Basket (done) -->
+              <div onclick="window.goToCart()" style="position:relative; z-index:1; text-align:center; cursor:pointer; min-width:120px;" title="Back to Basket">
                 <div style="width:28px; height:28px; background:#10b981; border:2px solid #10b981; color:#fff; border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(16,185,129,0.3);">
-
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <div style="font-size:11px; font-weight:700; color:#10b981; margin-top:8px;">Basket</div>
+              </div>
+              <!-- Shipping & Billing -->
+              <div onclick="window.chkGoToStep(1)" style="position:relative; z-index:1; text-align:center; cursor:pointer; min-width:160px;" title="Shipping &amp; Billing">
+                <div id="chk-step-dot-1" style="width:28px; height:28px; background:#007185; border:2px solid #007185; color:#fff; border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; box-shadow:0 2px 6px rgba(0,113,133,0.3); transition:all 0.2s;">2</div>
+                <div id="chk-step-label-1" style="font-size:11px; font-weight:700; color:#007185; margin-top:8px;">Shipping &amp; Billing</div>
+              </div>
+              <!-- Review & Confirm -->
+              <div onclick="window.chkGoToStep(2)" style="position:relative; z-index:1; text-align:center; cursor:pointer; min-width:140px;" title="Review &amp; Confirm">
+                <div id="chk-step-dot-2" style="width:28px; height:28px; background:#fff; border:2px solid #d1d5db; color:#9ca3af; border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; transition:all 0.2s;">3</div>
+                <div id="chk-step-label-2" style="font-size:11px; font-weight:600; color:#9ca3af; margin-top:8px;">Review &amp; Confirm</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
+        <!-- ── Main Content Area ── -->
+        <div style="flex:1; padding:32px 32px 140px 32px;">
+          <div style="max-width:1280px; margin:0 auto; display:flex; gap:32px; align-items:flex-start;">
+
+            <!-- ════════ LEFT COLUMN ════════ -->
+            <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:0;">
+
+              <h1 style="font-size:26px; font-weight:700; color:#111; margin:0 0 24px 0;">Your details &amp; review</h1>
+
+              <!-- ── Section 1: Delivery Information ── -->
+              <div style="background:#fff; border-radius:4px; margin-bottom:2px;">
+                <div style="display:flex; align-items:center; gap:12px; padding:20px 24px; border-bottom:3px solid #007185; cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+                  <div style="width:28px; height:28px; background:#007185; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </div>
+                  <h2 style="font-size:18px; font-weight:700; color:#111; margin:0;">Delivery information</h2>
+                </div>
+                <div style="padding:24px; display:block;" id="chk-delivery-section">
+                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px;">
+                    <!-- Delivery Address -->
+                    <div>
+                      <div style="font-size:13px; font-weight:600; color:#333; margin-bottom:12px;">Delivery address</div>
+                      <div style="border:2px solid #007185; border-radius:4px; padding:16px; font-size:13px; color:#333; line-height:1.7; background:#f8fdfd;">
+                        <div style="font-weight:700; margin-bottom:4px; text-transform:uppercase;" id="chk-addr-preview-name">—</div>
+                        <div id="chk-addr-preview-street">—</div>
+                        <div id="chk-addr-preview-city">—</div>
+                        <div id="chk-addr-preview-country">—</div>
+                        <button onclick="window.chkGoToStep(1)" style="margin-top:10px; background:none; border:none; color:#007185; font-size:12px; font-weight:700; cursor:pointer; padding:0; font-family:inherit;">Edit</button>
+                      </div>
+                    </div>
+                    <!-- Receiver + Delivery Method -->
+                    <div>
+                      <div style="font-size:13px; font-weight:600; color:#333; margin-bottom:12px;">Who's receiving the delivery? <span style="font-weight:400; color:#888;">(optional)</span></div>
+                      <div style="margin-bottom:6px; font-size:13px; color:#555;">Full name</div>
+                      <input type="text" id="chk-receiver-name" style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; margin-bottom:20px; box-sizing:border-box; font-family:inherit;">
+                      <div style="font-size:13px; font-weight:600; color:#333; margin-bottom:8px;">Delivery method</div>
+                      <div style="display:flex; justify-content:space-between; align-items:center; font-size:14px;">
+                        <span style="color:#333;">Standard Delivery</span>
+                        <span style="color:#10b981; font-weight:700;">Free</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ── Section 2: Payment ── -->
+              <div style="background:#fff; border-radius:4px; margin-bottom:2px;">
+                <div style="display:flex; align-items:center; gap:12px; padding:20px 24px; border-bottom:3px solid #007185; cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+                  <div style="width:28px; height:28px; background:#007185; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </div>
+                  <h2 style="font-size:18px; font-weight:700; color:#111; margin:0;">Payment</h2>
+                </div>
+                <div style="padding:24px;" id="chk-payment-section">
+                  <div style="font-size:13px; font-weight:600; color:#333; margin-bottom:12px;">Invoice address</div>
+                  <div style="border:2px solid #007185; border-radius:4px; padding:16px; font-size:13px; color:#333; line-height:1.7; background:#f8fdfd; display:inline-block; min-width:220px;">
+                    <div style="font-weight:700; text-transform:uppercase;" id="chk-bill-name-preview">Same as delivery</div>
+                    <div id="chk-bill-addr-preview"></div>
+                  </div>
+                  <div style="margin-top:20px;">
+                    <div style="font-size:13px; font-weight:600; color:#333; margin-bottom:12px;">Payment method</div>
+                    <div style="display:flex; align-items:center; gap:16px; padding:16px; border:1px solid #e2e8f0; border-radius:4px;">
+                      <div style="background:#eaf9fb; border:1px solid #007185; padding:6px 12px; border-radius:4px; font-size:12px; font-weight:700; color:#007185;">NET30</div>
+                      <div>
+                        <div style="font-size:14px; font-weight:600; color:#111;">Corporate Account · Net 30</div>
+                        <div style="font-size:12px; color:#666;">Invoiced post-supplier approval per procurement policy</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ── Section 3: Additional Details ── -->
+              <div style="background:#fff; border-radius:4px; margin-bottom:2px;">
+                <div style="display:flex; align-items:center; gap:12px; padding:20px 24px; border-bottom:3px solid #007185; cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+                  <div style="width:28px; height:28px; background:#007185; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:13px; font-weight:700; color:#fff;">3</div>
+                  <h2 style="font-size:18px; font-weight:700; color:#111; margin:0;">Additional details</h2>
+                </div>
+                <div style="padding:24px;" id="chk-additional-section">
+                  <!-- Purchase Order Number -->
+                  <div style="padding-bottom:20px; border-bottom:1px solid #eee; margin-bottom:20px;">
+                    <div style="font-size:14px; font-weight:700; color:#111; margin-bottom:6px;">Your order / PO Number</div>
+                    <div style="font-size:13px; color:#666; margin-bottom:12px;">You can use this field to allocate your own reference number to this order — e.g. a sales number or job number.</div>
+                    <input type="text" id="chk-po-number" placeholder="" style="width:320px; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit; display:block;">
+                  </div>
+                  <!-- Notes -->
+                  <div style="padding-bottom:20px; border-bottom:1px solid #eee; margin-bottom:20px;">
+                    <div style="font-size:14px; font-weight:700; color:#111; margin-bottom:6px;">Special instructions</div>
+                    <div style="font-size:13px; color:#666; margin-bottom:12px;">Any delivery or handling instructions for suppliers.</div>
+                    <textarea id="chk-notes" rows="3" style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit; resize:vertical; display:block;"></textarea>
+                  </div>
+                  <!-- Email colleague -->
+                  <div>
+                    <div style="font-size:14px; font-weight:700; color:#111; margin-bottom:10px;">Send email updates to a colleague</div>
+                    <label style="display:flex; align-items:flex-start; gap:10px; font-size:14px; color:#333; cursor:pointer;">
+                      <input type="checkbox" id="chk-notify-colleague" style="width:16px; height:16px; margin-top:2px; accent-color:#007185; flex-shrink:0;">
+                      <span>I would like a colleague to receive email updates about my order</span>
+                    </label>
+                    <input type="email" id="chk-colleague-email" placeholder="colleague@company.com" style="display:none; width:320px; margin-top:12px; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
+                  </div>
+                </div>
+              </div>
+
+              <!-- ── Your Products ── -->
+              <div style="background:#fff; border-radius:4px; margin-top:2px; padding:24px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+                  <h2 style="font-size:22px; font-weight:700; color:#111; margin:0;">Your Products <span id="chk-product-count" style="font-size:16px; font-weight:400; color:#666;"></span></h2>
+                  <button onclick="window.goToCart()" style="display:flex; align-items:center; gap:6px; background:none; border:none; color:#007185; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                    Edit
+                  </button>
+                </div>
+                <!-- Delivery group header -->
+                <div style="font-size:14px; font-weight:700; color:#333; margin-bottom:12px;">
+                  Estimated delivery: <span style="color:#007185;">Standard lead time</span>
+                </div>
+                <!-- Product rows (populated by JS) -->
+                <div id="chk-product-list" style="display:flex; flex-direction:column; gap:12px;"></div>
+              </div>
+
+            </div><!-- end LEFT COLUMN -->
+
+            <!-- ════════ RIGHT SIDEBAR ════════ -->
+            <div style="width:320px; flex-shrink:0;">
+              <div style="position:sticky; top:24px; display:flex; flex-direction:column; gap:16px;">
+
+                <!-- Order Summary Card -->
+                <div style="background:#fff; border-radius:4px; padding:0; overflow:hidden;">
+                  <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid #eee;">
+                    <h3 style="font-size:16px; font-weight:700; color:#111; margin:0;">Order Summary</h3>
+                    <button onclick="window.goToCart()" style="display:flex; align-items:center; gap:4px; background:none; border:none; color:#007185; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                      Edit
+                    </button>
+                  </div>
+                  <div style="padding:16px 20px;">
+                    <div style="display:flex; justify-content:space-between; font-size:14px; color:#333; margin-bottom:10px;">
+                      <span id="chk-summary-item-label">Items</span>
+                      <span id="chk-summary-items" style="font-weight:600;">$0.00</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:14px; color:#333; margin-bottom:10px;">
+                      <span>Delivery</span>
+                      <span style="color:#10b981; font-weight:700;">Free</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:14px; color:#333; margin-bottom:10px; padding-bottom:12px; border-bottom:1px solid #eee;">
+                      <span>GST (est.)</span>
+                      <span id="chk-summary-gst" style="font-weight:600;">$0.00</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:700; color:#111;">
+                      <span>Grand total</span>
+                      <span id="chk-summary-total">$0.00</span>
+                    </div>
+                  </div>
                 </div>
 
-                <div style="font-size:11px; font-weight:700; color:#10b981; margin-top:8px;">Basket</div>
+                <!-- We Accept Card -->
+                <div style="background:#fff; border-radius:4px; padding:16px 20px;">
+                  <div style="font-size:12px; font-weight:700; color:#555; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">We accept</div>
+                  <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                    <div style="border:1px solid #e2e8f0; border-radius:4px; padding:6px 10px; font-size:11px; font-weight:800; color:#1a1f71; letter-spacing:-0.5px;">VISA</div>
+                    <div style="border:1px solid #e2e8f0; border-radius:4px; padding:6px 10px; font-size:9px; font-weight:700; color:#eb5757; text-align:center; line-height:1.1;">MASTER<br>CARD</div>
+                    <div style="border:1px solid #e2e8f0; border-radius:4px; padding:6px 10px; font-size:11px; font-weight:800; color:#2e77bc;">AMEX</div>
+                    <div style="border:1px solid #e2e8f0; border-radius:4px; padding:6px 10px; font-size:10px; font-weight:700; color:#007185;">NET30</div>
+                  </div>
+                </div>
 
-              </div>
-
-
-
-              <!-- Step 2: Shipping & Billing -->
-
-              <div onclick="window.chkGoToStep(1)" style="position:relative; z-index:1; text-align:center; cursor:pointer; min-width:100px;" title="Shipping &amp; Billing">
-
-                <div id="chk-step-dot-1" style="width:28px; height:28px; background:#007185; border:2px solid #007185; color:#fff; border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; box-shadow:0 2px 6px rgba(0,113,133,0.3); transition:all 0.2s;">2</div>
-
-                <div id="chk-step-label-1" style="font-size:11px; font-weight:700; color:#007185; margin-top:8px;">Shipping &amp; Billing</div>
-
-              </div>
-
-
-
-              <!-- Step 3: Review & Confirm -->
-
-              <div onclick="window.chkGoToStep(2)" style="position:relative; z-index:1; text-align:center; cursor:pointer; min-width:100px;" title="Review &amp; Confirm">
-
-                <div id="chk-step-dot-2" style="width:28px; height:28px; background:#fff; border:2px solid #d1d5db; color:#9ca3af; border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; transition:all 0.2s;">3</div>
-
-                <div id="chk-step-label-2" style="font-size:11px; font-weight:600; color:#9ca3af; margin-top:8px;">Review &amp; Confirm</div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-          <!-- ── End Checkout Nav ──────────────────────────────────── -->
-
-
-
-          <div style="max-width:1200px; margin:0 auto; display:flex; gap:24px;">
-             
-             <div style="flex:1; display:flex; flex-direction:column; gap:24px;">
-                
-                <div style="background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.1); border-radius:8px; padding:32px;">
-                   <h2 style="font-size:20px; font-weight:700; margin-top:0; border-bottom:2px solid #007185; padding-bottom:12px; display:flex; align-items:center; gap:8px; color:#111 !important;">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007185" stroke-width="2"><rect x="3" y="10" width="18" height="10" rx="2" ry="2"></rect><circle cx="12" cy="15" r="1"></circle><path d="M5 10V7A7 7 0 0 1 19 7v3"></path></svg>
-                      1. Shipping Address
-                   </h2>
-                   <p style="font-size:13px; color:#555; margin-bottom:20px;">Start typing to search globally, or enter manually below.</p>
-                 
-                 <input type="text" id="chk-address-search" placeholder="Search for an address..." style="width:100%; padding:12px; border:1px solid #888c8c; border-radius:4px; font-size:14px; margin-bottom:16px;">
-                 
-                 <div id="chk-manual-address">
-                    <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Full Name / Department</label>
-                    <input type="text" id="chk-name" style="width:100%; padding:8px; border:1px solid #888c8c; border-radius:4px; margin-bottom:12px;" required>
-
-                    <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Address Line 1</label>
-                    <input type="text" id="chk-address1" style="width:100%; padding:8px; border:1px solid #888c8c; border-radius:4px; margin-bottom:12px;" required>
-
-                    <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Address Line 2 (Optional)</label>
-                    <input type="text" id="chk-address2" style="width:100%; padding:8px; border:1px solid #888c8c; border-radius:4px; margin-bottom:12px;">
-
-                    <div style="display:flex; gap:12px;">
-                       <div style="flex:1;">
-                          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">City</label>
-                          <input type="text" id="chk-city" style="width:100%; padding:8px; border:1px solid #888c8c; border-radius:4px; margin-bottom:12px;" required>
-                       </div>
-                       <div style="width:100px;">
-                          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">State</label>
-                          <input type="text" id="chk-state" style="width:100%; padding:8px; border:1px solid #888c8c; border-radius:4px; margin-bottom:12px;" required>
-                       </div>
-                       <div style="width:120px;">
-                          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">ZIP / Postal</label>
-                          <input type="text" id="chk-zip" style="width:100%; padding:8px; border:1px solid #888c8c; border-radius:4px; margin-bottom:12px;" required>
-                       </div>
+                <!-- Need Help Card -->
+                <div style="background:#fff; border-radius:4px; padding:16px 20px;">
+                  <div style="font-size:14px; font-weight:700; color:#111; margin-bottom:14px;">Need help?</div>
+                  <a href="mailto:support@atlasdt.com" style="display:flex; align-items:center; gap:10px; text-decoration:none; margin-bottom:12px;">
+                    <div style="width:32px; height:32px; background:#e6f7f9; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#007185" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                     </div>
-                 </div>
-              </div>
-
-              <div style="background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.1); border-radius:8px; padding:32px;">
-                 <h2 style="font-size:20px; font-weight:700; margin-top:0; border-bottom:2px solid #007185; padding-bottom:12px; display:flex; align-items:center; gap:8px; color:#111 !important;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007185" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-                    2. Payment Method
-                 </h2>
-                 <p style="font-size:13px; color:#555; margin-bottom:20px;">All transactions are secure and encrypted. Choose how you would like to be invoiced below.</p>
-
-                 <div style="border:1px solid #007185; background:#f0fbff; border-radius:6px; padding:16px; margin-bottom:20px;">
-                    <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:#111;">
-                       <input type="radio" name="payment-method" checked style="accent-color:#007185; width:16px; height:16px;"> 
-                       Use Corporate Account (NET30)
-                    </label>
-                    <p style="font-size:12px; color:#555; margin:8px 0 0 24px;">Requisitions will be processed according to your corporate procurement limits and invoiced post-supplier approval.</p>
-                 </div>
-
-                 <div style="border:1px solid #e2e8f0; border-radius:6px; padding:16px; margin-bottom:24px; opacity:0.6;">
-                    <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:#555;">
-                       <input type="radio" name="payment-method" disabled style="width:16px; height:16px;"> 
-                       Credit / Debit Card (Coming Soon)
-                    </label>
-                    <div style="margin:12px 0 0 24px; display:flex; gap:8px;">
-                       <div style="background:#fff; border:1px solid #ccc; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:bold; color:#1a1f36; box-shadow:0 1px 2px rgba(0,0,0,0.05);">VISA</div>
-                       <div style="background:#fff; border:1px solid #ccc; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:bold; color:#ff5f00; box-shadow:0 1px 2px rgba(0,0,0,0.05);">MASTERCARD</div>
-                       <div style="background:#fff; border:1px solid #ccc; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:bold; color:#2e77bc; box-shadow:0 1px 2px rgba(0,0,0,0.05);">AMEX</div>
+                    <span style="color:#007185; font-size:13px; font-weight:600;">support@atlasdt.com</span>
+                  </a>
+                  <a href="tel:+61390001234" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
+                    <div style="width:32px; height:32px; background:#e6f7f9; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#007185" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.16 6.16l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                     </div>
-                 </div>
+                    <span style="color:#007185; font-size:13px; font-weight:600;">+61 3 9000 1234</span>
+                  </a>
+                </div>
 
-                 <h3 style="font-size:14px; font-weight:700; margin:0 0 12px 0;">Billing Address</h3>
-                 <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:500;">
-                    <input type="checkbox" id="chk-billing-same" checked style="width:16px; height:16px; accent-color:#007185;"> Billing address is same as shipping
-                 </label>
               </div>
+            </div><!-- end RIGHT SIDEBAR -->
 
-           </div>
+          </div><!-- end main content row -->
+        </div><!-- end padding wrapper -->
 
-           <div style="width:340px; display:flex; flex-direction:column; gap:24px;">
-              <div style="background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.1); border-radius:8px; padding:24px; position:sticky; top:24px;">
-                 <button id="final-place-order-btn" style="width:100%; background:#ffd814; color:#111; border:1px solid #fcd200; padding:16px; border-radius:8px; font-weight:700; cursor:pointer; font-size:16px; box-shadow:0 1px 2px rgba(0,0,0,0.05); margin-bottom:16px;">Place your order</button>
-                 <p style="font-size:11px; color:#555; text-align:center; line-height:1.4;">By placing your order, you agree to our privacy notice and conditions of use.</p>
-                 
-                 <h3 style="font-size:16px; font-weight:700; margin-top:24px; border-top:1px solid #ddd; padding-top:16px;">Order Summary</h3>
-                 <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:13px; color:#333;">
-                    <span>Items:</span> <strong id="chk-summary-items">$0.00</strong>
-                 </div>
-                 <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:13px; color:#333;">
-                    <span>Shipping & handling:</span> <strong>TBD</strong>
-                 </div>
-                 <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:13px; color:#333; padding-bottom:12px; border-bottom:1px solid #ddd;">
-                    <span>Total before tax:</span> <strong id="chk-summary-pretax">$0.00</strong>
-                 </div>
-                 <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:18px; font-weight:700; color:#b12704;">
-                    <span>Order total:</span> <span id="chk-summary-total">$0.00</span>
-                 </div>
-                 
-                 <div style="display:flex; align-items:center; gap:8px; justify-content:center; margin-top:24px; padding-top:16px; border-top:1px solid #eee; font-size:12px; color:#10b981; font-weight:600;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                    Secure SSL Checkout
-                 </div>
-              </div>
-           </div>
+        <!-- ── Sticky Bottom Bar ── -->
+        <div style="position:sticky; bottom:0; background:#fff; border-top:1px solid #e2e8f0; padding:16px 32px; display:flex; align-items:center; justify-content:space-between; z-index:200; box-shadow:0 -4px 16px rgba(0,0,0,0.08);">
+          <label style="display:flex; align-items:flex-start; gap:10px; font-size:13px; color:#333; cursor:pointer; max-width:480px; line-height:1.5;">
+            <input type="checkbox" id="chk-agree-terms" style="width:16px; height:16px; margin-top:2px; accent-color:#007185; flex-shrink:0;">
+            <span>By placing your order you agree to the <a href="#" style="color:#007185; font-weight:600;">AtlasDT Terms &amp; Conditions</a> and our <a href="#" style="color:#007185; font-weight:600;">Privacy Policy</a>.</span>
+          </label>
+          <button id="final-place-order-btn" style="background:#007185; color:#fff; border:none; border-radius:4px; padding:14px 40px; font-size:16px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap; box-shadow:0 2px 8px rgba(0,113,133,0.25); transition:background 0.2s;" onmouseover="this.style.background='#005f6b'" onmouseout="this.style.background='#007185'">
+            Place order now
+          </button>
         </div>
-        </div>
+
+
 
         <!-- Advertisement / Promo Banner Section -->
         <div class="dk-promo-section" style="max-width:1200px; width:100%; margin: 60px auto; padding: 0 20px; display:flex; gap: 20px; flex-shrink: 0; box-sizing: border-box;">
