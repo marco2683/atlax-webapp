@@ -130,6 +130,55 @@ function crudPlugin() {
               res.end(JSON.stringify({ error: error.message }));
             }
           });
+        } else if (req.url.startsWith('/.netlify/functions/storage-upload') && req.method === 'POST') {
+          // Setup Supabase with Service Role to bypass RLS for Storage Uploads using body payload
+          let body = '';
+          // To handle large base64 bodies, maybe need chunks
+          req.on('data', chunk => { body += chunk.toString(); });
+          req.on('end', async () => {
+            try {
+              import('@supabase/supabase-js').then(async ({ createClient }) => {
+                const { loadEnv } = await import('vite');
+                const env = loadEnv('development', process.cwd(), '');
+                const supabaseUrl = env.VITE_SUPABASE_URL;
+                const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY;
+                if (!supabaseUrl || !supabaseKey) {
+                  res.statusCode = 500;
+                  return res.end(JSON.stringify({ error: "Missing Supabase env vars" }));
+                }
+                const supabase = createClient(supabaseUrl, supabaseKey);
+                try {
+                  const payload = JSON.parse(body);
+                  const { fileBase64, fileName, filePath, contentType, bucket = 'product_assets' } = payload;
+                  
+                  if (!fileBase64 || !filePath) {
+                    res.statusCode = 400;
+                    return res.end(JSON.stringify({ error: 'Missing fileBase64 or filePath' }));
+                  }
+
+                  const fileBuffer = Buffer.from(fileBase64, 'base64');
+                  const { data, error } = await supabase.storage
+                    .from(bucket)
+                    .upload(filePath, fileBuffer, {
+                      upsert: true,
+                      contentType: contentType || 'application/octet-stream',
+                      cacheControl: '3600'
+                    });
+                  if (error) throw error;
+                  
+                  const { data: publicData } = supabase.storage.from(bucket).getPublicUrl(filePath);
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(JSON.stringify({ success: true, path: data.path, publicUrl: publicData.publicUrl }));
+                } catch(e) {
+                  res.statusCode = 500;
+                  res.end(JSON.stringify({ error: e.message }));
+                }
+              });
+            } catch(e) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: e.message }));
+            }
+          });
         } else {
           next();
         }

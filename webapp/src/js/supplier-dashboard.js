@@ -996,25 +996,40 @@ function renderCreateProductForm(editProdId = null) {
       const fileName = `${prodId}_${safeType}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
       const filePath = `${factoryRecord.id}/${fileName}`;
 
-      // Ensure auth session is fresh before uploading
-      await supabase.auth.getSession();
+      let publicUrl = null;
+      try {
+        // Convert file to base64
+        const fileBase64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = error => reject(error);
+          reader.readAsDataURL(file);
+        });
 
-      const { error: uploadError } = await supabase.storage
-        .from('product_assets')
-        .upload(filePath, file, { upsert: true, cacheControl: '3600' });
+        const res = await fetch('/.netlify/functions/storage-upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fileBase64,
+            fileName,
+            filePath,
+            contentType: file.type || 'application/octet-stream',
+            bucket: 'product_assets'
+          })
+        });
 
-
-      if (uploadError) {
+        const result = await res.json();
+        if (!res.ok || !result.success) {
+          throw new Error(result.error || 'Server upload proxy failed');
+        }
+        publicUrl = result.publicUrl;
+      } catch (uploadError) {
         console.error(`[Upload FAIL] [${assetType}] File: ${file.name}`);
-        console.error(`  → Status:  `, uploadError.status ?? 'n/a');
         console.error(`  → Message: `, uploadError.message);
         console.error(`  → Error:   `, uploadError);
         uploadErrors.push(`${file.name}: ${uploadError.message}`);
         return null;
       }
-
-      const { data: publicData } = supabase.storage.from('product_assets').getPublicUrl(filePath);
-      const publicUrl = publicData.publicUrl;
 
       // Register in product_assets table
       const { error: assetRowErr } = await supabase.from('product_assets').insert({
