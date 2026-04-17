@@ -1,6 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// Single source of truth for the Supabase client.
+// Both this file and utils/supabaseClient.js now point to the same module
+// instance, preventing the "Multiple GoTrueClient instances" warning.
+export { supabase } from './utils/supabaseClient.js';
