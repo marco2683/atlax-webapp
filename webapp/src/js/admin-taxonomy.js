@@ -175,6 +175,7 @@ function renderTree() {
       }
       draggedNodeId = el.dataset.id;
       e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', el.dataset.id);
       el.style.opacity = '0.4';
       document.getElementById('root-dropzone').style.display = 'block';
     });
