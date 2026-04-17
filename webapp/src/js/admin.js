@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (t === 'rfqs')      { pageTitle.textContent = 'RFQ \u0026 Project Tracker';    renderRFQs(); }
         if (t === 'pricing') { pageTitle.textContent = 'Pricing Engine Configurator'; renderPricingConfigurator(contentRouting); }
         if (t === 'website')   { pageTitle.textContent = 'Website Content Manager';  renderWebsiteContent(); }
-        if (t === 'marketplace-taxonomy') { pageTitle.textContent = 'Marketplace Taxonomy Configurator'; renderMarketplaceTaxonomy(contentRouting); }
+        if (t === 'marketplace-taxonomy') { pageTitle.textContent = 'Marketplace Admin'; renderMarketplaceTaxonomy(contentRouting); }
         if (t === 'products') { pageTitle.textContent = 'Products Catalog'; renderAdminProducts(contentRouting); }
         if (t === 'staff')     { pageTitle.textContent = 'Staff Directory';  renderStaffTable(); }
       });

@@ -4,6 +4,7 @@ let categories = [];
 let parameters = [];
 let selectedCategoryId = null;
 let expandedCategories = new Set();
+let hideDisabled = false;
 
 export async function renderMarketplaceTaxonomy(container) {
   container.innerHTML = `
@@ -11,8 +12,16 @@ export async function renderMarketplaceTaxonomy(container) {
       
       <!-- Left Pane: Categories -->
       <div style="flex: 1; display: flex; flex-direction: column; gap: 16px; background: var(--section-bg); border: 1px solid var(--color-slate-800); border-radius: 12px; padding: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <h3 style="margin: 0; font-size: 18px; color: var(--color-electric); font-weight: 600;">Taxonomy Tree</h3>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <h3 style="margin: 0 0 8px 0; font-size: 18px; color: var(--color-electric); font-weight: 600;">Marketplace Categories</h3>
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <button class="btn btn-secondary" id="btn-check-all-cats" style="padding: 4px 8px; font-size: 11px;">Enable All</button>
+              <label style="font-size: 11px; color: var(--color-steel-300); display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                <input type="checkbox" id="cb-hide-disabled" style="accent-color: var(--color-electric);"> Hide Disabled
+              </label>
+            </div>
+          </div>
           <div style="display: flex; gap: 8px;">
             <button class="btn btn-secondary" id="btn-seed-json" style="padding: 6px 12px; font-size: 12px;" title="Seed DB with src/data/oem-taxonomy.json">Seed JSON</button>
             <button class="btn btn-primary" id="btn-add-root-cat" style="padding: 6px 12px; font-size: 12px;">+ Root Category</button>
@@ -110,6 +119,9 @@ function renderTree() {
     }
 
     nodes.forEach(node => {
+      const isActive = node.is_active !== false; // defaults to true
+      if (hideDisabled && !isActive) return;
+
       const children = categories.filter(c => c.parent_id === node.id);
       const isSelected = selectedCategoryId === node.id;
       const isExpanded = expandedCategories.has(node.id) || isSelected; // auto-expand if selected
@@ -122,6 +134,7 @@ function renderTree() {
             border: 1px solid ${isSelected ? 'var(--color-electric)' : 'transparent'};
             color: ${isSelected ? 'var(--color-electric)' : 'var(--color-white)'};
             transition: all 0.2s;
+            ${!isActive ? 'opacity: 0.5;' : ''}
           "
           onmouseover="if(!${isSelected}) { this.style.background='var(--color-slate-800)' }"
           onmouseout="if(!${isSelected}) { this.style.background='transparent' }"
@@ -133,7 +146,8 @@ function renderTree() {
                   : '<circle cx="12" cy="12" r="3"></circle>'}
               </svg>
             </span>
-            <span style="font-size: 14px; font-weight: ${level === 0 ? '600' : '400'}; flex: 1;">${node.name}</span>
+            <input type="checkbox" class="tax-checkbox" data-id="${node.id}" ${isActive ? 'checked' : ''} title="Enable/Disable Category" style="margin-right: 8px; accent-color: var(--color-electric); cursor: pointer;">
+            <span style="font-size: 14px; font-weight: ${level === 0 ? '600' : '400'}; flex: 1;">${node.name} <span style="font-size: 11px; color: var(--color-steel-400); margin-left: 4px; font-weight: normal;">(${children.length} sub)</span></span>
           </div>
           <div style="display: ${isExpanded ? 'block' : 'none'}; border-left: 1px solid var(--color-slate-800); margin-left: 12px;">
             ${buildHtml(children, level + 1)}
@@ -147,9 +161,11 @@ function renderTree() {
 
   container.innerHTML = buildHtml(rootNodes);
 
-  // Bind clicks
   container.querySelectorAll('.tax-node').forEach(el => {
     el.addEventListener('click', (e) => {
+      // Do nothing if clicked the checkbox
+      if (e.target.classList.contains('tax-checkbox')) return;
+      
       e.stopPropagation();
       const id = el.dataset.id;
       
@@ -169,6 +185,26 @@ function renderTree() {
       }
       renderTree();
       renderParametersPane();
+    });
+  });
+
+  // Bind checkboxes
+  container.querySelectorAll('.tax-checkbox').forEach(cb => {
+    cb.addEventListener('click', async (e) => {
+      e.stopPropagation(); // very important
+      const id = cb.dataset.id;
+      const isActive = cb.checked;
+      cb.disabled = true;
+      const { error } = await supabase.from('component_categories').update({ is_active: isActive }).eq('id', id);
+      cb.disabled = false;
+      if (error) {
+        alert("Error updating status: " + error.message);
+        cb.checked = !isActive;
+      } else {
+        const cat = categories.find(c => c.id === id);
+        if (cat) cat.is_active = isActive;
+        renderTree(); // refresh UI style (opacity and hide rules)
+      }
     });
   });
 }
@@ -334,6 +370,31 @@ function renderParametersPane() {
 }
 
 function bindGlobalEvents() {
+  document.getElementById('cb-hide-disabled')?.addEventListener('change', (e) => {
+    hideDisabled = e.target.checked;
+    renderTree();
+  });
+
+  document.getElementById('btn-check-all-cats')?.addEventListener('click', async (e) => {
+    if (!confirm("This will enable all currently disabled categories. Warning: this edits the DB for all records. Proceed?")) return;
+    e.target.disabled = true;
+    e.target.textContent = "Updating...";
+    
+    // Perform bulk update using rpc or update without returning if possible, 
+    // Supabase allows bulk updates if you provide eq/in, or if you omit it updates all (only if safe updates are off, but we can do it via eq is_active false)
+    const disabledIds = categories.filter(c => c.is_active === false).map(c => c.id);
+    if(disabledIds.length > 0) {
+      const { error } = await supabase.from('component_categories').update({ is_active: true }).in('id', disabledIds);
+      if(error) alert("Error batch enabling: " + error.message);
+      else {
+        categories.forEach(c => c.is_active = true);
+        renderTree();
+      }
+    }
+    e.target.disabled = false;
+    e.target.textContent = "Enable All";
+  });
+
   document.getElementById('btn-add-root-cat')?.addEventListener('click', () => promptAddCategory(null));
   document.getElementById('btn-add-subcat')?.addEventListener('click', () => promptAddCategory(selectedCategoryId));
   
