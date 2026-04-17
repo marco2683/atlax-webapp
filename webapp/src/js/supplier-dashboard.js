@@ -548,12 +548,25 @@ function renderCreateProductForm(editProdId = null) {
                 <input type="text" id="product-type" class="amz-form-input" style="width:100%; padding:6px 10px; border:1px solid #ccc; border-radius:3px; color:#333;" value="INDUSTRIAL_COMPONENT">
               </td>
             </tr>
-            <tr>
+            <tr style="border-bottom:1px solid #f0f0f0;">
               <td style="padding:10px 0; color:#666;">Technical Datasheet</td>
               <td style="padding:10px 0;">
                  <div style="display:flex; align-items:center; gap:8px;">
                      <input type="file" accept="application/pdf" id="p-pdf-file" style="font-size:11px; width:100%; padding:4px;">
                  </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:10px 0; color:#666; font-weight:600;">
+                Inventory on Hand
+                <div style="font-size:11px; color:#999; font-weight:400;">Units available to ship</div>
+              </td>
+              <td style="padding:10px 0;">
+                <input type="number" id="p-stock-qty" min="0" step="1"
+                  class="amz-form-input"
+                  style="width:120px; padding:6px 10px; border:1px solid #ccc; border-radius:3px; color:#111; font-size:14px; font-weight:700;"
+                  value="${prod?.stock_quantity ?? 0}" placeholder="0">
+                <span style="font-size:12px; color:#666; margin-left:8px;">units</span>
               </td>
             </tr>
           </table>
@@ -939,7 +952,7 @@ function renderCreateProductForm(editProdId = null) {
       category_id: finalCatId,
       mpn: document.getElementById('p-mpn').value || internalSku,
       description: document.getElementById('p-desc').value,
-      stock_quantity: 0,
+      stock_quantity: parseInt(document.getElementById('p-stock-qty')?.value || '0', 10),
       base_price: base_price,
       pricing_tiers: tiers,
       packaging: pack,
@@ -992,7 +1005,10 @@ function renderCreateProductForm(editProdId = null) {
 
 
       if (uploadError) {
-        console.error(`Upload failed [${assetType}]:`, uploadError.message);
+        console.error(`[Upload FAIL] [${assetType}] File: ${file.name}`);
+        console.error(`  → Status:  `, uploadError.status ?? 'n/a');
+        console.error(`  → Message: `, uploadError.message);
+        console.error(`  → Error:   `, uploadError);
         uploadErrors.push(`${file.name}: ${uploadError.message}`);
         return null;
       }
@@ -1001,11 +1017,15 @@ function renderCreateProductForm(editProdId = null) {
       const publicUrl = publicData.publicUrl;
 
       // Register in product_assets table
-      await supabase.from('product_assets').insert({
+      const { error: assetRowErr } = await supabase.from('product_assets').insert({
         product_id: prodId,
         asset_type: assetType,
         url: publicUrl
       });
+      if (assetRowErr) {
+        console.warn(`[product_assets table] Insert failed: ${assetRowErr.message}`);
+        // Non-fatal — file is still in storage, just not registered in the table
+      }
 
       // For images: update specs.images array and track first image for image_url
       if (assetType === 'image') {
