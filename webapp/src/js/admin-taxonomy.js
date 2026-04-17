@@ -139,7 +139,7 @@ function renderTree() {
             background: ${isSelected ? 'rgba(43,90,255,0.1)' : 'transparent'};
             border: 1px solid ${isSelected ? 'var(--color-electric)' : 'transparent'};
             color: ${isSelected ? 'var(--color-electric)' : 'var(--color-white)'};
-            transition: all 0.2s;
+            transition: all 0.2s; user-select: none; -webkit-user-select: none; -webkit-user-drag: element;
             ${!isActive ? 'opacity: 0.5;' : ''}
           "
           onmouseover="if(!${isSelected}) { this.style.background='var(--color-slate-800)' }"
