@@ -32,7 +32,7 @@ export async function initMarketplaceCatalog() {
   console.log('[Marketplace] Initializing DigiKey-style Storefront...');
 
   // 1. Fetch all categories
-  const { data: catData, error: catErr } = await supabase.from('component_categories').select('*').order('name');
+  const { data: catData, error: catErr } = await supabase.from('component_categories').select('*').eq('is_active', true).order('name');
   if (catErr) {
     console.error('Failed fetching marketplace categories:', catErr);
     return;
