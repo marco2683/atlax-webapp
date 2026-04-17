@@ -1290,18 +1290,94 @@ window.checkoutCart = async function() {
     }
 
     // Success!
+    // Capture order data before clearing cart
+    const orderedItems  = [...shoppingCart];
+    const shippingSnap  = { ...shippingInfo };
+    const orderRef      = 'ATL-' + Date.now().toString(36).toUpperCase();
+    const pretax        = orderedItems.reduce((s,i) => s+(i.price||0)*i.quantity, 0);
+    const gst           = pretax * 0.1;
+    const grandTotal    = pretax + gst;
+    const fmt           = v => '$' + v.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+
     shoppingCart = [];
     localStorage.setItem('marketplace_cart', JSON.stringify(shoppingCart));
     updateCartBadge();
-    
+
+    // ── Populate Thank You page ───────────────────────────────────────────
+    const setT = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+    const setH = (id, v) => { const el = document.getElementById(id); if(el) el.innerHTML = v; };
+
+    setT('ty-order-ref', orderRef);
+    setT('ty-user-email', user.email || 'your registered email');
+    setT('ty-user-name', user.email?.split('@')[0]?.toUpperCase() || '');
+
+    // Totals
+    setT('ty-item-count', orderedItems.length.toString());
+    setT('ty-item-qty-total', '(' + orderedItems.reduce((s,i)=>s+i.quantity,0) + ')');
+    setT('ty-goods-total',  fmt(pretax));
+    setT('ty-gst',          fmt(gst));
+    setT('ty-grand-total',  fmt(grandTotal));
+
+    // Address
+    const addrLines = [
+      shippingSnap.name,
+      shippingSnap.address1,
+      shippingSnap.address2,
+      [shippingSnap.city, shippingSnap.state, shippingSnap.zip].filter(Boolean).join(', ')
+    ].filter(Boolean).join('<br>');
+    setH('ty-delivery-addr', addrLines);
+    setH('ty-invoice-addr',  addrLines); // same as delivery (NET30)
+
+    // Recipient (from optional receiver-name field)
+    const recipientName = document.getElementById('chk-receiver-name')?.value?.trim() || shippingSnap.name;
+    setT('ty-recipient', recipientName);
+
+    // Products count
+    setT('ty-products-count', orderedItems.length + ' item' + (orderedItems.length > 1 ? 's' : ''));
+
+    // Product list rows
+    const tyList = document.getElementById('ty-product-list');
+    if (tyList) {
+      tyList.innerHTML = orderedItems.map(item => `
+        <div style="display:flex; align-items:center; gap:16px; padding:16px; background:#f9f9f9; border-radius:4px; border:1px solid #e8e8e8;">
+          <img src="${item.image || '/placeholder.png'}" alt="${item.name}" style="width:64px; height:64px; object-fit:contain; background:#fff; border:1px solid #eee; border-radius:4px; flex-shrink:0;">
+          <div style="flex:1; min-width:0;">
+            <div style="display:inline-flex; align-items:center; gap:6px; margin-bottom:6px;">
+              <span style="background:#e8f5e9; color:#2e7d32; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px;">● In Stock</span>
+            </div>
+            <div style="font-size:14px; font-weight:600; color:#111; margin-bottom:4px;">${item.name}</div>
+            <div style="font-size:12px; color:#888;">RS Stock No. &nbsp;&nbsp;&nbsp; ${item.mpn || '—'}</div>
+          </div>
+          <div style="text-align:right; flex-shrink:0;">
+            <div style="font-size:15px; font-weight:700; color:#111;">${fmt(item.price||0)}</div>
+            <div style="font-size:11px; color:#888; margin-bottom:4px;">Each</div>
+            <div style="font-size:20px; font-weight:700; color:#333;">${item.quantity}</div>
+            <div style="font-size:11px; color:#888;">Qty</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ── Rating widget handler ─────────────────────────────────────────────
+    window.tyRate = function(n) {
+      document.querySelectorAll('.ty-rate-btn').forEach((btn, i) => {
+        btn.style.background = i < n ? '#005f6b' : '#fff';
+        btn.style.color      = i < n ? '#fff'    : '#007185';
+      });
+      const thanks = document.getElementById('ty-rating-thanks');
+      if (thanks) { thanks.style.display = 'block'; }
+    };
+
     // UI transition
     chkBtn.innerHTML = 'Success!';
     setTimeout(() => {
       document.getElementById('checkout-page-layout').classList.add('hidden');
       document.getElementById('thank-you-layout').classList.remove('hidden');
-      chkBtn.innerHTML = 'Place your order';
+      document.getElementById('thank-you-layout').scrollTo({top:0, behavior:'smooth'});
+      chkBtn.innerHTML = 'Place order now';
       chkBtn.disabled = false;
     }, 1500);
+
 
   } catch (err) {
     console.error('Unhandled checkout error', err);

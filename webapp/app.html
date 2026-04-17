@@ -2936,21 +2936,158 @@
       </div>
 
       <!-- THANK YOU PAGE -->
-      <div id="thank-you-layout" class="hidden" style="flex:1; overflow-y:auto; background:#f0f2f5; display:flex; flex-direction:column;">
-         <div style="flex:1; padding:80px 20px; display:flex; justify-content:center; align-items:center;">
-            <div style="max-width:600px; width:100%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.1); border-radius:8px; padding:48px; text-align:center;">
-               <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" style="margin-bottom:24px; margin-inline:auto;">
-                 <circle cx="12" cy="12" r="10" />
-                 <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-                 <line x1="9" y1="9" x2="9.01" y2="9" />
-                 <line x1="15" y1="9" x2="15.01" y2="9" />
-               </svg>
-               <h1 style="font-size:28px; font-weight:700; margin-top:0; color:#111;">Order submitted.</h1>
-               <p style="font-size:16px; color:#555; line-height:1.6; margin-top:16px;">Thank you! Your requisitions have been routed directly to the manufacturers. You will receive an email confirmation with standard NET30 invoices as suppliers approve the lines.</p>
-               <button id="thank-you-return-btn" style="margin-top:32px; background:#007185; color:#fff; border:none; padding:12px 24px; border-radius:4px; font-weight:700; font-size:16px; cursor:pointer;">Return to Marketplace</button>
-            </div>
-         </div>
-        
+      <div id="thank-you-layout" class="hidden" style="flex:1; overflow-y:auto; background:#f4f4f4; display:flex; flex-direction:column;">
+
+        <!-- Print bar -->
+        <div style="background:#fff; border-bottom:1px solid #e2e8f0; padding:12px 32px; display:flex; align-items:center; justify-content:flex-end;">
+          <button onclick="window.print()" style="display:flex; align-items:center; gap:6px; background:#fff; border:1px solid #333; border-radius:3px; padding:7px 14px; font-size:13px; font-weight:600; color:#333; cursor:pointer; font-family:inherit;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Print
+          </button>
+        </div>
+
+        <!-- Main body -->
+        <div style="flex:1; padding:40px 32px; max-width:1280px; margin:0 auto; width:100%; box-sizing:border-box;">
+          <div style="display:flex; gap:32px; align-items:flex-start;">
+
+            <!-- ════════ LEFT COLUMN ════════ -->
+            <div style="flex:1; min-width:0;">
+
+              <!-- Heading -->
+              <h1 style="font-size:30px; font-weight:700; color:#007185; margin:0 0 24px 0;">Thank you for your order</h1>
+
+              <!-- Order ref box -->
+              <div style="background:#fff; border-radius:4px; padding:20px 24px; margin-bottom:4px;">
+                <div style="font-size:15px; color:#333;">Your AtlasDT order reference: <strong id="ty-order-ref" style="color:#007185; font-size:17px; letter-spacing:0.5px;">—</strong></div>
+                <hr style="border:none; border-top:1px solid #eee; margin:16px 0 0 0;">
+              </div>
+
+              <!-- Email confirmation -->
+              <div style="background:#fff; border-radius:4px; padding:20px 24px; margin-bottom:4px; font-size:14px; color:#333;">
+                Your order confirmation has been sent to <strong id="ty-user-email">your registered email address</strong>.
+              </div>
+
+              <!-- Order Summary -->
+              <div style="background:#fff; border-radius:4px; padding:20px 24px; margin-bottom:4px;">
+                <h2 style="font-size:16px; font-weight:700; color:#111; margin:0 0 12px 0;">Order summary</h2>
+                <hr style="border:none; border-top:2px solid #007185; margin:0 0 16px 0;">
+
+                <!-- Items line with scroll -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                  <span style="font-size:14px; color:#333;"><span id="ty-item-count">0</span> items <span id="ty-item-qty-total" style="color:#666;"></span></span>
+                  <button id="ty-view-products-btn" onclick="document.getElementById('ty-products-section').scrollIntoView({behavior:'smooth'})" style="background:none; border:none; color:#007185; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:4px;">
+                    View Products
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </button>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; font-size:14px; color:#333; margin-bottom:10px;">
+                  <span>Goods total</span><span id="ty-goods-total">$0.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:10px;">
+                  <span style="color:#333;">Delivery</span><span style="color:#10b981; font-weight:700;">Free</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:14px; color:#333; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid #eee;">
+                  <span>GST</span><span id="ty-gst">$0.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:700; color:#111;">
+                  <span>Grand total</span><span id="ty-grand-total">$0.00</span>
+                </div>
+              </div>
+
+              <!-- Delivery address -->
+              <div style="background:#fff; border-radius:4px; padding:20px 24px; margin-bottom:4px;">
+                <h2 style="font-size:15px; font-weight:700; color:#111; margin:0 0 8px 0;">Delivery address</h2>
+                <hr style="border:none; border-top:2px solid #007185; margin:0 0 14px 0;">
+                <div id="ty-delivery-addr" style="font-size:14px; color:#333; line-height:1.8; font-weight:600;"></div>
+              </div>
+
+              <!-- Delivery method -->
+              <div style="background:#fff; border-radius:4px; padding:20px 24px; margin-bottom:4px;">
+                <h2 style="font-size:15px; font-weight:700; color:#111; margin:0 0 8px 0;">Delivery method</h2>
+                <hr style="border:none; border-top:2px solid #007185; margin:0 0 14px 0;">
+                <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:600; color:#333;">
+                  <span>Standard Delivery</span>
+                  <span style="color:#10b981; font-weight:700;">FREE</span>
+                </div>
+              </div>
+
+              <!-- Delivery recipient -->
+              <div style="background:#fff; border-radius:4px; padding:20px 24px; margin-bottom:4px;">
+                <h2 style="font-size:15px; font-weight:700; color:#111; margin:0 0 8px 0;">Delivery recipient</h2>
+                <hr style="border:none; border-top:2px solid #007185; margin:0 0 14px 0;">
+                <div id="ty-recipient" style="font-size:14px; color:#555;">—</div>
+              </div>
+
+              <!-- Invoice address -->
+              <div style="background:#fff; border-radius:4px; padding:20px 24px; margin-bottom:4px;">
+                <h2 style="font-size:15px; font-weight:700; color:#111; margin:0 0 8px 0;">Invoice address</h2>
+                <hr style="border:none; border-top:2px solid #007185; margin:0 0 14px 0;">
+                <div id="ty-invoice-addr" style="font-size:14px; color:#333; line-height:1.8; font-weight:600;"></div>
+              </div>
+
+              <!-- Payment method -->
+              <div style="background:#fff; border-radius:4px; padding:20px 24px; margin-bottom:4px;">
+                <h2 style="font-size:15px; font-weight:700; color:#111; margin:0 0 8px 0;">Payment method</h2>
+                <hr style="border:none; border-top:2px solid #007185; margin:0 0 14px 0;">
+                <div style="display:flex; align-items:center; gap:14px;">
+                  <div style="background:#eaf9fb; border:1px solid #007185; padding:6px 12px; border-radius:4px; font-size:12px; font-weight:700; color:#007185; white-space:nowrap;">NET30</div>
+                  <div>
+                    <div style="font-size:14px; font-weight:700; color:#111;">Corporate Account · Net 30</div>
+                    <div id="ty-user-name" style="font-size:13px; color:#555; text-transform:uppercase; margin-top:2px;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Your Products -->
+              <div id="ty-products-section" style="background:#fff; border-radius:4px; padding:20px 24px; margin-top:4px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                  <h2 style="font-size:22px; font-weight:700; color:#111; margin:0;">Your Products <span id="ty-products-count" style="font-size:16px; font-weight:400; color:#666;"></span></h2>
+                  <button onclick="window.goBackToMarketplace()" style="display:flex; align-items:center; gap:6px; background:none; border:none; color:#007185; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                    Continue Shopping
+                  </button>
+                </div>
+                <div id="ty-product-list" style="display:flex; flex-direction:column; gap:12px; margin-top:16px;"></div>
+              </div>
+
+              <!-- Return button -->
+              <div style="margin-top:24px;">
+                <button id="thank-you-return-btn" style="background:#007185; color:#fff; border:none; border-radius:4px; padding:12px 28px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;">
+                  Back to Marketplace
+                </button>
+              </div>
+
+            </div><!-- end LEFT -->
+
+            <!-- ════════ RIGHT SIDEBAR ════════ -->
+            <div style="width:280px; flex-shrink:0;">
+              <div style="position:sticky; top:24px;">
+
+                <!-- Rating Widget -->
+                <div style="background:#007185; border-radius:4px; padding:20px; color:#fff; text-align:center;">
+                  <div style="font-size:14px; font-weight:600; margin-bottom:8px; line-height:1.5;">Please rate your checkout experience</div>
+                  <div style="font-size:11px; color:rgba(255,255,255,0.75); margin-bottom:14px;">1 = Terrible and 5 = Excellent</div>
+                  <div style="display:flex; justify-content:center; gap:8px; margin-bottom:16px;">
+                    <div id="ty-ratings" style="display:flex; gap:8px;">
+                      <button onclick="window.tyRate(1)" class="ty-rate-btn" style="width:36px; height:36px; background:#fff; border:2px solid rgba(255,255,255,0.5); border-radius:4px; font-size:13px; font-weight:700; color:#007185; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit;">1</button>
+                      <button onclick="window.tyRate(2)" class="ty-rate-btn" style="width:36px; height:36px; background:#fff; border:2px solid rgba(255,255,255,0.5); border-radius:4px; font-size:13px; font-weight:700; color:#007185; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit;">2</button>
+                      <button onclick="window.tyRate(3)" class="ty-rate-btn" style="width:36px; height:36px; background:#fff; border:2px solid rgba(255,255,255,0.5); border-radius:4px; font-size:13px; font-weight:700; color:#007185; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit;">3</button>
+                      <button onclick="window.tyRate(4)" class="ty-rate-btn" style="width:36px; height:36px; background:#fff; border:2px solid rgba(255,255,255,0.5); border-radius:4px; font-size:13px; font-weight:700; color:#007185; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit;">4</button>
+                      <button onclick="window.tyRate(5)" class="ty-rate-btn" style="width:36px; height:36px; background:#fff; border:2px solid rgba(255,255,255,0.5); border-radius:4px; font-size:13px; font-weight:700; color:#007185; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit;">5</button>
+                    </div>
+                  </div>
+                  <div id="ty-rating-thanks" style="font-size:12px; color:rgba(255,255,255,0.8); display:none;">Thanks for your feedback! ✓</div>
+                  <div style="font-size:10px; color:rgba(255,255,255,0.5); margin-top:12px; border-top:1px solid rgba(255,255,255,0.2); padding-top:10px;">Powered by AtlasDT</div>
+                </div>
+
+              </div>
+            </div><!-- end RIGHT -->
+
+          </div>
+        </div>
+
+
         <!-- MARKETPLACE FOOTER -->
         <div class="marketplace-footer" style="background:#111; color:#fff; padding:48px 24px; margin-top:auto; font-family:'Inter', sans-serif;">
           <div style="max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; flex-wrap:wrap; gap:40px;">
