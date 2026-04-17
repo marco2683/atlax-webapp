@@ -983,9 +983,13 @@ function renderCreateProductForm(editProdId = null) {
       const fileName = `${prodId}_${safeType}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
       const filePath = `${factoryRecord.id}/${fileName}`;
 
+      // Ensure auth session is fresh before uploading
+      await supabase.auth.getSession();
+
       const { error: uploadError } = await supabase.storage
         .from('product_assets')
-        .upload(filePath, file, { upsert: false });
+        .upload(filePath, file, { upsert: true, cacheControl: '3600' });
+
 
       if (uploadError) {
         console.error(`Upload failed [${assetType}]:`, uploadError.message);
