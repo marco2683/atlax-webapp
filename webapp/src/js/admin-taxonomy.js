@@ -595,21 +595,31 @@ function bindGlobalEvents() {
     const cat = categories.find(c => c.id === selectedCategoryId);
     if (!cat) return;
 
-    // Check for sub-categories
+    // Check for sub-categories (direct children)
     const children = categories.filter(c => c.parent_id === selectedCategoryId);
     
-    // Check for linked products
-    const { data: linkedProducts, error: countErr } = await supabase
-      .from('products')
-      .select('id', { count: 'exact', head: true })
-      .eq('category_id', selectedCategoryId);
-    
-    const productCount = linkedProducts?.length ?? 0;
-
     if (children.length > 0) {
       alert(`Cannot delete "${cat.name}" — it still has ${children.length} sub-categor${children.length === 1 ? 'y' : 'ies'}. Please move or delete all sub-categories first.`);
       return;
     }
+
+    // Collect this category + all descendant IDs to check for linked products
+    function getAllDescendantIds(parentId) {
+      let ids = [parentId];
+      categories.filter(c => c.parent_id === parentId).forEach(child => {
+        ids = ids.concat(getAllDescendantIds(child.id));
+      });
+      return ids;
+    }
+    const allIds = getAllDescendantIds(selectedCategoryId);
+
+    // Check for linked products across this category and all descendants
+    const { data: linkedProducts, error: countErr } = await supabase
+      .from('products')
+      .select('id')
+      .in('category_id', allIds);
+    
+    const productCount = linkedProducts?.length ?? 0;
 
     if (productCount > 0) {
       const action = prompt(
@@ -625,7 +635,7 @@ function bindGlobalEvents() {
         const { error: unassignErr } = await supabase
           .from('products')
           .update({ category_id: null })
-          .eq('category_id', selectedCategoryId);
+          .in('category_id', allIds);
         if (unassignErr) {
           alert("Error unassigning products: " + unassignErr.message);
           return;
