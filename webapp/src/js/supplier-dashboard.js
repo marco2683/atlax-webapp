@@ -926,10 +926,13 @@ function renderCreateProductForm(editProdId = null) {
     });
 
     const richDesc = document.getElementById('rich-description').innerHTML;
-    const applications = document.getElementById('p-applications').value;
+    const applications = document.getElementById('p-applications')?.value || '';
     const internalSku = document.getElementById('internal-sku').value;
 
     const base_price = tiers.length ? tiers[0].unit_price : 0;
+
+    // Store applications inside specs (not a top-level products column)
+    if (applications) specsPayload.applications = applications;
 
     const payload = {
       supplier_id: factoryRecord.id,
@@ -941,7 +944,6 @@ function renderCreateProductForm(editProdId = null) {
       pricing_tiers: tiers,
       packaging: pack,
       rich_description: richDesc,
-      applications: applications,
       specs: specsPayload
     };
 
