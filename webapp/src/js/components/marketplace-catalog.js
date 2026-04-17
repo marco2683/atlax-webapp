@@ -72,12 +72,10 @@ function renderTaxonomyTree() {
     let html = `<div class="${depthClass}">`;
     html += `<div class="dk-tree-node" data-id="${cat.id}" data-name="${cat.name}">`;
 
+    html += `<span class="dk-tree-label" style="flex:1; text-align:left;">${cat.name}</span>`;
     if (hasSubs) {
       html += `<svg class="dk-tree-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
-    } else {
-      html += `<span style="width:12px; display:inline-block;"></span>`;
     }
-    html += `${cat.name}`;
     html += `</div>`;
 
     if (hasSubs) {

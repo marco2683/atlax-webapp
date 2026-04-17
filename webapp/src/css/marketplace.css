@@ -220,36 +220,41 @@ body:has(.catalog-engine:not(.hidden)) .hero__globe-container {
 }
 
 .dk-tree-node {
-  padding: 6px 12px;
-  font-size: var(--dk-font-size-md);
-  color: var(--dk-link-blue);
+  padding: 8px 8px; /* reduced left padding */
+  font-size: 14px;
+  color: #4a4a4a; /* dark grey instead of link blue */
   cursor: pointer;
   border-bottom: 1px solid #EEEEEE;
   display: flex;
   align-items: center;
-  gap: 6px;
-  transition: background 0.1s;
+  justify-content: space-between; /* space text left and arrow right */
+  transition: background 0.2s, color 0.1s;
   text-decoration: none;
   user-select: none;
 }
 
 .dk-tree-node:hover {
-  background: var(--dk-filter-item-hover);
-  text-decoration: underline;
+  background: rgba(245, 158, 11, 0.15); /* amber highlight */
+  color: #000;
+  text-decoration: none; /* No underline */
 }
 
 .dk-tree-node.active {
-  background: var(--dk-filter-selected);
-  font-weight: 700;
-  color: var(--dk-text-primary);
+  background: rgba(245, 158, 11, 0.8); /* amber active highlight */
+  font-weight: 600;
+  color: #000;
 }
 
 .dk-tree-node .dk-tree-arrow {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
-  transition: transform 0.15s;
-  color: #999;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #777; /* Subtle arrow color */
+}
+
+.dk-tree-node.active .dk-tree-arrow {
+  color: #000; /* Dark arrow when active */
 }
 
 .dk-tree-node .dk-tree-arrow.expanded {
@@ -264,9 +269,9 @@ body:has(.catalog-engine:not(.hidden)) .hero__globe-container {
   display: block;
 }
 
-.dk-tree-depth-1 .dk-tree-node { padding-left: 24px; font-size: var(--dk-font-size-sm); }
-.dk-tree-depth-2 .dk-tree-node { padding-left: 36px; font-size: var(--dk-font-size-sm); }
-.dk-tree-depth-3 .dk-tree-node { padding-left: 48px; font-size: var(--dk-font-size-xs); }
+.dk-tree-depth-1 .dk-tree-node { padding-left: 16px; font-size: 13px; }
+.dk-tree-depth-2 .dk-tree-node { padding-left: 24px; font-size: 13px; }
+.dk-tree-depth-3 .dk-tree-node { padding-left: 32px; font-size: 12px; }
 
 /* ── Main Content ───────────────────────────────────────────── */
 .dk-main {
