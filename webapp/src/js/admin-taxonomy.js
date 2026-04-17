@@ -622,27 +622,50 @@ function bindGlobalEvents() {
     const productCount = linkedProducts?.length ?? 0;
 
     if (productCount > 0) {
+      // Build a list of other root categories for reassignment
+      const otherCats = categories
+        .filter(c => !allIds.includes(c.id) && c.id !== selectedCategoryId)
+        .map(c => c.name)
+        .slice(0, 10);
+      
       const action = prompt(
         `"${cat.name}" has ${productCount} product(s) linked to it.\n\n` +
-        `You must reassign them before deleting. Options:\n` +
-        `  1) Type "unassign" to remove category from those products (sets to null)\n` +
-        `  2) Press Cancel to abort deletion`
+        `Choose an action:\n` +
+        `  • Type a category NAME to reassign products to (e.g. "${otherCats[0] || 'Other Category'}")\n` +
+        `  • Type "DELETE" to permanently delete those products\n` +
+        `  • Press Cancel to abort\n\n` +
+        `Available categories: ${otherCats.join(', ') || '(none)'}`
       );
       
       if (!action) return;
       
-      if (action.trim().toLowerCase() === 'unassign') {
-        const { error: unassignErr } = await supabase
+      if (action.trim().toUpperCase() === 'DELETE') {
+        if (!confirm(`This will PERMANENTLY DELETE ${productCount} product(s). Are you absolutely sure?`)) return;
+        const { error: delErr } = await supabase
           .from('products')
-          .update({ category_id: null })
+          .delete()
           .in('category_id', allIds);
-        if (unassignErr) {
-          alert("Error unassigning products: " + unassignErr.message);
+        if (delErr) {
+          alert("Error deleting products: " + delErr.message);
           return;
         }
       } else {
-        alert('Deletion cancelled. Type "unassign" to proceed.');
-        return;
+        // Find the target category by name
+        const targetCat = categories.find(c => 
+          c.name.toLowerCase() === action.trim().toLowerCase() && !allIds.includes(c.id)
+        );
+        if (!targetCat) {
+          alert(`Category "${action}" not found. Please type an exact category name.`);
+          return;
+        }
+        const { error: reassignErr } = await supabase
+          .from('products')
+          .update({ category_id: targetCat.id })
+          .in('category_id', allIds);
+        if (reassignErr) {
+          alert("Error reassigning products: " + reassignErr.message);
+          return;
+        }
       }
     }
 
