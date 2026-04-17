@@ -591,13 +591,55 @@ function bindGlobalEvents() {
   });
 
   document.getElementById('btn-delete-cat')?.addEventListener('click', async () => {
-    if (!selectedCategoryId) return;
+    if (!selectedCategoryId || selectedCategoryId === 'global') return;
     const cat = categories.find(c => c.id === selectedCategoryId);
-    if(!confirm(`Are you sure you want to completely delete "${cat.name}" and ALL its sub-categories AND parameters? This could break existing products.`)) return;
+    if (!cat) return;
+
+    // Check for sub-categories
+    const children = categories.filter(c => c.parent_id === selectedCategoryId);
     
-    // Deleting root node cascade deletes everything due to ON DELETE CASCADE
+    // Check for linked products
+    const { data: linkedProducts, error: countErr } = await supabase
+      .from('products')
+      .select('id', { count: 'exact', head: true })
+      .eq('category_id', selectedCategoryId);
+    
+    const productCount = linkedProducts?.length ?? 0;
+
+    if (children.length > 0) {
+      alert(`Cannot delete "${cat.name}" — it still has ${children.length} sub-categor${children.length === 1 ? 'y' : 'ies'}. Please move or delete all sub-categories first.`);
+      return;
+    }
+
+    if (productCount > 0) {
+      const action = prompt(
+        `"${cat.name}" has ${productCount} product(s) linked to it.\n\n` +
+        `You must reassign them before deleting. Options:\n` +
+        `  1) Type "unassign" to remove category from those products (sets to null)\n` +
+        `  2) Press Cancel to abort deletion`
+      );
+      
+      if (!action) return;
+      
+      if (action.trim().toLowerCase() === 'unassign') {
+        const { error: unassignErr } = await supabase
+          .from('products')
+          .update({ category_id: null })
+          .eq('category_id', selectedCategoryId);
+        if (unassignErr) {
+          alert("Error unassigning products: " + unassignErr.message);
+          return;
+        }
+      } else {
+        alert('Deletion cancelled. Type "unassign" to proceed.');
+        return;
+      }
+    }
+
+    if (!confirm(`Final confirmation: permanently delete "${cat.name}" and all its parameters?`)) return;
+    
     const { error } = await supabase.from('component_categories').delete().eq('id', selectedCategoryId);
-    if(error) { alert("Error: " + error.message); return; }
+    if (error) { alert("Error: " + error.message); return; }
     
     selectedCategoryId = null;
     await loadTaxonomyData();
