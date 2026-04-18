@@ -188,8 +188,8 @@ body:has(.catalog-engine:not(.hidden)) .hero__globe-container {
 
 /* ── Category Sidebar ───────────────────────────────────────── */
 .dk-sidebar {
-  width: 220px;
-  min-width: 220px;
+  width: 280px;
+  min-width: 280px;
   background: #FAFAFA;
   border-right: 1px solid var(--dk-filter-border);
   overflow-y: auto;
