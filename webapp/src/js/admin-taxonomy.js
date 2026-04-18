@@ -2,6 +2,7 @@ import { supabase } from './supabase.js';
 
 let categories = [];
 let parameters = [];
+let productCounts = {}; // { categoryId: count }
 let selectedCategoryId = null;
 let expandedCategories = new Set();
 let hideDisabled = false;
@@ -47,6 +48,7 @@ export async function renderMarketplaceTaxonomy(container) {
             <p style="margin: 0; font-size: 12px; color: var(--color-steel-400);" id="param-pane-subtitle">Select a category from the tree to define its custom JSONB parameters.</p>
           </div>
           <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary" id="btn-rename-cat" style="padding: 8px 16px; font-size: 13px; display: none;">Rename</button>
             <button class="btn btn-secondary" id="btn-add-subcat" style="padding: 8px 16px; font-size: 13px; display: none;">+ Add Sub-Category</button>
             <button class="btn btn-primary" id="btn-add-param" style="padding: 8px 16px; font-size: 13px; display: none;">+ Add Parameter</button>
             <button class="btn btn-secondary" id="btn-delete-cat" style="padding: 8px 16px; font-size: 13px; display: none; color: #ef4444; border-color: rgba(239,68,68,0.2);">Delete Category</button>
@@ -68,9 +70,10 @@ export async function renderMarketplaceTaxonomy(container) {
 
 async function loadTaxonomyData() {
   try {
-    const [catRes, paramRes] = await Promise.all([
+    const [catRes, paramRes, prodRes] = await Promise.all([
       supabase.from('component_categories').select('*').order('name'),
-      supabase.from('category_parameters').select('*').order('parameter_name')
+      supabase.from('category_parameters').select('*').order('parameter_name'),
+      supabase.from('products').select('category_id')
     ]);
     
     if (catRes.error) throw catRes.error;
@@ -78,6 +81,14 @@ async function loadTaxonomyData() {
 
     categories = catRes.data || [];
     parameters = paramRes.data || [];
+
+    // Build product count map
+    productCounts = {};
+    (prodRes.data || []).forEach(p => {
+      if (p.category_id) {
+        productCounts[p.category_id] = (productCounts[p.category_id] || 0) + 1;
+      }
+    });
   } catch (err) {
     console.error("Error loading taxonomy", err);
     alert("Failed to load taxonomy data. Check console.");
@@ -153,7 +164,7 @@ function renderTree() {
               </svg>
             </span>
             <input type="checkbox" class="tax-checkbox" data-id="${node.id}" ${isActive ? 'checked' : ''} title="Enable/Disable Category" style="margin-right: 8px; accent-color: var(--color-electric); cursor: pointer;">
-            <span style="font-size: 14px; font-weight: ${level === 0 ? '600' : '400'}; flex: 1;">${node.name} <span style="font-size: 11px; color: var(--color-steel-400); margin-left: 4px; font-weight: normal;">(${children.length} sub)</span></span>
+            <span style="font-size: 14px; font-weight: ${level === 0 ? '600' : '400'}; flex: 1;">${node.name} <span style="font-size: 11px; color: var(--color-steel-400); margin-left: 4px; font-weight: normal;">(${children.length} sub${productCounts[node.id] ? ', ' + productCounts[node.id] + ' prod' : ''})</span></span>
           </div>
           <div style="display: ${isExpanded ? 'block' : 'none'}; border-left: 1px solid var(--color-slate-800); margin-left: 12px;">
             ${buildHtml(children, level + 1)}
@@ -400,6 +411,7 @@ function priorityBadge(priority) {
 function renderParametersPane() {
   const title = document.getElementById('param-pane-title');
   const subtitle = document.getElementById('param-pane-subtitle');
+  const renameBtn = document.getElementById('btn-rename-cat');
   const addSubBtn = document.getElementById('btn-add-subcat');
   const addParamBtn = document.getElementById('btn-add-param');
   const delCatBtn = document.getElementById('btn-delete-cat');
@@ -408,6 +420,7 @@ function renderParametersPane() {
   if (!selectedCategoryId) {
     title.textContent = "No Category Selected";
     subtitle.textContent = "Select a category from the tree to define its custom JSONB parameters.";
+    renameBtn.style.display = 'none';
     addSubBtn.style.display = 'none';
     addParamBtn.style.display = 'none';
     delCatBtn.style.display = 'none';
@@ -418,6 +431,7 @@ function renderParametersPane() {
   if (selectedCategoryId === 'global') {
     title.textContent = "Global Product Fields";
     subtitle.textContent = "These parameters apply to all products across all categories.";
+    renameBtn.style.display = 'none';
     addSubBtn.style.display = 'none';
     delCatBtn.style.display = 'none';
     addParamBtn.style.display = 'inline-block';
@@ -428,6 +442,7 @@ function renderParametersPane() {
       subtitle.textContent = `Slug: ${selectedCat.slug} | ID: ${selectedCat.id}`;
     }
     
+    renameBtn.style.display = 'inline-block';
     addSubBtn.style.display = 'inline-block';
     addParamBtn.style.display = 'inline-block';
     delCatBtn.style.display = 'inline-block';
@@ -570,6 +585,32 @@ function bindGlobalEvents() {
 
   document.getElementById('btn-add-root-cat')?.addEventListener('click', () => promptAddCategory(null));
   document.getElementById('btn-add-subcat')?.addEventListener('click', () => promptAddCategory(selectedCategoryId));
+  
+  document.getElementById('btn-rename-cat')?.addEventListener('click', async () => {
+    if (!selectedCategoryId || selectedCategoryId === 'global') return;
+    const cat = categories.find(c => c.id === selectedCategoryId);
+    if (!cat) return;
+    
+    const newName = prompt(`Rename "${cat.name}" to:`, cat.name);
+    if (!newName || newName.trim() === '' || newName.trim() === cat.name) return;
+    
+    const newSlug = newName.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    
+    const { error } = await supabase.from('component_categories')
+      .update({ name: newName.trim(), slug: newSlug })
+      .eq('id', selectedCategoryId);
+    
+    if (error) {
+      alert("Error renaming: " + error.message);
+      return;
+    }
+    
+    // Update local state
+    cat.name = newName.trim();
+    cat.slug = newSlug;
+    renderTree();
+    renderParametersPane();
+  });
   
   document.getElementById('btn-seed-json')?.addEventListener('click', async (e) => {
     if(!confirm("This will import the taxonomy from src/data/oem-taxonomy.json. It may take a minute. Ensure your schema is migrated. Proceed?")) return;
