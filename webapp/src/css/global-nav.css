@@ -1,0 +1,212 @@
+/* ═══════════════════════════════════════════════════
+   GLOBAL NAV — Unified two-line nav links
+   Shared across all user-facing pages
+   ═══════════════════════════════════════════════════ */
+
+/* ── Two-line nav link ────────────────────────────── */
+.global-nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.55);
+  transition: color 0.25s ease;
+  padding: 4px 8px;
+  cursor: pointer;
+  position: relative;
+}
+
+.global-nav-link:hover {
+  color: #fff;
+}
+
+.global-nav-link--active {
+  color: #fff;
+}
+
+.global-nav-link--active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--color-electric, #3c6bff);
+  border-radius: 1px;
+}
+
+/* Match original .nav-link font: 14px, 600 weight, var(--font-body) */
+.global-nav-link__top {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  text-transform: none;
+  letter-spacing: 0.3px;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.global-nav-link__sub {
+  font-size: 11px;
+  font-weight: 400;
+  font-family: var(--font-body);
+  text-transform: none;
+  letter-spacing: 0.2px;
+  line-height: 1.15;
+  opacity: 0.65;
+  white-space: nowrap;
+}
+
+.global-nav-link:hover .global-nav-link__sub {
+  opacity: 1;
+}
+
+.nav-engine-separator {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.nav-engine-label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 0;
+}
+
+.nav-engine-top {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  line-height: 1.15;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.nav-engine-bottom {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 200;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  line-height: 1.15;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.global-nav-link--active .global-nav-link__sub {
+  opacity: 1;
+}
+
+/* Single-line nav link (Home, etc.) */
+.global-nav-link--single .global-nav-link__top {
+  line-height: 1.4;
+}
+
+/* ── Separator between brand and links ────────────── */
+.global-nav-sep {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 8px;
+  flex-shrink: 0;
+}
+
+/* ── Nav links container — centred layout ─────────── */
+.global-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Centre the nav-links-container on marketing pages — absolute positioning for true centering */
+.marketing-page .navbar > div {
+  position: relative;
+}
+
+.marketing-page .nav-links-container {
+  gap: 4px !important;
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  flex: 0 0 auto !important;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* Keep brand and actions at the edges */
+.marketing-page .navbar__brand {
+  position: relative;
+  z-index: 2;
+}
+
+.marketing-page .navbar__actions {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+/* ── Hide Home link when on homepage ──────────────── */
+body.marketing-page.is-homepage .global-nav-link[data-nav="home"] {
+  display: none;
+}
+
+/* ── App.html navbar__menu-item two-line support ──── */
+.navbar__menu {
+  gap: 12px !important;
+}
+
+.navbar__menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.15;
+}
+
+.navbar__menu-item .global-nav-link__top {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  letter-spacing: 0.3px;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.navbar__menu-item .global-nav-link__sub {
+  font-size: 11px;
+  font-weight: 400;
+  font-family: var(--font-body);
+  letter-spacing: 0.2px;
+  line-height: 1.15;
+  opacity: 0.65;
+  white-space: nowrap;
+}
+
+.navbar__menu-item:hover .global-nav-link__sub,
+.navbar__menu-item--active .global-nav-link__sub {
+  opacity: 1;
+}
+
+/* ── Mobile responsive ────────────────────────────── */
+@media (max-width: 968px) {
+  .global-nav-links {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .global-nav-sep {
+    display: none;
+  }
+
+  .global-nav-link {
+    align-items: flex-start;
+  }
+}

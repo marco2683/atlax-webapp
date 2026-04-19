@@ -646,13 +646,205 @@ function wireEventListeners() {
   // ── Global Checkout Navigation Helpers ───────────────────────────────────
   // Hide all catalog sub-pages and show only the requested one
   function showCatalogPage(pageId) {
-    ['catalog-layout','catalog-pdp','cart-page-layout','checkout-page-layout','thank-you-layout']
+    ['catalog-layout','catalog-pdp','cart-page-layout','checkout-page-layout','thank-you-layout',
+     'mkt-manufacturers-layout','mkt-resources-layout','mkt-rfq-layout']
       .forEach(id => document.getElementById(id)?.classList.add('hidden'));
     document.getElementById(pageId)?.classList.remove('hidden');
+
+    // Move the shared marketplace footer into the active sub-page so it scrolls with content
+    const footer = document.getElementById('mkt-shared-footer');
+    if (footer) {
+      const subPages = ['mkt-manufacturers-layout','mkt-resources-layout','mkt-rfq-layout'];
+      if (subPages.includes(pageId)) {
+        const page = document.getElementById(pageId);
+        if (page) page.appendChild(footer);
+        footer.style.display = '';
+      } else {
+        footer.style.display = 'none';
+      }
+    }
   }
+
+  // ── Marketplace Navigation (Products / Manufacturers / Resources / RFQ) ──
+  const navMap = {
+    'catalog-layout':           'mkt-nav-products',
+    'mkt-manufacturers-layout': 'mkt-nav-manufacturers',
+    'mkt-resources-layout':     'mkt-nav-resources',
+    'mkt-rfq-layout':           'mkt-nav-rfq'
+  };
+
+  window.mktShowPage = function(pageId) {
+    showCatalogPage(pageId);
+
+    // Update active nav link
+    Object.values(navMap).forEach(id => document.getElementById(id)?.classList.remove('mkt-nav-active'));
+    const activeNavId = navMap[pageId];
+    if (activeNavId) document.getElementById(activeNavId)?.classList.add('mkt-nav-active');
+
+    // Render page-specific content
+    if (pageId === 'mkt-manufacturers-layout') renderManufacturersPage();
+  };
+
+  // Bind nav links explicitly
+  document.querySelectorAll('[data-mkt-page]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // prevent global active link click interceptors
+      const pageId = e.currentTarget.getAttribute('data-mkt-page');
+      if (pageId) window.mktShowPage(pageId);
+    });
+  });
+
+  // ── Manufacturers Page Rendering ─────────────────────────────────────────
+  function renderManufacturersPage(searchQuery = '') {
+    const grid = document.getElementById('mkt-mfg-grid');
+    const countEl = document.getElementById('mkt-mfg-count');
+    if (!grid) return;
+
+    // Extract unique manufacturers from allProducts
+    const mfgMap = {};
+    allProducts.forEach(p => {
+      const name = p.suppliers?.name || 'Unknown';
+      if (!mfgMap[name]) {
+        mfgMap[name] = { name, productCount: 0, categories: new Set(), image: null };
+      }
+      mfgMap[name].productCount++;
+      // Find category name
+      const cat = categories.find(c => c.id === p.category_id);
+      if (cat) mfgMap[name].categories.add(cat.name);
+      // Use first product image as fallback
+      if (!mfgMap[name].image) mfgMap[name].image = p.image_url || p.specs?.image_url || null;
+    });
+
+    let mfgList = Object.values(mfgMap).sort((a, b) => b.productCount - a.productCount);
+
+    // Filter by search
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      mfgList = mfgList.filter(m => m.name.toLowerCase().includes(q));
+    }
+
+    if (countEl) countEl.textContent = mfgList.length + ' manufacturer' + (mfgList.length !== 1 ? 's' : '');
+
+    if (mfgList.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:60px; color:#888; font-size:15px;">No manufacturers found.</div>';
+      return;
+    }
+
+    grid.innerHTML = mfgList.map(m => {
+      const initial = m.name.charAt(0).toUpperCase();
+      const catList = [...m.categories].slice(0, 3).join(', ') || 'General';
+      const colors = ['#0e7490','#7c3aed','#dc2626','#d97706','#16a34a','#2563eb','#be185d','#0369a1'];
+      const bgColor = colors[initial.charCodeAt(0) % colors.length];
+
+      return `
+        <div class="mkt-mfg-card" onclick="window.mktViewSupplierProducts('${m.name.replace(/'/g, "\\'")}')">
+          <div class="mkt-mfg-card-header">
+            <div class="mkt-mfg-avatar" style="background:${bgColor};">${initial}</div>
+            <div>
+              <div class="mkt-mfg-name">${m.name}</div>
+              <div class="mkt-mfg-meta">${m.productCount} product${m.productCount > 1 ? 's' : ''} listed</div>
+            </div>
+          </div>
+          <div class="mkt-mfg-categories">
+            <span style="font-size:11px; color:#888; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Categories:</span>
+            <span style="font-size:12px; color:#333;">${catList}</span>
+          </div>
+          <div class="mkt-mfg-cta">View Products →</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // View a specific supplier's products
+  window.mktViewSupplierProducts = function(supplierName) {
+    // Switch to Products page
+    window.mktShowPage('catalog-layout');
+    // Set the supplier filter active
+    if (!filterState.supplier) filterState.supplier = new Set();
+    filterState.supplier.clear();
+    filterState.supplier.add(supplierName);
+    currentPage = 1;
+    applyFiltersAndRender();
+  };
+
+  // ── Manufacturers search wiring ──────────────────────────────────────────
+  document.getElementById('mkt-mfg-search')?.addEventListener('input', (e) => {
+    renderManufacturersPage(e.target.value.trim());
+  });
+
+  // ── RFQ Form Submission ──────────────────────────────────────────────────
+  document.getElementById('mkt-rfq-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const user = await getCurrentUser();
+    if (!user) { alert('Please log in to submit a quote request.'); return; }
+
+    const btn = document.getElementById('mkt-rfq-submit');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    const rfqType = document.querySelector('input[name="rfq-type"]:checked')?.value || 'high-volume';
+    const certs = [...document.querySelectorAll('input[name="rfq-cert"]:checked')].map(cb => cb.value);
+
+    const payload = {
+      type: 'marketplace_rfq',
+      rfq_type: rfqType,
+      mpn: document.getElementById('rfq-mpn')?.value || '',
+      description: document.getElementById('rfq-desc')?.value || '',
+      quantity: parseInt(document.getElementById('rfq-qty')?.value) || 0,
+      target_price: document.getElementById('rfq-target-price')?.value || '',
+      delivery_date: document.getElementById('rfq-delivery-date')?.value || '',
+      preferred_mfg: document.getElementById('rfq-mfg')?.value || '',
+      certifications: certs,
+      notes: document.getElementById('rfq-notes')?.value || ''
+    };
+
+    try {
+      const { error } = await supabase.from('rfq_history').insert({
+        id: window.crypto?.randomUUID?.() || null,
+        user_id: user.id,
+        rfq_data: payload,
+        status: 'pending'
+      });
+
+      if (error) throw error;
+
+      btn.style.background = '#10b981';
+      btn.textContent = '✓ RFQ Submitted!';
+      setTimeout(() => {
+        btn.style.background = '#007185';
+        btn.textContent = 'Submit RFQ';
+        btn.disabled = false;
+        document.getElementById('mkt-rfq-form')?.reset();
+      }, 3000);
+    } catch (err) {
+      console.error('RFQ submission error:', err);
+      alert('Failed to submit. Please try again.');
+      btn.style.background = '#007185';
+      btn.textContent = 'Submit RFQ';
+      btn.disabled = false;
+    }
+  });
+
+  // ── RFQ type radio visual feedback ───────────────────────────────────────
+  document.querySelectorAll('.mkt-rfq-type-option input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.mkt-rfq-type-option').forEach(opt => {
+        opt.style.borderColor = '#e2e8f0';
+        opt.style.background = '#fff';
+      });
+      if (radio.checked) {
+        radio.closest('.mkt-rfq-type-option').style.borderColor = '#007185';
+        radio.closest('.mkt-rfq-type-option').style.background = '#f8fdfd';
+      }
+    });
+  });
 
   window.goBackToMarketplace = function() {
     showCatalogPage('catalog-layout');
+    // Also reset nav active state
+    Object.values(navMap).forEach(id => document.getElementById(id)?.classList.remove('mkt-nav-active'));
+    document.getElementById('mkt-nav-products')?.classList.add('mkt-nav-active');
   };
 
   window.goToCart = function() {
@@ -749,7 +941,7 @@ function wireEventListeners() {
     if (listEl) {
       listEl.innerHTML = shoppingCart.map(item => `
         <div style="display:flex; align-items:center; gap:16px; padding:16px; background:#f9f9f9; border-radius:4px; border:1px solid #e8e8e8;">
-          <img src="${item.image || '/placeholder.png'}" alt="${item.name}" style="width:64px; height:64px; object-fit:contain; border-radius:4px; background:#fff; border:1px solid #eee; flex-shrink:0;">
+          <img src="${item.image_url || '/placeholder.png'}" alt="${item.mpn || ''}" onerror="this.src='https://via.placeholder.com/64x64.png?text=No+Image'" style="width:64px; height:64px; object-fit:contain; border-radius:4px; background:#fff; border:1px solid #eee; flex-shrink:0;">
           <div style="flex:1; min-width:0;">
             <div style="display:inline-flex; align-items:center; gap:6px; margin-bottom:6px;">
               <span style="background:#e8f5e9; color:#2e7d32; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap;">● In Stock</span>
@@ -1338,7 +1530,7 @@ window.checkoutCart = async function() {
     if (tyList) {
       tyList.innerHTML = orderedItems.map(item => `
         <div style="display:flex; align-items:center; gap:16px; padding:16px; background:#f9f9f9; border-radius:4px; border:1px solid #e8e8e8;">
-          <img src="${item.image || '/placeholder.png'}" alt="${item.name}" style="width:64px; height:64px; object-fit:contain; background:#fff; border:1px solid #eee; border-radius:4px; flex-shrink:0;">
+          <img src="${item.image_url || '/placeholder.png'}" alt="${item.mpn || ''}" onerror="this.src='https://via.placeholder.com/64x64.png?text=No+Image'" style="width:64px; height:64px; object-fit:contain; background:#fff; border:1px solid #eee; border-radius:4px; flex-shrink:0;">
           <div style="flex:1; min-width:0;">
             <div style="display:inline-flex; align-items:center; gap:6px; margin-bottom:6px;">
               <span style="background:#e8f5e9; color:#2e7d32; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px;">● In Stock</span>

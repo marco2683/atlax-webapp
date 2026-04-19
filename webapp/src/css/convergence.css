@@ -1,0 +1,977 @@
+/* ============================================================
+   CONVERGENCE CSS — Recovered Styles
+   These styles were lost when marketing.css was corrupted
+   during a system crash. They cover:
+   - Who We Are section
+   - Expertise / Capabilities grid
+   - Manufacturing Engine Platform tools
+   - Convergence (Phase Network + Constellation)
+   ============================================================ */
+
+/* ── WHO WE ARE SECTION ──────────────────────────────────── */
+.prd-who-section {
+  background: linear-gradient(175deg, #f0fdf4 0%, #f8fafc 40%, #ffffff 100%);
+  padding: 120px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.prd-who-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.prd-who-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.prd-who-eyebrow {
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+/* Dark green shade on light backgrounds */
+.prd-who-section .prd-who-eyebrow,
+.prd-platform-section .prd-who-eyebrow {
+  color: #0e7a6c;
+}
+
+/* Blue on darker backgrounds */
+.prd-expertise-section .prd-who-eyebrow,
+.prd-convergence-section .prd-who-eyebrow {
+  color: #60a5fa;
+}
+
+.prd-who-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+}
+
+.prd-who-body {
+  font-size: 1rem;
+  color: #475569;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.prd-who-right {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Pillars */
+.prd-pillars {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.prd-pillar {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(14, 122, 108, 0.04);
+  border-radius: 12px;
+  border: 1px solid rgba(14, 122, 108, 0.1);
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.prd-pillar:hover {
+  border-color: rgba(14, 122, 108, 0.25);
+  background: rgba(14, 122, 108, 0.07);
+}
+
+.prd-pillar-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(14, 122, 108, 0.08);
+  border-radius: 10px;
+}
+
+.prd-pillar div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.prd-pillar strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.prd-pillar span {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Photo Frame */
+.prd-who-photo {
+  position: relative;
+}
+
+.prd-photo-frame {
+  position: relative;
+  border-radius: 20px;
+  overflow: visible;
+  background: #f1f5f9;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  aspect-ratio: 4 / 3;
+}
+
+.prd-photo-frame img {
+  border-radius: 20px;
+}
+
+.prd-photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.prd-photo-badge {
+  position: absolute;
+  bottom: -16px;
+  left: 20px;
+  background: #022c22;
+  border-radius: 999px;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  padding: 10px 24px;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 10;
+}
+
+.prd-photo-badge--2 {
+  left: auto;
+  right: 20px;
+  bottom: -16px;
+}
+
+.prd-badge-num {
+  font-size: 20px;
+  font-weight: 800;
+  color: #6ee7b7;
+  line-height: 1.1;
+}
+
+.prd-badge-label {
+  font-size: 11px;
+  color: #34d399;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Radar Chart */
+.prd-who-chart {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.prd-radar-svg {
+  width: 100%;
+  height: auto;
+}
+
+.prd-radar-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+
+/* ── EXPERTISE / CAPABILITIES SECTION ────────────────────── */
+.prd-expertise-section {
+  background: #05060a;
+  padding: 120px 40px;
+  color: #fff;
+  position: relative;
+}
+
+.prd-expertise-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.prd-expertise-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.prd-expertise-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 300;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+}
+
+.prd-expertise-desc {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.prd-expertise-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.prd-exp-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.3s;
+}
+
+.prd-exp-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.prd-exp-card--featured {
+  grid-row: span 2;
+}
+
+.prd-exp-img-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16/10;
+}
+
+.prd-exp-card--featured .prd-exp-img-wrap {
+  aspect-ratio: 16/12;
+}
+
+.prd-exp-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.prd-exp-card:hover .prd-exp-img-wrap img {
+  transform: scale(1.05);
+}
+
+.prd-exp-img-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0.2) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.prd-exp-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #5eead4;
+  background: rgba(94, 234, 212, 0.15);
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  width: fit-content;
+}
+
+.prd-exp-img-title {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #fff;
+  margin: 0 0 6px;
+}
+
+.prd-exp-img-desc {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.prd-exp-body {
+  padding: 20px 24px;
+}
+
+.prd-exp-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prd-exp-list li {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+  padding-left: 16px;
+  position: relative;
+}
+
+.prd-exp-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: #5eead4;
+  font-size: 11px;
+}
+
+
+/* ── MANUFACTURING ENGINE PLATFORM SECTION ────────────────── */
+.prd-platform-section {
+  background: linear-gradient(175deg, #f8fafc 0%, #f0f4f8 100%);
+  padding: 120px 40px;
+  position: relative;
+}
+
+.prd-platform-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.prd-platform-header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.prd-platform-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 400;
+  color: #0f172a;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.prd-platform-subtitle {
+  font-size: 1.1rem;
+  color: #64748b;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Tool Rows */
+.prd-tool-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  margin-bottom: 100px;
+}
+
+.prd-tool-row--reverse {
+  direction: rtl;
+}
+
+.prd-tool-row--reverse>* {
+  direction: ltr;
+}
+
+.prd-tool-screenshot {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  background: #f1f5f9;
+}
+
+.prd-tool-screenshot img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.prd-tool-row:hover .prd-tool-screenshot img {
+  transform: scale(1.02);
+}
+
+.prd-tool-soon-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.prd-tool-soon-badge {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: #fb923c;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 12px 28px;
+  border-radius: 8px;
+  border: 1px solid rgba(251, 146, 60, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+.prd-tool-text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.prd-tool-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  width: fit-content;
+  font-weight: 600;
+}
+
+.prd-tool-name {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: #0f172a;
+  letter-spacing: -0.3px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.prd-tool-desc {
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.prd-tool-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prd-tool-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.88rem;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.prd-tool-list li svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.prd-tool-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  border: 1px solid;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s;
+  width: fit-content;
+  cursor: pointer;
+}
+
+.prd-tool-cta:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+}
+
+
+/* ── CONVERGENCE SECTION ─────────────────────────────────── */
+.prd-convergence-section {
+  padding: 96px 24px 120px;
+  background-color: #05060a;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.prd-convergence-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.prd-convergence-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.prd-convergence-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.prd-convergence-subtitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+
+/* ── PHASE NETWORK ───────────────────────────────────────── */
+.prd-phase-network {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+  margin-top: 20px;
+}
+
+.prd-phase-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.prd-phase-svg--vert {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.animated-flow {
+  animation: flowAnimation 2s linear infinite;
+}
+
+@keyframes flowAnimation {
+  from {
+    stroke-dashoffset: 20;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Entry Badge */
+.prd-phase-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+  margin-bottom: -10px;
+}
+
+.prd-phase-entry-badge {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 24px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: #fff;
+  letter-spacing: 1px;
+  backdrop-filter: blur(10px);
+}
+
+.prd-phase-entry-line {
+  height: 30px;
+  width: 1px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), transparent);
+}
+
+/* Phase Tiers */
+.prd-phase-tier {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.prd-phase-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #ffffff;
+  opacity: 1;
+  position: relative;
+  z-index: 10;
+  background: #06080c;
+  padding: 8px 20px;
+  border-radius: 999px;
+  display: inline-block;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.prd-phase-label--floating {
+  margin-bottom: 24px;
+}
+
+/* Hero Group */
+.prd-phase-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.prd-phase-group--hero {
+  background: rgba(167, 139, 250, 0.05);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  border-radius: 24px;
+  padding: 40px;
+  backdrop-filter: blur(12px);
+  text-align: center;
+  max-width: 600px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.prd-phase-group--hero .prd-phase-label {
+  margin-bottom: 24px;
+}
+
+.prd-phase-hero-layout {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  text-align: left;
+}
+
+.prd-phase-hero-icon {
+  background: rgba(167, 139, 250, 0.15);
+  padding: 16px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  flex-shrink: 0;
+}
+
+.prd-phase-hero-text h4 {
+  font-size: 1.5rem;
+  margin: 0 0 8px;
+  font-weight: 400;
+  color: #fff;
+}
+
+.prd-phase-hero-text p {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.prd-phase-hero-text em {
+  color: #a78bfa;
+  font-style: normal;
+  font-weight: 500;
+}
+
+/* Phase Cards Row */
+.prd-phase-cards--row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+.prd-phase-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 30px 20px;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.3s, background 0.3s;
+}
+
+.prd-phase-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--phase-color, rgba(255, 255, 255, 0.2));
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.prd-phase-card-icon {
+  color: var(--phase-color, #60a5fa);
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.prd-phase-card h4 {
+  font-size: 1.1rem;
+  margin: 0 0 12px;
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+.prd-phase-card p {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Constellation override for cards in Phase 3 — DEFAULT (collapsed) state */
+.adv-matrix-container:not(.is-expanded) .matrix-constellation.prd-phase-cards--row {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 20px;
+  position: relative;
+  pointer-events: all;
+  height: auto;
+  min-height: 260px;
+}
+
+.adv-matrix-container .reset-map-btn {
+  position: absolute;
+  top: 6%;
+  left: 0;
+  z-index: 100;
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.adv-matrix-container .reset-map-btn:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+.adv-matrix-container:not(.is-expanded) .matrix-constellation .prd-phase-card.node.intent-node {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  width: 100%;
+  max-width: 260px;
+  flex: 1;
+  padding: 24px 20px;
+  cursor: pointer;
+}
+
+.matrix-constellation .prd-phase-card.node.intent-node .node-icon {
+  max-width: none !important;
+  width: 100% !important;
+  height: auto !important;
+  margin: 16px 0 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.matrix-constellation .prd-phase-card.node.intent-node .node-icon img {
+  max-height: 140px !important;
+  width: auto;
+  object-fit: contain;
+  border-radius: 12px;
+  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.matrix-constellation .prd-phase-card.node.intent-node:hover .node-icon img {
+  transform: scale(1.08);
+}
+
+.matrix-constellation .prd-phase-card:hover {
+  border-color: var(--phase-color, rgba(255, 255, 255, 0.2));
+}
+
+/* EXPANDED STATE — let advantage-map.js control positioning */
+.adv-matrix-container.is-expanded {
+  height: 85vh;
+  min-height: 600px;
+}
+
+.adv-matrix-container.is-expanded .matrix-constellation.prd-phase-cards--row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.adv-matrix-container.is-expanded .matrix-constellation .prd-phase-card.node.intent-node {
+  position: absolute !important;
+  max-width: none;
+  flex: none;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.8);
+}
+
+.adv-matrix-container.is-expanded .matrix-constellation .prd-phase-card.node.intent-node.active-intent {
+  opacity: 1;
+  pointer-events: all;
+  z-index: 60;
+  width: 260px;
+}
+
+/* Tech nodes pool (hidden by default) */
+.matrix-tech-nodes-pool {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+
+/* ── RESPONSIVE OVERRIDES ─────────────────────────────────── */
+
+@media (max-width: 1100px) {
+  .prd-who-inner {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .prd-tool-row {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .prd-tool-row--reverse {
+    direction: ltr;
+  }
+}
+
+@media (max-width: 1000px) {
+  .prd-phase-cards--row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .prd-expertise-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .prd-exp-card--featured {
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .prd-who-section,
+  .prd-expertise-section,
+  .prd-platform-section,
+  .prd-convergence-section {
+    padding: 80px 20px;
+  }
+
+  .prd-expertise-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .prd-phase-hero-layout {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .prd-phase-cards--row {
+    grid-template-columns: 1fr;
+  }
+
+  .matrix-constellation.prd-phase-cards--row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .matrix-constellation .prd-phase-card.node.intent-node {
+    max-width: 340px;
+  }
+
+  .prd-tool-name {
+    font-size: 1.4rem;
+  }
+}

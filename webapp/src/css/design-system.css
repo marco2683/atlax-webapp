@@ -53,7 +53,7 @@
   --stage-specialized:   var(--color-coral);
 
   /* ── Typography ────────────────────────────────────── */
-  --font-display:        'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-display:        'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
   --font-body:           'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-mono:           'JetBrains Mono', 'Fira Code', monospace;
 

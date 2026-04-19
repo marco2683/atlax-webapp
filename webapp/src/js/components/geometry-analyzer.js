@@ -38,20 +38,45 @@ async function getOCCT() {
 /**
  * Analyze a 3D file. Returns geometry metrics and Three.js BufferGeometry.
  * @param {File} file - The uploaded file
+ * @param {Function} [onProgress] - Optional callback for file read progress: (percent, loaded, total) => {}
  * @returns {Promise<Object>} Analysis results
  */
-export async function analyzeFile(file) {
+export async function analyzeFile(file, onProgress) {
   const ext = file.name.split('.').pop().toLowerCase();
 
   if (['step', 'stp', 'iges', 'igs'].includes(ext)) {
-    return analyzeSTEP(file, ext);
+    return analyzeSTEP(file, ext, onProgress);
   } else if (ext === 'stl') {
-    return analyzeSTL(file);
+    return analyzeSTL(file, onProgress);
   } else if (ext === 'obj') {
-    return analyzeOBJ(file);
+    return analyzeOBJ(file, onProgress);
   } else {
     throw new Error(`Unsupported format: .${ext}`);
   }
+}
+
+function readFileWithProgress(file, onProgress, format = 'arrayBuffer') {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (onProgress) onProgress(100, file.size, file.size);
+      resolve(e.target.result);
+    };
+    reader.onerror = () => reject(new Error('File reading failed'));
+    if (onProgress) {
+      reader.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const percent = Math.round((e.loaded / e.total) * 100);
+          onProgress(percent, e.loaded, e.total);
+        }
+      };
+    }
+    if (format === 'text') {
+      reader.readAsText(file);
+    } else {
+      reader.readAsArrayBuffer(file);
+    }
+  });
 }
 
 /**
@@ -127,9 +152,11 @@ export function renderThumbnail(geometry, container, size = 120) {
 
 // ═══ STEP/STP/IGES Analysis (via occt-import-js) ═══════
 
-async function analyzeSTEP(file, ext) {
+async function analyzeSTEP(file, ext, onProgress) {
+  const buffer = await readFileWithProgress(file, onProgress);
+  await new Promise(r => setTimeout(r, 150)); // Yield to allow DOM repaint (crucial before WASM locks main thread)
+  
   const occt = await getOCCT();
-  const buffer = await file.arrayBuffer();
   const fileBuffer = new Uint8Array(buffer);
 
   let result;
@@ -238,8 +265,9 @@ async function analyzeSTEP(file, ext) {
 
 // ═══ STL Analysis ═══════════════════════════════════════
 
-async function analyzeSTL(file) {
-  const buffer = await file.arrayBuffer();
+async function analyzeSTL(file, onProgress) {
+  const buffer = await readFileWithProgress(file, onProgress);
+  await new Promise(r => setTimeout(r, 150)); // Yield to allow DOM repaint
   const loader = new STLLoader();
   const geometry = loader.parse(buffer);
 
@@ -274,8 +302,9 @@ async function analyzeSTL(file) {
 
 // ═══ OBJ Analysis ═══════════════════════════════════════
 
-async function analyzeOBJ(file) {
-  const text = await file.text();
+async function analyzeOBJ(file, onProgress) {
+  const text = await readFileWithProgress(file, onProgress, 'text');
+  await new Promise(r => setTimeout(r, 150)); // Yield to allow DOM repaint
   const loader = new OBJLoader();
   const obj = loader.parse(text);
 

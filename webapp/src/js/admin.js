@@ -4,12 +4,16 @@ import { supabase } from './supabase.js';
 import { renderPricingConfigurator } from './admin-pricing.js';
 import { renderMarketplaceTaxonomy } from './admin-taxonomy.js';
 import { renderAdminProducts } from './admin-products.js';
+import { loadPricingConfig } from './utils/pricing-loader.js';
 
 /* ================================================================
    Atlas DT Admin Panel — Full CRM with Add/Edit Forms
    ================================================================ */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+
+  // Initialize Pricing Config (Async)
+  const pricingPromise = loadPricingConfig();
 
   const loginView = document.getElementById('admin-login-view');
   const dashboardView = document.getElementById('admin-dashboard-view');

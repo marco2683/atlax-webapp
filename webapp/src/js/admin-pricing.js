@@ -1,5 +1,8 @@
-import PRICING_CONFIG from './data/pricing-config.json';
+import { loadPricingConfig, getActivePricingConfig } from './utils/pricing-loader.js';
 import { calculateQuote } from './components/quote-engine.js';
+import { supabase } from './utils/supabaseClient.js';
+
+let PRICING_CONFIG = null;
 
 let chartInstance = null;
 let currentTechKey = 'cnc';
@@ -37,6 +40,7 @@ function subHeader(label, color = '#94a3b8') {
 // MAIN RENDER
 // ═══════════════════════════════════════════════════════════
 export function renderPricingConfigurator(container) {
+  PRICING_CONFIG = getActivePricingConfig();
   const G = PRICING_CONFIG.globalSettings;
 
   container.innerHTML = `
@@ -106,9 +110,12 @@ export function renderPricingConfigurator(container) {
           <div id="mc-sliders"></div>
         `, true)}
 
-        <!-- ═══ EXPORT ═══ -->
-        <button id="sim-export-btn" class="btn btn-primary" style="margin-top:12px; width:100%;">
-          ↓ Export pricing-config.json
+        <button id="sim-publish-btn" class="btn btn-primary" style="margin-top:12px; width:100%; background: var(--dk-accent); border-color: var(--dk-accent);">
+          🚀 Publish to Production
+        </button>
+
+        <button id="sim-export-btn" class="btn btn-secondary" style="margin-top:8px; width:100%; font-size: 11px;">
+          ↓ Download Backup (JSON)
         </button>
 
         </div>
@@ -170,6 +177,7 @@ export function renderPricingConfigurator(container) {
   const techSelect = document.getElementById('sim-tech-select');
   const matSelect = document.getElementById('sim-mat-select');
   const exportBtn = document.getElementById('sim-export-btn');
+  const publishBtn = document.getElementById('sim-publish-btn');
   const qtyRange = document.getElementById('sim-qty-range');
   const qtyVal = document.getElementById('sim-qty-val');
   const volRange = document.getElementById('sim-vol-range');
@@ -656,8 +664,37 @@ export function renderPricingConfigurator(container) {
   }
 
   // ═══════════════════════════════════════════════════════
-  // EXPORT
+  // PUBLISH & EXPORT
   // ═══════════════════════════════════════════════════════
+  publishBtn.addEventListener('click', async () => {
+    const originalText = publishBtn.textContent;
+    publishBtn.disabled = true;
+    publishBtn.textContent = '⌛ Publishing...';
+
+    try {
+      // 1. Deactivate all existing configs first
+      await supabase.from('pricing_configs').update({ is_active: false }).eq('is_active', true);
+
+      // 2. Insert the new one
+      const { error } = await supabase.from('pricing_configs').insert({
+        config: PRICING_CONFIG,
+        is_active: true,
+        label: `Config ${new Date().toLocaleString()}`,
+        updated_at: new Date().toISOString()
+      });
+
+      if (error) throw error;
+      
+      alert('✅ Successfully published! All instant quotes are now using the new pricing logic.');
+    } catch (err) {
+      console.error('Publish error:', err);
+      alert('❌ Failed to publish: ' + err.message);
+    } finally {
+      publishBtn.disabled = false;
+      publishBtn.textContent = originalText;
+    }
+  });
+
   exportBtn.addEventListener('click', () => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(PRICING_CONFIG, null, 2));
     const a = document.createElement('a');

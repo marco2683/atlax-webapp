@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/src/css/marketing.css">
   <link rel="stylesheet" href="/src/css/advantage.css">
   <link rel="stylesheet" href="/src/css/responsive.css">
+  <link rel="stylesheet" href="/src/css/global-nav.css">
   <link rel="stylesheet" href="/src/css/contact-modal.css">
   <script type="module" src="/src/js/contact-modal.js"></script>
 </head>
@@ -21,19 +22,37 @@
     <div
       style="display: flex; justify-content: space-between; align-items: center; max-width: 95%; margin: 0 auto; width: 100%;">
       <div class="navbar__brand">
-        <a href="index.html">
-          <img src="/paniani-logo-white.png" alt="PRD" style="height: 40px; width: auto; opacity: 0.9;">
+        <a href="/" aria-label="Home">
+          <img src="/logos/atlasdt-logo-light.png" alt="Atlas DT" style="height: 32px; width: auto; object-fit: contain;">
         </a>
       </div>
       <button class="mobile-menu-toggle" aria-label="Toggle mobile menu"
         onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
-      <div class="nav-links-container" style="display: flex; gap: var(--space-6); align-items: center;">
-        <a href="index.html" class="nav-link">Home</a>
-        <a href="services.html" class="nav-link">Our Services</a>
-        <a href="portfolio.html" class="nav-link">Portfolio</a>
-        <a href="about.html" class="nav-link">About Us</a>
-        <a href="/app.html" class="btn-marketing btn-marketing--primary"
-          style="font-size: 12px; padding: 10px 20px; text-decoration: none;">Manufacturing Engine</a>
+      <div class="nav-links-container" style="display: flex; align-items: center; gap: 16px;">
+        <a href="index.html" class="global-nav-link global-nav-link--single" data-nav="home">
+          <span class="global-nav-link__top">Home</span>
+        </a>
+        <div class="global-nav-sep"></div>
+        <a href="/app.html#suppliers" class="global-nav-link">
+          <span class="global-nav-link__top">Supply Chain</span>
+          <span class="global-nav-link__sub">Discovery</span>
+        </a>
+        <a href="/app.html#project-quote" class="global-nav-link">
+          <span class="global-nav-link__top">Quote</span>
+          <span class="global-nav-link__sub">My Project</span>
+        </a>
+        <a href="/app.html#rfq" class="global-nav-link">
+          <span class="global-nav-link__top">Component</span>
+          <span class="global-nav-link__sub">Instant Quote</span>
+        </a>
+        <a href="/app.html#catalog" class="global-nav-link">
+          <span class="global-nav-link__top">OEMs</span>
+          <span class="global-nav-link__sub">Marketplace</span>
+        </a>
+        <a href="/app.html#tariff" class="global-nav-link">
+          <span class="global-nav-link__top">HS Tariffs</span>
+          <span class="global-nav-link__sub">Optimiser</span>
+        </a>
       </div>
     </div>
   </nav>

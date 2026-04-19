@@ -413,6 +413,7 @@ function openTabularView() {
 
   document.querySelector('.view-toggle-btn[data-view="table"]')?.classList.add('active');
   document.querySelector('.view-toggle-btn[data-view="globe"]')?.classList.remove('active');
+  document.getElementById('flatearth-view-toggle')?.classList.add('hidden');
 }
 
 function openGlobeView() {
@@ -445,6 +446,7 @@ function openGlobeView() {
   
   document.querySelector('.view-toggle-btn[data-view="globe"]')?.classList.add('active');
   document.querySelector('.view-toggle-btn[data-view="table"]')?.classList.remove('active');
+  document.getElementById('flatearth-view-toggle')?.classList.remove('hidden');
 }
 
 // ── Tabular Engine Logic ──

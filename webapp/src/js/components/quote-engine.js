@@ -14,8 +14,7 @@
  * ────────────────────────────────────────────────────────
  */
 
-import PRICING_CONFIG from '../data/pricing-config.json';
-export { PRICING_CONFIG };
+import { getActivePricingConfig } from '../utils/pricing-loader.js';
 
 // ═══════════════════════════════════════════════════════
 // HELPERS — Technology-driven lookups
@@ -26,7 +25,8 @@ export { PRICING_CONFIG };
  * @param {string} techKey - e.g. 'cnc', 'injection', '3dp'
  */
 export function getTechConfig(techKey) {
-  return PRICING_CONFIG.technologies[techKey] || null;
+  const config = getActivePricingConfig();
+  return config.technologies[techKey] || null;
 }
 
 /**
@@ -89,6 +89,7 @@ export function techHasTooling(techKey) {
  * @returns {QuoteResult}
  */
 export function calculateQuote(geometry, config) {
+  const PRICING_CONFIG = getActivePricingConfig();
   const G = PRICING_CONFIG.globalSettings;
   const tech = getTechConfig(config.process);
 
@@ -256,7 +257,7 @@ export function calculateQuote(geometry, config) {
   const scaledUnitCost = complexityAdjustedCost * leadTimeMult * qtyDiscount;
 
   // ── Overheads & Margin Layer ──────────────────────────
-  const globalMargin = PRICING_CONFIG.globalMarginMultiplier || 1.30;
+  const globalMargin = getActivePricingConfig().globalMarginMultiplier || 1.30;
   const finalUnitPrice = scaledUnitCost * globalMargin;
 
   // ── Add-ons ───────────────────────────────────────────

@@ -118,41 +118,35 @@ import { signUpUser } from './services/auth.js';
   document.body.insertAdjacentHTML('beforeend', modalHTML);
 
 
-  // ─── 2. Inject "Contact Us" Link into Nav ────────────
-  // Strategy: detect which navbar pattern we're on
+  // Marketing pages: look for .navbar__actions (Contact Us goes BEFORE avatar to match app order)
+  const navActions = document.querySelector('.navbar__actions');
+  if (navActions && !document.querySelector('.navbar__menu')) {
+    // Only inject if it's a marketing page (no .navbar__menu = no app SPA tabs)
+    const contactBtn = document.createElement('button');
+    contactBtn.className = 'nav-contact-trigger';
+    contactBtn.id = 'atlasdt-contact-nav-trigger';
+    contactBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Contact Us`;
 
-  // Marketing pages: look for .nav-links-container
-  const navLinksContainer = document.querySelector('.nav-links-container');
-  if (navLinksContainer) {
-    // Insert before the "Log In" link or user menu, or at the end
-    const loginLink = navLinksContainer.querySelector('#nav-login-btn');
-    const userMenu = navLinksContainer.querySelector('#nav-user-menu');
-    const contactLink = document.createElement('a');
-    contactLink.href = '#';
-    contactLink.className = 'nav-link nav-contact-trigger';
-    contactLink.id = 'atlasdt-contact-nav-trigger';
-    contactLink.textContent = 'Contact Us';
-
-    if (loginLink) {
-      navLinksContainer.insertBefore(contactLink, loginLink);
-    } else if (userMenu) {
-      navLinksContainer.insertBefore(contactLink, userMenu);
+    // Insert before the user avatar/dropdown (matches app order: Contact Us → Avatar)
+    const userMenu = navActions.querySelector('#nav-user-menu');
+    if (userMenu) {
+      navActions.insertBefore(contactBtn, userMenu);
     } else {
-      navLinksContainer.appendChild(contactLink);
+      navActions.appendChild(contactBtn);
     }
   }
 
-  // App page: look for .navbar__actions
+  // App page: look for .navbar__actions (with .navbar__menu present)
   const navbarActions = document.querySelector('.navbar__actions');
-  if (navbarActions) {
+  if (navbarActions && document.querySelector('.navbar__menu')) {
     const contactBtn = document.createElement('button');
     contactBtn.className = 'nav-contact-trigger';
     contactBtn.id = 'atlasdt-contact-nav-trigger-app';
     contactBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Contact Us`;
-    // Insert before the avatar/login button
-    const avatar = navbarActions.querySelector('.navbar__avatar');
-    if (avatar) {
-      navbarActions.insertBefore(contactBtn, avatar);
+    // Insert before the avatar/login
+    const userMenu = navbarActions.querySelector('#nav-user-menu');
+    if (userMenu) {
+      navbarActions.insertBefore(contactBtn, userMenu);
     } else {
       navbarActions.appendChild(contactBtn);
     }
@@ -219,7 +213,7 @@ import { signUpUser } from './services/auth.js';
 
   // Trigger from any "Contact Us" element
   document.addEventListener('click', e => {
-    if (e.target.closest('#atlasdt-contact-nav-trigger') || e.target.closest('#atlasdt-contact-nav-trigger-app')) {
+    if (e.target.closest('.nav-contact-trigger')) {
       openContact(e);
     }
   });

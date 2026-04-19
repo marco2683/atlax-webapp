@@ -405,6 +405,20 @@ export function initGlobe(containerId, suppliers = []) {
     },
     setGlobeTheme: (isLight) => {
       updateGlobeMaterial(isLight);
+    },
+    setFlatEarthMode: (isFlat) => {
+      if (isFlat) {
+        controls.autoRotate = false;
+        controls.autoRotateSpeed = 0;
+        globe.pointOfView({ lat: 0, lng: 0, altitude: 2.2 }, 1000);
+        setTimeout(() => globe.scene().scale.set(1, 1, 0.001), 50);
+      } else {
+        globe.scene().scale.set(1, 1, 1);
+        if (!rotationStopped) {
+          controls.autoRotate = true;
+          controls.autoRotateSpeed = 0.15;
+        }
+      }
     }
   };
 }
@@ -412,6 +426,7 @@ export function initGlobe(containerId, suppliers = []) {
 function createNoopController() {
   return {
     globe: null,
+    setFlatEarthMode: () => {},
     stopRotation: () => {},
     showSuppliers: () => {},
     filterByStage: () => {},

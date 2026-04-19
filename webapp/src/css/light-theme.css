@@ -1294,6 +1294,22 @@ body.theme-light .view-toggle-btn.active {
   color: #ffffff !important;
 }
 
+body.theme-light .flat-toggle-btn {
+  color: rgba(0, 0, 0, 0.4) !important;
+}
+
+body.theme-light .flat-toggle-btn:hover {
+  color: rgba(0, 0, 0, 0.7) !important;
+}
+
+body.theme-light .flat-toggle-btn.active {
+  color: #111827 !important;
+}
+
+body.theme-light .flat-toggle-divider {
+  color: rgba(0, 0, 0, 0.2) !important;
+}
+
 body.theme-light .tabular-shortlist-btn {
   color: #9ca3af !important;
 }

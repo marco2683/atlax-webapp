@@ -31,6 +31,8 @@ function getPartState(idx) {
   return partState.get(idx);
 }
 
+
+
 // ── Dynamic Dropdown Population ─────────────────────────
 function populateMaterialDropdown(partIdx, techKey) {
   const panel = document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`);
@@ -228,6 +230,7 @@ function createPartPanelHTML(partIdx) {
  * Initialize the RFQ controller.
  */
 export function initRFQController() {
+  console.log('--- [DEBUG TRACE] ENTERING initRFQController ---');
   const tabList      = document.getElementById('rfq-tab-list');
   const addBtn       = document.getElementById('rfq-add-part');
   const panels       = document.getElementById('rfq-part-panels');
@@ -406,7 +409,7 @@ export function initRFQController() {
     if (tab) switchTab(parseInt(tab.dataset.part));
   });
 
-  // ── Submit Quote (Calculate for current part) ─────────
+  // Wire "Submit" button
   submitBtn?.addEventListener('click', () => calculateAndDisplayQuote());
 
   // Initialize result panel
@@ -467,12 +470,19 @@ function updateSubmitButtonState() {
 }
 
 function wirePartPanel(partIdx) {
+  console.log('--- [DEBUG TRACE] ENTERING wirePartPanel ---', partIdx);
   const panel = document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`);
-  if (!panel) return;
+  
+  if (!panel) {
+    console.warn('--- [DEBUG TRACE] wirePartPanel ABORTED: panel not found for part', partIdx);
+    return;
+  }
 
   const uploadZone = panel.querySelector('.rfq-engine__upload-zone');
   const fileInput  = panel.querySelector('.rfq-file-input');
   const selectBtn  = panel.querySelector('.rfq-select-files-btn');
+  
+  console.log('[DEBUG] wirePartPanel', partIdx, { uploadZone: !!uploadZone, fileInput: !!fileInput, selectBtn: !!selectBtn });
 
   // Wire process change → update materials + finishes dynamically
   const processSelect = panel.querySelector('.rfq-process');
@@ -563,9 +573,25 @@ function wirePartPanel(partIdx) {
   toolingCavitiesSelect?.addEventListener('change', updateToolingStatus);
   qtyInput?.addEventListener('input', updateToolingStatus);
 
-  selectBtn?.addEventListener('click', (e) => { e.stopPropagation(); fileInput?.click(); });
-  uploadZone?.querySelector('.upload-link')?.addEventListener('click', (e) => { e.stopPropagation(); fileInput?.click(); });
-  fileInput?.addEventListener('change', () => { if (fileInput.files.length > 0) handleFiles(fileInput.files, partIdx); });
+  selectBtn?.addEventListener('click', (e) => { 
+    console.log('[DEBUG] selectBtn clicked!', e.target);
+    e.stopPropagation(); 
+    fileInput?.click(); 
+  });
+  
+  uploadZone?.querySelector('.upload-link')?.addEventListener('click', (e) => { 
+    console.log('[DEBUG] 2D upload-link clicked!', e.target);
+    e.stopPropagation(); 
+    fileInput?.click(); 
+  });
+  
+  fileInput?.addEventListener('change', () => { 
+    console.log('[DEBUG] fileInput changed! Files count:', fileInput.files.length);
+    if (fileInput.files.length > 0) {
+      handleFiles(fileInput.files, partIdx);
+      // Removed sync value reset to prevent destroying file handles before parsing
+    }
+  });
 
   uploadZone?.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
   uploadZone?.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
@@ -574,8 +600,14 @@ function wirePartPanel(partIdx) {
     if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files, partIdx);
   });
 
+  // Remove the duplicate click listener on uploadZone that bypasses propagation and triggers fileInput a second time
+  // This causes the double window bug. We already have the selectBtn and upload-link listeners for the clickable text.
+  // We can just rely on those, or bind explicitly to the elements without a generic wrapper listener.
   uploadZone?.addEventListener('click', (e) => {
-    if (e.target === uploadZone || e.target.closest('.upload-icon') || e.target.closest('.upload-text')) fileInput?.click();
+    if (e.target.closest('.upload-icon') || e.target.closest('.upload-text')) {
+      e.stopPropagation();
+      fileInput?.click();
+    }
   });
 
   // ── 2D Upload Zone Wiring ─────────────────────────────
@@ -722,11 +754,54 @@ async function handleFiles(fileList, partIdx) {
     // Hide the placeholder, show the analysis results
     panel.querySelector('.rfq-results-placeholder')?.classList.add('hidden');
     resultsEl?.classList.remove('hidden');
-    if (statusEl) { statusEl.textContent = 'Analyzing...'; statusEl.classList.remove('done'); }
+    if (statusEl) { statusEl.textContent = 'Preparing file...'; statusEl.classList.remove('done'); }
     panel.querySelectorAll('[data-stat]').forEach(el => el.textContent = '...');
 
     try {
-      const analysis = await analyzeFile(parseable);
+      let progressBar = panel.querySelector('.rfq-progress-container');
+      if (!progressBar) {
+        progressBar = document.createElement('div');
+        progressBar.className = 'rfq-progress-container';
+        progressBar.style.cssText = 'width: 100%; height: 6px; background: rgba(0,0,0,0.3); border-radius: 4px; overflow: hidden; margin-top: 12px; position: relative; margin-bottom: 12px;';
+        progressBar.innerHTML = `
+          <div class="rfq-progress-fill" style="width: 0%; height: 100%; background: var(--color-teal-500); transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);"></div>
+          <div class="rfq-progress-shimmer" style="position: absolute; top:0; left:0; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: translateX(-100%); opacity: 0; pointer-events: none; will-change: transform;"></div>
+          <style>
+             @keyframes file-processing-sweep { 0% { transform: translate3d(-100%, 0, 0); } 100% { transform: translate3d(100%, 0, 0); } }
+             .is-processing .rfq-progress-shimmer { animation: file-processing-sweep 1s infinite linear; opacity: 1 !important; }
+             .is-processing .rfq-progress-fill { background: var(--color-blue-500); }
+          </style>
+        `;
+        statusEl.parentElement.appendChild(progressBar);
+      }
+      
+      progressBar.classList.remove('hidden', 'is-processing');
+      const fillEl = progressBar.querySelector('.rfq-progress-fill');
+      if (fillEl) {
+        fillEl.style.transition = 'none';
+        fillEl.style.width = '0%';
+        void fillEl.offsetWidth; // force layout recalculation
+        fillEl.style.transition = 'width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)';
+      }
+
+      // Ensure the UI animation plays for at least 1.5s so it doesn't just flash glitchily for tiny files
+      const [analysis] = await Promise.all([
+        analyzeFile(parseable, (percent, loadedBytes, totalBytes) => {
+          if (statusEl) {
+            const loadedMb = (loadedBytes / 1048576).toFixed(1);
+            const totalMb = (totalBytes / 1048576).toFixed(1);
+            statusEl.textContent = `Reading: ${percent}% (${loadedMb} / ${totalMb} MB)`;
+            if (fillEl) fillEl.style.width = `${percent}%`;
+            
+            if (percent === 100) {
+              statusEl.textContent = 'Processing geometry (this may take a moment)...';
+              progressBar.classList.add('is-processing');
+            }
+          }
+        }),
+        new Promise(r => setTimeout(r, 1500))
+      ]);
+      
       state.analysis = analysis;
 
       const bb = analysis.boundingBox;
@@ -737,6 +812,7 @@ async function handleFiles(fileList, partIdx) {
       setStat(panel, 'triangles', analysis.triangleCount.toLocaleString());
       setStat(panel, 'dimensions', `${bb.x}×${bb.y}×${bb.z} mm`);
       if (statusEl) { statusEl.textContent = '✓ Complete'; statusEl.classList.add('done'); }
+      if (progressBar) progressBar.classList.add('hidden');
 
       // Enable the Calculate button now that we have valid geometry
       updateSubmitButtonState();
@@ -750,6 +826,8 @@ async function handleFiles(fileList, partIdx) {
     } catch (err) {
       console.error('[RFQ] Analysis error:', err);
       if (statusEl) { statusEl.textContent = `Error: ${err.message}`; statusEl.classList.add('done'); }
+      let pb = panel.querySelector('.rfq-progress-container');
+      if (pb) pb.classList.add('hidden');
     }
   }
 }

@@ -1,5 +1,6 @@
 import './css/design-system.css';
 import './css/marketing.css';
+import './css/convergence.css';
 import './css/team.css';
 import { initAuthModal } from './js/components/auth-modal.js';
 

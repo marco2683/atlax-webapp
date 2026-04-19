@@ -28,6 +28,7 @@ import { renderShortlist } from './js/components/shortlist.js';
 import { getCurrentUser } from './js/services/auth.js';
 import { saveShortlist } from './js/services/workspace.js';
 import { supabase } from './js/supabase.js';
+import { loadPricingConfig } from './js/utils/pricing-loader.js';
 
 // ── App State ────────────────────────────────────────────
 const appState = {
@@ -44,6 +45,9 @@ const appState = {
 // ── Boot Sequence ────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('[PRD] Booting PRD Dashboard...');
+  
+  // Initialize Pricing Config (Async)
+  const pricingPromise = loadPricingConfig();
   
   appState.suppliersData = [];
   try {
@@ -114,11 +118,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     switchView(e.detail.view, globe);
   });
 
-  // Handle initial state or URL hash if needed
-  // ...
+  // Handle initial state from URL hash (e.g. app.html#project-quote)
+  const initialHash = window.location.hash.replace('#', '');
+  if (initialHash && initialHash !== 'suppliers') {
+    // Delay to let all engines finish registering
+    setTimeout(() => switchView(initialHash, globe), 300);
+  }
 
+  // Also handle hash changes after initial load (e.g. user navigates via link)
+  window.addEventListener('hashchange', () => {
+    const newHash = window.location.hash.replace('#', '');
+    if (newHash) {
+      switchView(newHash, globe);
+    }
+  });
 
+  // Flat Earth secondary toggle
+  document.querySelectorAll('.flat-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('.flat-toggle-btn').forEach(b => {
+        b.classList.remove('active');
+      });
+      const target = e.currentTarget;
+      target.classList.add('active');
 
+      const shape = target.dataset.shape;
+      if (globe && globe.setFlatEarthMode) {
+        globe.setFlatEarthMode(shape === 'flatearth');
+      }
+    });
+  });
 
   // 5. Stage chips (previously Region chips)
   document.querySelectorAll('.region-chip').forEach(chip => {
@@ -434,6 +463,10 @@ function switchView(view, globe) {
   selectionScreen?.classList.add('hidden');
   catalogEngine?.classList.add('hidden');
 
+  // Restore global footer when leaving marketplace
+  const globalFooter = document.getElementById('footer');
+  if (globalFooter) globalFooter.style.display = '';
+
   // Clean up global nav states
   document.querySelectorAll('.navbar__menu-item').forEach(item => {
     item.classList.remove('navbar__menu-item--active');
@@ -487,9 +520,9 @@ function switchView(view, globe) {
     bottomResults?.classList.add('hidden');
 
     if (!appState._rfqInitialized) {
+      appState._rfqInitialized = true;
       import('./js/components/rfq-controller.js').then(m => {
         m.initRFQController();
-        appState._rfqInitialized = true;
       });
     }
 
@@ -550,6 +583,10 @@ function switchView(view, globe) {
     hero?.classList.add('hidden');
     bottomResults?.classList.add('hidden');
     catalogEngine?.classList.remove('hidden');
+
+    // Hide the global app footer — the marketplace has its own footer
+    const gFooter = document.getElementById('footer');
+    if (gFooter) gFooter.style.display = 'none';
 
     if (!appState._catalogInitialized) {
       import('./js/components/marketplace-catalog.js').then(m => {

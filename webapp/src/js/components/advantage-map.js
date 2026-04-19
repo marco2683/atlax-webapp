@@ -236,9 +236,46 @@ document.addEventListener('DOMContentLoaded', () => {
     nodes.forEach(node => {
       const id = node.getAttribute('data-id');
       const pos = POSITIONS[id];
-      if (pos) {
+      if (pos && isExpanded) {
         node.style.top = pos.top;
         node.style.left = pos.left;
+        node.style.position = 'absolute';
+        // Only set opacity on tech nodes; intent node visibility is CSS-driven via .active-intent
+        if (node.classList.contains('tech-node')) {
+          node.style.opacity = '1';
+          node.style.pointerEvents = 'all';
+        } else {
+          // Clear inline styles so CSS .active-intent rules control intent node visibility
+          node.style.opacity = '';
+          node.style.pointerEvents = '';
+        }
+
+        // Populate empty tech nodes with content from TECH_DETAILS
+        if (node.classList.contains('tech-node') && !node.querySelector('.node-label')) {
+          const detail = TECH_DETAILS[id];
+          if (detail) {
+            const tag = document.createElement('span');
+            tag.className = 'node-tag';
+            tag.textContent = detail.tag;
+            const label = document.createElement('span');
+            label.className = 'node-label';
+            label.textContent = detail.title;
+            node.appendChild(tag);
+            node.appendChild(label);
+          }
+        }
+      } else {
+        node.style.top = '';
+        node.style.left = '';
+        node.style.position = '';
+        // Only hide tech nodes when not expanded
+        if (node.classList.contains('tech-node')) {
+          node.style.opacity = '0';
+          node.style.pointerEvents = 'none';
+        } else {
+          node.style.opacity = '1';
+          node.style.pointerEvents = 'all';
+        }
       }
     });
   }
@@ -284,6 +321,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isExpanded) return;
     isExpanded = true;
     container.classList.add('is-expanded');
+    
+    // Show reset button
+    if (resetBtn) {
+      resetBtn.style.opacity = '1';
+      resetBtn.style.pointerEvents = 'all';
+    }
+
     initNodes();
     
     setTimeout(() => {
@@ -386,10 +430,21 @@ document.addEventListener('DOMContentLoaded', () => {
       isExpanded = false;
       currentIntent = null;
       container.classList.remove('is-expanded');
-      nodes.forEach(n => n.classList.remove('active-intent'));
+      
+      // Clear paths
       canvas.innerHTML = '';
-      highlightPath(null);
-      setTimeout(initNodes, 800);
+      
+      // Hide reset button
+      resetBtn.style.opacity = '0';
+      resetBtn.style.pointerEvents = 'none';
+
+      nodes.forEach(n => {
+        n.classList.remove('active');
+        n.classList.remove('active-intent');
+      });
+
+      // Restore grid layout
+      initNodes();
     });
   }
 
