@@ -84,106 +84,72 @@
     if (!data?.pages?.home) return;
     const h = data.pages.home;
 
-    // Hero
-    const heroChip = document.querySelector('[data-cms-id="hero-chip"], .m-hero__chip');
-    const heroTitle = document.querySelector('[data-cms-id="hero-title"], .m-hero__title');
-    const heroSubtitle = document.querySelector('.m-hero__content h2');
-    const heroDesc = document.querySelector('[data-cms-id="hero-desc"], .m-hero__subtitle');
-    if (heroChip && h.hero?.chip) heroChip.textContent = h.hero.chip;
-    if (heroTitle && h.hero?.title) heroTitle.textContent = h.hero.title;
-    if (heroSubtitle && h.hero?.subtitle) heroSubtitle.textContent = h.hero.subtitle;
-    if (heroDesc && h.hero?.description) heroDesc.textContent = h.hero.description;
+    // --- Hero Section ---
+    if (h.hero) {
+      const headline = document.querySelector('.hero-headline__west');
+      if (headline && h.hero.headline) headline.textContent = h.hero.headline;
 
-    // CTA buttons
-    const ctaBtns = document.querySelectorAll('.m-hero__cta-group a');
-    if (ctaBtns[0] && h.hero?.ctaPrimary) ctaBtns[0].textContent = h.hero.ctaPrimary;
-    if (ctaBtns[1] && h.hero?.ctaSecondary) ctaBtns[1].textContent = h.hero.ctaSecondary;
-
-    // Merger cards
-    if (h.mergerCards) {
-      const westCard = document.querySelector('.m-merger-card--west');
-      const eastCard = document.querySelector('.m-merger-card--east');
-      if (westCard && h.mergerCards.west) {
-        patchMergerCard(westCard, h.mergerCards.west);
-      }
-      if (eastCard && h.mergerCards.east) {
-        patchMergerCard(eastCard, h.mergerCards.east);
-      }
+      const prompts = document.querySelectorAll('.hero-prompt__text');
+      if (prompts[0] && h.hero.prompt) prompts[0].innerHTML = h.hero.prompt;
+      if (prompts[1] && h.hero.gatePrompt) prompts[1].textContent = h.hero.gatePrompt;
     }
 
-    // Services section — managed directly in HTML now (skip CMS patching)
-    // if (h.capabilities) { ... }
-
-    // One-Stop Shop
-    if (h.oneStopShop) {
-      const ossSection = document.querySelector('#onestop');
-      if (ossSection) {
-        const ossTitle = ossSection.querySelector('.m-section-title');
-        const ossDesc = ossSection.querySelector('.m-section-desc');
-        if (ossTitle && h.oneStopShop.sectionTitle) ossTitle.textContent = h.oneStopShop.sectionTitle;
-        if (ossDesc && h.oneStopShop.sectionDescription) ossDesc.textContent = h.oneStopShop.sectionDescription;
-      }
+    // --- Phase Cards ---
+    if (h.phaseCards && h.phaseCards.length > 0) {
+      const cards = document.querySelectorAll('.pb-stage-card');
+      h.phaseCards.forEach((cardData, idx) => {
+        const cardEl = cards[idx];
+        if (!cardEl) return;
+        
+        const title = cardEl.querySelector('.pb-stage-title');
+        const prompt = cardEl.querySelector('.pb-stage-prompt');
+        const cta = cardEl.querySelector('.pb-stage-cta');
+        const bullets = cardEl.querySelectorAll('.pb-stage-list li');
+        
+        if (title && cardData.title) title.textContent = cardData.title;
+        if (prompt && cardData.prompt) prompt.textContent = cardData.prompt;
+        if (cta && cardData.cta) {
+          // If you change the CTA text care must be taken to not lose the onclick.
+          // By updating innerText we keep the inline onclick unless we replace the whole node
+          cta.textContent = cardData.cta;
+        }
+        
+        if (cardData.bullets && cardData.bullets.length > 0) {
+          cardData.bullets.forEach((bulletText, bIdx) => {
+            if (bullets[bIdx] && bulletText) {
+              bullets[bIdx].innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> ${bulletText}`;
+            }
+          });
+        }
+      });
     }
 
-    // Portfolio Preview
-    if (h.portfolioPreview) {
-      const ppSection = document.querySelector('#portfolio');
-      if (ppSection) {
-        const ppChip = ppSection.querySelector('.m-section-chip');
-        const ppTitle = ppSection.querySelector('.m-section-title');
-        const ppDesc = ppSection.querySelector('.m-section-desc');
-        if (ppChip && h.portfolioPreview.sectionChip) ppChip.textContent = h.portfolioPreview.sectionChip;
-        if (ppTitle && h.portfolioPreview.sectionTitle) ppTitle.textContent = h.portfolioPreview.sectionTitle;
-        if (ppDesc && h.portfolioPreview.sectionDescription) ppDesc.textContent = h.portfolioPreview.sectionDescription;
-      }
-    }
-
-    // Locations
-    if (h.locations) {
-      const locSection = document.querySelector('#locations');
-      if (locSection) {
-        const locTitle = locSection.querySelector('.m-section-title');
-        const locDesc = locSection.querySelector('.m-section-desc');
-        if (locTitle && h.locations.sectionTitle) locTitle.textContent = h.locations.sectionTitle;
-        if (locDesc && h.locations.sectionDescription) locDesc.textContent = h.locations.sectionDescription;
-
-        const locCards = locSection.querySelectorAll('.m-facility-card');
-        (h.locations.cards || []).forEach((loc, i) => {
-          const card = locCards[i];
-          if (!card) return;
-          const img = card.querySelector('.m-facility-img');
-          const country = card.querySelector('h3');
-          const label = card.querySelector('.m-facility-info > p:first-of-type');
-          if (img && loc.image) img.style.backgroundImage = `url('${loc.image}')`;
-          if (country && loc.country) country.textContent = loc.country;
-          if (label && loc.label) label.textContent = loc.label;
+    // --- Who We Are ---
+    if (h.whoWeAre) {
+      const eyebrow = document.querySelector('.prd-who-eyebrow');
+      const title = document.querySelector('.prd-who-title');
+      const bodies = document.querySelectorAll('.prd-who-body');
+      
+      if (eyebrow && h.whoWeAre.eyebrow) eyebrow.textContent = h.whoWeAre.eyebrow;
+      if (title && h.whoWeAre.title) title.innerHTML = h.whoWeAre.title;
+      if (bodies[0] && h.whoWeAre.body1) bodies[0].textContent = h.whoWeAre.body1;
+      if (bodies[1] && h.whoWeAre.body2) bodies[1].textContent = h.whoWeAre.body2;
+      
+      if (h.whoWeAre.pillars && h.whoWeAre.pillars.length > 0) {
+        const pillarEls = document.querySelectorAll('.prd-pillar div');
+        h.whoWeAre.pillars.forEach((pData, pIdx) => {
+          const pel = pillarEls[pIdx];
+          if (!pel) return;
+          const str = pel.querySelector('strong');
+          const sp = pel.querySelector('span');
+          if (str && pData.title) str.textContent = pData.title;
+          if (sp && pData.desc) sp.textContent = pData.desc;
         });
       }
     }
-
-    // Data CTA
-    if (h.dataCta) {
-      const ctaSection = document.querySelector('.m-app-cta');
-      if (ctaSection) {
-        const ctaTitle = ctaSection.querySelector('.m-section-title');
-        const ctaDesc = ctaSection.querySelector('.m-section-desc');
-        if (ctaTitle && h.dataCta.title) ctaTitle.textContent = h.dataCta.title;
-        if (ctaDesc && h.dataCta.description) ctaDesc.textContent = h.dataCta.description;
-      }
-    }
   }
 
-  function patchMergerCard(cardEl, data) {
-    const img = cardEl.querySelector('.m-merger-card__image');
-    const tag = cardEl.querySelector('.m-merger-card__tag');
-    const title = cardEl.querySelector('h4');
-    const paras = cardEl.querySelectorAll('.m-merger-card__content p');
-    if (img && data.image) img.style.backgroundImage = `url('${data.image}')`;
-    if (tag && data.tag) tag.innerHTML = data.tag;
-    if (title && data.title) title.textContent = data.title;
-    if (paras[0] && data.line1) paras[0].textContent = data.line1;
-    if (paras[1] && data.line2) paras[1].textContent = data.line2;
-  }
+  function patchMergerCard(cardEl, data) {}
 
   /**
    * Patch the services/capabilities page from CMS data.
@@ -259,6 +225,54 @@
     }
   }
 
+  function patchFaqPage(data) {
+    if (!data?.pages?.faq?.sections) return;
+    const container = document.getElementById('faq-cms-container');
+    if (!container) return;
+    
+    let html = '';
+    data.pages.faq.sections.forEach(sec => {
+      html += `<div class="faq-section"><h2>${sec.title || ''}</h2>`;
+      if (sec.items) {
+        sec.items.forEach(item => {
+          html += `
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              ${item.question || ''}
+              <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="faq-answer">${item.answer || ''}</div>
+          </div>`;
+        });
+      }
+      html += `</div>`;
+    });
+    container.innerHTML = html;
+  }
+
+  function patchBlogPage(data) {
+    if (!data?.pages?.blog?.posts) return;
+    const container = document.getElementById('blog-cms-container');
+    if (!container) return;
+
+    window.__blogPosts = data.pages.blog.posts;
+
+    let html = '';
+    data.pages.blog.posts.forEach((post, i) => {
+      html += `
+      <div class="blog-card" onclick="openBlogModal(window.__blogPosts[${i}])">
+        <div class="blog-image" style="background-image: url('${post.image || ''}')"></div>
+        <div class="blog-content">
+          <div class="blog-date">${post.date || ''}</div>
+          <h3 class="blog-title">${post.title || ''}</h3>
+          <div class="blog-excerpt">${post.content || ''}</div>
+        </div>
+      </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
   /**
    * Determine which page we're on and patch accordingly.
    */
@@ -270,6 +284,10 @@
       patchServicesPage(data);
     } else if (path.includes('about')) {
       patchAboutPage(data);
+    } else if (path.includes('faq')) {
+      patchFaqPage(data);
+    } else if (path.includes('blog')) {
+      patchBlogPage(data);
     } else if (path === '/' || path.includes('index')) {
       patchHomePage(data);
     }

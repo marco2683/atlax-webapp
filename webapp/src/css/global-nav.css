@@ -210,3 +210,8 @@ body.marketing-page.is-homepage .global-nav-link[data-nav="home"] {
     align-items: flex-start;
   }
 }
+
+
+/* Paniani Footer Logo Styles */
+img.paniani-footer-logo { filter: grayscale(1) invert(1) brightness(2) !important; transition: filter 0.3s ease; }
+body.theme-light img.paniani-footer-logo { filter: grayscale(1) invert(0) brightness(0) !important; }

@@ -1,145 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portfolio - Atlas DT</title>
+  <title>Website Terms | AtlasDT Legal</title>
   <link rel="stylesheet" href="/src/css/advantage.css">
   <link rel="stylesheet" href="/src/css/auth.css">
   <link rel="stylesheet" href="/src/css/responsive.css">
   <link rel="stylesheet" href="/src/css/global-nav.css">
   <link rel="stylesheet" href="/src/css/contact-modal.css">
-  <link rel="stylesheet" href="/src/css/portfolio-modal.css">
-  <script defer src="/src/js/portfolio-modal.js"></script>
-  <script defer src="/src/js/cms-loader.js"></script>
   <script type="module" src="/src/js/contact-modal.js"></script>
+  <script defer src="/src/js/cms-loader.js"></script>
   <style>
-    .portfolio-hero {
-      padding: 180px 5% 80px 5%;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      background: url('/assets/portfolio/factory-floor.png') center/cover no-repeat;
-    }
-
-    .portfolio-hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.12) 0%, transparent 60%),
-        linear-gradient(to bottom, rgba(10, 10, 15, 0.88) 0%, rgba(10, 10, 15, 0.94) 100%);
-      z-index: 0;
-    }
-
-    .portfolio-hero>* {
-      position: relative;
-      z-index: 1;
-    }
-
-    .portfolio-hero h1 {
-      font-size: 56px;
-      font-weight: 800;
-      color: var(--color-white);
-      margin-bottom: 24px;
-      letter-spacing: -1.5px;
-    }
-
-    .portfolio-hero p {
-      font-size: 20px;
-      color: var(--color-steel-400);
-      max-width: 600px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-
-    .portfolio-section {
-      padding: 80px 5%;
-      max-width: 1600px;
-      margin: 0 auto;
-    }
-
-    .portfolio-section-header {
-      margin-bottom: 40px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 24px;
-    }
-
-    .portfolio-section-header h2 {
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--color-white);
-      margin-bottom: 12px;
-    }
-
-    .portfolio-section-header p {
-      color: var(--color-steel-400);
-      font-size: 16px;
-      max-width: 600px;
-      line-height: 1.5;
-    }
-
-    /* Masonry Layout */
-    .masonry-grid {
-      column-count: 3;
-      column-gap: 24px;
-    }
-
-    .masonry-item {
-      break-inside: avoid;
-      margin-bottom: 24px;
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      background: var(--color-steel-800);
-      position: relative;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      transition: all 0.3s ease;
-    }
-
-    .masonry-item:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
-      border-color: rgba(14, 165, 233, 0.3);
-    }
-
-    .masonry-item img {
-      width: 100%;
-      display: block;
-      transition: transform 0.5s ease;
-    }
-
-    .masonry-item:hover img {
-      transform: scale(1.02);
-    }
-
-    @media (max-width: 1024px) {
-      .masonry-grid {
-        column-count: 2;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .masonry-grid {
-        column-count: 1;
-      }
-
-      .portfolio-hero h1 {
-        font-size: 40px;
-      }
-    }
+    .faq-container { max-width: 800px; margin: 0 auto; padding: 100px 5%; }
+    .faq-section { margin-bottom: 40px; }
+    .faq-section h2 { color: white; margin-bottom: 20px; font-size: 24px; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+    .faq-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+    .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500; font-size: 16px; color: white; transition: background 0.2s; }
+    .faq-question:hover { background: rgba(255,255,255,0.05); }
+    .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out; color: var(--color-steel-300); line-height: 1.6; }
+    .faq-item.active .faq-answer { padding: 0 20px 20px 20px; max-height: 1000px; }
+    .faq-icon { transition: transform 0.3s; }
+    .faq-item.active .faq-icon { transform: rotate(180deg); }
   </style>
+
+  <style>
+    .legal-framework-container { max-width: 1400px; margin: 0 auto; padding: 120px 5% 100px 5%; display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; }
+    @media (max-width: 900px) { .legal-framework-container { grid-template-columns: 1fr; } }
+    .legal-sidebar { position: sticky; top: 100px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+    .legal-sidebar-menu { list-style: none; padding: 0; margin: 20px 0 0; }
+    .legal-sidebar-menu li { margin-bottom: 8px; }
+    .legal-sidebar-menu a { display: block; padding: 10px 14px; border-radius: 8px; color: var(--color-steel-300); text-decoration: none; font-size: 14px; transition: all 0.2s; }
+    .legal-sidebar-menu a:hover, .legal-sidebar-menu a.active { background: rgba(91,124,255,0.1); color: var(--color-electric); }
+    .legal-content { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 50px 60px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); color: var(--color-steel-300); font-size: 15px; line-height: 1.8; }
+    @media (max-width: 600px) { .legal-content { padding: 30px 20px; } }
+    .legal-content h1 { font-family: 'Montserrat', sans-serif; font-size: 40px; color: #fff; margin-top: 0; margin-bottom: 12px; letter-spacing: -1px; }
+    .legal-content .meta { color: var(--color-steel-500); font-size: 13px; margin-bottom: 40px; }
+    .legal-content h2 { font-family: 'Montserrat', sans-serif; font-size: 24px; color: #fff; margin-top: 50px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+    .legal-content h3 { font-size: 18px; color: #fff; margin-top: 40px; margin-bottom: 15px; }
+    .legal-content p, .legal-content li { margin-bottom: 16px; }
+    .legal-content ul, .legal-content ol { padding-left: 24px; margin-bottom: 24px; }
+    .legal-content table { width: 100%; border-collapse: collapse; margin: 30px 0; font-size: 14px; }
+    .legal-content th, .legal-content td { padding: 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .legal-content th { color: #fff; background: rgba(255,255,255,0.05); }
+    .legal-content .notice { background: rgba(91,124,255,0.08); border: 1px solid rgba(91,124,255,0.2); border-radius: 8px; padding: 16px; margin: 30px 0; color: #a9baf0; font-size: 14px; }
+    .legal-content a { color: var(--color-electric); text-decoration: underline; text-underline-offset: 3px; }
+  </style>
+
 </head>
-
 <body class="marketing-page" style="background: var(--color-void);">
-
   <nav class="navbar" id="navbar"
     style="position: fixed; width: 100%; top: 0; z-index: 100; transition: background 0.3s; padding: var(--space-4) var(--space-6); background: rgba(12,12,12,0.8); backdrop-filter: blur(20px);">
     <div
       style="display: flex; justify-content: space-between; align-items: center; max-width: 95%; margin: 0 auto; width: 100%;">
       <div class="navbar__brand" style="display: flex; align-items: center; gap: 12px; flex: 1;">
-        <a href="/" aria-label="Home"><img src="/logos/atlasdt-logo-light.png" alt="Atlas DT"
-            style="height: 32px; width: auto; object-fit: contain;" /></a>
+        <a href="/" aria-label="Home"><img src="/logos/atlasdt-logo-light.png" alt="Atlas DT" style="height: 32px; width: auto; object-fit: contain;" /></a>
       </div>
       <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
       <div class="nav-links-container" style="display: flex; align-items: center; gap: 4px; flex: 0 0 auto;">
@@ -186,84 +102,140 @@
       </div>
     </div>
   </nav>
+  <!-- OVERRIDE FOR LEGAL SUBPAGES -->
+  <style> body { background: var(--color-void); } </style>
+  <div class="legal-framework-container">
+    <aside class="legal-sidebar">
+      <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--color-steel-500); margin-bottom: 20px;">AtlasDT Legal</div>
+      <h2 style="font-size: 20px; color: #fff; margin:0 0 10px 0; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.05); font-weight: 500;">Framework</h2>
+      <ul class="legal-sidebar-menu">
+        
+          <li><a class="" href="data-protection.html">Data Protection</a></li>
+<li><a class="" href="email-security.html">Email Security</a></li>
+<li><a class="" href="privacy-policy.html">Privacy Policy</a></li>
+<li><a class="active" href="website-terms.html">Website Terms</a></li>
+<li><a class="" href="conditions-of-sale.html">Conditions of Sale</a></li>
+<li><a class="" href="cookie-policy.html">Cookie Policy</a></li>
+<li><a class="" href="nda.html">NDA</a></li>
+        
+      </ul>
+    </aside>
+    <main class="legal-content">
+      
+        <h1>Website Terms</h1>
+        <div class="meta">Effective date: 20 April 2026 &nbsp;•&nbsp; Website: www.atlasdt.com</div>
+        <div class="notice">Recommended use: publish for all website, portal, dashboard and marketplace access.</div>
+        
+<p>These Website Terms of Use ("<strong>Terms</strong>") govern access to and use of www.atlasdt.com, any sub-domains, and any associated AtlasDT portal, marketplace, dashboard, or digital service that links to these Terms (collectively, the "<strong>Site</strong>"). By accessing or using the Site, you agree to be bound by these Terms.</p>
 
-  <main>
-    <section class="portfolio-hero">
-      <h1>Product Portfolio</h1>
-      <p>A selection of the products we’ve engineered, sourced, and manufactured for global brands. From concept to mass
-        production.</p>
-    </section>
+<h2>1. About AtlasDT</h2>
+<p>The Site is operated by <strong>Paniani Products Pty Ltd</strong>, trading as <strong>AtlasDT</strong>, ABN [Pending], of Corner Carrington Rd & Thurston St, Suite 10/1 Main St, Box Hill VIC 3128.</p>
 
-    <section class="portfolio-section">
-      <div class="portfolio-section-header">
-        <h2>Consumer Products</h2>
-        <p>Advanced electronics, home goods, and innovative gadgets designed for global markets with strict quality
-          specifications.</p>
-      </div>
-      <div class="masonry-grid">
-        <div class="masonry-item"><img
-            src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop"
-            alt="Premium Headphones" /></div>
-        <div class="masonry-item"><img
-            src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=800&auto=format&fit=crop"
-            alt="Smartwatch" /></div>
-        <div class="masonry-item"><img
-            src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?q=80&w=800&auto=format&fit=crop"
-            alt="Smart Home Device" /></div>
-        <div class="masonry-item"><img
-            src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?q=80&w=800&auto=format&fit=crop"
-            alt="Mechanical Keyboard" /></div>
-        <div class="masonry-item"><img
-            src="https://images.unsplash.com/photo-1606220838315-056192d5e927?q=80&w=800&auto=format&fit=crop"
-            alt="Coffee Maker" /></div>
-        <div class="masonry-item"><img
-            src="https://images.unsplash.com/photo-1583394838336-aced97838b38?q=80&w=800&auto=format&fit=crop"
-            alt="Gaming Mouse" /></div>
-      </div>
-    </section>
+<h2>2. Eligibility and business use</h2>
+<ol>
+  <li>The Site is intended primarily for business, professional and commercial use.</li>
+  <li>If you use the Site on behalf of a company or other legal entity, you represent that you have authority to bind that entity to these Terms.</li>
+  <li>AtlasDT may refuse access, suspend accounts or limit use where AtlasDT reasonably considers that the Site is being misused or used in a way that creates legal, commercial, operational or security risk.</li>
+</ol>
 
-    <section class="portfolio-section">
-      <div class="portfolio-section-header">
-        <h2>Industrial & Tooling</h2>
-        <p>High-precision components, CNC machined parts, and robust industrial assemblies built for harsh environments.
-        </p>
-      </div>
-      <div class="masonry-grid">
-        <div class="masonry-item"><img src="/assets/images/manufacturing/IMG_2879.JPG" alt="CNC Machined Part" />
-        </div>
-        <div class="masonry-item"><img src="/assets/images/manufacturing/IMG_1924.JPG" alt="Microchips" /></div>
-        <div class="masonry-item"><img src="/assets/images/manufacturing/IMG_4367.JPG" alt="Steel Tooling" /></div>
-        <div class="masonry-item"><img src="/assets/images/manufacturing/IMG_4388.JPG" alt="Motor Assembly" />
-        </div>
-        <div class="masonry-item"><img src="/assets/images/manufacturing/20180629_161409.jpg" alt="Motor Assembly" />
-        </div>
-        <div class="masonry-item"><img src="/assets/images/manufacturing/20181224_134542_HDR.jpg"
-            alt="Motor Assembly" />
-        </div>
-      </div>
-    </section>
+<h2>3. Changes to the Site and the Terms</h2>
+<p>AtlasDT may update the Site, its features, content, workflows, APIs, pricing presentation, supplier listings, and these Terms at any time. The version published on the Site will apply from its stated effective date. Your continued use of the Site after an update takes effect constitutes acceptance of the updated Terms.</p>
 
-    <section class="portfolio-section">
-      <div class="portfolio-section-header">
-        <h2>Softgoods & Bags</h2>
-        <p>Premium textiles, backpacks, and tactical gear featuring high-durability stitching and weatherproof
-          materials.</p>
-      </div>
-      <div class="masonry-grid">
-        <div class="masonry-item"><img
-            src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=800&auto=format&fit=crop"
-            alt="Backpack" /></div>
-        <div class="masonry-item"><img
-            src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=800&auto=format&fit=crop"
-            alt="Travel Bag" /></div>
-        <div class="masonry-item"><img
-            src="https://images.unsplash.com/photo-1547949007-53504fb471cc?q=80&w=800&auto=format&fit=crop"
-            alt="Duffel Bag" /></div>
-      </div>
-    </section>
-  </main>
+<h2>4. Account registration and security</h2>
+<ol>
+  <li>You may need to register an account to access certain parts of the Site.</li>
+  <li>You must ensure that information you provide is accurate, current and complete.</li>
+  <li>You are responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account, except to the extent caused by AtlasDT's own failure to maintain reasonable security controls.</li>
+  <li>You must notify AtlasDT promptly at <a href="mailto:info@atlasdt.com">info@atlasdt.com</a> if you suspect unauthorised access to your account.</li>
+</ol>
 
-  <footer id="footer" class="m-footer"
+<h2>5. Acceptable use</h2>
+<p>You must not, and must not permit others to:</p>
+<ul>
+  <li>use the Site in breach of any law, regulation, sanctions regime or third-party right;</li>
+  <li>submit false, misleading or fraudulent information;</li>
+  <li>scrape, harvest, mirror, crawl or systematically extract data from the Site except as expressly permitted in writing;</li>
+  <li>upload malware, harmful code, or material that interferes with the Site's operation;</li>
+  <li>attempt to gain unauthorised access to systems, accounts, data or networks;</li>
+  <li>interfere with security, rate limits, API controls, platform integrity or supplier-buyer workflows;</li>
+  <li>copy, reverse engineer, decompile or create derivative works from the Site except where the law prohibits restriction of that activity;</li>
+  <li>use the Site to compete unfairly with AtlasDT, to benchmark it publicly without AtlasDT's consent, or to train machine-learning models on protected Site content unless expressly authorised; or</li>
+  <li>upload content that is defamatory, infringing, unlawful, obscene or commercially deceptive.</li>
+</ul>
+
+<h2>6. Information on the Site</h2>
+<ol>
+  <li>Content on the Site is provided for general information and business workflow purposes only.</li>
+  <li>Product data, supplier data, lead times, pricing, availability, technical descriptions, compliance statements and shipping estimates may be supplied by third parties or generated from data sources that can change over time.</li>
+  <li>AtlasDT does not guarantee that all Site content is complete, current, error-free or suitable for your particular purpose. You remain responsible for technical, commercial, legal and regulatory validation before relying on any product or supplier information.</li>
+  <li>Nothing on the Site constitutes engineering, legal, tax, customs, regulatory or financial advice unless expressly stated in a signed engagement.</li>
+</ol>
+
+<h2>7. Quotes, listings and marketplace content</h2>
+<ol>
+  <li>Unless expressly stated otherwise, product listings, supplier profiles, dashboard outputs, comparison results and quotations displayed on the Site are invitations to treat only and not binding offers capable of immediate acceptance.</li>
+  <li>Any order, engagement or transaction remains subject to AtlasDT's separate contract, statement of work, order confirmation, supplier terms, or <a href="conditions-of-sale.html">Conditions of Sale</a>.</li>
+  <li>AtlasDT may remove, amend or reject listings, supplier content or requests for quotes at its discretion.</li>
+</ol>
+
+<h2>8. User content</h2>
+<ol>
+  <li>If you upload or submit content to the Site, including RFQs, drawings, BOMs, specifications, messages, reviews, supplier content or other materials, you grant AtlasDT a non-exclusive, worldwide, royalty-free licence to host, reproduce, transmit, adapt and otherwise use that content to operate, secure, support and improve the Site and to perform the relevant services.</li>
+  <li>You represent that you have all rights necessary to submit that content and that AtlasDT's permitted use of it will not infringe any third-party right.</li>
+  <li>AtlasDT may remove content that it reasonably considers unlawful, risky, misleading, infringing or inconsistent with these Terms.</li>
+</ol>
+
+<h2>9. Intellectual property</h2>
+<ol>
+  <li>AtlasDT and its licensors retain all rights, title and interest in the Site, including its software, design, workflows, text, logos, databases, source data arrangements, graphics, and other content, excluding user content and third-party materials.</li>
+  <li>No licence or right is granted except the limited right to access and use the Site in accordance with these Terms.</li>
+  <li>You must not use AtlasDT's names, logos or marks without prior written consent.</li>
+</ol>
+
+<h2>10. Third-party services and links</h2>
+<p>The Site may link to or integrate with third-party platforms, websites, products or services. AtlasDT is not responsible for the content, performance, availability or terms of those third parties. Your use of third-party services is governed by the applicable third-party terms.</p>
+
+<h2>11. Availability and beta features</h2>
+<ol>
+  <li>AtlasDT may make the Site, or parts of it, available on a pilot, beta, early-access or trial basis. Such features may be modified, interrupted or withdrawn at any time.</li>
+  <li>AtlasDT does not guarantee uninterrupted availability, absolute security, or that the Site will be compatible with every device, system or browser.</li>
+</ol>
+
+<h2>12. Privacy and cookies</h2>
+<p>Your use of the Site is also subject to AtlasDT's <a href="privacy-policy.html">Privacy Policy</a>, <a href="cookie-policy.html">Cookie Policy</a>, and, where relevant, the <a href="data-protection.html">Data Protection</a> page.</p>
+
+<h2>13. Disclaimers</h2>
+<p>To the maximum extent permitted by law, the Site is provided on an "as is" and "as available" basis. AtlasDT disclaims all warranties, representations and conditions not expressly stated in these Terms, including implied warranties of merchantability, fitness for a particular purpose, title, non-infringement, and accuracy of data. Nothing in these Terms excludes any rights that cannot lawfully be excluded, including non-excludable rights under the Australian Consumer Law where applicable.</p>
+
+<h2>14. Liability</h2>
+<ol>
+  <li>To the maximum extent permitted by law, AtlasDT is not liable for any indirect, incidental, special, consequential or punitive loss, or for loss of profit, revenue, business opportunity, goodwill, anticipated savings, or data, arising out of or in connection with the Site.</li>
+  <li>To the extent AtlasDT is liable in connection with the Site, AtlasDT's aggregate liability will not exceed the greater of:
+    <ul>
+      <li>the fees paid by you to AtlasDT for use of the Site or related services in the 12 months preceding the event giving rise to the claim; and</li>
+      <li>AUD {{LIABILITY_CAP_AUD|50000}}.</li>
+    </ul>
+  </li>
+  <li>This clause does not exclude liability that cannot lawfully be excluded or limited.</li>
+</ol>
+
+<h2>15. Indemnity</h2>
+<p>You indemnify AtlasDT, its officers, employees and contractors against losses, claims, liabilities and costs arising from your unlawful use of the Site, your breach of these Terms, or your infringement of any third-party rights, except to the extent caused by AtlasDT's own breach or misconduct.</p>
+
+<h2>16. Suspension and termination</h2>
+<p>AtlasDT may suspend or terminate your access to the Site immediately if AtlasDT reasonably believes you have breached these Terms, created security risk, failed to pay applicable fees, or used the Site in a manner that may expose AtlasDT or others to harm, liability or disruption.</p>
+
+<h2>17. Governing law and disputes</h2>
+<p>These Terms are governed by the laws of Victoria, Australia, and the parties submit to the exclusive jurisdiction of the courts of that jurisdiction and any courts hearing appeals from them, unless mandatory law requires otherwise.</p>
+
+<h2>18. Contact</h2>
+<p>Questions about these Terms should be sent to <a href="mailto:info@atlasdt.com">info@atlasdt.com</a>.</p>
+
+        
+      
+    </main>
+  </div>
+<footer id="footer" class="m-footer"
     style="padding: 100px var(--space-8); background: #080808; border-top: 1px solid rgba(255,255,255,0.05);">
     <div
       style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 60px; max-width: 1400px; margin: 0 auto; text-align: left;">
@@ -304,6 +276,11 @@
                   style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Our Services</a></li>
               <li><a href="portfolio.html"
                   style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Portfolio</a></li>
+              <li><a href="blog.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Blog</a></li>
+              <li><a href="faq.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">FAQ</a></li>
+              
             </ul>
           </div>
           <div>
@@ -363,17 +340,18 @@
       </div>
     </div>
     <div
-      style="margin-top: 80px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; color: var(--color-steel-500); font-size: 11px; letter-spacing: 1px;">
+      style="margin-top: 40px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; color: var(--color-steel-500); font-size: 11px; letter-spacing: 1px;">
       &copy; 2026 Atlas DT. STRATEGIC SOURCING & COMPETITIVE MANUFACTURING.
     </div>
   </footer>
+
+  <script type="module" src="/src/marketing.js"></script>
 
   <!-- ── Authentication Modal (Login / Sign Up) ────────────────────────────────────────── -->
   <div class="auth-modal hidden" id="auth-modal">
     <div class="auth-modal-glass">
       <button class="close-auth-modal" id="close-auth-modal">&times;</button>
       <div class="auth-forms-container auth-state-login" id="auth-forms-container">
-        <!-- LOGIN FORM -->
         <div class="auth-form-wrapper" id="form-login">
           <div class="auth-header">
             <h2>Welcome Back.</h2>
@@ -386,8 +364,7 @@
             </div>
             <div class="auth-input-group">
               <label for="login-password">Password</label>
-              <input type="password" id="login-password" required
-                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+              <input type="password" id="login-password" required placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
             </div>
             <div style="text-align:right; margin-top:-10px; margin-bottom:15px;"><a id="toggle-to-reset" style="font-size:12px; color:var(--color-electric); cursor:pointer;">Forgot password?</a></div>
             <div id="login-error" class="auth-error-msg"></div>
@@ -397,7 +374,6 @@
             No account yet? <a id="toggle-to-signup">Sign up for access</a>
           </div>
         </div>
-        <!-- SIGN UP FORM -->
         
         <!-- RESET PASSWORD FORM -->
         <div class="auth-form-wrapper" id="form-reset" style="display: none;">
@@ -444,8 +420,7 @@
             </div>
             <div class="auth-input-group">
               <label for="signup-password">Password</label>
-              <input type="password" id="signup-password" required
-                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+              <input type="password" id="signup-password" required placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
               <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars: 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
             </div>
             <div class="auth-input-group" style="display: flex; gap: 10px; align-items: start; margin-top: 10px; margin-bottom: 15px;">
@@ -464,10 +439,6 @@
       </div>
     </div>
   </div>
-
-  <script type="module" src="/src/marketing.js"></script>
 </body>
 
 </html>
-
-

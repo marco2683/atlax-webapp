@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Atlas DT - About Us</title>
+  <title>Privacy Policy | AtlasDT Legal</title>
   <link rel="stylesheet" href="/src/css/advantage.css">
   <link rel="stylesheet" href="/src/css/auth.css">
   <link rel="stylesheet" href="/src/css/responsive.css">
@@ -13,11 +12,44 @@
   <link rel="stylesheet" href="/src/css/contact-modal.css">
   <script type="module" src="/src/js/contact-modal.js"></script>
   <script defer src="/src/js/cms-loader.js"></script>
+  <style>
+    .faq-container { max-width: 800px; margin: 0 auto; padding: 100px 5%; }
+    .faq-section { margin-bottom: 40px; }
+    .faq-section h2 { color: white; margin-bottom: 20px; font-size: 24px; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+    .faq-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+    .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500; font-size: 16px; color: white; transition: background 0.2s; }
+    .faq-question:hover { background: rgba(255,255,255,0.05); }
+    .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out; color: var(--color-steel-300); line-height: 1.6; }
+    .faq-item.active .faq-answer { padding: 0 20px 20px 20px; max-height: 1000px; }
+    .faq-icon { transition: transform 0.3s; }
+    .faq-item.active .faq-icon { transform: rotate(180deg); }
+  </style>
+
+  <style>
+    .legal-framework-container { max-width: 1400px; margin: 0 auto; padding: 120px 5% 100px 5%; display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; }
+    @media (max-width: 900px) { .legal-framework-container { grid-template-columns: 1fr; } }
+    .legal-sidebar { position: sticky; top: 100px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+    .legal-sidebar-menu { list-style: none; padding: 0; margin: 20px 0 0; }
+    .legal-sidebar-menu li { margin-bottom: 8px; }
+    .legal-sidebar-menu a { display: block; padding: 10px 14px; border-radius: 8px; color: var(--color-steel-300); text-decoration: none; font-size: 14px; transition: all 0.2s; }
+    .legal-sidebar-menu a:hover, .legal-sidebar-menu a.active { background: rgba(91,124,255,0.1); color: var(--color-electric); }
+    .legal-content { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 50px 60px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); color: var(--color-steel-300); font-size: 15px; line-height: 1.8; }
+    @media (max-width: 600px) { .legal-content { padding: 30px 20px; } }
+    .legal-content h1 { font-family: 'Montserrat', sans-serif; font-size: 40px; color: #fff; margin-top: 0; margin-bottom: 12px; letter-spacing: -1px; }
+    .legal-content .meta { color: var(--color-steel-500); font-size: 13px; margin-bottom: 40px; }
+    .legal-content h2 { font-family: 'Montserrat', sans-serif; font-size: 24px; color: #fff; margin-top: 50px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+    .legal-content h3 { font-size: 18px; color: #fff; margin-top: 40px; margin-bottom: 15px; }
+    .legal-content p, .legal-content li { margin-bottom: 16px; }
+    .legal-content ul, .legal-content ol { padding-left: 24px; margin-bottom: 24px; }
+    .legal-content table { width: 100%; border-collapse: collapse; margin: 30px 0; font-size: 14px; }
+    .legal-content th, .legal-content td { padding: 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .legal-content th { color: #fff; background: rgba(255,255,255,0.05); }
+    .legal-content .notice { background: rgba(91,124,255,0.08); border: 1px solid rgba(91,124,255,0.2); border-radius: 8px; padding: 16px; margin: 30px 0; color: #a9baf0; font-size: 14px; }
+    .legal-content a { color: var(--color-electric); text-decoration: underline; text-underline-offset: 3px; }
+  </style>
+
 </head>
-
 <body class="marketing-page" style="background: var(--color-void);">
-
-  <!-- ── Navbar ────────────────────────────────────────── -->
   <nav class="navbar" id="navbar"
     style="position: fixed; width: 100%; top: 0; z-index: 100; transition: background 0.3s; padding: var(--space-4) var(--space-6); background: rgba(12,12,12,0.8); backdrop-filter: blur(20px);">
     <div
@@ -70,133 +102,150 @@
       </div>
     </div>
   </nav>
-
-  <!-- ── Hero Section (DARK) ────────────────────────────────── -->
-  <header style="padding: 200px 5% 100px 5%; max-width: 1600px; margin: 0 auto;">
-    <div style="display: flex; flex-direction: column; gap: 24px; max-width: 800px;">
-      <div class="m-hero__chip" data-cms-id="about-hero-chip" style="align-self: flex-start;">Our History & Mission</div>
-      <h1 data-cms-id="about-hero-title" style="font-size: 80px; font-weight: 800; line-height: 1; color: white; letter-spacing: -2px;">
-        Engineering the Unfair Advantage.
-      </h1>
-      <p data-cms-id="about-hero-desc" style="font-size: 20px; color: var(--color-steel-300); line-height: 1.6; max-width: 700px;">
-        What started as an industrial design and engineering consultancy has evolved into an end-to-end strategic product realization firm.
-        We bridge the gap between premium western product design and high-velocity Asian manufacturing.
-      </p>
-    </div>
-  </header>
-
-  <!-- SECTION: Media Placeholders -->
-  <section style="padding: 0 5%; max-width: 1600px; margin: 0 auto 150px auto;">
-    <div data-cms-id="about-media" style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-      <div style="background: #111; border-radius: 24px; aspect-ratio: 16/9; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
-        <!-- Video Placeholder -->
-        <div style="text-align: center; color: var(--color-steel-400);">
-          <svg style="width: 48px; height: 48px; margin: 0 auto 16px auto; opacity: 0.5;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-          <p>Product Development Story (Video Placeholder)</p>
-        </div>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 20px;">
-        <div style="background: #111; border-radius: 24px; flex: 1; border: 1px solid rgba(255,255,255,0.05); background-image: url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&q=80'); background-size: cover; background-position: center;"></div>
-        <div style="background: #111; border-radius: 24px; flex: 1; border: 1px solid rgba(255,255,255,0.05); background-image: url('https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?auto=format&fit=crop&w=600&q=80'); background-size: cover; background-position: center;"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION: Methodology & Agile (DARK) -->
-  <section id="methodology" class="m-agile-dark">
-    <div style="max-width: 1600px; margin: 0 auto; text-align: center; margin-bottom: 80px;" class="m-fade-up">
-      <h2 class="m-section-title">Execution at the Speed of Thought</h2>
-      <p class="m-section-desc" style="max-width: 800px; margin: 0 auto;">
-        We save our clients time and capital by doing just enough, just in time. By combining common-sense engineering
-        with deeply integrated supply chains, we transform the strictly linear waterfall into rapid, de-risked parallel
-        loops.
-      </p>
-    </div>
-
-    <!-- The 3-Loop Animation Graphic -->
-    <div class="m-loop-graphic-container m-fade-up">
-      <div class="m-chevron-path">
-        <span>PLAN</span>
-        <span>LAUNCH</span>
-      </div>
-
-      <div class="m-agile-circles">
-        <!-- Loop 1 -->
-        <div class="m-agile-loop">
-          <div class="m-loop-text-center"><span>1</span><br>Core Tech<br>Proof of Concept</div>
-          <div class="m-loop-ring" style="--ring-color: var(--color-electric);"></div>
-          <div class="m-loop-value">
-            <span class="m-val m-val-1">BoM Target Hit</span>
-            <span class="m-val m-val-2">Concept Proven</span>
-            <span class="m-val m-val-3">Architecture Locked</span>
-          </div>
-        </div>
-        <div class="m-loop-arrow">&rarr;</div>
-        <!-- Loop 2 -->
-        <div class="m-agile-loop">
-          <div class="m-loop-text-center"><span>2</span><br>Detailed<br>Design</div>
-          <div class="m-loop-ring" style="--ring-color: var(--color-neon-purple); animation-delay: -5.33s;"></div>
-          <div class="m-loop-value">
-            <span class="m-val m-val-1" style="animation-delay: 2.67s;">Class-A Surfaces</span>
-            <span class="m-val m-val-2" style="animation-delay: 2.67s;">DFM Verified</span>
-            <span class="m-val m-val-3" style="animation-delay: 2.67s;">Tooling Released</span>
-          </div>
-        </div>
-        <div class="m-loop-arrow">&rarr;</div>
-        <!-- Loop 3 -->
-        <div class="m-agile-loop">
-          <div class="m-loop-text-center"><span>3</span><br>Mfg<br>Optimization</div>
-          <div class="m-loop-ring" style="--ring-color: var(--color-neon-cyan); animation-delay: -2.67s;"></div>
-          <div class="m-loop-value">
-            <span class="m-val m-val-1" style="animation-delay: 5.33s;">Yield &gt; 98%</span>
-            <span class="m-val m-val-2" style="animation-delay: 5.33s;">Cycle Optimized</span>
-            <span class="m-val m-val-3" style="animation-delay: 5.33s;">Mass Production</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION: Our Team -->
-  <section id="team" style="padding: 150px 5%; max-width: 1600px; margin: 0 auto;">
-    <div style="text-align: center; max-width: 600px; margin: 0 auto 80px auto;">
-        <h2 style="font-size: 48px; margin-bottom: 16px; font-weight: 800;">Leadership Team</h2>
-        <p style="color: var(--color-steel-400); font-size: 16px; line-height: 1.6;">Our leadership combines decades of experience navigating the complexities of Asian supply chains and Western boardroom expectations.</p>
-    </div>
-    
-    <!-- Modern Team Grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px;">
-        <div data-cms-id="team-member" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 32px; border-radius: 24px; text-align: center; transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
-            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&h=400&q=80" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-bottom: 24px; border: 4px solid var(--color-void); outline: 2px solid var(--color-electric);">
-            <h4 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Placeholder Name</h4>
-            <div data-cms-field="role" style="color: var(--color-electric); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;">CEO</div>
-            <p data-cms-field="description" style="color: var(--color-steel-400); font-size: 13px; line-height: 1.5;">20+ years of hardware strategy and strategic sourcing execution.</p>
-        </div>
-
-        <div data-cms-id="team-member" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 32px; border-radius: 24px; text-align: center; transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
-            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&h=400&q=80" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-bottom: 24px; border: 4px solid var(--color-void); outline: 2px solid var(--color-neon-purple);">
-            <h4 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Placeholder Name</h4>
-            <div data-cms-field="role" style="color: var(--color-neon-purple); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;">Head of Engineering</div>
-            <p data-cms-field="description" style="color: var(--color-steel-400); font-size: 13px; line-height: 1.5;">Mechatronics expert turning complex concepts into manufacturable units.</p>
-        </div>
-
-        <div data-cms-id="team-member" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 32px; border-radius: 24px; text-align: center; transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
-            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&h=400&q=80" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-bottom: 24px; border: 4px solid var(--color-void); outline: 2px solid var(--color-neon-cyan);">
-            <h4 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Placeholder Name</h4>
-            <div data-cms-field="role" style="color: var(--color-neon-cyan); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;">Lead ID</div>
-            <p data-cms-field="description" style="color: var(--color-steel-400); font-size: 13px; line-height: 1.5;">Designing award-winning class-A surfaces for consumer products.</p>
-        </div>
+  <!-- OVERRIDE FOR LEGAL SUBPAGES -->
+  <style> body { background: var(--color-void); } </style>
+  <div class="legal-framework-container">
+    <aside class="legal-sidebar">
+      <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--color-steel-500); margin-bottom: 20px;">AtlasDT Legal</div>
+      <h2 style="font-size: 20px; color: #fff; margin:0 0 10px 0; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.05); font-weight: 500;">Framework</h2>
+      <ul class="legal-sidebar-menu">
         
-        <div data-cms-id="team-member" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 32px; border-radius: 24px; text-align: center; transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
-            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&h=400&q=80" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-bottom: 24px; border: 4px solid var(--color-void); outline: 2px solid var(--color-amber);">
-            <h4 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Placeholder Name</h4>
-            <div data-cms-field="role" style="color: var(--color-amber); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;">Supply Chain Director</div>
-            <p data-cms-field="description" style="color: var(--color-steel-400); font-size: 13px; line-height: 1.5;">Navigating raw material procurement and multi-tier vendor risk.</p>
-        </div>
-    </div>
-  </section>
+          <li><a class="" href="data-protection.html">Data Protection</a></li>
+<li><a class="" href="email-security.html">Email Security</a></li>
+<li><a class="active" href="privacy-policy.html">Privacy Policy</a></li>
+<li><a class="" href="website-terms.html">Website Terms</a></li>
+<li><a class="" href="conditions-of-sale.html">Conditions of Sale</a></li>
+<li><a class="" href="cookie-policy.html">Cookie Policy</a></li>
+<li><a class="" href="nda.html">NDA</a></li>
+        
+      </ul>
+    </aside>
+    <main class="legal-content">
+      
+        <h1>Privacy Policy</h1>
+        <div class="meta">Effective date: 20 April 2026 &nbsp;•&nbsp; Website: www.atlasdt.com</div>
+        <div class="notice">Recommended use: publish as AtlasDT's main website and business privacy policy.</div>
+        
+<p>This Privacy Policy explains how <strong>Paniani Products Pty Ltd</strong> trading as <strong>AtlasDT</strong> ("<strong>AtlasDT</strong>", "<strong>we</strong>", "<strong>us</strong>" or "<strong>our</strong>") collects, uses, discloses and protects personal information when you visit our website, use our software or marketplace, request consulting or sourcing services, interact with our team, or otherwise engage with us.</p>
 
-  <footer id="footer" class="m-footer"
+<div class="notice"><strong>Important:</strong> This Privacy Policy covers AtlasDT's processing as a business operating a website, SaaS-enabled marketplace and advisory/supply-chain services. Where AtlasDT processes personal data purely on behalf of a customer, the <a href="data-protection.html">Data Protection</a> page may also apply.</div>
+
+<h2>1. Scope</h2>
+<p>This Privacy Policy applies to:</p>
+<ul>
+  <li>visitors to www.atlasdt.com;</li>
+  <li>prospective and actual customers, suppliers, partners and professional contacts;</li>
+  <li>users of AtlasDT accounts, portals, dashboards, software, marketplace and support channels; and</li>
+  <li>individuals whose information is provided to AtlasDT in connection with a project, procurement workflow, supplier introduction, transaction, shipment or support request.</li>
+</ul>
+
+<h2>2. Personal information we collect</h2>
+<p>Depending on how you interact with AtlasDT, we may collect:</p>
+<ul>
+  <li><strong>Identity and contact data</strong>: name, job title, company name, business email, telephone number, postal address, and other contact details.</li>
+  <li><strong>Account and access data</strong>: usernames, encrypted passwords, permissions, profile settings, authentication logs, and account preferences.</li>
+  <li><strong>Commercial and transaction data</strong>: RFQs, quotations, purchase orders, invoices, payment status, order history, returns, disputes, project scopes, delivery details, and communications relating to products or services.</li>
+  <li><strong>Supplier and marketplace data</strong>: supplier onboarding details, product data, pricing, certifications, logistics information, compliance documents, and performance metrics.</li>
+  <li><strong>Consulting and project data</strong>: project briefs, technical requirements, manufacturing notes, BOMs, drawings, milestones, deliverables, and related business records.</li>
+  <li><strong>Technical and usage data</strong>: IP address, browser type, device information, pages viewed, referring URLs, cookie identifiers, session data, platform events, and similar diagnostic information.</li>
+  <li><strong>Marketing and communications data</strong>: your preferences, campaign interactions, event participation, survey responses, and correspondence with AtlasDT.</li>
+  <li><strong>Verification and compliance data</strong>: sanctions-screening outputs, trade-compliance information, ABN/VAT or company-registration details, credit checks, and anti-fraud signals where reasonably necessary.</li>
+</ul>
+
+<h2>3. How we collect personal information</h2>
+<p>We may collect personal information:</p>
+<ul>
+  <li>directly from you when you submit a form, request a quote, create an account, join a demo, sign a contract, upload content, place an order, or contact us;</li>
+  <li>automatically through cookies, pixels, server logs, analytics tools and similar technologies when you use our website or platform;</li>
+  <li>from your employer, colleagues, representatives, logistics providers, payment processors, suppliers or buyers connected to a transaction;</li>
+  <li>from public sources such as corporate websites, trade registries, sanctions databases, exhibitions, directories or networking platforms; and</li>
+  <li>from service providers, partners or referral sources acting lawfully.</li>
+</ul>
+
+<h2>4. Why we use personal information</h2>
+<p>We use personal information to:</p>
+<ul>
+  <li>operate, maintain and improve our website, marketplace, software and services;</li>
+  <li>create and manage accounts, authenticate users, and provide customer support;</li>
+  <li>prepare quotations, manage supplier introductions, coordinate projects, process orders, arrange shipments, and administer payments;</li>
+  <li>facilitate communications between buyers, suppliers, logistics providers and project stakeholders;</li>
+  <li>perform due diligence, supplier evaluation, fraud prevention, security monitoring and compliance checks;</li>
+  <li>provide consulting, sourcing, procurement, product-development and supply-chain management services;</li>
+  <li>send service notices, technical alerts, legal notices, updates and administrative communications;</li>
+  <li>measure performance, analyse usage and develop new features or service offerings;</li>
+  <li>send marketing communications, event invitations and thought-leadership content where permitted by law; and</li>
+  <li>comply with legal obligations, resolve disputes and enforce our agreements.</li>
+</ul>
+
+<h2>5. Legal bases for processing</h2>
+<p>Where applicable law requires a legal basis, AtlasDT relies on one or more of the following:</p>
+<ul>
+  <li><strong>Contract</strong>: where processing is necessary to provide requested products, platform access, consulting, sourcing or project services.</li>
+  <li><strong>Legitimate interests</strong>: where processing supports the administration, security, improvement and marketing of our business in a proportionate way.</li>
+  <li><strong>Legal obligation</strong>: where we must retain records, comply with tax, trade, corporate, privacy, sanctions or fraud-prevention obligations, or respond to lawful requests.</li>
+  <li><strong>Consent</strong>: where we rely on consent for optional marketing, cookies or other processing that requires it.</li>
+</ul>
+
+<h2>6. Disclosure of personal information</h2>
+<p>We may disclose personal information to:</p>
+<ul>
+  <li>our affiliates, advisers, auditors and insurers;</li>
+  <li>hosting, cloud, analytics, communications, CRM, support, accounting, e-signature, payment and logistics service providers;</li>
+  <li>suppliers, manufacturers, distributors, freight providers, customs agents, inspection providers or buyers where disclosure is required to fulfil a project or transaction;</li>
+  <li>identity-verification, sanctions-screening, fraud-prevention and credit-check providers where reasonably required;</li>
+  <li>courts, regulators, law-enforcement agencies, government authorities or other parties where required or permitted by law; and</li>
+  <li>a purchaser, investor, successor or professional adviser in connection with a merger, financing, acquisition, restructuring or sale of assets, subject to appropriate confidentiality controls.</li>
+</ul>
+<p>We do not sell personal information as that term is commonly understood in privacy law.</p>
+
+<h2>7. International disclosures</h2>
+<p>AtlasDT may use personnel or service providers located in Australia and other countries. Personal information may therefore be stored or processed outside your jurisdiction. Where applicable law requires, AtlasDT will take reasonable steps to ensure that overseas recipients handle personal information in a manner consistent with required privacy protections.</p>
+
+<h2>8. Cookies and similar technologies</h2>
+<p>AtlasDT uses cookies and similar technologies to operate the website, remember preferences, understand usage patterns, measure campaign effectiveness and improve the user experience. For more detail, see our <a href="cookie-policy.html">Cookie Policy</a>.</p>
+
+<h2>9. Direct marketing</h2>
+<ol>
+  <li>AtlasDT may send you marketing communications about products, platform releases, supplier programs, events, articles or services that may be relevant to your business.</li>
+  <li>You can opt out of non-essential marketing communications at any time by using the unsubscribe link in the message or by contacting <a href="mailto:info@atlasdt.com">info@atlasdt.com</a>.</li>
+  <li>Operational, transactional or legally required messages are not marketing and may still be sent even if you opt out of marketing.</li>
+</ol>
+
+<h2>10. Retention</h2>
+<p>We retain personal information only for as long as reasonably necessary for the purposes described in this Privacy Policy, including to deliver services, maintain business records, comply with law, resolve disputes, protect legal rights and maintain security logs. Retention periods vary according to the nature of the data, the relevant service and legal requirements.</p>
+
+<h2>11. Security</h2>
+<p>AtlasDT applies administrative, technical and organisational safeguards designed to protect personal information against misuse, interference, loss, unauthorised access, modification or disclosure. However, no internet or storage system is completely secure, and AtlasDT cannot guarantee absolute security.</p>
+
+<h2>12. Your rights</h2>
+<p>Depending on where you are located and the law that applies, you may have rights to request access to, correction of, deletion of, restriction of, portability of, or objection to our processing of your personal information. You may also have the right to withdraw consent where processing relies on consent.</p>
+<p>To exercise a privacy right, contact <a href="mailto:info@atlasdt.com">info@atlasdt.com</a>. We may need to verify your identity before acting on your request.</p>
+
+<h2>13. Third-party websites and services</h2>
+<p>Our website or platform may contain links to third-party websites, portals, tools or services. AtlasDT is not responsible for the privacy or security practices of third parties. You should review the applicable policies of those third parties before submitting personal information to them.</p>
+
+<h2>14. Children's privacy</h2>
+<p>AtlasDT's offerings are intended for business and professional users and are not directed to children. If we become aware that we have collected personal information from a child in contravention of applicable law, we will take reasonable steps to delete it.</p>
+
+<h2>15. Changes to this Privacy Policy</h2>
+<p>AtlasDT may update this Privacy Policy from time to time. The latest version will be posted on this page with an updated effective date. Material changes may also be notified by email, in-platform notice, or other reasonable means.</p>
+
+<h2>16. Contact AtlasDT</h2>
+<table>
+  <tr><th>Privacy contact</th><td><a href="mailto:info@atlasdt.com">info@atlasdt.com</a></td></tr>
+  <tr><th>Legal contact</th><td><a href="mailto:info@atlasdt.com">info@atlasdt.com</a></td></tr>
+  <tr><th>Postal address</th><td>Corner Carrington Rd & Thurston St, Suite 10/1 Main St, Box Hill VIC 3128</td></tr>
+  <tr><th>Entity</th><td>Paniani Products Pty Ltd — ABN [Pending]</td></tr>
+</table>
+
+<h2>17. Region-specific notice for Australian users</h2>
+<p>Where the Privacy Act 1988 (Cth) and the Australian Privacy Principles apply, AtlasDT will manage personal information in accordance with those requirements, including taking reasonable steps to ensure information is accurate, up to date and secure, and to provide access or correction rights where required by law.</p>
+
+        
+      
+    </main>
+  </div>
+<footer id="footer" class="m-footer"
     style="padding: 100px var(--space-8); background: #080808; border-top: 1px solid rgba(255,255,255,0.05);">
     <div
       style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 60px; max-width: 1400px; margin: 0 auto; text-align: left;">
@@ -403,5 +452,3 @@
 </body>
 
 </html>
-
-

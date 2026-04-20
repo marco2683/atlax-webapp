@@ -198,7 +198,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (t === 'overview')  { pageTitle.textContent = 'Platform Overview';        renderOverview(); }
         if (t === 'suppliers') { pageTitle.textContent = 'Suppliers CRM Directory';  renderSuppliersTable(); }
         if (t === 'customers') { pageTitle.textContent = 'Customers Data CRM';       renderCustomersTable(); }
-        if (t === 'designers') { pageTitle.textContent = 'Talent Hub (Designers)';   renderDesignersTable(); }
         if (t === 'rfqs')      { pageTitle.textContent = 'RFQ \u0026 Project Tracker';    renderRFQs(); }
         if (t === 'pricing') { pageTitle.textContent = 'Pricing Engine Configurator'; renderPricingConfigurator(contentRouting); }
         if (t === 'website')   { pageTitle.textContent = 'Website Content Manager';  renderWebsiteContent(); }
@@ -213,23 +212,361 @@ document.addEventListener('DOMContentLoaded', async () => {
   //  O V E R V I E W
   // ═══════════════════════════════════════════════════════════
   function renderOverview() {
+    // Top groups for suppliers
+    let techCounts = {};
+    loadedSuppliers.forEach(s => {
+      let g = s.techGroup || 'General';
+      techCounts[g] = (techCounts[g] || 0) + 1;
+    });
+    // Sort and keep top 5
+    let sortedTech = Object.entries(techCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    let techLabelsArray = sortedTech.map(x=>x[0]);
+    let techDataArray = sortedTech.map(x=>x[1]);
+
+    if (techLabelsArray.length === 0) {
+      techLabelsArray = ['CNC Machining', 'Injection Molding', 'Additive Mfg', 'Sheet Metal', 'Casting'];
+      techDataArray = [45, 25, 15, 10, 5];
+    }
+
+    const isLightMode = document.body.classList.contains('theme-light');
+    const chartTextColor = isLightMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.4)';
+    const chartGridColor = isLightMode ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.03)';
+    const chartBarLight = isLightMode ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.05)';
+    const chartBarMed1 = isLightMode ? 'rgba(0, 0, 0, 0.15)' : 'rgba(255, 255, 255, 0.15)';
+    const chartBarMed2 = isLightMode ? 'rgba(0, 0, 0, 0.25)' : 'rgba(255, 255, 255, 0.25)';
+
     contentRouting.innerHTML = `
-      <div class="admin-metrics-grid">
-        <div class="admin-metric-card">
-          <div class="admin-metric-value">${loadedSuppliers.length}</div>
-          <div class="admin-metric-label">Verified Suppliers</div>
+      <div class="admin-dash-wrapper">
+      <style>
+        .admin-dash-wrapper {
+          --dash-bg: rgba(255, 255, 255, 0.02);
+          --dash-border: rgba(255, 255, 255, 0.05);
+          --dash-modal: #0f1219;
+          --dash-text: white;
+          --dash-muted: var(--color-steel-400);
+          --dash-subtle: var(--color-steel-300);
+          --dash-tile: rgba(0,0,0,0.2);
+          --dash-scroll: rgba(255, 255, 255, 0.1);
+          --dash-btn: rgba(255,255,255,0.05);
+          --dash-highlight: #0ea5e9;
+        }
+        body.theme-light .admin-dash-wrapper {
+          --dash-bg: #ffffff;
+          --dash-border: rgba(0, 0, 0, 0.08);
+          --dash-modal: #f9fafb;
+          --dash-text: #111827;
+          --dash-muted: #6b7280;
+          --dash-subtle: #4b5563;
+          --dash-tile: #ffffff;
+          --dash-scroll: rgba(0, 0, 0, 0.15);
+          --dash-btn: rgba(0,0,0,0.04);
+          --dash-highlight: #0284c7;
+        }
+
+        .admin-dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; margin-bottom: 40px; }
+        .admin-dash-section { background: var(--dash-bg); border: 1px solid var(--dash-border); border-radius: 8px; padding: 24px; display: flex; flex-direction: column; gap: 16px; min-width:0; max-height: 450px; overflow-y: auto; transition: all 0.3s; position: relative; }
+        body.theme-light .admin-dash-section { box-shadow: 0 4px 6px rgba(0,0,0,0.04); }
+        .admin-dash-section.expanded { position: fixed; top: 5%; left: 5%; width: 90%; height: 90%; max-height: 90%; z-index: 1000; background: var(--dash-modal); border: 1px solid var(--dash-highlight); box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        body.theme-light .admin-dash-section.expanded { box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
+        .admin-dash-section::-webkit-scrollbar { width: 6px; }
+        .admin-dash-section::-webkit-scrollbar-track { background: transparent; }
+        .admin-dash-section::-webkit-scrollbar-thumb { background: var(--dash-scroll); border-radius: 4px; }
+        .admin-dash-title { font-size: 16px; font-weight: 600; color: var(--dash-text); display:flex; align-items:center; justify-content: space-between; gap:8px; border-bottom: 1px solid var(--dash-border); padding-bottom: 12px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;}
+        .dash-expand-btn { background: var(--dash-btn); border: 1px solid var(--dash-border); color: var(--dash-subtle); border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px;}
+        .dash-expand-btn:hover { background: var(--dash-border); color: var(--dash-text); }
+        .admin-stat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--dash-border); }
+        .admin-stat-row:last-child { border-bottom: none; }
+        .admin-stat-label { color: var(--dash-muted); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .admin-stat-value { color: var(--dash-text); font-weight: 500; font-size: 15px; }
+        .admin-table-mini { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        .admin-table-mini th, .admin-table-mini td { padding: 10px 8px; text-align: left; font-size: 13px; border-bottom: 1px solid var(--dash-border); }
+        .admin-table-mini th { color: var(--dash-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px; }
+        .admin-table-mini td { color: var(--dash-subtle); }
+        .admin-table-mini tr:last-child td { border-bottom: none; }
+        .admin-badge { background: var(--dash-btn); padding: 4px 8px; border-radius: 4px; font-size: 10px; white-space:nowrap; text-transform: uppercase; letter-spacing: 0.5px; color: var(--dash-subtle); border: 1px solid var(--dash-border); }
+        .admin-badge.active { border-color: rgba(14, 165, 233, 0.4); color: var(--dash-highlight); background: rgba(14, 165, 233, 0.05); }
+        .admin-chart-container { position: relative; height: 180px; width: 100%; margin-top: 16px; margin-bottom: 16px;}
+        .highlight-text { color: var(--dash-highlight); font-weight: 600; }
+        .dash-tile { background: var(--dash-tile); padding: 16px; border-radius: 6px; text-align: center; border: 1px solid var(--dash-border); flex: 1; }
+        body.theme-light .dash-tile { box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .dash-tile.highlighted { border-color: rgba(14, 165, 233, 0.3); }
+        .dash-tile-muted { color: var(--dash-muted); font-size: 11px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dash-tile-val { font-size: 22px; color: var(--dash-subtle); font-weight: 400; }
+        .dash-tile-val.main { color: var(--dash-text); }
+        .dash-percent-bar { height: 6px; background: var(--dash-btn); border-radius: 3px; overflow: hidden; flex: 1; }
+      </style>
+
+      <div style="margin-bottom:24px;">
+        <h2 style="color:var(--dash-text); margin-bottom:8px; font-size: 20px; font-weight: 400; letter-spacing: -0.5px;">Platform Overview</h2>
+        <p style="color:var(--dash-muted); font-size: 14px;">Operational analytics and metrics</p>
+      </div>
+
+      <div class="admin-dash-grid">
+        
+        <!-- Marketplace Section -->
+        <div class="admin-dash-section">
+          <div class="admin-dash-title">
+            <span>Marketplace Analytics</span>
+            <button class="dash-expand-btn" onclick="this.closest('.admin-dash-section').classList.toggle('expanded')">Expand</button>
+          </div>
+          <div style="display:flex; gap:12px; margin-bottom:12px;">
+            <div class="dash-tile highlighted">
+              <div class="dash-tile-muted">Today's Orders</div>
+              <div class="dash-tile-val main">$4,250</div>
+            </div>
+            <div class="dash-tile">
+              <div class="dash-tile-muted">Last Week</div>
+              <div class="dash-tile-val">$28,400</div>
+            </div>
+            <div class="dash-tile">
+              <div class="dash-tile-muted">Last Month</div>
+              <div class="dash-tile-val">$114,200</div>
+            </div>
+          </div>
+          
+          <div class="admin-chart-container">
+            <canvas id="chartOrders"></canvas>
+          </div>
+
+          <div class="admin-stat-label" style="margin-top:8px;">Top 10 Most Ordered Items</div>
+          <table class="admin-table-mini">
+            <tr><th>Item / SKU</th><th>Category</th><th>Qty Sold</th><th>Revenue</th></tr>
+            <tr><td>Precision Gear (G-102)</td><td>CNC Machining</td><td>420</td><td class="highlight-text">$12,600</td></tr>
+            <tr><td>Aluminum Bracket (B-34)</td><td>CNC Machining</td><td>315</td><td class="highlight-text">$8,200</td></tr>
+            <tr><td>Housing Enclosure (H-98)</td><td>Injection Molding</td><td>280</td><td class="highlight-text">$14,000</td></tr>
+            <tr><td>Titanium Bolt (T-01)</td><td>Hardware</td><td>1500</td><td class="highlight-text">$6,000</td></tr>
+            <tr><td>Motor Mount (M-22)</td><td>Sheet Metal</td><td>185</td><td class="highlight-text">$5,100</td></tr>
+            <tr><td>Nylon Standoff (N-44)</td><td>Hardware</td><td>3200</td><td class="highlight-text">$1,600</td></tr>
+            <tr><td>Steel Shaft (S-77)</td><td>Turning</td><td>125</td><td class="highlight-text">$4,500</td></tr>
+            <tr><td>Custom Heat Sink (HS-1)</td><td>Extrusion</td><td>95</td><td class="highlight-text">$3,800</td></tr>
+            <tr><td>Bearing Block (BB-2)</td><td>Assembly</td><td>80</td><td class="highlight-text">$7,200</td></tr>
+            <tr><td>Lens Retainer (LR-9)</td><td>3D Printing</td><td>210</td><td class="highlight-text">$2,100</td></tr>
+          </table>
         </div>
-        <div class="admin-metric-card">
-          <div class="admin-metric-value">${loadedDesigners.length}</div>
-          <div class="admin-metric-label">Approved Designers</div>
+
+        <!-- RFQ Pipeline Section -->
+        <div class="admin-dash-section">
+          <div class="admin-dash-title">
+            <span>RFQ Pipeline</span>
+            <button class="dash-expand-btn" onclick="this.closest('.admin-dash-section').classList.toggle('expanded')">Expand</button>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 24px;" class="dash-tile">
+            <div style="text-align:center;"><div class="dash-tile-val">12</div><div class="dash-tile-muted">Drafted</div></div>
+            <div style="text-align:center;"><div class="dash-tile-val">5</div><div class="dash-tile-muted">Pending</div></div>
+            <div style="text-align:center;"><div class="dash-tile-val">8</div><div class="dash-tile-muted">Sent</div></div>
+            <div style="text-align:center;"><div class="dash-tile-val" style="color:var(--dash-highlight)">24</div><div class="dash-tile-muted" style="color:var(--dash-highlight)">Addressed</div></div>
+          </div>
+          
+          <div class="admin-chart-container">
+            <canvas id="chartRFQs"></canvas>
+          </div>
+
+          <div class="admin-stat-label">Recent High-Value RFQs</div>
+          <table class="admin-table-mini">
+            <tr><th>RFQ ID</th><th>Client</th><th>Est. Value</th><th>Status</th></tr>
+            <tr><td>#RFQ-8821</td><td>Tesla Automotive</td><td class="highlight-text">$45,000</td><td><span class="admin-badge">Pending</span></td></tr>
+            <tr><td>#RFQ-8819</td><td>Boston Dynamics</td><td class="highlight-text">$12,500</td><td><span class="admin-badge">Sent</span></td></tr>
+            <tr><td>#RFQ-8815</td><td>SpaceX</td><td class="highlight-text">$84,200</td><td><span class="admin-badge active">Addressed</span></td></tr>
+            <tr><td>#RFQ-8814</td><td>Medtronic</td><td class="highlight-text">$8,900</td><td><span class="admin-badge">Pending</span></td></tr>
+            <tr><td>#RFQ-8810</td><td>Apple Inc.</td><td class="highlight-text">$23,500</td><td><span class="admin-badge">Sent</span></td></tr>
+          </table>
         </div>
-        <div class="admin-metric-card">
-          <div class="admin-metric-value">12</div>
-          <div class="admin-metric-label">Active RFQs</div>
+
+        <!-- Suppliers Section -->
+        <div class="admin-dash-section">
+          <div class="admin-dash-title">
+            <span>Supplier Network</span>
+            <button class="dash-expand-btn" onclick="this.closest('.admin-dash-section').classList.toggle('expanded')">Expand</button>
+          </div>
+          
+          <div class="admin-stat-row">
+            <span class="admin-stat-label">Total Verified</span>
+            <span class="admin-stat-value" style="font-size:18px;">\${loadedSuppliers.length || 154}</span>
+          </div>
+          <div class="admin-stat-row">
+            <span class="admin-stat-label">Awaiting Verification</span>
+            <span class="admin-stat-value highlight-text" style="font-size:18px;">12</span>
+          </div>
+          
+          <div class="admin-chart-container" style="height:220px;">
+            <canvas id="chartSuppliers"></canvas>
+          </div>
+          
+          <div class="admin-stat-label" style="margin-top:24px; margin-bottom:12px;">Supplier Split</div>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center;">
+              <div style="width:140px; font-size:12px; color:var(--dash-subtle); text-transform:uppercase; letter-spacing:0.5px;">CNC Machining</div>
+              <div class="dash-percent-bar"><div style="height:100%; width:45%; background:rgba(14, 165, 233, 1);"></div></div>
+              <div style="width:40px; text-align:right; font-size:12px; color:var(--dash-text);">45%</div>
+            </div>
+            <div style="display:flex; align-items:center;">
+              <div style="width:140px; font-size:12px; color:var(--dash-subtle); text-transform:uppercase; letter-spacing:0.5px;">Injection Molding</div>
+              <div class="dash-percent-bar"><div style="height:100%; width:25%; background:rgba(14, 165, 233, 0.8);"></div></div>
+              <div style="width:40px; text-align:right; font-size:12px; color:var(--dash-text);">25%</div>
+            </div>
+            <div style="display:flex; align-items:center;">
+              <div style="width:140px; font-size:12px; color:var(--dash-subtle); text-transform:uppercase; letter-spacing:0.5px;">Additive Mfg</div>
+              <div class="dash-percent-bar"><div style="height:100%; width:15%; background:rgba(14, 165, 233, 0.6);"></div></div>
+              <div style="width:40px; text-align:right; font-size:12px; color:var(--dash-text);">15%</div>
+            </div>
+            <div style="display:flex; align-items:center;">
+              <div style="width:140px; font-size:12px; color:var(--dash-subtle); text-transform:uppercase; letter-spacing:0.5px;">Sheet Metal</div>
+              <div class="dash-percent-bar"><div style="height:100%; width:10%; background:rgba(14, 165, 233, 0.4);"></div></div>
+              <div style="width:40px; text-align:right; font-size:12px; color:var(--dash-text);">10%</div>
+            </div>
+             <div style="display:flex; align-items:center;">
+              <div style="width:140px; font-size:12px; color:var(--dash-subtle); text-transform:uppercase; letter-spacing:0.5px;">Casting</div>
+              <div class="dash-percent-bar"><div style="height:100%; width:5%; background:rgba(14, 165, 233, 0.2);"></div></div>
+              <div style="width:40px; text-align:right; font-size:12px; color:var(--dash-text);">5%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customers Section -->
+        <div class="admin-dash-section">
+          <div class="admin-dash-title">
+            <span>Customer Insights</span>
+            <button class="dash-expand-btn" onclick="this.closest('.admin-dash-section').classList.toggle('expanded')">Expand</button>
+          </div>
+          
+          <div style="display:flex; gap:16px; margin-bottom:16px;">
+            <div class="dash-tile">
+              <div class="dash-tile-muted">Enterprise</div>
+              <div class="dash-tile-val main">85</div>
+            </div>
+            <div class="dash-tile">
+              <div class="dash-tile-muted">SMB</div>
+              <div class="dash-tile-val main">320</div>
+            </div>
+          </div>
+
+          <div class="admin-stat-label">Top Customers (By LTV)</div>
+          <table class="admin-table-mini">
+            <tr><th>Rank</th><th>Customer</th><th>Sector</th><th>Total Revenue</th></tr>
+            <tr><td>#1</td><td>Tesla Automotive</td><td>Automotive</td><td class="highlight-text">$1.2M</td></tr>
+            <tr><td>#2</td><td>SpaceX</td><td>Aerospace</td><td class="highlight-text">$840k</td></tr>
+            <tr><td>#3</td><td>Boston Dynamics</td><td>Robotics</td><td class="highlight-text">$650k</td></tr>
+            <tr><td>#4</td><td>Medtronic</td><td>Medical</td><td class="highlight-text">$420k</td></tr>
+            <tr><td>#5</td><td>Apple Inc.</td><td>Consumer Tech</td><td class="highlight-text">$380k</td></tr>
+            <tr><td>#6</td><td>General Dynamics</td><td>Defense</td><td class="highlight-text">$310k</td></tr>
+            <tr><td>#7</td><td>Rivian</td><td>Automotive</td><td class="highlight-text">$290k</td></tr>
+            <tr><td>#8</td><td>Lockheed Martin</td><td>Aerospace</td><td class="highlight-text">$210k</td></tr>
+          </table>
+
+          <div class="admin-stat-label" style="margin-top:24px;">Recent Signups</div>
+          <table class="admin-table-mini">
+            <tr><th>Customer</th><th>Date</th><th>Type</th></tr>
+            <tr><td>NeuroLink Tech</td><td>Today</td><td><span class="admin-badge active">Enterprise</span></td></tr>
+            <tr><td>Astra Space</td><td>Yesterday</td><td><span class="admin-badge active">Enterprise</span></td></tr>
+            <tr><td>RoboWorks LLC</td><td>2 Days Ago</td><td><span class="admin-badge">SMB</span></td></tr>
+            <tr><td>ProtoDesign Inc</td><td>3 Days Ago</td><td><span class="admin-badge">SMB</span></td></tr>
+          </table>
         </div>
       </div>
-      <p style="color:var(--color-steel-400); font-size:var(--text-md);">Select a section from the sidebar to manage your CRM data.</p>
+      </div>
     `;
+
+    // Render charts
+    setTimeout(() => {
+      // Common chart configuration
+      Chart.defaults.color = chartTextColor;
+      Chart.defaults.font.family = "'Inter', sans-serif";
+      
+      // 1. Line Chart: Marketplace Orders
+      const ctxOrders = document.getElementById('chartOrders');
+      if(ctxOrders) {
+        new Chart(ctxOrders.getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+              label: 'Orders',
+              data: [12, 19, 35, 52, 85, 142],
+              borderColor: isLightMode ? '#0ea5e9' : '#0ea5e9',
+              backgroundColor: isLightMode ? 'rgba(14, 165, 233, 0.15)' : 'rgba(14, 165, 233, 0.1)',
+              borderWidth: 2,
+              tension: 0.4,
+              fill: true,
+              pointBackgroundColor: '#0ea5e9',
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { color: chartGridColor } },
+              y: { grid: { color: chartGridColor }, beginAtZero: true }
+            }
+          }
+        });
+      }
+
+      // 2. Doughnut Chart: Suppliers by Technology
+      const ctxSuppliers = document.getElementById('chartSuppliers');
+      if (ctxSuppliers) {
+        new Chart(ctxSuppliers.getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: techLabelsArray,
+            datasets: [{
+              data: techDataArray,
+              backgroundColor: [
+                'rgba(14, 165, 233, 1)', 
+                'rgba(14, 165, 233, 0.8)', 
+                'rgba(14, 165, 233, 0.6)', 
+                'rgba(14, 165, 233, 0.4)', 
+                'rgba(14, 165, 233, 0.2)'
+              ],
+              borderWidth: 0,
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: { boxWidth: 10, font: { size: 10 } }
+              }
+            },
+            cutout: '75%'
+          }
+        });
+      }
+
+      // 3. Bar Chart: RFQ Pipeline
+      const ctxRFQs = document.getElementById('chartRFQs');
+      if (ctxRFQs) {
+        new Chart(ctxRFQs.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: ['Drafted', 'Pending', 'Sent', 'Addressed'],
+            datasets: [{
+              label: 'RFQs',
+              data: [18, 5, 24, 9],
+              backgroundColor: [
+                chartBarLight,
+                chartBarMed1,
+                chartBarMed2,
+                '#0ea5e9'
+              ],
+              borderRadius: 2,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { display: false } },
+              y: { grid: { color: chartGridColor }, beginAtZero: true }
+            }
+          }
+        });
+      }
+    }, 50);
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -1309,319 +1646,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
   // ═══════════════════════════════════════════════════════════
-  //  D E S I G N E R S   T A B L E
-  // ═══════════════════════════════════════════════════════════
-  function renderDesignersTable() {
-    const sorted = [...loadedDesigners].sort((a, b) => compareValues(a, b, designerSort.key, designerSort.dir));
-
-    const rows = sorted.map(d => `
-      <tr>
-        <td style="display:flex;align-items:center;gap:12px;">
-          <div style="width:32px;height:32px;background-size:cover;background-position:center;background-image:url(${d.avatar});border-radius:50%;flex-shrink:0;"></div>
-          <strong>${d.name}</strong>
-        </td>
-        <td>${d.title}</td>
-        <td>${d.rate}/hr</td>
-        <td>${d.rating} ★ <span style="color:var(--color-steel-400)">(${d.reviews})</span></td>
-        <td><span class="admin-badge active">${d.availability}</span></td>
-        <td class="admin-table-actions"><div class="admin-table-actions-wrapper">
-          <button class="admin-action-btn admin-edit-designer" data-id="${d.id}">Edit</button>
-          <button class="admin-action-btn" style="color:#ef4444;border-color:rgba(239,68,68,.2);">Deactivate</button>
-        </div></td>
-      </tr>`).join('');
-
-    contentRouting.innerHTML = `
-      <div style="margin-bottom:24px;display:flex;justify-content:flex-end;">
-        <button class="btn btn-primary" id="admin-add-designer-btn">+ Onboard Designer</button>
-      </div>
-      <div class="admin-table-container">
-        <table class="admin-table">
-          <thead><tr>
-            <th class="sortable" data-sort-key="name">Identity ${sortArrow('name', designerSort)}</th>
-            <th class="sortable" data-sort-key="title">Title ${sortArrow('title', designerSort)}</th>
-            <th class="sortable" data-sort-key="rateNum">Rate ${sortArrow('rateNum', designerSort)}</th>
-            <th class="sortable" data-sort-key="ratingNum">Rating ${sortArrow('ratingNum', designerSort)}</th>
-            <th class="sortable" data-sort-key="availability">Availability ${sortArrow('availability', designerSort)}</th>
-            <th>Actions</th>
-          </tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>`;
-
-    // Sort header clicks
-    contentRouting.querySelectorAll('.sortable').forEach(th => {
-      th.addEventListener('click', () => {
-        const key = th.dataset.sortKey;
-        if (designerSort.key === key) {
-          designerSort.dir = designerSort.dir === 'asc' ? 'desc' : 'asc';
-        } else {
-          designerSort = { key, dir: 'asc' };
-        }
-        renderDesignersTable();
-      });
-    });
-
-    document.getElementById('admin-add-designer-btn')?.addEventListener('click', () => renderDesignerForm());
-  }
-
-
-  // ═══════════════════════════════════════════════════════════
-  //  A D D / E D I T   D E S I G N E R   F O R M
-  // ═══════════════════════════════════════════════════════════
-  function renderDesignerForm(existing = null) {
-    pageTitle.textContent = existing ? `Edit Designer — ${existing.name}` : 'Onboard New Designer';
-    const d = existing || {};
-
-    contentRouting.innerHTML = `
-    <div class="admin-form-page">
-      <button class="admin-back-btn" id="admin-des-back">← Back to Designers</button>
-
-      <form id="admin-designer-form" class="admin-form">
-
-        <!-- ─── SECTION 1: Personal Identity ─── -->
-        <div class="admin-form-section">
-          <div class="admin-form-section-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            Personal Identity
-          </div>
-          <div class="admin-form-grid cols-2">
-            <div class="admin-field">
-              <label>Full Name <span class="req">*</span></label>
-              <input type="text" name="name" value="${d.name || ''}" required placeholder="Elena Rodriguez">
-            </div>
-            <div class="admin-field">
-              <label>Designer ID</label>
-              <input type="text" name="id" value="${d.id || ''}" placeholder="Auto-generated if blank">
-            </div>
-          </div>
-          <div class="admin-form-grid cols-2">
-            <div class="admin-field">
-              <label>Title / Role <span class="req">*</span></label>
-              <input type="text" name="title" value="${d.title || ''}" required placeholder="Senior Industrial Designer">
-            </div>
-            <div class="admin-field">
-              <label>Location <span class="req">*</span></label>
-              <input type="text" name="location" value="${d.location || ''}" required placeholder="San Francisco, CA">
-            </div>
-          </div>
-          <div class="admin-field">
-            <label>Bio / About <span class="req">*</span></label>
-            <textarea name="bio" rows="4" required placeholder="I help hardware startups bring consumer electronics to market...">${d.bio || ''}</textarea>
-          </div>
-        </div>
-
-        <!-- ─── SECTION 2: Professional Profile ─── -->
-        <div class="admin-form-section">
-          <div class="admin-form-section-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-            Professional Profile
-          </div>
-          <div class="admin-form-grid cols-3">
-            <div class="admin-field">
-              <label>Hourly Rate ($) <span class="req">*</span></label>
-              <input type="text" name="rate" value="${d.rate || ''}" required placeholder="$85">
-            </div>
-            <div class="admin-field">
-              <label>Availability</label>
-              <select name="availability">
-                <option value="Available now" ${(d.availability || '') === 'Available now' ? 'selected' : ''}>Available now</option>
-                <option value="Available in 1 week" ${(d.availability || '') === 'Available in 1 week' ? 'selected' : ''}>Available in 1 week</option>
-                <option value="Available in 2 weeks" ${(d.availability || '') === 'Available in 2 weeks' ? 'selected' : ''}>Available in 2 weeks</option>
-                <option value="Unavailable" ${(d.availability || '') === 'Unavailable' ? 'selected' : ''}>Unavailable</option>
-              </select>
-            </div>
-            <div class="admin-field">
-              <label>Success Rate</label>
-              <input type="text" name="successRate" value="${d.successRate || ''}" placeholder="98%">
-            </div>
-          </div>
-          <div class="admin-field">
-            <label>Skill Tags <span class="hint">(comma-separated)</span></label>
-            <input type="text" name="tags" value="${(d.tags || []).join(', ')}" placeholder="Consumer Electronics, Wearables, CAD, SolidWorks">
-          </div>
-          <div class="admin-form-grid cols-2">
-            <div class="admin-field">
-              <label>Years of Experience</label>
-              <input type="number" name="experience" value="${d.experience || ''}" placeholder="8">
-            </div>
-            <div class="admin-field">
-              <label>Languages Spoken</label>
-              <input type="text" name="languages" value="${d.languages || ''}" placeholder="English, Mandarin, Spanish">
-            </div>
-          </div>
-        </div>
-
-        <!-- ─── SECTION 3: Contact Information ─── -->
-        <div class="admin-form-section">
-          <div class="admin-form-section-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            Contact Details
-          </div>
-          <div class="admin-form-grid cols-2">
-            <div class="admin-field">
-              <label>Email Address <span class="req">*</span></label>
-              <input type="email" name="email" value="${d.email || ''}" required placeholder="elena@designstudio.com">
-            </div>
-            <div class="admin-field">
-              <label>Phone</label>
-              <input type="text" name="phone" value="${d.phone || ''}" placeholder="+1 415 555 1234">
-            </div>
-          </div>
-          <div class="admin-form-grid cols-2">
-            <div class="admin-field">
-              <label>Website / Behance / Dribbble</label>
-              <input type="url" name="website" value="${d.website || ''}" placeholder="https://dribbble.com/elena">
-            </div>
-            <div class="admin-field">
-              <label>LinkedIn URL</label>
-              <input type="url" name="linkedin" value="${d.linkedin || ''}" placeholder="https://linkedin.com/in/elena-rodriguez">
-            </div>
-          </div>
-        </div>
-
-        <!-- ─── SECTION 4: Profile Images ─── -->
-        <div class="admin-form-section">
-          <div class="admin-form-section-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            Profile Images
-          </div>
-          <div class="admin-form-grid cols-2">
-            <div class="admin-field">
-              <label>Avatar / Headshot URL <span class="req">*</span></label>
-              <input type="url" name="avatar" value="${d.avatar || ''}" required placeholder="https://i.pravatar.cc/150?u=elena">
-            </div>
-            <div class="admin-field">
-              <label>Cover / Banner Image URL</label>
-              <input type="url" name="cover" value="${d.cover || ''}" placeholder="https://example.com/cover.jpg">
-            </div>
-          </div>
-        </div>
-
-        <!-- ─── SECTION 5: Portfolio ─── -->
-        <div class="admin-form-section">
-          <div class="admin-form-section-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-            Portfolio Pieces
-          </div>
-          <p class="admin-form-hint">Add up to 6 portfolio items. Each item needs a project title and an image URL.</p>
-          <div id="admin-des-portfolio-list">
-            ${(d.portfolio && d.portfolio.length > 0)
-              ? d.portfolio.map((p, i) => `
-                <div class="admin-portfolio-row">
-                  <input type="text" name="portfolio_title_${i}" value="${p.title}" placeholder="Project Title">
-                  <input type="url" name="portfolio_img_${i}" value="${p.img}" placeholder="Image URL">
-                  <button type="button" class="admin-remove-row-btn">✕</button>
-                </div>`).join('')
-              : `<div class="admin-portfolio-row">
-                  <input type="text" name="portfolio_title_0" placeholder="Project Title">
-                  <input type="url" name="portfolio_img_0" placeholder="Image URL">
-                  <button type="button" class="admin-remove-row-btn">✕</button>
-                </div>`}
-          </div>
-          <button type="button" class="admin-add-row-btn" id="admin-des-add-portfolio">+ Add Portfolio Item</button>
-        </div>
-
-        <!-- ─── SECTION 6: Reviews (Staff Managed) ─── -->
-        <div class="admin-form-section">
-          <div class="admin-form-section-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            Ratings & Reviews
-          </div>
-          <div class="admin-form-grid cols-2">
-            <div class="admin-field">
-              <label>Rating (0–5)</label>
-              <input type="number" step="0.1" min="0" max="5" name="rating" value="${d.rating || ''}" placeholder="4.9">
-            </div>
-            <div class="admin-field">
-              <label>Total Review Count</label>
-              <input type="number" name="reviews" value="${d.reviews || ''}" placeholder="124">
-            </div>
-          </div>
-          <p class="admin-form-hint">Seed reviews (optional):</p>
-          <div id="admin-des-reviews-list">
-            ${(d.reviewList && d.reviewList.length > 0)
-              ? d.reviewList.map((r, i) => `
-                <div class="admin-review-row">
-                  <input type="text" name="review_author_${i}" value="${r.author}" placeholder="Author Name">
-                  <input type="number" name="review_rating_${i}" value="${r.rating}" min="1" max="5" placeholder="5">
-                  <input type="text" name="review_text_${i}" value="${r.text}" placeholder="Review text…">
-                  <button type="button" class="admin-remove-row-btn">✕</button>
-                </div>`).join('')
-              : `<div class="admin-review-row">
-                  <input type="text" name="review_author_0" placeholder="Author Name">
-                  <input type="number" name="review_rating_0" min="1" max="5" placeholder="5">
-                  <input type="text" name="review_text_0" placeholder="Review text…">
-                  <button type="button" class="admin-remove-row-btn">✕</button>
-                </div>`}
-          </div>
-          <button type="button" class="admin-add-row-btn" id="admin-des-add-review">+ Add Review</button>
-        </div>
-
-        <!-- ─── SECTION 7: Internal Notes ─── -->
-        <div class="admin-form-section">
-          <div class="admin-form-section-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            Internal Staff Notes
-          </div>
-          <div class="admin-field">
-            <label>Private Notes <span class="hint">(not visible to designers or users)</span></label>
-            <textarea name="internalNotes" rows="3" placeholder="Vetted via portfolio review. Strong DFM skills.">${d.internalNotes || ''}</textarea>
-          </div>
-        </div>
-
-        <!-- ─── Submit ─── -->
-        <div class="admin-form-actions">
-          <button type="button" class="btn btn-secondary" id="admin-des-cancel">Cancel</button>
-          <button type="submit" class="btn btn-primary">${existing ? 'Save Changes' : 'Onboard Designer'}</button>
-        </div>
-      </form>
-    </div>`;
-
-    // Wire interactive bits
-    wireFormDynamics();
-    let portfolioIdx = (d.portfolio || [{ title: '', img: '' }]).length;
-    let reviewIdx = (d.reviewList || [{ author: '', rating: 5, text: '' }]).length;
-
-    document.getElementById('admin-des-back')?.addEventListener('click', () => { pageTitle.textContent = 'Talent Hub (Designers)'; renderDesignersTable(); });
-    document.getElementById('admin-des-cancel')?.addEventListener('click', () => { pageTitle.textContent = 'Talent Hub (Designers)'; renderDesignersTable(); });
-
-    document.getElementById('admin-des-add-portfolio')?.addEventListener('click', () => {
-      const list = document.getElementById('admin-des-portfolio-list');
-      const row = document.createElement('div');
-      row.className = 'admin-portfolio-row';
-      row.innerHTML = `
-        <input type="text" name="portfolio_title_${portfolioIdx}" placeholder="Project Title">
-        <input type="url" name="portfolio_img_${portfolioIdx}" placeholder="Image URL">
-        <button type="button" class="admin-remove-row-btn">✕</button>`;
-      list.appendChild(row);
-      portfolioIdx++;
-      wireRemoveButtons(list);
-    });
-
-    document.getElementById('admin-des-add-review')?.addEventListener('click', () => {
-      const list = document.getElementById('admin-des-reviews-list');
-      const row = document.createElement('div');
-      row.className = 'admin-review-row';
-      row.innerHTML = `
-        <input type="text" name="review_author_${reviewIdx}" placeholder="Author Name">
-        <input type="number" name="review_rating_${reviewIdx}" min="1" max="5" placeholder="5">
-        <input type="text" name="review_text_${reviewIdx}" placeholder="Review text…">
-        <button type="button" class="admin-remove-row-btn">✕</button>`;
-      list.appendChild(row);
-      reviewIdx++;
-      wireRemoveButtons(list);
-    });
-
-    document.getElementById('admin-designer-form')?.addEventListener('submit', e => {
-      e.preventDefault();
-      alert('Designer saved successfully (prototype — data not persisted).');
-      pageTitle.textContent = 'Talent Hub (Designers)';
-      renderDesignersTable();
-    });
-  }
-
-
-  // ═══════════════════════════════════════════════════════════
   //  R F Q s   T A B L E
   // ═══════════════════════════════════════════════════════════
   function renderRFQs() {
@@ -1866,7 +1890,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       { id: 'portfolio', label: 'Portfolio', icon: '📸' },
       { id: 'home',      label: 'Home', icon: '🏠' },
       { id: 'services',  label: 'Capabilities', icon: '⚙️' },
-      { id: 'about',     label: 'About Us', icon: '🏢' }
+      { id: 'about',     label: 'About Us', icon: '🏢' },
+      { id: 'faq',       label: 'FAQ', icon: '❓' },
+      { id: 'blog',      label: 'Blog', icon: '✒️' }
     ];
 
     contentRouting.innerHTML = `
@@ -1938,250 +1964,206 @@ document.addEventListener('DOMContentLoaded', async () => {
       case 'portfolio': renderCMSPortfolio(container); break;
       case 'home':      renderCMSHome(container);      break;
       case 'services':  renderCMSServices(container);  break;
-      case 'about':     renderCMSAbout(container);      break;
+      case 'about':     renderCMSAbout(container);     break;
+      case 'faq':       renderCMSFaq(container);       break;
+      case 'blog':      renderCMSBlog(container);      break;
       default: container.innerHTML = '<p style="color:var(--color-steel-400);padding:40px;text-align:center;">Select a page to edit.</p>';
     }
+  }
+
+  /* ═══════════════════════════════════════════════════
+     FAQ PAGE EDITOR
+     ═══════════════════════════════════════════════════ */
+  window.cmsAddFaqSection = function() {
+    if(!cmsDraft.pages.faq) cmsDraft.pages.faq = { sections: [] };
+    if(!cmsDraft.pages.faq.sections) cmsDraft.pages.faq.sections = [];
+    cmsDraft.pages.faq.sections.push({ title: "New Section", items: [] });
+    renderCMSPage();
+  };
+  window.cmsRemoveFaqSection = function(i) {
+    cmsDraft.pages.faq.sections.splice(i, 1);
+    renderCMSPage();
+  };
+  window.cmsAddFaqItem = function(i) {
+    if(!cmsDraft.pages.faq.sections[i].items) cmsDraft.pages.faq.sections[i].items = [];
+    cmsDraft.pages.faq.sections[i].items.push({ question: "New Question", answer: "Answer here" });
+    renderCMSPage();
+  };
+  window.cmsRemoveFaqItem = function(sIdx, iIdx) {
+    cmsDraft.pages.faq.sections[sIdx].items.splice(iIdx, 1);
+    renderCMSPage();
+  };
+  window.cmsUpdateFaqItem = function(sIdx, iIdx, field, val) {
+    cmsDraft.pages.faq.sections[sIdx].items[iIdx][field] = val;
+    saveCMSDraft();
+  };
+  window.cmsUpdateFaqSection = function(sIdx, val) {
+    cmsDraft.pages.faq.sections[sIdx].title = val;
+    saveCMSDraft();
+  };
+
+  function renderCMSFaq(container) {
+    const faq = cmsDraft?.pages?.faq;
+    if (!faq) cmsDraft.pages.faq = { sections: [] };
+    const sections = cmsDraft.pages.faq.sections || [];
+    let html = '<div class="cms-section-card"><h3>FAQ Sections</h3>';
+    
+    sections.forEach((sec, sIdx) => {
+      html += `
+        <div style="border:1px solid rgba(255,255,255,0.1); padding:16px; border-radius:8px; margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+            <input type="text" class="cms-input" value="${sec.title || ''}" onchange="cmsUpdateFaqSection(${sIdx}, this.value)" placeholder="Section Title" style="flex:1; margin-right:12px;">
+            <button class="btn" style="background:#ff4d4d; color:white; border:none; padding:8px 12px; border-radius:4px;" onclick="cmsRemoveFaqSection(${sIdx})">Remove Section</button>
+          </div>
+          <div style="margin-left: 20px;">
+      `;
+      const items = sec.items || [];
+      items.forEach((item, iIdx) => {
+        html += `
+            <div style="background:rgba(255,255,255,0.02); padding:12px; border-radius:6px; margin-bottom:8px; position:relative;">
+              <input type="text" class="cms-input" value="${item.question || ''}" onchange="cmsUpdateFaqItem(${sIdx}, ${iIdx}, 'question', this.value)" placeholder="Question" style="margin-bottom:8px; width:100%;">
+              <textarea class="cms-input" onchange="cmsUpdateFaqItem(${sIdx}, ${iIdx}, 'answer', this.value)" placeholder="Answer" rows="3" style="width:100%;">${item.answer || ''}</textarea>
+              <button class="btn" style="position:absolute; top:12px; right:12px; background:transparent; color:#ff4d4d; border:1px solid #ff4d4d; padding:4px 8px; border-radius:4px; font-size:11px;" onclick="cmsRemoveFaqItem(${sIdx}, ${iIdx})">Remove Q</button>
+            </div>
+        `;
+      });
+      html += `
+            <button class="btn btn-secondary" onclick="cmsAddFaqItem(${sIdx})" style="font-size:12px; margin-top:8px;">+ Add Question</button>
+          </div>
+        </div>
+      `;
+    });
+
+    html += `<button class="btn btn-primary" onclick="cmsAddFaqSection()">+ Add Section</button></div>`;
+    container.innerHTML = html;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     BLOG PAGE EDITOR
+     ═══════════════════════════════════════════════════ */
+  window.cmsAddBlogPost = function() {
+    if(!cmsDraft.pages.blog) cmsDraft.pages.blog = { posts: [] };
+    if(!cmsDraft.pages.blog.posts) cmsDraft.pages.blog.posts = [];
+    cmsDraft.pages.blog.posts.push({ title: "New Post", date: new Date().toISOString().split('T')[0], image: "", content: "" });
+    renderCMSPage();
+  };
+  window.cmsRemoveBlogPost = function(i) {
+    cmsDraft.pages.blog.posts.splice(i, 1);
+    renderCMSPage();
+  };
+  window.cmsUpdateBlogPost = function(i, field, val) {
+    cmsDraft.pages.blog.posts[i][field] = val;
+    saveCMSDraft();
+  };
+
+  function renderCMSBlog(container) {
+    const blog = cmsDraft?.pages?.blog;
+    if (!blog) cmsDraft.pages.blog = { posts: [] };
+    const posts = cmsDraft.pages.blog.posts || [];
+    let html = '<div class="cms-section-card"><h3>Blog Posts</h3>';
+    
+    posts.forEach((post, i) => {
+      html += `
+        <div style="border:1px solid rgba(255,255,255,0.1); padding:16px; border-radius:8px; margin-bottom:16px; position:relative;">
+          <input type="text" class="cms-input" value="${post.title || ''}" onchange="cmsUpdateBlogPost(${i}, 'title', this.value)" placeholder="Post Title" style="margin-bottom:8px; width:calc(100% - 100px);">
+          <input type="date" class="cms-input" value="${post.date || ''}" onchange="cmsUpdateBlogPost(${i}, 'date', this.value)" style="margin-bottom:8px; width:100px;">
+          <input type="text" class="cms-input" value="${post.image || ''}" onchange="cmsUpdateBlogPost(${i}, 'image', this.value)" placeholder="Image URL (e.g., https://images.unsplash.com/...)" style="margin-bottom:8px; width:100%;">
+          <textarea class="cms-input" onchange="cmsUpdateBlogPost(${i}, 'content', this.value)" placeholder="Post Content (Markdown or Text)" rows="6" style="width:100%;">${post.content || ''}</textarea>
+          <button class="btn" style="position:absolute; top:16px; right:16px; background:#ff4d4d; color:white; border:none; padding:6px 12px; border-radius:4px; font-size:12px;" onclick="cmsRemoveBlogPost(${i})">Remove</button>
+        </div>
+      `;
+    });
+
+    html += `<button class="btn btn-primary" onclick="cmsAddBlogPost()">+ Add Post</button></div>`;
+    container.innerHTML = html;
   }
 
   /* ═══════════════════════════════════════════════════
      HOME PAGE EDITOR
      ═══════════════════════════════════════════════════ */
   function renderCMSHome(container) {
-    const home = cmsDraft?.pages?.home;
-    if (!home) {
-      container.innerHTML = '<p style="color:var(--color-steel-400);">No home page data found. Publish defaults first.</p>';
-      return;
-    }
+    let home = cmsDraft?.pages?.home;
+    if (!home) home = cmsDraft.pages.home = {};
 
     let html = '';
 
     // ── Hero ──
     html += `
       <div class="cms-block">
-        <div class="cms-block__header">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/></svg>
-          Hero Section
-        </div>
-        <div class="admin-form-grid cols-2">
-          <div class="admin-field">
-            <label>Chip Text</label>
-            <input type="text" value="${home.hero?.chip || ''}" data-cms-path="hero.chip" />
-          </div>
-          <div class="admin-field">
-            <label>Hero Title</label>
-            <input type="text" value="${home.hero?.title || ''}" data-cms-path="hero.title" />
-          </div>
+        <div class="cms-block__header">Hero Section</div>
+        <div class="admin-field">
+          <label>Headline</label>
+          <input type="text" value="${home.hero?.headline || ''}" data-cms-path="hero.headline" placeholder="Design + Manufacturing" />
         </div>
         <div class="admin-field">
-          <label>Subtitle Line</label>
-          <input type="text" value="${home.hero?.subtitle || ''}" data-cms-path="hero.subtitle" />
+          <label>Prompt Text (Subtitle)</label>
+          <textarea data-cms-path="hero.prompt" rows="2" placeholder="From concept to factory floor...">${home.hero?.prompt || ''}</textarea>
         </div>
         <div class="admin-field">
-          <label>Description</label>
-          <textarea data-cms-path="hero.description" rows="3">${home.hero?.description || ''}</textarea>
-        </div>
-        <div class="admin-form-grid cols-2">
-          <div class="admin-field">
-            <label>Primary CTA Label</label>
-            <input type="text" value="${home.hero?.ctaPrimary || ''}" data-cms-path="hero.ctaPrimary" />
-          </div>
-          <div class="admin-field">
-            <label>Secondary CTA Label</label>
-            <input type="text" value="${home.hero?.ctaSecondary || ''}" data-cms-path="hero.ctaSecondary" />
-          </div>
+          <label>Gate Prompt (Above phase cards)</label>
+          <input type="text" value="${home.hero?.gatePrompt || ''}" data-cms-path="hero.gatePrompt" placeholder="How can we help you" />
         </div>
       </div>
     `;
 
-    // ── Merger Cards ──
+    // ── Phase Cards ──
     html += `
       <div class="cms-block">
-        <div class="cms-block__header">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-          Merger Cards (Hero Graphic)
-        </div>
-        <div class="admin-form-grid cols-2">
-          ${['west','east'].map(side => {
-            const card = home.mergerCards?.[side] || {};
-            return `
-              <div style="padding:16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;">
-                <h4 style="color:var(--color-electric);font-size:13px;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">${side === 'west' ? '🌎 West' : '🌏 East'}</h4>
-                <div class="cms-drop-zone" data-cms-field="mergerCards.${side}.image">
-                  <div class="cms-drop-zone__preview" style="background-image:url(${card.image || ''});"></div>
-                  <div class="cms-drop-zone__overlay"><span>Drop image or click</span></div>
-                  <input type="file" accept="image/*" class="cms-drop-zone__input" />
-                </div>
-                <div class="admin-field" style="margin-top:12px;">
-                  <label>Tag</label>
-                  <input type="text" value="${card.tag || ''}" data-cms-path="mergerCards.${side}.tag" />
-                </div>
-                <div class="admin-field">
-                  <label>Title</label>
-                  <input type="text" value="${card.title || ''}" data-cms-path="mergerCards.${side}.title" />
-                </div>
-                <div class="admin-field">
-                  <label>Line 1</label>
-                  <input type="text" value="${card.line1 || ''}" data-cms-path="mergerCards.${side}.line1" />
-                </div>
-                <div class="admin-field">
-                  <label>Line 2</label>
-                  <input type="text" value="${card.line2 || ''}" data-cms-path="mergerCards.${side}.line2" />
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      </div>
+        <div class="cms-block__header">Phase Cards (x4)</div>
     `;
-
-    // ── Core Capabilities ──
-    const caps = home.capabilities || {};
-    html += `
-      <div class="cms-block">
-        <div class="cms-block__header">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          Core Capabilities (Bento Grid)
-        </div>
-        <div class="admin-form-grid cols-2">
-          <div class="admin-field">
-            <label>Section Title</label>
-            <input type="text" value="${caps.sectionTitle || ''}" data-cms-path="capabilities.sectionTitle" />
-          </div>
-          <div class="admin-field">
-            <label>Section Description</label>
-            <textarea data-cms-path="capabilities.sectionDescription" rows="2">${caps.sectionDescription || ''}</textarea>
-          </div>
-        </div>
-        <div class="cms-items-grid">
-          ${(caps.cards || []).map((card, i) => `
-            <div class="cms-item-card" data-iidx="${i}">
-              <div class="cms-drop-zone cms-item-drop" data-sidx="0" data-iidx="${i}">
-                <div class="cms-drop-zone__preview" style="background-image:url(${card.image || ''});"></div>
-                <div class="cms-drop-zone__overlay"><span>Drop to replace</span></div>
-                <input type="file" accept="image/*" class="cms-drop-zone__input" />
-              </div>
-              <div class="cms-item-card__controls">
-                <button class="cms-reorder-btn cms-home-cap-move" data-dir="left" data-idx="${i}" title="Move Left" ${i === 0 ? 'disabled' : ''}>←</button>
-                <button class="cms-reorder-btn cms-home-cap-move" data-dir="right" data-idx="${i}" title="Move Right" ${i >= (caps.cards || []).length - 1 ? 'disabled' : ''}>→</button>
-                <button class="cms-home-cap-delete" data-idx="${i}" title="Delete">✕</button>
-              </div>
-              <div class="cms-item-card__fields">
-                <input type="text" value="${card.title || ''}" placeholder="Title" class="cms-home-cap-title" data-idx="${i}" />
-                <textarea placeholder="Description" class="cms-home-cap-desc" data-idx="${i}" rows="2">${card.description || ''}</textarea>
-              </div>
+    for (let c = 0; c < 4; c++) {
+      const card = home.phaseCards?.[c] || {};
+      html += `
+        <div style="margin-bottom:16px; border:1px solid rgba(255,255,255,0.1); padding:16px; border-radius:8px;">
+            <h4 style="color:white; margin-bottom:12px;">Card ${c + 1}</h4>
+            <div class="admin-field"><label>Title</label><input type="text" value="${card.title || ''}" data-cms-path="phaseCards.${c}.title"/></div>
+            <div class="admin-field"><label>Prompt</label><input type="text" value="${card.prompt || ''}" data-cms-path="phaseCards.${c}.prompt"/></div>
+            <div class="admin-field"><label>CTA Button</label><input type="text" value="${card.cta || ''}" data-cms-path="phaseCards.${c}.cta"/></div>
+            <div class="admin-field">
+              <label>Bullets (3)</label>
+              <input type="text" value="${card.bullets?.[0] || ''}" data-cms-path="phaseCards.${c}.bullets.0" placeholder="Bullet 1" style="margin-bottom:8px; display:block;"/>
+              <input type="text" value="${card.bullets?.[1] || ''}" data-cms-path="phaseCards.${c}.bullets.1" placeholder="Bullet 2" style="margin-bottom:8px; display:block;"/>
+              <input type="text" value="${card.bullets?.[2] || ''}" data-cms-path="phaseCards.${c}.bullets.2" placeholder="Bullet 3" style="margin-bottom:8px; display:block;"/>
             </div>
-          `).join('')}
-          <div class="cms-item-add" id="cms-home-add-cap">
-            <span>+</span>
-            <span>Add Card</span>
-          </div>
         </div>
-      </div>
-    `;
+      `;
+    }
+    html += '</div>';
 
-    // ── One-Stop Shop ──
-    const oss = home.oneStopShop || {};
+    // ── Who We Are ──
     html += `
       <div class="cms-block">
-        <div class="cms-block__header">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
-          One-Stop Shop Section
-        </div>
-        <div class="admin-form-grid cols-2">
-          <div class="admin-field">
-            <label>Title</label>
-            <input type="text" value="${oss.sectionTitle || ''}" data-cms-path="oneStopShop.sectionTitle" />
-          </div>
-          <div class="admin-field">
-            <label>Description</label>
-            <textarea data-cms-path="oneStopShop.sectionDescription" rows="2">${oss.sectionDescription || ''}</textarea>
-          </div>
-        </div>
-      </div>
-    `;
-
-    // ── Portfolio Preview ──
-    const pp = home.portfolioPreview || {};
-    html += `
-      <div class="cms-block">
-        <div class="cms-block__header">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-          Portfolio Preview Section
+        <div class="cms-block__header">Who We Are</div>
+        <div class="admin-field">
+          <label>Eyebrow Text</label>
+          <input type="text" value="${home.whoWeAre?.eyebrow || ''}" data-cms-path="whoWeAre.eyebrow" placeholder="Who We Are" />
         </div>
         <div class="admin-field">
-          <label>Chip</label>
-          <input type="text" value="${pp.sectionChip || ''}" data-cms-path="portfolioPreview.sectionChip" />
+          <label>Main Title</label>
+          <textarea data-cms-path="whoWeAre.title" rows="2">${home.whoWeAre?.title || ''}</textarea>
         </div>
-        <div class="admin-form-grid cols-2">
-          <div class="admin-field">
-            <label>Title</label>
-            <input type="text" value="${pp.sectionTitle || ''}" data-cms-path="portfolioPreview.sectionTitle" />
-          </div>
-          <div class="admin-field">
-            <label>Description</label>
-            <textarea data-cms-path="portfolioPreview.sectionDescription" rows="2">${pp.sectionDescription || ''}</textarea>
-          </div>
+        <div class="admin-field">
+          <label>Body Paragraph 1</label>
+          <textarea data-cms-path="whoWeAre.body1" rows="3">${home.whoWeAre?.body1 || ''}</textarea>
         </div>
-      </div>
+        <div class="admin-field">
+          <label>Body Paragraph 2</label>
+          <textarea data-cms-path="whoWeAre.body2" rows="3">${home.whoWeAre?.body2 || ''}</textarea>
+        </div>
     `;
 
-    // ── Locations ──
-    const locs = home.locations || {};
-    html += `
-      <div class="cms-block">
-        <div class="cms-block__header">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          Locations
-        </div>
-        <div class="admin-form-grid cols-2">
-          <div class="admin-field">
-            <label>Section Title</label>
-            <input type="text" value="${locs.sectionTitle || ''}" data-cms-path="locations.sectionTitle" />
+    // Pillars
+    html += `<label style="color:var(--color-steel-300);font-size:13px;display:block;margin-bottom:8px;">4 Core Pillars</label>`;
+    for(let i = 0; i < 4; i++) {
+        const pillar = home.whoWeAre?.pillars?.[i] || {};
+        html += `
+          <div style="display:flex;gap:12px;margin-bottom:12px;">
+            <div style="flex:1;"><input type="text" value="${pillar.title || ''}" data-cms-path="whoWeAre.pillars.${i}.title" placeholder="Pillar Title" style="width:100%;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.1);color:white;padding:8px;border-radius:4px;"/></div>
+            <div style="flex:2;"><input type="text" value="${pillar.desc || ''}" data-cms-path="whoWeAre.pillars.${i}.desc" placeholder="Pillar Description" style="width:100%;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.1);color:white;padding:8px;border-radius:4px;"/></div>
           </div>
-          <div class="admin-field">
-            <label>Section Description</label>
-            <textarea data-cms-path="locations.sectionDescription" rows="2">${locs.sectionDescription || ''}</textarea>
-          </div>
-        </div>
-        <div class="cms-items-grid">
-          ${(locs.cards || []).map((loc, i) => `
-            <div class="cms-item-card" data-iidx="${i}">
-              <div class="cms-drop-zone" data-cms-field="locations.cards.${i}.image">
-                <div class="cms-drop-zone__preview" style="background-image:url(${loc.image || ''});"></div>
-                <div class="cms-drop-zone__overlay"><span>Drop to replace</span></div>
-                <input type="file" accept="image/*" class="cms-drop-zone__input" />
-              </div>
-              <div class="cms-item-card__fields">
-                <input type="text" value="${loc.country || ''}" placeholder="Country" class="cms-loc-field" data-idx="${i}" data-field="country" />
-                <input type="text" value="${loc.label || ''}" placeholder="Label" class="cms-loc-field" data-idx="${i}" data-field="label" />
-                <textarea placeholder="Address" class="cms-loc-field" data-idx="${i}" data-field="address" rows="2">${(loc.address || '').replace(/\n/g, '\n')}</textarea>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-
-    // ── Data CTA ──
-    const dc = home.dataCta || {};
-    html += `
-      <div class="cms-block">
-        <div class="cms-block__header">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          Data Intelligence CTA
-        </div>
-        <div class="admin-form-grid cols-2">
-          <div class="admin-field">
-            <label>Title</label>
-            <input type="text" value="${dc.title || ''}" data-cms-path="dataCta.title" />
-          </div>
-          <div class="admin-field">
-            <label>Description</label>
-            <textarea data-cms-path="dataCta.description" rows="2">${dc.description || ''}</textarea>
-          </div>
-        </div>
-      </div>
-    `;
+        `;
+    }
+    html += '</div>';
 
     container.innerHTML = html;
     wireCMSHomeEvents(container);
@@ -2195,71 +2177,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       el.addEventListener('input', () => {
         const parts = el.dataset.cmsPath.split('.');
         let obj = home;
-        for (let k = 0; k < parts.length - 1; k++) obj = obj[parts[k]];
+        for (let k = 0; k < parts.length - 1; k++) {
+          if (!obj[parts[k]]) obj[parts[k]] = {};
+          obj = obj[parts[k]];
+        }
         obj[parts[parts.length - 1]] = el.value;
       });
     });
 
-    // Capability card fields
-    container.querySelectorAll('.cms-home-cap-title').forEach(el => {
-      el.addEventListener('input', () => {
-        home.capabilities.cards[parseInt(el.dataset.idx)].title = el.value;
-      });
-    });
-    container.querySelectorAll('.cms-home-cap-desc').forEach(el => {
-      el.addEventListener('input', () => {
-        home.capabilities.cards[parseInt(el.dataset.idx)].description = el.value;
-      });
-    });
-
-    // Capability card move
-    container.querySelectorAll('.cms-home-cap-move').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const i = parseInt(btn.dataset.idx);
-        const cards = home.capabilities.cards;
-        if (btn.dataset.dir === 'left' && i > 0) {
-          [cards[i - 1], cards[i]] = [cards[i], cards[i - 1]];
-          renderCMSPage();
-        } else if (btn.dataset.dir === 'right' && i < cards.length - 1) {
-          [cards[i], cards[i + 1]] = [cards[i + 1], cards[i]];
-          renderCMSPage();
-        }
-      });
-    });
-
-    // Capability card delete
-    container.querySelectorAll('.cms-home-cap-delete').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const i = parseInt(btn.dataset.idx);
-        const title = home.capabilities.cards[i]?.title || 'card';
-        home.capabilities.cards.splice(i, 1);
-        renderCMSPage();
-        showCMSToast(`"${title}" deleted — Discard Changes to undo`);
-      });
-    });
-
-    // Add capability card
-    document.getElementById('cms-home-add-cap')?.addEventListener('click', () => {
-      home.capabilities.cards.push({
-        id: 'cap-' + Date.now(),
-        image: '',
-        title: 'New Card',
-        description: ''
-      });
-      renderCMSPage();
-    });
-
-    // Location fields
-    container.querySelectorAll('.cms-loc-field').forEach(el => {
-      el.addEventListener('input', () => {
-        const i = parseInt(el.dataset.idx);
-        home.locations.cards[i][el.dataset.field] = el.value;
-      });
-    });
-
-    // Wire drop zones
+    // Wire drop zones (if any added later)
     wireDropZones(container);
   }
 
