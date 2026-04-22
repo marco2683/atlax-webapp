@@ -3261,16 +3261,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   } // END renderStaffForm
 
-  function renderDesignersHub() {
-    let pendingDesigners = loadedCustomers.filter(c => c.designer_status === 'pending');
+  window.hideRejectedDesigners = window.hideRejectedDesigners === undefined ? false : window.hideRejectedDesigners;
 
-    const rows = pendingDesigners.map(s => `
+  function renderDesignersHub() {
+    let targetDesigners = loadedCustomers.filter(c => c.designer_status && c.designer_status !== 'none');
+    if (window.hideRejectedDesigners) {
+      targetDesigners = targetDesigners.filter(c => c.designer_status !== 'rejected');
+    }
+
+    const rows = targetDesigners.map(s => `
       <tr>
         <td>
           <div style="font-weight:600; color:var(--color-electric);">${s.first_name || ''} ${s.last_name || ''}</div>
           <div style="font-size:12px; color:var(--color-steel-400);">${s.email || '—'}</div>
         </td>
-        <td>${s.job_title || s.company || '—'}</td>
+        <td>
+           <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); text-transform: uppercase;">${s.designer_status}</span><br>
+           <div style="font-size: 12px; margin-top: 4px; color: var(--color-steel-400);">${s.job_title || s.company || '—'}</div>
+        </td>
         <td style="max-width:300px;">
           <div style="max-height:80px; overflow-y:auto; font-size:12px; background:rgba(255,255,255,0.05); padding:8px; border-radius:4px; white-space:pre-wrap;">${s.cover_letter || 'No pitch provided.'}</div>
         </td>
@@ -3278,20 +3286,36 @@ document.addEventListener('DOMContentLoaded', async () => {
           ${s.resume_url ? `<a href="${s.resume_url}" target="_blank" class="admin-badge active" style="text-decoration:none;">View CV</a>` : `<span class="admin-badge">No CV</span>`}
         </td>
         <td>
-          ${s.portfolio_assets && s.portfolio_assets.length ? `<a href="${JSON.parse(s.portfolio_assets)[0]}" target="_blank" class="admin-badge active" style="text-decoration:none;">View Portfolio</a>` : `<span class="admin-badge">No Portfolio</span>`}
+          ${s.portfolio_url ? `<a href="${s.portfolio_url}" target="_blank" class="admin-badge active" style="text-decoration:none;">Doc</a>` : ''}
+          ${s.portfolio_assets && s.portfolio_assets.length ? `<a href="${JSON.parse(s.portfolio_assets)[0]}" target="_blank" class="admin-badge active" style="text-decoration:none; margin-left: ${s.portfolio_url ? '4px' : '0'};">Images</a>` : (!s.portfolio_url ? `<span class="admin-badge">None</span>` : '')}
         </td>
         <td class="admin-table-actions">
            <button class="admin-action-btn admin-view-designer" data-id="${s.id}" style="color:white; background:var(--color-electric); border-color:var(--color-electric);">Review</button>
-           <button class="admin-action-btn admin-approve-designer" data-id="${s.id}" style="color:var(--color-emerald); border-color:var(--color-emerald);">Approve</button>
-           <button class="admin-action-btn admin-reject-designer" data-id="${s.id}" style="color:#ef4444; border-color:rgba(239,68,68,.2);">Reject</button>
+           ${s.designer_status === 'pending' ? `
+             <button class="admin-action-btn admin-approve-designer" data-id="${s.id}" style="color:var(--color-emerald); border-color:var(--color-emerald);">Approve</button>
+             <button class="admin-action-btn admin-reject-designer" data-id="${s.id}" style="color:#ef4444; border-color:rgba(239,68,68,.2);">Reject</button>
+           ` : ''}
+           ${s.designer_status === 'approved' ? `
+             <button class="admin-action-btn admin-reject-designer" data-id="${s.id}" style="color:#ef4444; border-color:rgba(239,68,68,.2);">Revoke</button>
+           ` : ''}
+           ${s.designer_status === 'rejected' ? `
+             <button class="admin-action-btn admin-approve-designer" data-id="${s.id}" style="color:var(--color-emerald); border-color:var(--color-emerald);">Restore</button>
+             <button class="admin-action-btn admin-delete-designer" data-id="${s.id}" style="color:white; background:#ef4444; border-color:#ef4444;">Delete</button>
+           ` : ''}
         </td>
       </tr>
     `).join('');
 
     contentRouting.innerHTML = `
-      <div style="margin-bottom:24px;">
-        <h2 style="font-size: 20px; margin-bottom: 8px;">Pending Designer Applications</h2>
-        <p style="color: var(--color-steel-400); font-size: 14px;">Review CVs and Cover Letters before approving them to the global Designer directory.</p>
+      <div style="margin-bottom:24px; display: flex; justify-content: space-between; align-items: start;">
+        <div>
+          <h2 style="font-size: 20px; margin-bottom: 8px;">Designer Directory & Applications</h2>
+          <p style="color: var(--color-steel-400); font-size: 14px;">Review applicants and manage approved designers.</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <input type="checkbox" id="hide-rejected-toggle" ${window.hideRejectedDesigners ? 'checked' : ''}>
+          <label for="hide-rejected-toggle" style="font-size: 13px; color: var(--color-steel-300); cursor:pointer;">Hide Rejected</label>
+        </div>
       </div>
 
       <div class="admin-table-container">
@@ -3299,7 +3323,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <thead>
             <tr>
               <th>Applicant</th>
-              <th>Current Role</th>
+              <th>Status & Role</th>
               <th>Cover Letter / Pitch</th>
               <th>Resume</th>
               <th>Portfolio</th>
@@ -3307,16 +3331,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             </tr>
           </thead>
           <tbody>
-            ${rows.length ? rows : '<tr><td colspan="6" style="text-align:center; padding: 40px; color:var(--color-steel-400);">No pending applications found.</td></tr>'}
+            ${rows.length ? rows : '<tr><td colspan="6" style="text-align:center; padding: 40px; color:var(--color-steel-400);">No applications found.</td></tr>'}
           </tbody>
         </table>
       </div>
     `;
 
+    document.getElementById('hide-rejected-toggle')?.addEventListener('change', (e) => {
+      window.hideRejectedDesigners = e.target.checked;
+      renderDesignersHub();
+    });
+
     document.querySelectorAll('.admin-approve-designer').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         const id = e.target.dataset.id;
-        btn.textContent = 'Approving...';
+        btn.textContent = '...';
         btn.disabled = true;
         try {
           const { error } = await supabase.from('profiles').update({ designer_status: 'approved' }).eq('id', id);
@@ -3324,53 +3353,78 @@ document.addEventListener('DOMContentLoaded', async () => {
           
           const approved = loadedCustomers.find(c => c.id === id);
           if (approved) {
+             const wasPending = approved.designer_status === 'pending';
              approved.designer_status = 'approved';
-             try {
-               await fetch('/.netlify/functions/send-email', {
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
-                 body: JSON.stringify({ email: approved.contact_email, name: approved.first_name || 'Designer', type: 'designer_approved' })
-               });
-             } catch(err) { console.error("Failed to trigger email hook", err); }
+             if (wasPending) {
+               try {
+                 await fetch('/.netlify/functions/send-email', {
+                   method: 'POST',
+                   headers: { 'Content-Type': 'application/json' },
+                   body: JSON.stringify({ email: approved.contact_email, name: approved.first_name || 'Designer', type: 'designer_approved' })
+                 });
+               } catch(err) { console.error("Failed to trigger email hook", err); }
+             }
           }
           updateNavBadges();
           renderDesignersHub();
         } catch(err) {
           alert('Error approving designer: ' + err.message);
-          btn.textContent = 'Approve';
-          btn.disabled = false;
+          renderDesignersHub();
         }
       });
     });
 
     document.querySelectorAll('.admin-reject-designer').forEach(btn => {
       btn.addEventListener('click', async (e) => {
-        if (!confirm("Are you sure you want to reject this applicant? They will be removed from pending.")) return;
+        if (!confirm("Are you sure you want to reject/revoke this status?")) return;
         const id = e.target.dataset.id;
-        btn.textContent = 'Rejecting...';
+        btn.textContent = '...';
         btn.disabled = true;
         try {
-           // We can set it back to null or 'rejected'
           const { error } = await supabase.from('profiles').update({ designer_status: 'rejected' }).eq('id', id);
           if (error) throw error;
           
           const rejected = loadedCustomers.find(c => c.id === id);
           if (rejected) {
+             const wasPending = rejected.designer_status === 'pending';
              rejected.designer_status = 'rejected';
-             try {
-               await fetch('/.netlify/functions/send-email', {
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
-                 body: JSON.stringify({ email: rejected.contact_email, name: rejected.first_name || 'Designer', type: 'designer_rejected' })
-               });
-             } catch(err) { console.error("Failed to trigger email hook", err); }
+             if (wasPending) {
+               try {
+                 await fetch('/.netlify/functions/send-email', {
+                   method: 'POST',
+                   headers: { 'Content-Type': 'application/json' },
+                   body: JSON.stringify({ email: rejected.contact_email, name: rejected.first_name || 'Designer', type: 'designer_rejected' })
+                 });
+               } catch(err) { console.error("Failed to trigger email hook", err); }
+             }
           }
           updateNavBadges();
           renderDesignersHub();
         } catch(err) {
-          alert('Error rejecting designer: ' + err.message);
-          btn.textContent = 'Reject';
-          btn.disabled = false;
+          alert('Error updating status: ' + err.message);
+          renderDesignersHub();
+        }
+      });
+    });
+
+    document.querySelectorAll('.admin-delete-designer').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        if (!confirm("Permanently delete this designer application? This will reset them entirely.")) return;
+        const id = e.target.dataset.id;
+        btn.textContent = '...';
+        btn.disabled = true;
+        try {
+          const { error } = await supabase.from('profiles').update({ designer_status: 'none' }).eq('id', id);
+          if (error) throw error;
+          
+          const target = loadedCustomers.find(c => c.id === id);
+          if (target) target.designer_status = 'none';
+          
+          updateNavBadges();
+          renderDesignersHub();
+        } catch(err) {
+          alert('Error deleting: ' + err.message);
+          renderDesignersHub();
         }
       });
     });
