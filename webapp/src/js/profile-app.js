@@ -10,6 +10,45 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
+  // 1. Populate Industry Dropdown dynamically
+  const industryDropdown = document.getElementById('comp-industry');
+  if (industryDropdown) {
+    const industries = [
+      { value: "aerospace", label: "Aerospace & Defense" },
+      { value: "agriculture", label: "Agriculture & Farming" },
+      { value: "apparel_fashion", label: "Apparel & Fashion" },
+      { value: "automotive", label: "Automotive & Mobility" },
+      { value: "biotech", label: "Biotechnology" },
+      { value: "chemicals", label: "Chemicals & Plastics" },
+      { value: "construction", label: "Construction & Engineering" },
+      { value: "consumer_electronics", label: "Consumer Electronics" },
+      { value: "consumer_goods", label: "FMCG / Consumer Goods" },
+      { value: "energy", label: "Energy & Cleantech" },
+      { value: "food_beverage", label: "Food & Beverage" },
+      { value: "furniture", label: "Furniture & Decor" },
+      { value: "healthcare", label: "Healthcare Equipment" },
+      { value: "home_appliances", label: "Home Appliances" },
+      { value: "industrial_machinery", label: "Industrial Machinery" },
+      { value: "iot_robotics", label: "IoT & Robotics" },
+      { value: "medical_devices", label: "Medical Devices" },
+      { value: "packaging", label: "Packaging" },
+      { value: "pharmaceuticals", label: "Pharmaceuticals" },
+      { value: "semiconductors", label: "Semiconductors" },
+      { value: "sporting_goods", label: "Sporting Goods" },
+      { value: "telecommunications", label: "Telecommunications" },
+      { value: "toys_games", label: "Toys & Games" },
+      { value: "transportation", label: "Transportation / Logistics" },
+      { value: "other", label: "Other" }
+    ];
+
+    industries.forEach(ind => {
+      const option = document.createElement('option');
+      option.value = ind.value;
+      option.textContent = ind.label;
+      industryDropdown.appendChild(option);
+    });
+  }
+
   // Load User Data
   const emailInput = document.getElementById('prof-email');
   emailInput.value = session.user.email;
@@ -32,6 +71,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (skillsEl) skillsEl.value = profile.skills || '';
     const linkedinEl = document.getElementById('prof-linkedin');
     if (linkedinEl) linkedinEl.value = profile.linkedin_url || '';
+    
+    const setSafe = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+    setSafe('comp-name', profile.company);
+    setSafe('comp-website', profile.company_website);
+    setSafe('comp-industry', profile.company_industry);
+    setSafe('comp-size', profile.company_size);
+    setSafe('comp-tax-id', profile.tax_id);
+    setSafe('comp-reg-num', profile.registration_number);
+    setSafe('comp-address', profile.address);
+    setSafe('comp-shipping', profile.shipping_address);
+
 
     if (profile.designer_status === 'approved') {
       const designerMenu = document.getElementById('approved-designer-tabs');
@@ -102,7 +152,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         methodologies: getVal('prof-methodologies'),
         company: getVal('comp-name') || getVal('prof-company'),
         address: getVal('comp-address') || getVal('prof-address'),
-        tax_id: getVal('comp-tax-id')
+        tax_id: getVal('comp-tax-id'),
+        company_website: getVal('comp-website'),
+        company_industry: getVal('comp-industry'),
+        company_size: getVal('comp-size'),
+        registration_number: getVal('comp-reg-num'),
+        shipping_address: getVal('comp-shipping')
       };
 
       // Filter out nulls/undefineds for partial saves

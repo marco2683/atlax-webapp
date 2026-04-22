@@ -607,13 +607,51 @@
               <input type="text" class="profile-input" id="comp-name" placeholder="e.g. Atlas Digital Technologies Ltd.">
             </div>
             <div class="profile-form-group">
+              <label>Company Website</label>
+              <input type="url" class="profile-input" id="comp-website" placeholder="https://yourcompany.com">
+            </div>
+          </div>
+
+          <div class="profile-form-grid">
+            <div class="profile-form-group">
+              <label>Industry</label>
+              <select class="profile-input" id="comp-industry">
+                <option value="">Select an industry...</option>
+                <!-- JSON Options will be injected here via profile-app.js -->
+              </select>
+            </div>
+            <div class="profile-form-group">
+              <label>Company Size</label>
+              <select class="profile-input" id="comp-size">
+                <option value="">Select size...</option>
+                <option value="1-10">1-10 Employees</option>
+                <option value="11-50">11-50 Employees</option>
+                <option value="51-200">51-200 Employees</option>
+                <option value="201-1000">201-1000 Employees</option>
+                <option value="1000+">1000+ Employees</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="profile-form-grid">
+            <div class="profile-form-group">
               <label>VAT / Tax ID</label>
               <input type="text" class="profile-input" id="comp-tax-id" placeholder="e.g. US123456789">
             </div>
+            <div class="profile-form-group">
+              <label>Registration Number (EIN, CRO, etc.)</label>
+              <input type="text" class="profile-input" id="comp-reg-num" placeholder="e.g. 12-3456789">
+            </div>
           </div>
+
           <div class="profile-form-group" style="margin-bottom: 24px;">
             <label>Legal & Billing Address</label>
             <input type="text" class="profile-input" id="comp-address" placeholder="123 Manufacturing Blvd, City, Country">
+          </div>
+
+          <div class="profile-form-group" style="margin-bottom: 24px;">
+            <label>Shipping Address</label>
+            <input type="text" class="profile-input" id="comp-shipping" placeholder="Warehouse address for component shipments...">
           </div>
 
           <div class="profile-form-grid" style="margin-top: 32px;">
@@ -704,7 +742,7 @@
 
     
       <!-- Persistent Global Save Action Card -->
-      <div class="billing-card" style="margin-top: 24px; padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.3);">
+      <div class="billing-card" style="margin-top: 24px; padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.02);">
         <div>
           <h3 style="font-size: 16px; margin: 0; font-family: 'Space Grotesk', sans-serif;">Save Profile Changes</h3>
           <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin: 4px 0 0 0;">Don't forget to save your edits across all tabs.</p>
