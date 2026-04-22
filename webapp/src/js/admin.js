@@ -3272,7 +3272,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const parseArray = (attr) => {
       if (!attr) return [];
       if (Array.isArray(attr)) return attr;
-      try { return JSON.parse(attr); } catch(e) { return []; }
+      try { return JSON.parse(attr); } catch(e) { return [attr]; }
     };
 
     const rows = targetDesigners.map(s => `
