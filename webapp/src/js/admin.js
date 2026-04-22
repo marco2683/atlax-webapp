@@ -3250,6 +3250,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert('Failed to save staff member');
       }
     });
+  } // END renderStaffForm
+
   function renderDesignersHub() {
     let pendingDesigners = loadedCustomers.filter(c => c.designer_status === 'pending');
 
