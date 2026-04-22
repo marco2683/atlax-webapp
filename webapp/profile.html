@@ -597,8 +597,8 @@
   </div>
 
   <!-- Onboarding Modal Container -->
-  <div class="auth-modal hidden" id="role-onboarding-modal" style="z-index: 9999; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; background: rgba(8, 8, 8, 0.85); backdrop-filter: blur(12px);">
-    <div class="auth-modal-glass modal-expanded" style="max-width: 1000px; padding: 40px; border: 1px solid rgba(255,255,255,0.05); text-align: left; background: #0d1117; width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.5); border-radius: 16px;">
+  <div class="auth-modal hidden auth-modal-overlay" id="role-onboarding-modal" style="z-index: 9999; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(12px);">
+    <div class="auth-modal-glass auth-modal-panel modal-expanded" style="max-width: 1000px; padding: 40px; border: 1px solid rgba(255,255,255,0.05); text-align: left; width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.5); border-radius: 16px;">
       <button class="close-auth-modal" id="close-role-onboarding" style="z-index: 10;">&times;</button>
       <div id="onboarding-content-area" style="text-align: left;">
         <!-- Dynamically populated via JS depending on Designer vs Entrepreneur -->

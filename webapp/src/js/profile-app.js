@@ -379,20 +379,53 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (closeOnboardingBtn) closeOnboardingBtn.addEventListener('click', closeOnboarding);
 
   const performApplication = async (btn) => {
-    const coverLetter = document.getElementById('app-cover-letter')?.value;
-    if (!coverLetter || coverLetter.length < 20) {
-      alert("Please provide a meaningful cover letter or description of your expertise.");
+    // 1. Validate LinkedIn URL
+    const linkedinVal = document.getElementById('app-linkedin-url')?.value?.trim();
+    if (!linkedinVal || !/^https?:\/\/(www\.)?linkedin\.com\/.*$/i.test(linkedinVal)) {
+      alert("A valid LinkedIn Profile URL is completely mandatory to apply.");
       return;
     }
+
+    // 2. Format Specialized Skills
+    const skillCards = Array.from(document.querySelectorAll('#skills-container .skill-pill'));
+    const specializedSkillsIds = skillCards.map((pill, index) => {
+      return { rank: index + 1, skill: pill.dataset.skill };
+    });
+
+    if (specializedSkillsIds.length === 0) {
+      alert("Please add at least one specialized skill (e.g. Injection Molding).");
+      return;
+    }
+
+    // Fetch previously attached files from the UI dataset
+    const coverUrl = document.getElementById('z-cover')?.dataset?.url || null;
+    const resumeUrl = document.getElementById('z-resume')?.dataset?.url || null;
+    const portfolioUrl = document.getElementById('z-portfolio')?.dataset?.url || null;
+
+    if (!resumeUrl) {
+      alert("Please upload your Resume/CV to proceed.");
+      return;
+    }
+
+    const pitchText = "Cover Letter Attached: " + (coverUrl ? "Yes" : "No");
+
     const dbPayload = { 
       designer_status: 'pending',
-      cover_letter: coverLetter,
+      cover_letter: pitchText,
+      cover_letter_url: coverUrl,
+      resume_url: resumeUrl,
+      portfolio_url: portfolioUrl,
       contact_email: document.getElementById('app-contact-email')?.value || '',
-      linkedin_url: document.getElementById('app-linkedin-url')?.value || '',
+      linkedin_url: linkedinVal,
       online_portfolio_url: document.getElementById('app-online-portfolio')?.value || '',
       hourly_rate_currency: document.getElementById('app-currency')?.value || 'USD',
       hourly_rate: document.getElementById('app-hourly-rate')?.value ? parseFloat(document.getElementById('app-hourly-rate').value) : null,
       availability: document.getElementById('app-availability')?.value || '',
+      schedule_type: document.getElementById('app-schedule-type')?.value || 'Weekly',
+      timezone: document.getElementById('app-timezone')?.value || '',
+      working_days: document.getElementById('app-working-days')?.value || '',
+      working_hours: document.getElementById('app-working-hours')?.value || '',
+      specialized_skills: specializedSkillsIds,
       comms_tools: JSON.stringify(Array.from(document.querySelectorAll('.comm-row')).map(row => ({
         type: row.querySelector('.comm-type').value,
         detail: row.querySelector('.comm-detail').value
@@ -422,7 +455,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           email: user.email, 
           userId: user.id, 
           type: 'designer_application',
-          cover_letter: coverLetter
+          cover_letter: pitchText
         })
       });
     } catch(err) {
@@ -479,14 +512,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div style="display: flex; flex-direction: column; gap: 20px;">
               <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(139, 92, 246, 1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 8px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
               <h2 style="font-size: 28px; margin-bottom: 4px; line-height: 1.2;">Apply to the Designer Hub</h2>
-              <p style="color: rgba(255,255,255,0.7); font-size: 15px; margin-bottom: 12px; line-height: 1.5;">To join the network, please provide an application pitch below. Additionally, you can upload your <b>Resume/CV</b> and <b>Portfolio</b> assets directly on this form.</p>
+              <p style="color: rgba(255,255,255,0.7); font-size: 15px; margin-bottom: 12px; line-height: 1.5;">To join the network, please provide an application pitch below. Additionally, you can upload your <b>Resume/CV</b>, <b>Cover Letter</b> and <b>Portfolio</b> assets directly on this form.</p>
               
-              <div class="profile-form-group">
-                <label style="color: var(--color-electric);">Application Pitch / Cover Letter <span class="req">*</span></label>
-                <textarea id="app-cover-letter" class="profile-input" rows="5" placeholder="Detail your experience in design for manufacturing, your specialties, and why you would be a great fit for the network..."></textarea>
-              </div>
-
-              <!-- New Fields Grid -->
+              <!-- Core Bio Profile -->
               <div class="profile-form-grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
                 <div class="profile-form-group">
                   <label>Hourly Rate</label>
@@ -495,14 +523,63 @@ document.addEventListener('DOMContentLoaded', async () => {
                       <option value="USD">USD</option>
                       <option value="EUR">EUR</option>
                       <option value="GBP">GBP</option>
+                      <option value="AUD">AUD</option>
+                      <option value="CAD">CAD</option>
+                      <option value="SGD">SGD</option>
+                      <option value="JPY">JPY</option>
                       <option value="AED">AED</option>
                     </select>
                     <input type="number" id="app-hourly-rate" class="profile-input" placeholder="e.g. 50" style="flex: 1;">
                   </div>
                 </div>
                 <div class="profile-form-group">
-                  <label>Availability</label>
-                  <input type="text" id="app-availability" class="profile-input" placeholder="e.g. 20 hours/week, GMT+8">
+                  <label>Availability Frequency</label>
+                  <div style="display: flex; gap: 8px;">
+                    <select id="app-schedule-type" class="profile-input" style="width: 120px;">
+                      <option value="Daily">Daily</option>
+                      <option value="Weekly">Weekly</option>
+                      <option value="Monthly">Monthly</option>
+                      <option value="Project-Based">Project-Based</option>
+                    </select>
+                    <input type="text" id="app-availability" class="profile-input" placeholder="e.g. 20 hours/week" style="flex: 1;">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Typical Working Schedule -->
+              <div class="profile-form-group" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: 8px;">
+                <label style="margin-bottom: 12px; color: var(--color-electric); font-weight: 600;">Typical Working Schedule</label>
+                <div class="profile-form-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                  <div>
+                    <label style="font-size: 11px;">Timezone</label>
+                    <select id="app-timezone" class="profile-input">
+                      <option value="UTC-8 (PST)">UTC-8 (PST)</option>
+                      <option value="UTC-5 (EST)">UTC-5 (EST)</option>
+                      <option value="UTC+0 (GMT)">UTC+0 (GMT)</option>
+                      <option value="UTC+1 (CET)">UTC+1 (CET)</option>
+                      <option value="UTC+4 (GST)">UTC+4 (GST)</option>
+                      <option value="UTC+8 (CST/AWST)">UTC+8 (CST/AWST)</option>
+                      <option value="UTC+10 (AEST)">UTC+10 (AEST)</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style="font-size: 11px;">Working Days</label>
+                    <input type="text" id="app-working-days" class="profile-input" placeholder="e.g. Mon - Fri">
+                  </div>
+                  <div>
+                    <label style="font-size: 11px;">Working Hours</label>
+                    <input type="text" id="app-working-hours" class="profile-input" placeholder="e.g. 9AM - 5PM">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Skill Tagging -->
+              <div class="profile-form-group">
+                <label>Specialized Skills (Ranked) <span class="req">*</span></label>
+                <p style="font-size: 11px; opacity: 0.6; margin-bottom: 8px; margin-top:-4px;">Type a skill and press Enter. Order them from most to least specialized (e.g. Injection Molding, Sheet Metal...). Top 5 are highlighted.</p>
+                <div id="skills-container" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; min-height: 48px; background: rgba(0,0,0,0.2);">
+                  <input type="text" id="app-skill-input" style="background: transparent; border: none; color: inherit; outline: none; flex: 1; min-width: 150px;" placeholder="Add skill...">
                 </div>
               </div>
 
@@ -512,8 +589,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                   <input type="url" id="app-online-portfolio" class="profile-input" placeholder="https://dribbble.com/yourprofile">
                 </div>
                 <div class="profile-form-group">
-                  <label>LinkedIn Profile URL</label>
-                  <input type="url" id="app-linkedin-url" class="profile-input" placeholder="https://linkedin.com/in/yourprofile">
+                  <label>LinkedIn Profile URL <span class="req" style="color: #ef4444;">*</span></label>
+                  <input type="url" id="app-linkedin-url" class="profile-input" placeholder="https://linkedin.com/in/yourprofile" required>
                 </div>
               </div>
 
@@ -542,10 +619,46 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
               </div>
 
-              <!-- Mount targets for DOM transplantation -->
-              <div class="profile-form-grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
-                <div id="modal-resume-mount" style="margin-bottom: 8px;"></div>
-                <div id="modal-portfolio-mount" style="margin-bottom: 24px;"></div>
+              <!-- Native File Uploads -->
+              <div class="profile-form-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 8px;">
+                <!-- Cover Letter Upload -->
+                <div class="profile-form-group">
+                  <label style="font-size: 13px;">Cover Letter</label>
+                  <div class="upload-zone" id="z-cover" style="border: 1px dashed rgba(255,255,255,0.2); padding: 16px 8px; text-align: center; border-radius: 8px; cursor: pointer; transition: 0.2s;">
+                    <div id="l-cover" style="font-size: 12px; color: #9ca3af;">Click to upload (.pdf)</div>
+                    <input type="file" id="f-cover" style="display: none;" accept=".pdf,.doc,.docx">
+                  </div>
+                  <div id="a-cover" style="display: none; justify-content: center; margin-top: 8px; gap: 8px;">
+                    <button class="btn btn-primary" type="button" style="padding: 4px 8px; font-size: 11px;" onclick="document.getElementById('f-cover').click()">Replace</button>
+                    <button class="btn" type="button" style="padding: 4px 8px; font-size: 11px; border: 1px solid #ef4444; color: #ef4444;" id="r-cover">X</button>
+                  </div>
+                </div>
+
+                <!-- Resume Upload -->
+                <div class="profile-form-group">
+                  <label style="font-size: 13px;">Resume / CV</label>
+                  <div class="upload-zone" id="z-resume" style="border: 1px dashed rgba(255,255,255,0.2); padding: 16px 8px; text-align: center; border-radius: 8px; cursor: pointer; transition: 0.2s;">
+                    <div id="l-resume" style="font-size: 12px; color: #9ca3af;">Click to upload (.pdf)</div>
+                    <input type="file" id="f-resume" style="display: none;" accept=".pdf,.doc,.docx">
+                  </div>
+                  <div id="a-resume" style="display: none; justify-content: center; margin-top: 8px; gap: 8px;">
+                    <button class="btn btn-primary" type="button" style="padding: 4px 8px; font-size: 11px;" onclick="document.getElementById('f-resume').click()">Replace</button>
+                    <button class="btn" type="button" style="padding: 4px 8px; font-size: 11px; border: 1px solid #ef4444; color: #ef4444;" id="r-resume">X</button>
+                  </div>
+                </div>
+
+                <!-- Portfolio Upload -->
+                <div class="profile-form-group">
+                  <label style="font-size: 13px;">Portfolio</label>
+                  <div class="upload-zone" id="z-portfolio" style="border: 1px dashed rgba(255,255,255,0.2); padding: 16px 8px; text-align: center; border-radius: 8px; cursor: pointer; transition: 0.2s;">
+                    <div id="l-portfolio" style="font-size: 12px; color: #9ca3af;">Click to upload (.pdf)</div>
+                    <input type="file" id="f-portfolio" style="display: none;" accept=".pdf,.zip">
+                  </div>
+                  <div id="a-portfolio" style="display: none; justify-content: center; margin-top: 8px; gap: 8px;">
+                    <button class="btn btn-primary" type="button" style="padding: 4px 8px; font-size: 11px;" onclick="document.getElementById('f-portfolio').click()">Replace</button>
+                    <button class="btn" type="button" style="padding: 4px 8px; font-size: 11px; border: 1px solid #ef4444; color: #ef4444;" id="r-portfolio">X</button>
+                  </div>
+                </div>
               </div>
 
               <div style="display: flex; gap: 12px; margin-top: 12px;">
@@ -565,15 +678,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       onboardingContent.innerHTML = html;
       
       if (planType === 'designer') {
-        const rMount = document.getElementById('modal-resume-mount');
-        const pMount = document.getElementById('modal-portfolio-mount');
-        
-        // Safely fetch and mount the DOM chunks into the modal
-        const rContent = document.querySelector('#pane-resume .billing-card');
-        const pContent = document.querySelector('#pane-portfolio .billing-card');
-        if (rMount && rContent) rMount.appendChild(rContent);
-        if (pMount && pContent) pMount.appendChild(pContent);
-
         const btnAddComm = document.getElementById('btn-add-comm');
         if (btnAddComm) {
           btnAddComm.addEventListener('click', () => {
@@ -594,6 +698,99 @@ document.addEventListener('DOMContentLoaded', async () => {
               <button type="button" class="btn-remove-comm" style="background:transparent; border:none; color:#ef4444; cursor:pointer;" onclick="this.parentElement.remove()">✕</button>
             `;
             container.appendChild(row);
+          });
+        }
+
+        // Native Uploader Helper
+        const setupNativeUpload = (id, bucket) => {
+          const fileInput = document.getElementById(`f-${id}`);
+          const zone = document.getElementById(`z-${id}`);
+          const label = document.getElementById(`l-${id}`);
+          const actions = document.getElementById(`a-${id}`);
+          const removeBtn = document.getElementById(`r-${id}`);
+          
+          if(!fileInput) return;
+
+          zone.addEventListener('click', () => { if(!zone.dataset.url) fileInput.click(); });
+          
+          fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            label.innerText = `Uploading ${file.name}...`;
+            zone.style.opacity = '0.5';
+
+            const { data: { user } } = await supabase.auth.getUser();
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${user.id}_${id}_${Date.now()}.${fileExt}`;
+            
+            const { data, error } = await supabase.storage.from(bucket).upload(fileName, file);
+
+            if (error) {
+              alert("Upload Error: " + error.message);
+              label.innerText = "Click to upload";
+              zone.style.opacity = '1';
+              return;
+            }
+
+            let { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(fileName);
+            publicUrl += `?download=${encodeURIComponent(file.name)}`;
+            
+            zone.dataset.url = publicUrl;
+            label.innerText = `✅ ${file.name}`;
+            label.style.color = '#10b981';
+            zone.style.opacity = '1';
+            zone.style.borderStyle = 'solid';
+            zone.style.borderColor = 'var(--color-electric)';
+            actions.style.display = 'flex';
+          });
+
+          removeBtn?.addEventListener('click', () => {
+             zone.dataset.url = '';
+             label.innerText = 'Click to upload';
+             label.style.color = '#9ca3af';
+             zone.style.borderStyle = 'dashed';
+             zone.style.borderColor = 'rgba(255,255,255,0.2)';
+             actions.style.display = 'none';
+             fileInput.value = '';
+          });
+        };
+
+        setupNativeUpload('cover', 'user_resumes');
+        setupNativeUpload('resume', 'user_resumes');
+        setupNativeUpload('portfolio', 'user_portfolios');
+
+        // Skill Tagging Logic
+        const skillInput = document.getElementById('app-skill-input');
+        const skillsContainer = document.getElementById('skills-container');
+        if (skillInput) {
+          skillInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ',') {
+              e.preventDefault();
+              const val = skillInput.value.trim();
+              if (val) {
+                const count = skillsContainer.querySelectorAll('.skill-pill').length + 1;
+                const pill = document.createElement('div');
+                pill.className = 'skill-pill';
+                pill.dataset.skill = val;
+                pill.style = `display: flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 4px; font-size: 13px; background: ${count <= 5 ? '#3b82f6' : 'rgba(255,255,255,0.1)'}; color: ${count <= 5 ? '#fff' : 'rgba(255,255,255,0.7)'}; border: 1px solid ${count <= 5 ? '#2563eb' : 'rgba(255,255,255,0.2)'};`;
+                pill.innerHTML = `<span style="font-size:10px; opacity:0.8;">#${count}</span> ${val} <span style="cursor:pointer; margin-left:4px; opacity:0.7;">✕</span>`;
+                skillsContainer.insertBefore(pill, skillInput);
+                skillInput.value = '';
+                
+                pill.querySelector('span:last-child').addEventListener('click', () => {
+                   pill.remove();
+                   const allPills = Array.from(skillsContainer.querySelectorAll('.skill-pill'));
+                   allPills.forEach((p, idx) => {
+                     const rank = idx + 1;
+                     p.querySelector('span:first-child').innerText = `#${rank}`;
+                     p.style.background = rank <= 5 ? '#3b82f6' : 'rgba(255,255,255,0.1)';
+                     p.style.color = rank <= 5 ? '#fff' : 'rgba(255,255,255,0.7)';
+                     p.style.borderColor = rank <= 5 ? '#2563eb' : 'rgba(255,255,255,0.2)';
+                   });
+                });
+              }
+            }
           });
         }
 
