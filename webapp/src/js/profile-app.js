@@ -1105,7 +1105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if(iconDark) iconDark.style.display = 'none';
       
       const logo = document.querySelector('.profile-nav img');
-      if(logo) logo.src = '/logos/atlasdt-logo-dark.png'; // Swap to dark logo for light theme
+      if(logo) logo.src = '/logos/atlasdt-logo-full.png'; // Swap to dark text logo for light theme
     } else {
       document.body.classList.remove('theme-light');
       if(iconLight) iconLight.style.display = 'none';
