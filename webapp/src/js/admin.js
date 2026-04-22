@@ -185,8 +185,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ─── Dashboard Init ────────────────────────────────────────
+  function updateNavBadges() {
+    const pendingDesigners = loadedCustomers.filter(c => c.designer_status === 'pending').length;
+    const designerTab = document.querySelector('.admin-nav-item[data-tab="designers"]');
+    if (designerTab) {
+      designerTab.innerHTML = `Designer Hub ${pendingDesigners > 0 ? \`<span style="background:var(--color-electric); color:white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 6px; font-weight: bold;">\${pendingDesigners}</span>\` : ''}`;
+    }
+  }
+
   async function initDashboard() {
     await loadCRMData();
+    updateNavBadges();
     renderOverview();
     navItems.forEach(tab => {
       // Clone to remove old listeners
@@ -3272,6 +3281,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           ${s.portfolio_assets && s.portfolio_assets.length ? `<a href="${JSON.parse(s.portfolio_assets)[0]}" target="_blank" class="admin-badge active" style="text-decoration:none;">View Portfolio</a>` : `<span class="admin-badge">No Portfolio</span>`}
         </td>
         <td class="admin-table-actions">
+           <button class="admin-action-btn admin-view-designer" data-id="${s.id}" style="color:white; background:var(--color-electric); border-color:var(--color-electric);">Review</button>
            <button class="admin-action-btn admin-approve-designer" data-id="${s.id}" style="color:var(--color-emerald); border-color:var(--color-emerald);">Approve</button>
            <button class="admin-action-btn admin-reject-designer" data-id="${s.id}" style="color:#ef4444; border-color:rgba(239,68,68,.2);">Reject</button>
         </td>
@@ -3314,6 +3324,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           
           const approved = loadedCustomers.find(c => c.id === id);
           if (approved) approved.designer_status = 'approved';
+          updateNavBadges();
           renderDesignersHub();
         } catch(err) {
           alert('Error approving designer: ' + err.message);
@@ -3336,6 +3347,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           
           const rejected = loadedCustomers.find(c => c.id === id);
           if (rejected) rejected.designer_status = 'rejected';
+          updateNavBadges();
           renderDesignersHub();
         } catch(err) {
           alert('Error rejecting designer: ' + err.message);
@@ -3344,6 +3356,66 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       });
     });
+
+    document.querySelectorAll('.admin-view-designer').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.target.dataset.id;
+        const s = loadedCustomers.find(c => c.id === id);
+        if (!s) return;
+        
+        const parseArray = (attr) => {
+          if (!attr) return [];
+          if (Array.isArray(attr)) return attr;
+          try { return JSON.parse(attr); } catch(e) { return [attr]; }
+        };
+
+        let skillsHtml = parseArray(s.specialized_skills).map(sk => `<span style="display:inline-block; border:1px solid rgba(255,255,255,0.2); border-radius:4px; padding:2px 6px; margin:2px;">${sk.skill || sk}</span>`).join('') || 'None';
+        let softwareHtml = parseArray(s.software_used).map(sk => `<span style="display:inline-block; border:1px solid rgba(255,255,255,0.2); border-radius:4px; padding:2px 6px; margin:2px;">${sk}</span>`).join('') || 'None';
+        let languageHtml = parseArray(s.spoken_languages).map(sk => `<span style="display:inline-block; border:1px solid rgba(255,255,255,0.2); border-radius:4px; padding:2px 6px; margin:2px;">${sk}</span>`).join('') || 'None';
+
+        const modalHtml = `
+          <div id="inspector-modal-overlay-${id}" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center;">
+            <div style="background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:12px; width:90%; max-width:800px; max-height:90vh; overflow-y:auto; padding:32px; color:white; font-family:'Output', 'Space Grotesk', sans-serif;">
+              <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:16px; margin-bottom:24px;">
+                <h2 style="margin:0; font-size:22px;">Applicant Diagnostics File</h2>
+                <button onclick="document.getElementById('inspector-modal-overlay-${id}').remove()" style="background:transparent; border:none; color:white; font-size:24px; cursor:pointer;">&times;</button>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:24px;">
+                <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
+                  <strong style="color:var(--color-electric); display:block; margin-bottom:8px; text-transform:uppercase; font-size:12px;">Contact Information</strong>
+                  <div style="font-size:14px; margin-bottom:4px;"><strong>Email (Auth):</strong> ${s.email || 'N/A'}</div>
+                  <div style="font-size:14px; margin-bottom:4px;"><strong>Email (Contact):</strong> ${s.contact_email || 'N/A'}</div>
+                  <div style="font-size:14px; margin-bottom:4px;"><strong>Phone:</strong> ${s.phone || 'N/A'}</div>
+                  <div style="font-size:14px; margin-bottom:4px;"><strong>Location:</strong> ${s.address || 'N/A'}</div>
+                  <div style="font-size:14px; margin-bottom:4px;"><strong>LinkedIn:</strong> ${s.linkedin_url ? `<a href="${s.linkedin_url}" target="_blank" style="color:#60a5fa;">View</a>` : 'N/A'}</div>
+                  <div style="font-size:14px; margin-bottom:4px;"><strong>Online Portfolio:</strong> ${s.online_portfolio_url ? `<a href="${s.online_portfolio_url}" target="_blank" style="color:#60a5fa;">View</a>` : 'N/A'}</div>
+                </div>
+
+                <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
+                  <strong style="color:var(--color-electric); display:block; margin-bottom:8px; text-transform:uppercase; font-size:12px;">Rates & Environment</strong>
+                  <div style="font-size:14px; margin-bottom:4px;"><strong>Hourly Rate:</strong> ${s.hourly_rate ? s.hourly_rate + ' ' + (s.hourly_rate_currency || 'USD') + '/hr' : 'N/A'}</div>
+                  <div style="font-size:14px; margin-bottom:4px;"><strong>Availability:</strong> ${s.availability || 'N/A'}</div>
+                  <div style="font-size:14px; margin-bottom:4px;"><strong>Schedule Type:</strong> ${s.schedule_type || 'N/A'}</div>
+                  <div style="font-size:14px; margin-bottom:4px;"><strong>Working Days:</strong> ${s.working_days || 'N/A'}</div>
+                  <div style="font-size:14px; margin-bottom:4px;"><strong>Working Hours:</strong> ${s.working_hours || 'N/A'}</div>
+                  <div style="font-size:14px; margin-bottom:4px;"><strong>Timezone:</strong> ${s.timezone || 'N/A'}</div>
+                </div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:8px; border:1px solid rgba(255,255,255,0.05); margin-bottom:24px;">
+                  <strong style="color:var(--color-electric); display:block; margin-bottom:8px; text-transform:uppercase; font-size:12px;">Technical Skills</strong>
+                  <div style="margin-bottom:12px; font-size:13px;"><strong style="display:block; margin-bottom:4px;">Specializations:</strong> ${skillsHtml}</div>
+                  <div style="margin-bottom:12px; font-size:13px;"><strong style="display:block; margin-bottom:4px;">Software Used:</strong> ${softwareHtml}</div>
+                  <div style="margin-bottom:12px; font-size:13px;"><strong style="display:block; margin-bottom:4px;">Languages Spoken:</strong> ${languageHtml}</div>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+      });
+    });
+
   }
 
 });
