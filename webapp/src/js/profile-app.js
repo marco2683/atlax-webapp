@@ -484,7 +484,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    const pitchText = "Cover Letter Attached: " + (coverUrl ? "Yes" : "No");
+    const typedPitch = document.getElementById('app-pitch-text')?.value;
+    const pitchText = typedPitch ? typedPitch : ("Cover Letter Attached: " + (coverUrl ? "Yes" : "No"));
 
     const dbPayload = { 
       designer_status: 'pending',
@@ -736,6 +737,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <input type="text" class="profile-input comm-detail" placeholder="ID, Number or Link" style="flex: 1;">
                   </div>
                 </div>
+              </div>
+
+              <!-- Cover Letter / Pitch -->
+              <div class="profile-form-group" style="margin-top: 8px;">
+                <label style="margin-bottom: 8px; font-weight: 600; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;">Cover Letter & Pitch</label>
+                <textarea id="app-pitch-text" class="profile-input" rows="5" placeholder="Describe your skills, why you want to be part of Atlas DT, and what value you can provide..." style="width: 100%; resize: vertical; margin-bottom: 8px;"></textarea>
               </div>
 
               <!-- Native File Uploads -->
