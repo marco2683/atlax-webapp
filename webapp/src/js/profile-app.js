@@ -387,13 +387,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // 2. Format Specialized Skills
-    const skillCards = Array.from(document.querySelectorAll('#skills-container .skill-pill'));
-    const specializedSkillsIds = skillCards.map((pill, index) => {
-      return { rank: index + 1, skill: pill.dataset.skill };
+    const skillInputs = Array.from(document.querySelectorAll('.skill-rank-input'));
+    const specializedSkillsIds = [];
+    skillInputs.forEach((input, index) => {
+      const val = input.value.trim();
+      if (val) {
+        specializedSkillsIds.push({ rank: index + 1, skill: val });
+      }
     });
 
     if (specializedSkillsIds.length === 0) {
       alert("Please add at least one specialized skill (e.g. Injection Molding).");
+      return;
+    }
+
+    // 3. Format Software Used
+    const softwarePills = Array.from(document.querySelectorAll('#software-container .skill-pill'));
+    const softwareUsed = softwarePills.map(pill => pill.dataset.software);
+
+    if (softwareUsed.length === 0) {
+      alert("Please add at least one software tool you are proficient in.");
       return;
     }
 
@@ -426,6 +439,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       working_days: document.getElementById('app-working-days')?.value || '',
       working_hours: document.getElementById('app-working-hours')?.value || '',
       specialized_skills: specializedSkillsIds,
+      software_used: softwareUsed,
       comms_tools: JSON.stringify(Array.from(document.querySelectorAll('.comm-row')).map(row => ({
         type: row.querySelector('.comm-type').value,
         detail: row.querySelector('.comm-detail').value
@@ -548,11 +562,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
               <!-- Typical Working Schedule -->
               <div class="profile-form-group" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: 8px;">
-                <label style="margin-bottom: 12px; color: var(--color-electric); font-weight: 600;">Typical Working Schedule</label>
-                <div class="profile-form-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-                  <div>
-                    <label style="font-size: 11px;">Timezone</label>
-                    <select id="app-timezone" class="profile-input">
+                <label style="margin-bottom: 16px; color: var(--color-electric); font-weight: 600; display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;">Typical Working Schedule</label>
+                <div class="profile-form-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+                  <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 11px; font-weight: 600; opacity: 0.7;">Timezone</label>
+                    <select id="app-timezone" class="profile-input" style="width: 100%;">
                       <option value="UTC-8 (PST)">UTC-8 (PST)</option>
                       <option value="UTC-5 (EST)">UTC-5 (EST)</option>
                       <option value="UTC+0 (GMT)">UTC+0 (GMT)</option>
@@ -563,12 +577,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                       <option value="Other">Other</option>
                     </select>
                   </div>
-                  <div>
-                    <label style="font-size: 11px;">Working Days</label>
+                  <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 11px; font-weight: 600; opacity: 0.7;">Working Days</label>
                     <input type="text" id="app-working-days" class="profile-input" placeholder="e.g. Mon - Fri">
                   </div>
-                  <div>
-                    <label style="font-size: 11px;">Working Hours</label>
+                  <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 11px; font-weight: 600; opacity: 0.7;">Working Hours</label>
                     <input type="text" id="app-working-hours" class="profile-input" placeholder="e.g. 9AM - 5PM">
                   </div>
                 </div>
@@ -577,9 +591,40 @@ document.addEventListener('DOMContentLoaded', async () => {
               <!-- Skill Tagging -->
               <div class="profile-form-group">
                 <label>Specialized Skills (Ranked) <span class="req">*</span></label>
-                <p style="font-size: 11px; opacity: 0.6; margin-bottom: 8px; margin-top:-4px;">Type a skill and press Enter. Order them from most to least specialized (e.g. Injection Molding, Sheet Metal...). Top 5 are highlighted.</p>
-                <div id="skills-container" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; min-height: 48px; background: rgba(0,0,0,0.2);">
-                  <input type="text" id="app-skill-input" style="background: transparent; border: none; color: inherit; outline: none; flex: 1; min-width: 150px;" placeholder="Add skill...">
+                <div class="profile-form-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 12px; font-weight: 600; color: var(--color-electric); width: 14px;">1.</span>
+                    <input type="text" class="profile-input skill-rank-input" placeholder="e.g. Injection Molding">
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 12px; font-weight: 600; color: var(--color-electric); width: 14px;">2.</span>
+                    <input type="text" class="profile-input skill-rank-input" placeholder="e.g. Sheet Metal">
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 12px; font-weight: 600; color: var(--color-electric); width: 14px;">3.</span>
+                    <input type="text" class="profile-input skill-rank-input" placeholder="e.g. Tool Design">
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 12px; opacity: 0.5; width: 14px;">4.</span>
+                    <input type="text" class="profile-input skill-rank-input" placeholder="Optional">
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 12px; opacity: 0.5; width: 14px;">5.</span>
+                    <input type="text" class="profile-input skill-rank-input" placeholder="Optional">
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 12px; opacity: 0.5; width: 14px;">6.</span>
+                    <input type="text" class="profile-input skill-rank-input" placeholder="Optional">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Software Used Tagging -->
+              <div class="profile-form-group">
+                <label>Software Used <span class="req">*</span></label>
+                <p style="font-size: 11px; opacity: 0.6; margin-bottom: 8px; margin-top:-4px;">Type a software tool and press Enter (e.g. Solidworks, AutoCAD...).</p>
+                <div id="software-container" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; min-height: 48px; background: rgba(0,0,0,0.2);">
+                  <input type="text" id="app-software-input" style="background: transparent; border: none; color: inherit; outline: none; flex: 1; min-width: 150px;" placeholder="Add software...">
                 </div>
               </div>
 
@@ -760,34 +805,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         setupNativeUpload('resume', 'user_resumes');
         setupNativeUpload('portfolio', 'user_portfolios');
 
-        // Skill Tagging Logic
-        const skillInput = document.getElementById('app-skill-input');
-        const skillsContainer = document.getElementById('skills-container');
-        if (skillInput) {
-          skillInput.addEventListener('keydown', (e) => {
+        // Software Tagging Logic
+        const softwareInput = document.getElementById('app-software-input');
+        const softwareContainer = document.getElementById('software-container');
+        if (softwareInput) {
+          softwareInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ',') {
               e.preventDefault();
-              const val = skillInput.value.trim();
+              const val = softwareInput.value.trim();
               if (val) {
-                const count = skillsContainer.querySelectorAll('.skill-pill').length + 1;
+                const count = softwareContainer.querySelectorAll('.skill-pill').length + 1;
                 const pill = document.createElement('div');
                 pill.className = 'skill-pill';
-                pill.dataset.skill = val;
-                pill.style = `display: flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 4px; font-size: 13px; background: ${count <= 5 ? '#3b82f6' : 'rgba(255,255,255,0.1)'}; color: ${count <= 5 ? '#fff' : 'rgba(255,255,255,0.7)'}; border: 1px solid ${count <= 5 ? '#2563eb' : 'rgba(255,255,255,0.2)'};`;
-                pill.innerHTML = `<span style="font-size:10px; opacity:0.8;">#${count}</span> ${val} <span style="cursor:pointer; margin-left:4px; opacity:0.7;">✕</span>`;
-                skillsContainer.insertBefore(pill, skillInput);
-                skillInput.value = '';
+                pill.dataset.software = val;
+                pill.style = `display: flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 4px; font-size: 13px; background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3);`;
+                pill.innerHTML = `${val} <span style="cursor:pointer; margin-left:4px; opacity:0.7;">✕</span>`;
+                softwareContainer.insertBefore(pill, softwareInput);
+                softwareInput.value = '';
                 
                 pill.querySelector('span:last-child').addEventListener('click', () => {
                    pill.remove();
-                   const allPills = Array.from(skillsContainer.querySelectorAll('.skill-pill'));
-                   allPills.forEach((p, idx) => {
-                     const rank = idx + 1;
-                     p.querySelector('span:first-child').innerText = `#${rank}`;
-                     p.style.background = rank <= 5 ? '#3b82f6' : 'rgba(255,255,255,0.1)';
-                     p.style.color = rank <= 5 ? '#fff' : 'rgba(255,255,255,0.7)';
-                     p.style.borderColor = rank <= 5 ? '#2563eb' : 'rgba(255,255,255,0.2)';
-                   });
                 });
               }
             }
