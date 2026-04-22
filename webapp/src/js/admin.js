@@ -3323,7 +3323,16 @@ document.addEventListener('DOMContentLoaded', async () => {
           if (error) throw error;
           
           const approved = loadedCustomers.find(c => c.id === id);
-          if (approved) approved.designer_status = 'approved';
+          if (approved) {
+             approved.designer_status = 'approved';
+             try {
+               await fetch('/.netlify/functions/send-email', {
+                 method: 'POST',
+                 headers: { 'Content-Type': 'application/json' },
+                 body: JSON.stringify({ email: approved.email, name: approved.first_name, type: 'designer_approved' })
+               });
+             } catch(err) { console.error("Failed to trigger email hook", err); }
+          }
           updateNavBadges();
           renderDesignersHub();
         } catch(err) {
@@ -3346,7 +3355,16 @@ document.addEventListener('DOMContentLoaded', async () => {
           if (error) throw error;
           
           const rejected = loadedCustomers.find(c => c.id === id);
-          if (rejected) rejected.designer_status = 'rejected';
+          if (rejected) {
+             rejected.designer_status = 'rejected';
+             try {
+               await fetch('/.netlify/functions/send-email', {
+                 method: 'POST',
+                 headers: { 'Content-Type': 'application/json' },
+                 body: JSON.stringify({ email: rejected.email, name: rejected.first_name, type: 'designer_rejected' })
+               });
+             } catch(err) { console.error("Failed to trigger email hook", err); }
+          }
           updateNavBadges();
           renderDesignersHub();
         } catch(err) {
