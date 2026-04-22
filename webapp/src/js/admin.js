@@ -3269,6 +3269,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       targetDesigners = targetDesigners.filter(c => c.designer_status !== 'rejected');
     }
 
+    const parseArray = (attr) => {
+      if (!attr) return [];
+      if (Array.isArray(attr)) return attr;
+      try { return JSON.parse(attr); } catch(e) { return []; }
+    };
+
     const rows = targetDesigners.map(s => `
       <tr>
         <td>
@@ -3287,7 +3293,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         </td>
         <td>
           ${s.portfolio_url ? `<a href="${s.portfolio_url}" target="_blank" class="admin-badge active" style="text-decoration:none;">Doc</a>` : ''}
-          ${s.portfolio_assets && s.portfolio_assets.length ? `<a href="${JSON.parse(s.portfolio_assets)[0]}" target="_blank" class="admin-badge active" style="text-decoration:none; margin-left: ${s.portfolio_url ? '4px' : '0'};">Images</a>` : (!s.portfolio_url ? `<span class="admin-badge">None</span>` : '')}
+          ${parseArray(s.portfolio_assets).length ? `<a href="${parseArray(s.portfolio_assets)[0]}" target="_blank" class="admin-badge active" style="text-decoration:none; margin-left: ${s.portfolio_url ? '4px' : '0'};">Images</a>` : (!s.portfolio_url ? `<span class="admin-badge">None</span>` : '')}
         </td>
         <td class="admin-table-actions">
            <button class="admin-action-btn admin-view-designer" data-id="${s.id}" style="color:white; background:var(--color-electric); border-color:var(--color-electric);">Review</button>

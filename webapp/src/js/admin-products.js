@@ -61,7 +61,7 @@ function renderProductsTable(container, search = '') {
         <td style="font-family:monospace; font-size:11px; color:var(--color-steel-400);" title="${p.id}">${p.id.substring(0, 8)}…</td>
         <td>
           <div style="display:flex; align-items:center; gap:10px;">
-            <img src="${p.image_url || '/placeholder.png'}" style="width:36px; height:36px; object-fit:cover; border-radius:4px; border:1px solid rgba(255,255,255,0.08);" onerror="this.src='/placeholder.png'">
+            <img src="${p.image_url || '/placeholder.png'}" style="width:36px; height:36px; object-fit:cover; border-radius:4px; border:1px solid rgba(255,255,255,0.08);" onerror="this.onerror=null; this.src='https://via.placeholder.com/64x64.png?text=No+Image'">
             <div>
               <div style="font-weight:600; font-size:13px;">${p.description || p.mpn}</div>
               <div style="font-size:11px; color:var(--color-steel-400);">${p.mpn}</div>
