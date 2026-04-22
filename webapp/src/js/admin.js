@@ -3329,7 +3329,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                await fetch('/.netlify/functions/send-email', {
                  method: 'POST',
                  headers: { 'Content-Type': 'application/json' },
-                 body: JSON.stringify({ email: approved.email, name: approved.first_name, type: 'designer_approved' })
+                 body: JSON.stringify({ email: approved.contact_email, name: approved.first_name || 'Designer', type: 'designer_approved' })
                });
              } catch(err) { console.error("Failed to trigger email hook", err); }
           }
@@ -3361,7 +3361,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                await fetch('/.netlify/functions/send-email', {
                  method: 'POST',
                  headers: { 'Content-Type': 'application/json' },
-                 body: JSON.stringify({ email: rejected.email, name: rejected.first_name, type: 'designer_rejected' })
+                 body: JSON.stringify({ email: rejected.contact_email, name: rejected.first_name || 'Designer', type: 'designer_rejected' })
                });
              } catch(err) { console.error("Failed to trigger email hook", err); }
           }
