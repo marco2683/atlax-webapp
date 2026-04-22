@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const pendingDesigners = loadedCustomers.filter(c => c.designer_status === 'pending').length;
     const designerTab = document.querySelector('.admin-nav-item[data-tab="designers"]');
     if (designerTab) {
-      designerTab.innerHTML = `Designer Hub ${pendingDesigners > 0 ? \`<span style="background:var(--color-electric); color:white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 6px; font-weight: bold;">\${pendingDesigners}</span>\` : ''}`;
+      designerTab.innerHTML = `Designer Hub ${pendingDesigners > 0 ? '<span style="background:var(--color-electric); color:white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 6px; font-weight: bold;">' + pendingDesigners + '</span>' : ''}`;
     }
   }
 
