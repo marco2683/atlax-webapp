@@ -25,8 +25,8 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.12) 0%, transparent 60%),
-        linear-gradient(to bottom, rgba(10, 10, 15, 0.88) 0%, rgba(10, 10, 15, 0.94) 100%);
+      background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.08) 0%, transparent 60%),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.98) 100%);
       z-index: 0;
     }
 
@@ -38,14 +38,14 @@
     .services-hero h1 {
       font-size: 56px;
       font-weight: 800;
-      color: var(--color-white);
+      color: #0f172a;
       margin-bottom: 24px;
       letter-spacing: -1.5px;
     }
 
     .services-hero p {
       font-size: 20px;
-      color: var(--color-steel-400);
+      color: #334155;
       max-width: 700px;
       margin: 0 auto;
       line-height: 1.6;
@@ -59,7 +59,7 @@
 
     .service-block + .service-block,
     .engine-block + .service-block {
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
     }
 
     .service-block__inner {
@@ -86,20 +86,20 @@
     .service-block__image img {
       width: 100%;
       border-radius: var(--radius-lg);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
     }
 
     .service-block__content h2 {
       font-size: 40px;
       font-weight: 700;
-      color: var(--color-white);
+      color: #0f172a;
       margin-bottom: 24px;
       letter-spacing: -1px;
     }
 
     .service-block__content>p {
-      color: var(--color-steel-300);
+      color: #475569;
       font-size: 18px;
       line-height: 1.6;
       margin-bottom: 32px;
@@ -123,7 +123,7 @@
       margin-bottom: 16px;
       position: relative;
       padding-left: 24px;
-      color: var(--color-steel-400);
+      color: #475569;
       line-height: 1.5;
     }
 
@@ -138,11 +138,11 @@
     }
 
     .service-list li strong {
-      color: var(--color-white);
+      color: #0f172a;
     }
 
     .service-result {
-      background: rgba(14, 165, 233, 0.05);
+      background: rgba(14, 165, 233, 0.04);
       border-left: 3px solid var(--color-electric);
       padding: 24px;
       border-radius: 0 var(--radius-md) var(--radius-md) 0;
@@ -150,16 +150,17 @@
 
     .service-result h4 {
       font-size: 16px;
-      color: var(--color-white);
+      color: #0f172a;
       margin-bottom: 8px;
     }
 
     .service-result p {
-      color: var(--color-steel-300);
+      color: #475569;
       margin: 0;
       font-size: 15px;
       line-height: 1.5;
     }
+
 
     @media (max-width: 1024px) {
 
@@ -229,7 +230,7 @@
   <script defer src="/src/js/cms-loader.js"></script>
 </head>
 
-<body class="marketing-page" style="background: var(--color-void);">
+<body class="marketing-page" style="background: #ffffff;">
 
   <nav class="navbar" id="navbar"
     style="position: fixed; width: 100%; top: 0; z-index: 100; transition: background 0.3s; padding: var(--space-4) var(--space-6); background: rgba(12,12,12,0.8); backdrop-filter: blur(20px);">
@@ -255,14 +256,13 @@
         <a href="/app.html#rfq" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">Component</span>
           <span class="global-nav-link__sub">Instant Quote</span>
-        </a>
-        <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
+        </a>        <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">OEMs</span>
           <span class="global-nav-link__sub">Marketplace</span>
         </a>
-        <a href="/app.html#tariff" class="global-nav-link" style="padding: 8px 24px;">
-          <span class="global-nav-link__top">HS Tariffs</span>
-          <span class="global-nav-link__sub">Optimiser</span>
+        <a href="/app.html#designers" class="global-nav-link" style="padding: 8px 24px;">
+          <span class="global-nav-link__top">Engineering</span>
+          <span class="global-nav-link__sub">Talents</span>
         </a>
       </div>
       <div class="navbar__actions">
@@ -294,35 +294,10 @@
     <!-- MANUFACTURING ENGINE -->
     <section class="engine-block">
       <div style="text-align: center; max-width: 800px; margin: 0 auto 60px;">
-        <h2 style="font-size: 40px; font-weight: 700; color: var(--color-white); margin-bottom: 24px; letter-spacing: -1px;">The Manufacturing Engine</h2>
-        <p style="color: var(--color-steel-300); font-size: 18px; line-height: 1.6;">Our integrated software directly connects you to a heavily vetted network of premium global suppliers at industry-best costs. Instantly quote, orchestrate production, and scale your supply chain with radical efficiency.</p>
+        <h2 style="font-size: 40px; font-weight: 700; color: #0f172a; margin-bottom: 24px; letter-spacing: -1px;">The Manufacturing Engine</h2>
+        <p style="color: #475569; font-size: 18px; line-height: 1.6;">Our integrated software directly connects you to a heavily vetted network of premium global suppliers at industry-best costs. Instantly quote, orchestrate production, and scale your supply chain with radical efficiency.</p>
       </div>
-      
-      <!-- Showcase Section (Marquee) -->
-      <div class="sales-showcase" style="overflow: hidden; width: 100vw; margin-left: calc(-50vw + 50%); margin-top: 20px;">
-        <div class="sales-marquee-container">
-          <div class="sales-marquee-track">
-            <!-- Group 1 -->
-            <img src="/images/showcase-1.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <img src="/images/showcase-2.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <img src="/images/showcase-3.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <img src="/images/showcase-4.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <img src="/images/showcase-5.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <img src="/images/showcase-6.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <img src="/images/showcase-7.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <img src="/images/showcase-8.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <!-- Group 2 -->
-            <img src="/images/showcase-1.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <img src="/images/showcase-2.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <img src="/images/showcase-3.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <img src="/images/showcase-4.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <img src="/images/showcase-5.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <img src="/images/showcase-6.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <img src="/images/showcase-7.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-            <img src="/images/showcase-8.png" alt="Platform UI" class="sales-marquee-img" onerror="this.src='/images/placeholder-ui.png'">
-          </div>
-        </div>
-      </div>
+
     </section>
 
     <!-- 1. PRODUCT DESIGN & DEVELOPMENT -->
@@ -376,7 +351,7 @@
           </div>
         </div>
         <div class="service-block__image">
-          <img src="/assets/images/services/detail-prototyping.png" alt="Rapid Prototyping" />
+          <img src="/assets/images/services/new_prototyping.png" alt="Rapid Prototyping" />
         </div>
       </div>
     </section>
@@ -385,7 +360,7 @@
     <section class="service-block">
       <div class="service-block__inner">
         <div class="service-block__image">
-          <img src="/assets/images/services/detail-sourcing.png" alt="Strategic Sourcing & Supply Chain" />
+          <img src="/assets/images/services/new_sourcing.png" alt="Strategic Sourcing & Supply Chain" />
         </div>
         <div class="service-block__content">
           <h2>Strategic Sourcing & Supply Chain</h2>
@@ -432,7 +407,7 @@
           </div>
         </div>
         <div class="service-block__image">
-          <img src="/assets/images/services/detail-contract.png" alt="Contract Manufacturing" />
+          <img src="/assets/images/services/contract-mfg.png" alt="Contract Manufacturing" />
         </div>
       </div>
     </section>
@@ -441,7 +416,7 @@
     <section class="service-block">
       <div class="service-block__inner">
         <div class="service-block__image">
-          <img src="/assets/images/services/detail-electronics.png" alt="Electronics Development" />
+          <img src="/assets/images/services/new_electronics.png" alt="Electronics Development" />
         </div>
         <div class="service-block__content">
           <h2>Electronics Development</h2>
@@ -488,7 +463,7 @@
           </div>
         </div>
         <div class="service-block__image">
-          <img src="/assets/images/services/detail-automation.png" alt="Factory Automation" />
+          <img src="/assets/images/services/new_automation.png" alt="Factory Automation" />
         </div>
       </div>
     </section>
@@ -699,5 +674,7 @@
 </body>
 
 </html>
+
+
 
 

@@ -5,6 +5,7 @@ import { MOCK_ESTIMATOR_PRODUCTS } from '../data/mock-estimator.js';
 let shortlist = [];
 let selectedEstimatorProduct = null;
 let activeFilter = 'All Talent';
+let searchQuery = '';
 let scenarioState = {}; // { 'Phase Name': { active: true, alloc: 1.0, offWorkers: [] } }
 
 /* ── CATEGORY FILTERS ─────────────────────────────────────── */
@@ -23,6 +24,7 @@ export function initDesignersController() {
   container.innerHTML = `
     <div class="de-header m-fade-up">
       <h1>Find Designers &amp; Engineers or Post Your Job</h1>
+      <p id="de-header-desc" style="color: var(--color-steel-300); font-size: 1.1rem; margin-top: 12px; margin-bottom: 24px; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.5;"></p>
       <div class="de-toggle-group" id="de-main-toggle">
         <button class="de-toggle-btn active" data-mode="hire">Hire Talent</button>
         <button class="de-toggle-btn" data-mode="work">Find Work</button>
@@ -52,9 +54,13 @@ export function initDesignersController() {
 
   function setMode(mode) {
     toggleBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.mode === mode));
+    
+    const desc = document.getElementById('de-header-desc');
     if (mode === 'hire') {
+      if (desc) desc.innerHTML = 'Browse our curated network of highly vetted Industrial Designers, Mechanical Engineers, and UI/UX specialists ready to bring your vision to life.';
       renderHireView(workspace);
     } else {
+      if (desc) desc.innerHTML = 'Submit your project details and allow top-tier hardware professionals to submit proposals and bids directly to your workspace.';
       renderWorkView(workspace);
     }
   }
@@ -83,13 +89,17 @@ function renderHireView(workspace) {
       <aside class="de-sidebar" id="de-sidebar-container"></aside>
 
       <div class="de-main-content">
-        <div class="de-toolbar">
-          <div class="de-filters" id="de-filters">
+        <div class="de-toolbar" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <div class="de-filters" id="de-filters" style="display: flex; gap: 8px; flex-wrap: wrap; flex: 1;">
             ${Object.keys(FILTER_CATEGORIES).map(cat =>
     `<button class="de-filter-chip ${cat === activeFilter ? 'active' : ''}" data-filter="${cat}">${cat}</button>`
   ).join('')}
           </div>
-          <button class="de-post-job-btn" id="de-post-job-trigger">
+          <div style="position: relative; max-width: 320px; width: 100%; flex-shrink: 0;">
+            <svg style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--color-steel-400);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="de-search-input" placeholder="Search skills, tags, names..." style="width: 100%; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: var(--color-white); border-radius: 8px; padding: 10px 14px 10px 38px; outline: none; font-size: 0.95rem; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--color-electric)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+          </div>
+          <button class="de-post-job-btn" id="de-post-job-trigger" style="flex-shrink: 0;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             Post a Job
           </button>
@@ -97,9 +107,6 @@ function renderHireView(workspace) {
         <div class="de-grid-carousel" id="de-grid-container"></div>
       </div>
     </div>
-
-    <div class="de-estimator-top" id="de-estimator-container"></div>
-    <div class="de-scenario-planner" id="de-scenario-planner-container"></div>
   `;
 
   // Filter chips
@@ -111,13 +118,20 @@ function renderHireView(workspace) {
     updateGrid();
   });
 
+  // Search input
+  const searchInput = document.getElementById('de-search-input');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase().trim();
+      updateGrid();
+    });
+  }
+
   // Post a Job button
   document.getElementById('de-post-job-trigger')?.addEventListener('click', showPostJobModal);
 
   updateSidebar();
   updateGrid();
-  updateEstimator();
-  updateScenarioPlanner();
 }
 
 /* ── SIDEBAR ──────────────────────────────────────────────── */
@@ -218,7 +232,18 @@ function updateGrid() {
   if (!container) return;
 
   const filterFn = FILTER_CATEGORIES[activeFilter] || (() => true);
-  const filtered = MOCK_DESIGNERS.filter(filterFn);
+  const filtered = MOCK_DESIGNERS.filter(d => {
+    if (!filterFn(d)) return false;
+    if (searchQuery) {
+      const q = searchQuery;
+      return (
+        d.name.toLowerCase().includes(q) ||
+        d.title.toLowerCase().includes(q) ||
+        d.tags.some(t => t.toLowerCase().includes(q))
+      );
+    }
+    return true;
+  });
 
   if (filtered.length === 0) {
     container.innerHTML = `<div class="de-empty-state">No designers match this filter.</div>`;
@@ -229,37 +254,29 @@ function updateGrid() {
     const isAdded = shortlist.some(s => s.id === d.id);
     const stars = renderStars(parseFloat(d.rating));
     return `
-      <div class="de-designer-card" data-id="${d.id}">
-        <div class="de-designer-portfolio-preview" style="background-image: url('${d.cover}')">
-          <div class="de-designer-portfolio-overlay"></div>
-          <div class="de-avail-badge ${d.availability === 'Available now' ? 'avail--now' : 'avail--soon'}">${d.availability}</div>
+      <div class="de-designer-card minimalist-card" data-id="${d.id}">
+        <img src="${d.avatar}" alt="${d.name}" class="minimalist-card-img" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=random'">
+        <h3 class="minimalist-card-name">${d.name}</h3>
+        <p class="minimalist-card-title">${d.title}</p>
+        
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px;">
+          ${d.tags.slice(0, 3).map(t => `<span class="minimalist-card-tag">${t}</span>`).join('')}
+          ${d.tags.length > 3 ? `<span class="minimalist-card-tag">+${d.tags.length - 3}</span>` : ''}
         </div>
-        <div class="de-designer-info">
-          <div class="de-designer-avatar" style="background-image: url('${d.avatar}')"></div>
-          <div class="de-designer-top-meta">
-            <div class="de-designer-rate">${d.rate} <span>/ hr</span></div>
-            <div class="de-designer-rating">
-              ${stars}
-              ${d.rating} <span style="color:var(--color-steel-400);font-weight:normal;">(${d.reviews})</span>
-            </div>
+        
+        <div class="minimalist-card-footer">
+          <div style="text-align: left;">
+            <span class="minimalist-card-rate-label">Hourly Rate</span>
+            <span class="minimalist-card-rate-val">${d.rate}</span>
           </div>
-          <h3 class="de-designer-name">${d.name}</h3>
-          <div class="de-designer-title">${d.title}</div>
-          <div class="de-designer-location">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            ${d.location}
+          <div style="display: flex; gap: 8px;">
+            <button class="de-btn-message" data-id="${d.id}" style="background: transparent; color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); padding: 8px 12px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(139,92,246,0.1)'" onmouseout="this.style.background='transparent'" title="Contact Designer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <button class="de-btn-add-team ${isAdded ? 'added' : ''}" data-id="${d.id}" style="background: ${isAdded ? 'rgba(16,185,129,0.15)' : 'rgba(139,92,246,0.15)'}; color: ${isAdded ? '#10b981' : '#c4b5fd'}; border: 1px solid ${isAdded ? 'rgba(16,185,129,0.3)' : 'rgba(139,92,246,0.3)'}; padding: 8px 12px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='${isAdded ? 'rgba(16,185,129,0.25)' : 'rgba(139,92,246,0.25)'}'" onmouseout="this.style.background='${isAdded ? 'rgba(16,185,129,0.15)' : 'rgba(139,92,246,0.15)'}'" title="${isAdded ? 'Added to Team' : 'Add to Team'}">
+              ${isAdded ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><polyline points="20 6 9 17 4 12"/></svg>' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'}
+            </button>
           </div>
-          <div class="de-designer-tags">
-            ${d.tags.slice(0, 3).map(t => `<span class="de-designer-tag">${t}</span>`).join('')}
-            ${d.tags.length > 3 ? `<span class="de-designer-tag de-tag-more">+${d.tags.length - 3}</span>` : ''}
-          </div>
-        </div>
-        <div class="de-card-actions">
-          <button class="de-btn-add-team ${isAdded ? 'added' : ''}" data-id="${d.id}">
-            ${isAdded
-        ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Added`
-        : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add`}
-          </button>
         </div>
       </div>
     `;
@@ -267,13 +284,20 @@ function updateGrid() {
 
   // View Profile (Entire Card Clickable)
   container.querySelectorAll('.de-designer-card').forEach(card => {
-    card.style.cursor = 'pointer';
     card.addEventListener('click', e => {
-      // If they clicked the add-to-team button, don't open the profile
-      if (e.target.closest('.de-btn-add-team')) return;
+      if (e.target.closest('.de-btn-add-team') || e.target.closest('.de-btn-message')) return;
       e.stopPropagation();
       const designer = MOCK_DESIGNERS.find(d => d.id === card.dataset.id);
       if (designer) showDesignerProfile(designer);
+    });
+  });
+
+  // Message Designer directly from Grid
+  container.querySelectorAll('.de-btn-message').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const designer = MOCK_DESIGNERS.find(d => d.id === btn.dataset.id);
+      if (designer) showContactDesignerModal(designer);
     });
   });
 

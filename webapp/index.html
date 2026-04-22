@@ -58,14 +58,13 @@
         <a href="/app.html#rfq" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">Component</span>
           <span class="global-nav-link__sub">Instant Quote</span>
-        </a>
-        <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
+        </a>        <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">OEMs</span>
           <span class="global-nav-link__sub">Marketplace</span>
         </a>
-        <a href="/app.html#tariff" class="global-nav-link" style="padding: 8px 24px;">
-          <span class="global-nav-link__top">HS Tariffs</span>
-          <span class="global-nav-link__sub">Optimiser</span>
+        <a href="/app.html#designers" class="global-nav-link" style="padding: 8px 24px;">
+          <span class="global-nav-link__top">Engineering</span>
+          <span class="global-nav-link__sub">Talents</span>
         </a>
       </div>
       <div class="navbar__actions">
@@ -103,10 +102,18 @@
     <div class="m-hero__content m-fade-up"
       style="text-align: center; align-items: center; max-width: 900px; margin: auto; padding-top: 5vh;">
 
-      <div class="hero-headline">
-        <span class="hero-headline__west" style="font-size: clamp(3.2rem, 7vw, 4.5rem);">Design + Manufacturing</span>
+      <div style="display: inline-flex; flex-direction: column; align-items: stretch; justify-content: center; margin-bottom: 8px; max-width: max-content; margin-left: auto; margin-right: auto; padding: 0 10px;">
+        <img src="/logos/atlasdt-logo-light.png" alt="AtlasDT" style="height: clamp(80px, 14vw, 140px); width: auto; margin-bottom: -12px; object-fit: contain;">
+        <div style="display: flex; justify-content: space-between; width: 100%; font-family: 'Outfit', sans-serif; font-size: clamp(14px, 2.8vw, 24px); font-weight: 300; text-transform: uppercase; color: rgba(255, 255, 255, 0.8); position: relative; z-index: 2;">
+          <span>D</span><span>E</span><span>S</span><span>I</span><span>G</span><span>N</span>
+          <span style="visibility: hidden; width: 1px;">-</span>
+          <span>&amp;</span>
+          <span style="visibility: hidden; width: 1px;">-</span>
+          <span>T</span><span>E</span><span>C</span><span>H</span><span>N</span><span>O</span><span>L</span><span>O</span><span>G</span><span>Y</span>
+        </div>
       </div>
-      <span class="hero-prompt__text" style="font-size: 16px; margin-top: 10px; display: block;">From concept to factory
+
+      <span class="hero-prompt__text" style="font-size: 16px; display: block;">From concept to factory
         floor &mdash; faster, leaner, and more competitive than you thought possible.</span>
     </div>
 
@@ -240,8 +247,18 @@
       <div class="prd-who-left">
         <!-- LEFT ALIGNED EYEBROW KEY TO GRID: must be inside column -->
         <p class="prd-who-eyebrow">Who We Are</p>
-        <h2 class="prd-who-title">Hands-on designers & engineers.
-          <h2 class="prd-who-title">On-the-ground procurement & quality.<br><br>Not just a corporate agency.</h2>
+        
+        <ul style="list-style: none; padding: 0; margin: 16px 0 32px 0; display: flex; flex-direction: column; gap: 12px;">
+          <li class="prd-who-title" style="font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
+            <span style="color: #0e7a6c; margin-top: -2px;">&bull;</span> Hands-on designers &amp; engineers.
+          </li>
+          <li class="prd-who-title" style="font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
+            <span style="color: #0e7a6c; margin-top: -2px;">&bull;</span> On-the-ground procurement &amp; quality.
+          </li>
+          <li class="prd-who-title" style="font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
+            <span style="color: #0e7a6c; margin-top: -2px;">&bull;</span> Not just a corporate agency.
+          </li>
+        </ul>
           <p class="prd-who-body">
             We're a lean team of engineers and designers headquartered in Melbourne, with boots on the ground in China
             and
@@ -254,7 +271,35 @@
             ecosystem in the world. You start from an advantage that most companies spend years trying to reach.
           </p>
 
-          <div class="prd-pillars">
+      </div>
+
+      <!-- RIGHT: Photo stacked above Spider Chart -->
+      <div class="prd-who-right">
+
+        <!-- Team Photo -->
+        <div class="prd-who-photo">
+          <div class="prd-photo-frame">
+            <img src="/assets/images/team/engineers_tech_lab.png" alt="Atlas Engineers"
+              style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            <div class="prd-photo-badge">
+              <span class="prd-badge-num">500+</span>
+              <span class="prd-badge-label">Qualified Suppliers</span>
+            </div>
+            <div class="prd-photo-badge prd-photo-badge--2">
+              <span class="prd-badge-num">12+</span>
+              <span class="prd-badge-label">Years in PRD</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Second Row: Pillars and Quote (Vertically Centered) -->
+    <div class="prd-who-inner" style="align-items: center; margin-top: 80px;">
+      
+      <div class="prd-who-left">
+          <div class="prd-pillars" style="margin-top: 0;">
             <div class="prd-pillar">
               <span class="prd-pillar-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
@@ -314,28 +359,10 @@
           </div>
       </div>
 
-      <!-- RIGHT: Photo stacked above Spider Chart -->
       <div class="prd-who-right">
-
-        <!-- Team Photo -->
-        <div class="prd-who-photo">
-          <div class="prd-photo-frame">
-            <img src="/assets/images/team/engineers_tech_lab.png" alt="Atlas Engineers"
-              style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            <div class="prd-photo-badge">
-              <span class="prd-badge-num">500+</span>
-              <span class="prd-badge-label">Qualified Suppliers</span>
-            </div>
-            <div class="prd-photo-badge prd-photo-badge--2">
-              <span class="prd-badge-num">12+</span>
-              <span class="prd-badge-label">Years in PRD</span>
-            </div>
-          </div>
-        </div>
-
         <!-- Typographic Message -->
         <div class="prd-message-block m-fade-up"
-          style="margin-top: 140px; text-align: center; max-width: 90%; margin-left: auto; margin-right: auto; padding-bottom: 8px;">
+          style="text-align: center; max-width: 90%; margin-left: auto; margin-right: auto; padding-bottom: 8px;">
           <p
             style="font-family: var(--font-body), 'Inter', sans-serif; font-style: italic; font-size: 22px; font-weight: 400; line-height: 1.6; color: #64748b; margin: 0;">
             "We eliminate the <span style="text-decoration: line-through; opacity: 0.7;">overhead</span> and <span
@@ -343,7 +370,6 @@
             of our engineering effort is concentrated purely on advancing your product."
           </p>
         </div>
-
       </div>
     </div>
     </div>
@@ -660,45 +686,39 @@
         </div>
       </div>
 
-      <!-- Row 4: Tariff Optimiser — Coming Soon (reversed) -->
+      <!-- Row 4: Find Designers & Engineers (reversed) -->
       <div class="prd-tool-row prd-tool-row--reverse m-fade-up">
         <div class="prd-tool-screenshot">
-          <img src="/assets/images/platform/supply-chain.png" alt="Tariff Optimiser"
-            style="filter:blur(3px) brightness(0.4);">
-          <div class="prd-tool-soon-overlay">
-            <span class="prd-tool-soon-badge">Coming Soon</span>
-          </div>
+          <img src="/images/showcase-6.png" alt="Find Designers and Engineers">
         </div>
         <div class="prd-tool-text">
           <span class="prd-tool-tag"
-            style="background:rgba(194,65,12,0.1);color:#c2410c;border:1px solid rgba(194,65,12,0.3);">
-            <svg width="10" height="10" fill="#c2410c" viewBox="0 0 24 24">
+            style="background:rgba(139,92,246,0.1);color:#c4b5fd;border:1px solid rgba(139,92,246,0.3);">
+            <svg width="10" height="10" fill="#c4b5fd" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="10" />
             </svg>
-            Coming Soon
+            Live Expert Network
           </span>
-          <h3 class="prd-tool-name">Tariff Cost Optimiser</h3>
-          <p class="prd-tool-desc">As tariff landscapes shift, cost structures change overnight. Our Tariff Optimiser
-            maps your BOM against live HS tariff schedules, models alternative sourcing scenarios, and flags
-            optimisation opportunities before they hit your margins.</p>
+          <h3 class="prd-tool-name">Find Designers &amp; Engineers</h3>
+          <p class="prd-tool-desc">Need extra hands to prepare your designs for mass production? Access our Global Designer Network to find pre-vetted industrial designers and mechanical engineers. Seamlessly augment your team, collaborate on CAD, and transition concepts to reality inside a single unified workspace.</p>
           <ul class="prd-tool-list">
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2">
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="2">
                 <polyline points="20 6 9 17 4 12" />
-              </svg>HS code mapping across your full BOM in seconds</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2">
+              </svg>Hire pre-vetted hardware and industrial professionals</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="2">
                 <polyline points="20 6 9 17 4 12" />
-              </svg>Model tariff impact on unit cost across US, EU, and AU trade rules</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2">
+              </svg>Manage contracts and NDAs securely in the platform</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="2">
                 <polyline points="20 6 9 17 4 12" />
-              </svg>Identify country-of-origin optimisation paths</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>Real-time alerts when schedule changes affect your supply chain</li>
+              </svg>Build multidisciplinary teams for complex product launches</li>
           </ul>
-          <span class="prd-tool-cta"
-            style="background:rgba(194,65,12,0.1);color:#c2410c;border-color:rgba(194,65,12,0.3);cursor:default;">
-            Notify Me When Live
-          </span>
+          <a href="app.html#designers" class="prd-tool-cta"
+            style="background:rgba(139,92,246,0.1);color:#c4b5fd;border-color:rgba(139,92,246,0.3);text-decoration:none;display:inline-flex;">
+            Browse Network
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
         </div>
       </div>
 
@@ -994,150 +1014,6 @@
   </div>
 
 
-  <!-- SECTION: One Stop Shop Timeline (DARK) -->
-  <section id="onestop" class="m-onestop-dark">
-    <div style="max-width: 1400px; margin: 0 auto; text-align: center; margin-bottom: 200px;" class="m-fade-up">
-      <h2 class="m-section-title" style="margin-bottom: 24px">One-Stop Shop</h2>
-      <!--<<p class="m-section-desc" style="max-width: 1200px; margin: 0 auto;">
-        From regulated medical devices and high-quality consumer electronics to complex industrial equipment and premium
-        home appliances. We guide your product from early ideation all the way to massive yield manufacturing.
-      </p>-->
-    </div>
-
-    <!-- The Timeline Animation -->
-    <div class="m-timeline-wrapper m-fade-up">
-      <div class="m-timeline-track">
-        <div class="m-timeline-progress"></div>
-      </div>
-
-      <div class="m-timeline-nodes">
-        <!-- Node 1: Ideation -->
-        <div class="m-timeline-step">
-          <div class="m-timeline-dot">
-            <div class="m-timeline-pulse m-pulse-1" style="--node-color: var(--color-neon-purple);"></div>
-          </div>
-          <div class="m-timeline-content m-tc-1">
-            <svg class="m-phase-icon" viewBox="0 0 24 24" fill="none" stroke="var(--color-neon-purple)" stroke-width="1"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 18h6" />
-              <path d="M10 22h4" />
-              <path
-                d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14" />
-            </svg>
-            <h4>1. Product Ideation</h4>
-            <div class="m-timeline-tags">
-              <span style="--node-color: var(--color-neon-purple);">Industrial Design</span>
-              <span style="--node-color: var(--color-neon-purple);">UJM</span>
-              <span style="--node-color: var(--color-neon-purple);">UI/UX</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Node 2: Engineering -->
-        <div class="m-timeline-step m-timeline-step--alt">
-          <div class="m-timeline-dot">
-            <div class="m-timeline-pulse m-pulse-2" style="--node-color: var(--color-electric);"></div>
-          </div>
-          <div class="m-timeline-content m-tc-2">
-            <svg class="m-phase-icon" viewBox="0 0 24 24" fill="none" stroke="var(--color-electric)" stroke-width="1"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path
-                d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-            <h4>2. Precision Engineering</h4>
-            <div class="m-timeline-tags">
-              <span style="--node-color: var(--color-electric);">Mechanical</span>
-              <span style="--node-color: var(--color-electric);">Electrical</span>
-              <span style="--node-color: var(--color-electric);">Systems</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Node 3: Manufacturing -->
-        <div class="m-timeline-step">
-          <div class="m-timeline-dot">
-            <div class="m-timeline-pulse m-pulse-3" style="--node-color: var(--color-neon-cyan);"></div>
-          </div>
-          <div class="m-timeline-content m-tc-3">
-            <svg class="m-phase-icon" viewBox="0 0 24 24" fill="none" stroke="var(--color-neon-cyan)" stroke-width="1"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-              <path d="M17 18h1" />
-              <path d="M12 18h1" />
-              <path d="M7 18h1" />
-            </svg>
-            <h4>3. Execution & Mfg</h4>
-            <div class="m-timeline-tags">
-              <span style="--node-color: var(--color-neon-cyan);">DFM</span>
-              <span style="--node-color: var(--color-neon-cyan);">Tooling</span>
-              <span style="--node-color: var(--color-neon-cyan);">Mass Production</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION: Portfolio Preview (DARK) -->
-  <section id="portfolio" class="m-portfolio-preview">
-    <div class="m-section-header m-fade-up" style="text-align: center; max-width: 800px; margin: 0 auto 80px auto;">
-      <span class="m-section-chip">Our Work</span>
-      <h2 class="m-section-title" style="color: #fff;">Products We've Brought to Life</h2>
-      <p class="m-section-desc">From concept sketches to mass production — real products, engineered and manufactured
-        through our ecosystem.</p>
-    </div>
-
-    <div class="m-portfolio-trio m-fade-up">
-      <!-- Left: Rectangular -->
-      <div class="m-portfolio-card m-portfolio-rect" onclick="openProductModal('speaker')" style="cursor: pointer;">
-        <div class="m-portfolio-card-inner">
-          <img src="assets/portfolio/speaker.png" alt="Aura Smart Speaker" loading="lazy">
-          <div class="m-portfolio-card-overlay">
-            <span class="m-portfolio-tag">Consumer Electronics</span>
-            <h3>Aura Smart Speaker</h3>
-            <p>Precision-milled aluminum unibody with integrated acoustic engineering.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Center: Circle -->
-      <div class="m-portfolio-card m-portfolio-circle" onclick="openProductModal('medical')" style="cursor: pointer;">
-        <div class="m-portfolio-card-inner">
-          <img src="assets/portfolio/medical.png" alt="Vanguard Vision Scanner" loading="lazy">
-          <div class="m-portfolio-card-overlay">
-            <span class="m-portfolio-tag">Medical Diagnostics</span>
-            <h3>Vanguard Vision</h3>
-            <p>ISO 13485 compliant optical scanner.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: Rectangular -->
-      <div class="m-portfolio-card m-portfolio-rect" onclick="openProductModal('wearable')" style="cursor: pointer;">
-        <div class="m-portfolio-card-inner">
-          <img src="assets/portfolio/wearable.png" alt="Pulse Biometric Ring" loading="lazy">
-          <div class="m-portfolio-card-overlay">
-            <span class="m-portfolio-tag">Wearables</span>
-            <h3>Pulse Biometric Ring</h3>
-            <p>Titanium housing with overmolded sensor array and 5ATM water resistance.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="m-portfolio-cta m-fade-up">
-      <a href="portfolio.html" class="btn-marketing btn-marketing--secondary"
-        style="display: inline-flex; align-items: center; gap: 8px;">
-        View Full Portfolio
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2">
-          <path d="M5 12h14" />
-          <path d="m12 5 7 7-7 7" />
-        </svg>
-      </a>
-    </div>
-  </section>
 
   <!-- SECTION: Locations (LIGHT) -->
   <style>
@@ -1614,3 +1490,4 @@
 </body>
 
 </html>
+

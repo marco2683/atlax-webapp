@@ -201,7 +201,7 @@ export default defineConfig({
         workspace: resolve(__dirname, 'workspace.html'),
         admin: resolve(__dirname, 'admin.html'),
         profile: resolve(__dirname, 'profile.html'),
-        signup: resolve(__dirname, 'signup.html'),
+
         "supplier-dashboard": resolve(__dirname, 'supplier-dashboard.html')
       }
     }

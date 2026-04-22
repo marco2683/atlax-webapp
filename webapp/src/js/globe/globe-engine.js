@@ -208,10 +208,12 @@ export function initGlobe(containerId, suppliers = []) {
     currentSuppliers = suppliers;
     renderPoints();
 
+    const validSuppliers = suppliers.filter(p => p && typeof p.lat === 'number' && typeof p.lng === 'number' && !isNaN(p.lat) && !isNaN(p.lng));
+
     // Fly to show all points
-    if (suppliers.length > 0) {
-      const avgLat = suppliers.reduce((s, p) => s + p.lat, 0) / suppliers.length;
-      const avgLng = suppliers.reduce((s, p) => s + p.lng, 0) / suppliers.length;
+    if (validSuppliers.length > 0) {
+      const avgLat = validSuppliers.reduce((s, p) => s + p.lat, 0) / validSuppliers.length;
+      const avgLng = validSuppliers.reduce((s, p) => s + p.lng, 0) / validSuppliers.length;
       globe.pointOfView({ lat: avgLat, lng: avgLng, altitude: 2.0 }, 1800);
     }
   }
@@ -227,7 +229,9 @@ export function initGlobe(containerId, suppliers = []) {
       filtered = filtered.filter(s => s.stage === activeStageFilter);
     }
 
-    const points = filtered.map(s => {
+    const validFiltered = filtered.filter(p => p && typeof p.lat === 'number' && typeof p.lng === 'number' && !isNaN(p.lat) && !isNaN(p.lng));
+
+    const points = validFiltered.map(s => {
       const sid = String(s.id || s.name);
       const isShortlisted = shortlistedIds.has(sid);
       return {
@@ -240,8 +244,10 @@ export function initGlobe(containerId, suppliers = []) {
     globe.pointsData(points);
     
     // Add pulsing rings for all current suppliers + user location hub
-    const ringData = filtered.map(s => ({ lat: s.lat, lng: s.lng }));
-    ringData.push({ lat: userLocation.lat, lng: userLocation.lng });
+    const ringData = validFiltered.map(s => ({ lat: s.lat, lng: s.lng }));
+    if (userLocation && typeof userLocation.lat === 'number' && typeof userLocation.lng === 'number') {
+      ringData.push({ lat: userLocation.lat, lng: userLocation.lng });
+    }
     globe.ringsData(ringData);
   }
 

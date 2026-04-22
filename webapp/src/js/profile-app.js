@@ -33,21 +33,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const linkedinEl = document.getElementById('prof-linkedin');
     if (linkedinEl) linkedinEl.value = profile.linkedin_url || '';
 
-    // Billing info
-    const isPro = profile.tier === 'professional';
-    document.getElementById('billing-tier-name').textContent = isPro ? 'Professional Tier' : 'Basic Tier';
-    const badge = document.getElementById('billing-tier-badge');
-    const desc = document.getElementById('billing-tier-desc');
-    const upgradeBtn = document.getElementById('btn-upgrade');
-    
-    badge.textContent = isPro ? 'PRO' : 'BASIC';
-    if (isPro) {
-      badge.classList.add('professional');
-      desc.textContent = "You have full, unrestricted access to the Atlas DT Professional platform.";
-      desc.style.color = "var(--color-electric)";
-      upgradeBtn.style.display = 'none'; // Hide upgrade button if already pro
-    } else {
-      desc.textContent = "You currently have restricted platform access.";
+    if (profile.designer_status === 'approved') {
+      const designerMenu = document.getElementById('approved-designer-tabs');
+      if (designerMenu) designerMenu.style.display = 'flex';
     }
   }
 
@@ -366,39 +354,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Stripe Integration Triggers
-  // Stripe Integration Triggers
-  document.getElementById('btn-upgrade').addEventListener('click', async () => {
-    window.location.href = '/signup.html?tier=professional';
-  });
 
-  document.getElementById('btn-customer-portal').addEventListener('click', async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return alert("You must be logged in.");
-
-      const btn = document.getElementById('btn-customer-portal');
-      btn.textContent = 'Loading Portal...';
-      
-      const response = await fetch('/.netlify/functions/create-portal', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id })
-      });
-
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.error || 'Failed to initialize customer portal');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Network error initializing portal.');
-    } finally {
-      document.getElementById('btn-customer-portal').textContent = 'Open Stripe Portal';
-    }
-  });
 
   // Updated Role Checkout -> Onboarding Flow
   const onboardingModal = document.getElementById('role-onboarding-modal');
@@ -406,82 +362,233 @@ document.addEventListener('DOMContentLoaded', async () => {
   const closeOnboardingBtn = document.getElementById('close-role-onboarding');
 
   const closeOnboarding = () => {
+    // Restore file inputs to their respective panes
+    const resumeMount = document.getElementById('modal-resume-mount');
+    if (resumeMount && resumeMount.children.length > 0) {
+      document.getElementById('pane-resume').appendChild(resumeMount.firstElementChild);
+    }
+    const portfolioMount = document.getElementById('modal-portfolio-mount');
+    if (portfolioMount && portfolioMount.children.length > 0) {
+      document.getElementById('pane-portfolio').appendChild(portfolioMount.firstElementChild);
+    }
+
     onboardingModal.classList.add('hidden');
     document.body.style.overflow = '';
   };
   
   if (closeOnboardingBtn) closeOnboardingBtn.addEventListener('click', closeOnboarding);
 
-  const performStripeCheckout = async (planType, btn) => {
-    window.location.href = `/signup.html?tier=${planType}`;
+  const performApplication = async (btn) => {
+    const coverLetter = document.getElementById('app-cover-letter')?.value;
+    if (!coverLetter || coverLetter.length < 20) {
+      alert("Please provide a meaningful cover letter or description of your expertise.");
+      return;
+    }
+    const dbPayload = { 
+      designer_status: 'pending',
+      cover_letter: coverLetter,
+      contact_email: document.getElementById('app-contact-email')?.value || '',
+      hourly_rate_currency: document.getElementById('app-currency')?.value || 'USD',
+      hourly_rate: document.getElementById('app-hourly-rate')?.value ? parseFloat(document.getElementById('app-hourly-rate').value) : null,
+      availability: document.getElementById('app-availability')?.value || '',
+      comms_tools: JSON.stringify(Array.from(document.querySelectorAll('.comm-row')).map(row => ({
+        type: row.querySelector('.comm-type').value,
+        detail: row.querySelector('.comm-detail').value
+      })).filter(c => c.detail.trim() !== ''))
+    };
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting Application...';
+
+    // Update their profile in Supabase
+    const { error } = await updateMyProfile(dbPayload);
+
+    if (error) {
+      alert("Error submitting application: " + error.message);
+      btn.disabled = false;
+      btn.textContent = 'Submit Application';
+      return;
+    }
+
+    // Call Netlify Function to send email alert
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      await fetch('/.netlify/functions/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email: user.email, 
+          userId: user.id, 
+          type: 'designer_application',
+          cover_letter: coverLetter
+        })
+      });
+    } catch(err) {
+      console.error("Failed to trigger email hook", err);
+    }
+
+    btn.style.background = 'var(--color-emerald)';
+    btn.textContent = 'Application Submitted Successfully!';
+    setTimeout(() => {
+      closeOnboarding();
+      alert("Your application has been submitted to the Atlas DT team for review. We will be in touch shortly.");
+      const appBtn = document.getElementById('btn-role-designer');
+      if (appBtn) {
+        appBtn.textContent = 'Application Pending';
+        appBtn.disabled = true;
+        appBtn.style.opacity = '0.5';
+      }
+    }, 2000);
   };
 
   const setupRoleOnboarding = (btnId, planType) => {
     const btn = document.getElementById(btnId);
     if (!btn) return;
     
+    // Check if they are already pending
+    supabase.auth.getUser().then(async ({data: { user }}) => {
+      if (!user) return;
+      const { data } = await supabase.from('profiles').select('designer_status').eq('id', user.id).single();
+      if (data && data.designer_status === 'pending') {
+         if (planType === 'designer') {
+           btn.textContent = 'Application Pending';
+           btn.disabled = true;
+           btn.style.opacity = '0.5';
+         }
+      } else if (data && data.designer_status === 'approved') {
+         if (planType === 'designer') {
+           btn.textContent = 'Approved Designer';
+           btn.disabled = true;
+           btn.style.background = 'var(--color-emerald)';
+         }
+      }
+    });
+
     btn.addEventListener('click', async () => {
       onboardingModal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
       
+      const { data: { user } } = await supabase.auth.getUser();
+      const userEmail = user?.email || '';
+      
       let html = '';
       if (planType === 'designer') {
         html = `
-          <div style="display: flex; flex-direction: row; align-items: stretch; min-height: 480px;">
-            <div style="flex: 1; min-width: 300px; background: url('/images/showcase-6.png') center/cover; position: relative; border-right: 1px solid rgba(255,255,255,0.05);">
-              <div style="position: absolute; inset: 0; background: linear-gradient(to right, rgba(13,17,23,0), rgba(13,17,23,0.8));"></div>
-            </div>
-            <div style="flex: 1; padding: 48px; background: rgba(13, 17, 23, 1); display: flex; flex-direction: column; justify-content: center;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(139, 92, 246, 1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 20px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-              <h2 style="font-size: 32px; margin-bottom: 12px; line-height: 1.2;">Join the Network</h2>
-              <p style="color: rgba(255,255,255,0.7); font-size: 15px; margin-bottom: 24px; line-height: 1.5;">Access a global market of hardware creators looking for your expertise. Get verified, pitch for projects, and guarantee milestone payouts through our escrow system.</p>
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(139, 92, 246, 1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 8px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+              <h2 style="font-size: 28px; margin-bottom: 4px; line-height: 1.2;">Apply to the Designer Hub</h2>
+              <p style="color: rgba(255,255,255,0.7); font-size: 15px; margin-bottom: 12px; line-height: 1.5;">To join the network, please provide an application pitch below. Additionally, you can upload your <b>Resume/CV</b> and <b>Portfolio</b> assets directly on this form.</p>
               
-              <ul style="list-style: none; padding: 0; margin-bottom: 32px; display: flex; flex-direction: column; gap: 12px;">
-                <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #fff;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Verified Global Job Board</li>
-                <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #fff;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Professional Public Profile</li>
-                <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #fff;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Secured Milestone Payments</li>
-              </ul>
-
-              <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
-                <span style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: rgba(139, 92, 246, 0.9); font-weight: 600;">Designer Role</span>
-                <span style="font-size: 28px; font-weight: bold; color: white;">$29<span style="font-size: 14px; color: rgba(255,255,255,0.5); font-weight: normal;">/mo</span></span>
+              <div class="profile-form-group">
+                <label style="color: var(--color-electric);">Application Pitch / Cover Letter <span class="req">*</span></label>
+                <textarea id="app-cover-letter" class="profile-input" rows="5" placeholder="Detail your experience in design for manufacturing, your specialties, and why you would be a great fit for the network..."></textarea>
               </div>
-              
-              <button class="btn-save" id="onboarding-checkout-btn" style="width: 100%; font-size: 16px; padding: 16px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(124, 58, 237, 1)); border: none; border-radius: 8px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">Proceed to Secure Checkout <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
+
+              <!-- New Fields Grid -->
+              <div class="profile-form-grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="profile-form-group">
+                  <label>Hourly Rate</label>
+                  <div style="display: flex; gap: 8px;">
+                    <select id="app-currency" class="profile-input" style="width: 80px; padding-left: 8px; padding-right: 8px;">
+                      <option value="USD">USD</option>
+                      <option value="EUR">EUR</option>
+                      <option value="GBP">GBP</option>
+                      <option value="AED">AED</option>
+                    </select>
+                    <input type="number" id="app-hourly-rate" class="profile-input" placeholder="e.g. 50" style="flex: 1;">
+                  </div>
+                </div>
+                <div class="profile-form-group">
+                  <label>Availability</label>
+                  <input type="text" id="app-availability" class="profile-input" placeholder="e.g. 20 hours/week, GMT+8">
+                </div>
+              </div>
+
+              <div class="profile-form-group">
+                <label>Contact Email (For Designer Work)</label>
+                <input type="email" id="app-contact-email" class="profile-input" value="${userEmail}" placeholder="designer@example.com">
+              </div>
+
+              <div class="profile-form-group">
+                <label style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+                  <span>Contact Tools & Profiles</span>
+                  <button type="button" id="btn-add-comm" style="background:transparent; border:1px solid rgba(255,255,255,0.1); color:var(--color-electric); cursor:pointer; font-size:12px; padding:4px 8px; border-radius:4px;">+ Add Tool</button>
+                </label>
+                <div id="comms-container" style="display: flex; flex-direction: column; gap: 8px;">
+                  <div class="comm-row" style="display: flex; gap: 8px;">
+                    <select class="profile-input comm-type" style="width: 120px;">
+                      <option value="WhatsApp">WhatsApp</option>
+                      <option value="WeChat">WeChat</option>
+                      <option value="Skype">Skype</option>
+                      <option value="Zoom">Zoom</option>
+                      <option value="Teams">Teams</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    <input type="text" class="profile-input comm-detail" placeholder="ID, Number or Link" style="flex: 1;">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Mount targets for DOM transplantation -->
+              <div class="profile-form-grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div id="modal-resume-mount" style="margin-bottom: 8px;"></div>
+                <div id="modal-portfolio-mount" style="margin-bottom: 24px;"></div>
+              </div>
+
+              <div style="display: flex; gap: 12px; margin-top: 12px;">
+                <button type="button" class="btn btn-primary" id="btn-submit-application" style="flex: 1; padding: 16px;">Submit Application</button>
+              </div>
             </div>
-          </div>`
+        `;
       } else {
         html = `
-          <div style="display: flex; flex-direction: row; align-items: stretch; min-height: 480px;">
-            <div style="flex: 1; min-width: 300px; background: url('/images/showcase-4.png') center/cover; position: relative; border-right: 1px solid rgba(255,255,255,0.05);">
-              <div style="position: absolute; inset: 0; background: linear-gradient(to right, rgba(13,17,23,0), rgba(13,17,23,0.8));"></div>
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              <h2 style="font-size: 28px; line-height: 1.2;">Coming Soon</h2>
+              <p style="color: rgba(255,255,255,0.7); font-size: 15px;">Entrepreneur onboarding is currently restricted. Please contact sales.</p>
             </div>
-            <div style="flex: 1; padding: 48px; background: rgba(13, 17, 23, 1); display: flex; flex-direction: column; justify-content: center;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(249, 115, 22, 1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 20px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-              <h2 style="font-size: 32px; margin-bottom: 12px; line-height: 1.2;">Build Your Team</h2>
-              <p style="color: rgba(255,255,255,0.7); font-size: 15px; margin-bottom: 24px; line-height: 1.5;">Post RFQs and instantly discover vetted talent. Manage NDAs, hire dedicated experts, and secure your product development phases.</p>
-              
-              <ul style="list-style: none; padding: 0; margin-bottom: 32px; display: flex; flex-direction: column; gap: 12px;">
-                <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #fff;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdba74" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Post Unlimited Job RFQs</li>
-                <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #fff;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdba74" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Secure Escrow & Milestones</li>
-                <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #fff;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdba74" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Access Global Talent Network</li>
-              </ul>
-
-              <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3); border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
-                <span style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: rgba(249, 115, 22, 0.9); font-weight: 600;">Entrepreneur</span>
-                <span style="font-size: 28px; font-weight: bold; color: white;">$49<span style="font-size: 14px; color: rgba(255,255,255,0.5); font-weight: normal;">/mo</span></span>
-              </div>
-              
-              <button class="btn-save" id="onboarding-checkout-btn" style="width: 100%; font-size: 16px; padding: 16px; background: linear-gradient(135deg, rgba(249, 115, 22, 0.9), rgba(234, 88, 12, 1)); border: none; border-radius: 8px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">Proceed to Secure Checkout <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
-            </div>
-          </div>`
+        `;
       }
       
       onboardingContent.innerHTML = html;
       
-      document.getElementById('onboarding-checkout-btn').addEventListener('click', (e) => {
-        performStripeCheckout(planType, e.target);
-      });
+      if (planType === 'designer') {
+        const rMount = document.getElementById('modal-resume-mount');
+        const pMount = document.getElementById('modal-portfolio-mount');
+        
+        // Safely fetch and mount the DOM chunks into the modal
+        const rContent = document.querySelector('#pane-resume .billing-card');
+        const pContent = document.querySelector('#pane-portfolio .billing-card');
+        if (rMount && rContent) rMount.appendChild(rContent);
+        if (pMount && pContent) pMount.appendChild(pContent);
+
+        const btnAddComm = document.getElementById('btn-add-comm');
+        if (btnAddComm) {
+          btnAddComm.addEventListener('click', () => {
+            const container = document.getElementById('comms-container');
+            const row = document.createElement('div');
+            row.className = 'comm-row';
+            row.style = 'display: flex; gap: 8px; margin-top: 4px;';
+            row.innerHTML = `
+              <select class="profile-input comm-type" style="width: 120px;">
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="WeChat">WeChat</option>
+                <option value="Skype">Skype</option>
+                <option value="Zoom">Zoom</option>
+                <option value="Teams">Teams</option>
+                <option value="Other">Other</option>
+              </select>
+              <input type="text" class="profile-input comm-detail" placeholder="ID, Number or Link" style="flex: 1;">
+              <button type="button" class="btn-remove-comm" style="background:transparent; border:none; color:#ef4444; cursor:pointer;" onclick="this.parentElement.remove()">✕</button>
+            `;
+            container.appendChild(row);
+          });
+        }
+
+        const submitBtn = document.getElementById('btn-submit-application');
+        if (submitBtn) {
+          submitBtn.addEventListener('click', () => performApplication(submitBtn));
+        }
+      }
     });
   };
 

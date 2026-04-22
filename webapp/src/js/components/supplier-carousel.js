@@ -170,7 +170,7 @@ function renderCurrentCard() {
       </button>`;
 
   let productImgs = s.images?.product || [];
-  let facilityImgs = [...(s.images?.facility || []), ...(s.images?.equipment || [])];
+  let facilityImgs = [...(s.images?.facility || []), ...(s.images?.equipment || []), ...(s.images?.factory || [])];
   
   // Use s.url as primary, fallback to s.website
   let websiteUrl = s.url || s.website;
@@ -209,227 +209,104 @@ function renderCurrentCard() {
   const getStar = (type) => pAdv === type ? `<div style="position: absolute; top: -12px; right: -12px; background: ${advColors[type].icon}; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.15); z-index: 2;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>` : '';
 
   body.innerHTML = `
-<div class="sup-dossier" style="height:100%; display:flex;">
-  
-  <!-- LEFT SIDEBAR -->
-  <div class="sup-dossier__sidebar" style="display:flex; flex-direction:column; height: 100%;">
-    <div style="margin-bottom: 24px;">
-      ${shortlistBtnHTML.replace('sup-banner__add-shortlist-btn', 'sup-sidebar__cta' + (isShortlisted ? ' sup-sidebar__cta--added' : ''))}
-    </div>
-    
-    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-      <div class="sup-dossier__logo" style="margin-bottom: 0px;">${s.name.substring(0, Math.min(2, s.name.length)).toUpperCase()}</div>
+<div class="sup-dossier-simple" style="padding: 24px; background: #fff; height:100%; overflow-y: auto;">
+  <!-- Header -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div style="width: 56px; height: 56px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: #475569;">
+        ${s.name.substring(0, 2).toUpperCase()}
+      </div>
       <div>
-         <div class="sup-dossier__name" style="margin-bottom: 2px; font-size: 18px;">${s.name}</div>
-         <div class="sup-dossier__category">${s.segment || 'Industrial Manufacturing'}</div>
+        <h2 style="margin: 0 0 4px 0; font-size: 24px; color: #0f172a; font-weight: 800;">${s.name}</h2>
+        <div style="color: #64748b; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          ${s.address || (s.city + ', ' + s.country)}
+        </div>
       </div>
     </div>
-    
-    <div class="sup-contact-block" style="margin-bottom: 24px; margin-top: 12px;">
-      <div style="display: grid; grid-template-columns: 80px 1fr; gap: 8px; margin-bottom: 12px;">
-         <span class="sup-contact-label" style="margin-bottom: 0;">Email</span>
-         <a href="mailto:${email}" class="sup-contact-value" style="color: #2563eb; margin-bottom: 0; font-size: 13px;">${email}</a>
-      </div>
-      <div style="display: grid; grid-template-columns: 80px 1fr; gap: 8px; margin-bottom: 12px;">
-         <span class="sup-contact-label" style="margin-bottom: 0;">Phone</span>
-         <span class="sup-contact-value" style="margin-bottom: 0; font-size: 13px;">${phone || '--'}</span>
-      </div>
-      <div style="display: grid; grid-template-columns: 80px 1fr; gap: 8px; margin-bottom: 12px;">
-         <span class="sup-contact-label" style="margin-bottom: 0;">WeChat</span>
-         <span class="sup-contact-value" style="margin-bottom: 0; font-size: 13px;">${wechat || '--'}</span>
-      </div>
-      <div style="display: grid; grid-template-columns: 80px 1fr; gap: 8px; margin-bottom: 12px;">
-         <span class="sup-contact-label" style="margin-bottom: 0;">Website</span>
-         <a href="${websiteUrl ? (websiteUrl.startsWith('http') ? websiteUrl : 'https://' + websiteUrl) : '#'}" target="_blank" class="sup-contact-value" style="color: #2563eb; margin-bottom: 0; font-size: 13px;">${websiteUrl ? 'Visit Website ↗' : '--'}</a>
-      </div>
-      <div style="display: grid; grid-template-columns: 80px 1fr; gap: 8px; margin-bottom: 12px;">
-         <span class="sup-contact-label" style="margin-bottom: 0;">Address</span>
-         <span class="sup-contact-value" style="margin-bottom: 0; font-size: 13px; line-height: 1.4;">${s.address || s.city + ', ' + s.country}</span>
-      </div>
-    </div>
-
-    <!-- Factory Map placed in sidebar bottom -->
-    <div style="flex: 1; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; margin-bottom: 24px; display:flex; flex-direction:column; min-height:160px; position:relative; z-index:1;">
-       <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="${mapEmbedUrl}" style="border: none; flex:1;"></iframe>
-    </div>
-
-    <div style="display: flex; flex-direction: column; gap: 8px;">
-      <button id="modal-send-rfq" style="width: 100%; padding: 14px; background: #0f172a; color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer;">Submit Inquiry</button>
-      <button id="modal-engage-consulting" style="width: 100%; padding: 14px; background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer;">🌿 Engage Atlas Auditing Team</button>
+    <div style="text-align: right;">
+      <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Factory Score</div>
+      <div style="font-size: 28px; font-weight: 800; color: #10b981; line-height: 1;">${s.factoryScore || '92'}<span style="font-size: 14px; color: #94a3b8;">/100</span></div>
     </div>
   </div>
 
-  <!-- RIGHT DASHBOARD -->
-  <div class="sup-dossier__dashboard" style="height: 100%; overflow-y: auto;">
+  <div style="display: grid; grid-template-columns: 1fr 300px; gap: 32px;">
     
-    <div class="sup-intel-gate--light ${isIntelLocked ? 'is-locked' : ''}">
-      ${isIntelLocked ? `
-        <div class="sup-intel-gate-overlay">
-          <button class="sup-intel-gate-btn" onclick="window.location.href='/profile.html?tab=billing'">
-            🔒 Upgrade to View Full Dossier
-          </button>
-        </div>
-      ` : ''}
-
-      <!-- CORE EVALUATION FRAMEWORK - BRAND NEW VISUALIZATION -->
-      <div class="sup-panel" style="margin-bottom: 24px; padding: 24px 32px;">
-         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 16px;">
-            <div class="sup-panel__title" style="margin-bottom: 0; padding-bottom: 0; border: none; font-size: 14px; color: #0f172a;">Atlas Factory Qualification Matrix</div>
-         </div>
-         
-         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <!-- 1. Technical Capability -->
-            <div style="background: #ffffff; ${getBoxStyle('technical')} border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02); display: flex; flex-direction: column; position: relative;">
-               ${getStar('technical')}
-               <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                 <div style="font-weight: 700; color: #0f172a; font-size: 15px; display: flex; align-items: center; gap: 8px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                    Technical Capability
-                 </div>
-                 <div style="background: rgba(79, 70, 229, 0.1); color: #4f46e5; border: 1px solid rgba(79,70,229,0.2); font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 12px; letter-spacing: 0.02em;">${(!s.scoreTc || s.scoreTc == 0) ? 'Limited' : (s.scoreTc == 1 ? 'Moderate' : 'Advanced')}</div>
-               </div>
-               <p style="font-size: 13.5px; color: #64748b; margin: 0 0 16px 0; line-height: 1.6;">Scope and depth of manufacturing technologies, precision capacity, equipment modernism, and engineering talent to execute on complex DFM requirements.</p>
-               <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; flex: 1;">
-                 <div style="font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 8px;">Key Strengths</div>
-                 <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #0f172a; line-height: 1.6;">${getTcBullets(s.scoreTc)}</ul>
-               </div>
-            </div>
-            
-            <!-- 2. Ownership Ethos -->
-            <div style="background: #ffffff; ${getBoxStyle('ethos')} border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02); display: flex; flex-direction: column; position: relative;">
-               ${getStar('ethos')}
-               <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                 <div style="font-weight: 700; color: #0f172a; font-size: 15px; display: flex; align-items: center; gap: 8px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    Ownership Ethos
-                 </div>
-                 <div style="background: rgba(217, 119, 6, 0.1); color: #d97706; border: 1px solid rgba(217, 119, 6, 0.2); font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 12px; letter-spacing: 0.02em;">${(!s.scoreOe || s.scoreOe == 0) ? 'Passive' : (s.scoreOe == 1 ? 'Moderate' : 'Proactive')}</div>
-               </div>
-               <p style="font-size: 13.5px; color: #64748b; margin: 0 0 16px 0; line-height: 1.6;">Management's attitude and accountability. The critical indicator for responsiveness, how proactively they solve deviations, and long-term partnership reliability.</p>
-               <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; flex: 1;">
-                 <div style="font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 8px;">Key Strengths</div>
-                 <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #0f172a; line-height: 1.6;">${getOeBullets(s.scoreOe)}</ul>
-               </div>
-            </div>
-
-            <!-- 3. Quality Assurance -->
-            <div style="background: #ffffff; ${getBoxStyle('quality')} border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02); display: flex; flex-direction: column; position: relative;">
-               ${getStar('quality')}
-               <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                 <div style="font-weight: 700; color: #0f172a; font-size: 15px; display: flex; align-items: center; gap: 8px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                    Quality Aspect
-                 </div>
-                 <div style="background: rgba(5, 150, 105, 0.1); color: #059669; border: 1px solid rgba(5, 150, 105, 0.2); font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 12px; letter-spacing: 0.02em;">${(!s.scoreQs || s.scoreQs == 0) ? 'Basic' : (s.scoreQs == 1 ? 'Capable' : 'Exceptional')}</div>
-               </div>
-               <p style="font-size: 13.5px; color: #64748b; margin: 0 0 16px 0; line-height: 1.6;">Robustness of the deployed QMS, traceability workflows, statistical process control, and reliability of IQC (Incoming QC) and final inspections.</p>
-               <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; flex: 1;">
-                 <div style="font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 8px;">Key Strengths</div>
-                 <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #0f172a; line-height: 1.6;">${getQsBullets(s.scoreQs)}</ul>
-               </div>
-            </div>
-
-            <!-- 4. Cost Competitiveness -->
-            <div style="background: #ffffff; ${getBoxStyle('cost')} border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02); display: flex; flex-direction: column; position: relative;">
-               ${getStar('cost')}
-               <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                 <div style="font-weight: 700; color: #0f172a; font-size: 15px; display: flex; align-items: center; gap: 8px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    Cost & Speed Profile
-                 </div>
-                 <div style="background: rgba(14, 165, 233, 0.1); color: #0ea5e9; border: 1px solid rgba(14, 165, 233, 0.2); font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 12px; letter-spacing: 0.02em;">${s.scoreCost ? s.scoreCost + '/10' : '8/10'} Index</div>
-               </div>
-               <p style="font-size: 13.5px; color: #64748b; margin: 0 0 16px 0; line-height: 1.6;">Overall commercial advantage rating. Evaluates unit COGS fairness, NRE/Tooling amortization strategies, and pure speed to market agility.</p>
-               <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; flex: 1;">
-                 <div style="font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 8px;">Key Strengths</div>
-                 <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #0f172a; line-height: 1.6;">${getCostBullets(s.scoreCost || 8)}</ul>
-               </div>
-            </div>
-
-            <!-- OVERALL ADVANTAGE -->
-            <div style="grid-column: span 2; background: ${advStyle.bg}; border: 1px solid ${advStyle.border}; border-radius: 12px; padding: 20px; margin-top: 4px;">
-               <div style="font-weight: 700; color: ${advStyle.text}; font-size: 14px; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${advStyle.icon}" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-                 Atlas Primary Advantage
-               </div>
-               <p style="font-size: 15px; color: ${advStyle.text}; margin: 0; line-height: 1.6; font-weight: 500;">
-                 ${s.mainAdvantage ? s.mainAdvantage : `We selected ${s.name} for their excellent balance of rapid tooling deployment and highly responsive communication. They offer a strong commercial advantage for mid-volume production runs without sacrificing ISO-grade quality standards.`}
-               </p>
-            </div>
-
-            <!-- BEST FOR -->
-            ${s.bestFor ? `
-            <div style="grid-column: span 2; background: #fdfdfd; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 16px 20px; margin-top: -4px; display: flex; align-items: flex-start; gap: 16px;">
-               <div style="background: #f1f5f9; padding: 8px 10px; border-radius: 8px; color: #475569; display: flex; align-items: center; justify-content: center;">
-                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
-               </div>
-               <div>
-                 <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Ideal Product Match & Best For</div>
-                 <div style="font-size: 15px; color: #0f172a; font-weight: 600; line-height: 1.4;">${s.bestFor}</div>
-               </div>
-            </div>
-            ` : ''}
-         </div>
-      </div>
-      
-      <!-- Middle Row: Tech & Capabilities -->
-      <div class="sup-board-grid" style="grid-template-columns: 1fr; margin-bottom: 24px;">
-        <div class="sup-panel" style="display: flex; flex-direction: column;">
-          <div class="sup-panel__title" style="margin-bottom: 16px; padding-bottom: 16px; font-size: 14px; color: #0f172a;">Specific Technical Node Mapping</div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px;">
-              ${(s.technologies || []).map(t => `
-              <div class="sup-cap-item" style="border-bottom:none; padding-bottom:0; align-items:center;">
-                <div class="sup-cap-icon" style="width:32px; height:32px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
-                <div class="sup-cap-details">
-                  <div class="sup-cap-name" style="font-size: 14px; font-weight: 600;">${t}</div>
-                </div>
-              </div>
-              `).join('')}
-              ${(s.tags || []).map(t => `
-              <div class="sup-cap-item" style="border-bottom:none; padding-bottom:0; align-items:center;">
-                <div class="sup-cap-icon" style="width:32px; height:32px; background:#fff7ed; color:#ea580c;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
-                <div class="sup-cap-details">
-                  <div class="sup-cap-name" style="font-size: 14px; font-weight: 600;">${t}</div>
-                </div>
-              </div>
-              `).join('')}
-          </div>
-          
-          <!-- Facility Details Bottom Row -->
-          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 8px; border-top: 1px solid #e2e8f0; padding-top: 24px; background: #f8fafc; margin: 0 -28px -28px -28px; padding: 24px 28px; border-radius: 0 0 12px 12px;">
-              <div style="display:flex; flex-direction:column; align-items:flex-start;">
-                <div class="sup-detail-label" style="color: #64748b; font-size: 10px; margin-bottom: 4px;">FACTORY AREA</div>
-                <div class="sup-detail-value" style="font-size: 16px; color:#0f172a;">${s.factoryArea || '--'}</div>
-              </div>
-              <div style="display:flex; flex-direction:column; align-items:flex-start;">
-                <div class="sup-detail-label" style="color: #64748b; font-size: 10px; margin-bottom: 4px;">EMPLOYEES</div>
-                <div class="sup-detail-value" style="font-size: 16px; color:#0f172a;">${s.employees || '--'}</div>
-              </div>
-              <div style="display:flex; flex-direction:column; align-items:flex-start;">
-                <div class="sup-detail-label" style="color: #64748b; font-size: 10px; margin-bottom: 4px;">MIN ORDER QTY</div>
-                <div class="sup-detail-value" style="font-size: 16px; color:#0f172a;">${s.moq || '--'}</div>
-              </div>
-              <div style="display:flex; flex-direction:column; align-items:flex-start;">
-                <div class="sup-detail-label" style="color: #64748b; font-size: 10px; margin-bottom: 4px;">LEAD TIME</div>
-                <div class="sup-detail-value" style="font-size: 16px; color:#0f172a;">${s.leadTime || '--'}</div>
-              </div>
-          </div>
+    <!-- Left Column -->
+    <div>
+      <!-- Specialties -->
+      <div style="margin-bottom: 32px;">
+        <h3 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Specialties</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          ${(s.technologies || []).concat(s.tags || []).slice(0, 8).map(t => 
+            `<span style="background: #f8fafc; border: 1px solid #e2e8f0; color: #334155; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600;">${t}</span>`
+          ).join('')}
         </div>
       </div>
-      
-      <!-- Bottom Row: Photo Gallery -->
+
+      <!-- Capability Scores -->
+      <div style="margin-bottom: 32px;">
+         <h3 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Capability Scores</h3>
+         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+               <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Technical Capacity</div>
+               <div style="font-size: 16px; font-weight: 700; color: #4f46e5;">${(!s.scoreTc || s.scoreTc == 0) ? 'Limited' : (s.scoreTc == 1 ? 'Moderate' : 'Advanced')}</div>
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+               <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Cost Index</div>
+               <div style="font-size: 16px; font-weight: 700; color: #0ea5e9;">${s.scoreCost ? s.scoreCost + '/10' : '8/10'}</div>
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+               <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Quality Assurance</div>
+               <div style="font-size: 16px; font-weight: 700; color: #059669;">${(!s.scoreQs || s.scoreQs == 0) ? 'Basic' : (s.scoreQs == 1 ? 'Capable' : 'Exceptional')}</div>
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+               <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Ownership Ethos</div>
+               <div style="font-size: 16px; font-weight: 700; color: #d97706;">${(!s.scoreOe || s.scoreOe == 0) ? 'Passive' : (s.scoreOe == 1 ? 'Moderate' : 'Proactive')}</div>
+            </div>
+         </div>
+      </div>
+
+      <!-- Photo Gallery -->
       ${[...productImgs, ...facilityImgs].length > 0 ? `
-      <div class="sup-panel">
-        <div class="sup-panel__title" style="margin-bottom: 20px; font-size: 14px; color: #0f172a;">Facility & Product Portfolio</div>
-        <div class="sup-gallery-grid">
+      <div>
+        <h3 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Facility & Work</h3>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
           ${[...productImgs, ...facilityImgs].slice(0, 8).map(img => `
-            <img src="${img}" class="sup-gallery-img" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" />
+            <div style="background: url('${img}') center/cover; aspect-ratio: 1; border-radius: 8px; border: 1px solid #e2e8f0;"></div>
           `).join('')}
         </div>
       </div>
       ` : ''}
 
-    </div> <!-- CLOSING INTEL GATE -->
+    </div>
+
+    <!-- Right Sidebar (Contact) -->
+    <div>
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
+        <h3 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 16px;">Contact Details</h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
+          <div>
+             <div style="font-size: 11px; font-weight: 600; color: #94a3b8; margin-bottom: 2px;">Email</div>
+             <a href="mailto:${email}" style="font-size: 14px; color: #2563eb; font-weight: 500; text-decoration: none;">${email}</a>
+          </div>
+          <div>
+             <div style="font-size: 11px; font-weight: 600; color: #94a3b8; margin-bottom: 2px;">Phone</div>
+             <div style="font-size: 14px; color: #0f172a; font-weight: 500;">${phone || '--'}</div>
+          </div>
+          <div>
+             <div style="font-size: 11px; font-weight: 600; color: #94a3b8; margin-bottom: 2px;">Website</div>
+             ${websiteUrl ? `<a href="${websiteUrl.startsWith('http') ? websiteUrl : 'https://' + websiteUrl}" target="_blank" style="font-size: 14px; color: #2563eb; font-weight: 500; text-decoration: none;">Visit Website ↗</a>` : '<div style="font-size: 14px; color: #0f172a; font-weight: 500;">--</div>'}
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #e2e8f0; padding-top: 24px;">
+          ${shortlistBtnHTML.replace('sup-banner__add-shortlist-btn', 'CTA-BTN' + (isShortlisted ? ' CTA-BTN--added' : '')).replace('CTA-BTN', 'style="width: 100%; padding: 12px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; display:flex; align-items:center; justify-content:center; gap:8px; ' + (isShortlisted ? 'background:#ecfdf5; color:#10b981; border:1px solid #a7f3d0;"' : 'background:#2563eb; color:white;"'))}
+          <button id="modal-send-rfq" style="width: 100%; padding: 12px; background: #fff; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;">Direct Message</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
   `;

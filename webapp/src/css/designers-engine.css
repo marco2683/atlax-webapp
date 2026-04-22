@@ -62,32 +62,41 @@
 /* Main Workspace */
 .de-workspace {
   flex: 1;
-  max-width: 1600px;
+  max-width: 100%; /* Go full width to let the internal 3-column grid handle centering */
   margin: 0 auto;
   width: 100%;
   padding: 0 var(--space-6) var(--space-12) var(--space-6);
 }
 
-/* Sidebar + Grid flex row */
 .de-hire-layout {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) max-content minmax(320px, 1fr);
   gap: var(--space-8);
   align-items: flex-start;
+  width: 100%;
 }
 
-@media (max-width: 968px) {
+.de-hire-layout::after {
+  content: "";
+  grid-column: 3;
+}
+
+@media (max-width: 1600px) {
   .de-hire-layout {
+    display: flex;
     flex-direction: column;
   }
 }
 
 /* ── Sidebar floats on the left without affecting center ── */
 .de-sidebar {
+  grid-column: 1;
+  justify-self: end;
   position: relative;
   top: auto;
   left: auto;
   width: 100%;
-  max-width: 380px;
+  max-width: 320px;
   background: var(--color-midnight);
   border: var(--border-subtle);
   border-radius: var(--radius-lg);
@@ -100,7 +109,7 @@
   flex-shrink: 0;
 }
 
-@media (max-width: 968px) {
+@media (max-width: 1200px) {
   .de-sidebar {
     max-width: 100%;
   }
@@ -125,9 +134,11 @@
 
 /* ── Centered main talent content ── */
 .de-main-content {
+  grid-column: 2;
   flex: 1;
   min-width: 0;
   width: 100%;
+  max-width: 1300px; /* Highly expanded centerpiece width requested by user */
 }
 
 /* ── Shortlist ── */
@@ -738,14 +749,15 @@ body.theme-light .de-btn-add-team { background: rgba(0,0,0,0.03); }
 /* Grid Layouts */
 .de-grid-carousel {
   display: grid;
-  grid-template-rows: repeat(2, 1fr);
-  grid-auto-flow: column;
-  grid-auto-columns: 320px;
+  grid-template-columns: repeat(3, 1fr); /* Strictly enforces 3 giant columns as requested */
   gap: var(--space-6);
-  overflow-x: auto;
   padding-bottom: var(--space-6);
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 968px) {
+  .de-grid-carousel {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .de-grid-carousel::-webkit-scrollbar {
@@ -883,8 +895,6 @@ body.theme-light .de-btn-add-team { background: rgba(0,0,0,0.03); }
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  max-width: 900px;
-  margin: 0 auto;
 }
 
 .de-job-card {
@@ -1780,6 +1790,8 @@ body.theme-light .de-review-card {
   grid-template-columns: 1fr 280px;
   gap: 24px;
   align-items: start;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .de-work-sidebar {
@@ -2222,8 +2234,7 @@ body.theme-light .de-review-card {
 
 @media (max-width: 768px) {
   .de-grid-carousel {
-    grid-template-rows: repeat(1, 1fr);
-    grid-auto-columns: 280px;
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
     gap: var(--space-4);
   }
   .de-pm-header {
@@ -2253,3 +2264,55 @@ body.theme-light .de-review-card {
   }
 }
 
+/* Minimalist Card Theming */
+.de-designer-card.minimalist-card {
+  background: var(--color-midnight);
+  border: 1px solid var(--border-subtle, rgba(255,255,255,0.08));
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.2s, border-color 0.2s;
+  min-height: 300px;
+  cursor: pointer;
+}
+.de-designer-card.minimalist-card:hover {
+  border-color: rgba(139,92,246,0.4);
+  transform: translateY(-4px);
+}
+.minimalist-card-img {
+  width: 86px; height: 86px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid rgba(255,255,255,0.05);
+}
+.minimalist-card-name {
+  color: #fff; font-size: 1.25rem; font-weight: 600; margin: 0 0 4px 0;
+}
+.minimalist-card-title {
+  color: #c4b5fd; font-size: 0.9rem; font-weight: 500; margin: 0 0 16px 0;
+}
+.minimalist-card-tag {
+  background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;
+}
+.minimalist-card-footer {
+  margin-top: auto; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;
+}
+.minimalist-card-rate-label {
+  display: block; font-size: 0.75rem; color: #888;
+}
+.minimalist-card-rate-val {
+  color: #fff; font-weight: 600;
+}
+
+/* Light Theme Overrides */
+body.theme-light .de-designer-card.minimalist-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+body.theme-light .minimalist-card-img { border-color: #e2e8f0; }
+body.theme-light .minimalist-card-name { color: #0f172a; }
+body.theme-light .minimalist-card-title { color: #3b82f6; }
+body.theme-light .minimalist-card-tag { background: #f1f5f9; color: #475569; }
+body.theme-light .minimalist-card-footer { border-top-color: #e2e8f0; }
+body.theme-light .minimalist-card-rate-label { color: #64748b; }
+body.theme-light .minimalist-card-rate-val { color: #0f172a; }

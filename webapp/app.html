@@ -155,9 +155,9 @@
           <span class="global-nav-link__top">OEMs</span>
           <span class="global-nav-link__sub">Marketplace</span>
         </li>
-        <li class="navbar__menu-item" data-view="tariff">
-          <span class="global-nav-link__top">HS Tariffs</span>
-          <span class="global-nav-link__sub">Optimiser</span>
+        <li class="navbar__menu-item" data-view="designers">
+          <span class="global-nav-link__top">Engineering</span>
+          <span class="global-nav-link__sub">Talent</span>
         </li>
       </ul>
 
@@ -629,7 +629,7 @@
                     style="padding: 14px 32px; background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.4); color: #c4b5fd; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
                     onmouseover="this.style.background='rgba(139,92,246,0.25)'; this.style.borderColor='rgba(139,92,246,0.6)'"
                     onmouseout="this.style.background='rgba(139,92,246,0.15)'; this.style.borderColor='rgba(139,92,246,0.4)'"
-                    onclick="window.location.href='signup.html?tier=designer'">Become a Designer</button>
+                    onclick="window.location.href='/index.html?auth=login'">Become a Designer</button>
                 </div>
               </div>
 
@@ -691,7 +691,7 @@
                     style="padding: 14px 32px; background: rgba(249,115,22,0.15); border: 1px solid rgba(249,115,22,0.4); color: #fdba74; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
                     onmouseover="this.style.background='rgba(249,115,22,0.25)'; this.style.borderColor='rgba(249,115,22,0.6)'"
                     onmouseout="this.style.background='rgba(249,115,22,0.15)'; this.style.borderColor='rgba(249,115,22,0.4)'"
-                    onclick="window.location.href='signup.html?tier=entrepreneur'">Join as Entrepreneur</button>
+                    onclick="window.location.href='/index.html?auth=login'">Join as Entrepreneur</button>
                 </div>
               </div>
 
@@ -771,7 +771,7 @@
                     style="padding: 16px 40px; background: linear-gradient(135deg, #3c6bff, #5ea2ff); border: none; color: #fff; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 8px 24px rgba(43,90,255,0.3); width: fit-content;"
                     onmouseover="this.style.filter='brightness(1.1)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 32px rgba(43,90,255,0.4)'"
                     onmouseout="this.style.filter='brightness(1)'; this.style.transform='none'; this.style.boxShadow='0 8px 24px rgba(43,90,255,0.3)'"
-                    onclick="window.location.href='signup.html?tier=professional'">Upgrade to Professional</button>
+                    onclick="window.location.href='/index.html?auth=login'">Upgrade to Professional</button>
                 </div>
 
                 <!-- Right: Image Grid -->
@@ -825,7 +825,7 @@
                   style="width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #ccc; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
                   onmouseover="this.style.background='rgba(255,255,255,0.1)'"
                   onmouseout="this.style.background='rgba(255,255,255,0.05)'"
-                  onclick="window.location.href='signup.html?tier=free'">Get Started Free</button>
+                  onclick="window.location.href='/index.html?auth=login'">Get Started Free</button>
               </div>
 
               <!-- Enterprise Tier -->
@@ -864,7 +864,7 @@
                   style="width: 100%; padding: 14px; background: transparent; border: 1px solid rgba(94,162,255,0.5); color: #5ea2ff; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
                   onmouseover="this.style.background='rgba(94,162,255,0.1)'; this.style.borderColor='rgba(94,162,255,0.7)'"
                   onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(94,162,255,0.5)'"
-                  onclick="window.location.href='signup.html?tier=enterprise'">Contact Sales</button>
+                  onclick="window.location.href='/index.html?auth=login'">Contact Sales</button>
               </div>
 
             </div>
@@ -1074,13 +1074,13 @@
 
         <!-- Region Selector Chips (always visible) -->
         <div class="region-row" id="region-row-hero"
-          style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 10px; margin-top:10px">
-          <button class="region-chip" data-stage="design">Design</button>
-          <button class="region-chip" data-stage="prototype">Prototyping</button>
-          <button class="region-chip" data-stage="low volume">Low Volume</button>
-          <button class="region-chip" data-stage="high volume">High Volume</button>
-          <button class="region-chip" data-stage="manufacturing">Contract Manufacturing</button>
-
+          style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; margin-top:10px">
+          <button class="region-chip" data-region="China">China</button>
+          <button class="region-chip" data-region="Vietnam">Vietnam</button>
+          <button class="region-chip" data-region="Taiwan">Taiwan</button>
+          <button class="region-chip" data-region="USA">USA</button>
+          <button class="region-chip" data-region="Europe">Europe</button>
+          <button class="region-chip" data-region="Australia">Australia</button>
         </div>
 
         <!-- Search Bar -->
@@ -1103,150 +1103,6 @@
           </button>
           <!-- Subtle Quick Tech Cards removed in favor of large grid -->
 
-        </div>
-
-        <div class="quick-tech-grid" id="quick-tech-grid"
-          style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; position: absolute; left: 50%; top: 100%; transform: translateX(-50%); margin-top: 24px; width: 80vw; max-width: 1400px; padding: 0; z-index: 10;">
-          <style>
-            .quick-tech-grid {
-              transition: opacity 0.3s ease, transform 0.3s ease;
-            }
-
-            .quick-tech-grid.hidden-by-search {
-              opacity: 0;
-              pointer-events: none;
-              transform: translateX(-50%) translateY(20px) !important;
-            }
-
-            .tech-grid-card {
-              background: rgba(255, 255, 255, 0.015);
-              border: 1px dashed rgba(255, 255, 255, 0.12);
-              border-radius: 12px;
-              padding: 20px;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              text-align: center;
-              cursor: pointer;
-              aspect-ratio: 1.6;
-              transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-              position: relative;
-              overflow: hidden;
-              backdrop-filter: blur(2px);
-              -webkit-backdrop-filter: blur(2px);
-            }
-
-            .tech-grid-card:hover {
-              background: rgba(255, 255, 255, 0.04);
-              border-color: rgba(255, 255, 255, 0.4);
-              border-style: solid;
-              transform: translateY(-4px);
-              box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
-            }
-
-            .tech-grid-card-title {
-              color: rgba(255, 255, 255, 0.85);
-              font-size: 16px;
-              font-weight: 500;
-              line-height: 1.3;
-              letter-spacing: 0.5px;
-            }
-
-            /* Light theme overrides */
-            body.theme-light .tech-grid-card {
-              background: rgba(255, 255, 255, 0.5);
-              border: 1px dashed rgba(15, 23, 42, 0.25);
-              backdrop-filter: blur(6px);
-              -webkit-backdrop-filter: blur(6px);
-            }
-
-            body.theme-light .tech-grid-card:hover {
-              background: rgba(255, 255, 255, 0.9);
-              border-color: rgba(15, 23, 42, 0.5);
-              border-style: solid;
-              box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            }
-
-            body.theme-light .tech-grid-card-title {
-              color: #0f172a;
-              font-weight: 600;
-            }
-
-            /* Responsive adjustments for phones/tablets */
-            @media (max-width: 1024px) {
-              .quick-tech-grid {
-                grid-template-columns: repeat(3, 1fr) !important;
-                width: 90vw !important;
-              }
-            }
-
-            @media (max-width: 768px) {
-              .quick-tech-grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-                width: 95vw !important;
-              }
-
-              .tech-grid-card {
-                aspect-ratio: 1.2;
-              }
-            }
-          </style>
-
-          <script>
-            function quickSearch(tech) {
-              const input = document.getElementById('search-input');
-              const submit = document.getElementById('search-submit');
-              const grid = document.getElementById('quick-tech-grid');
-              if (input && submit) {
-                input.value = tech;
-                submit.click();
-              }
-              if (grid) grid.classList.add('hidden-by-search');
-            }
-
-            // Hide/Show grid based on search/clear actions
-            document.addEventListener('DOMContentLoaded', () => {
-              const input = document.getElementById('search-input');
-              const submit = document.getElementById('search-submit');
-              const grid = document.getElementById('quick-tech-grid');
-              const hideGrid = () => { if (input.value.trim().length > 0) grid.classList.add('hidden-by-search'); };
-
-              if (submit) submit.addEventListener('click', hideGrid);
-              if (input) input.addEventListener('keydown', (e) => { if (e.key === 'Enter') hideGrid(); });
-
-              window.addEventListener('prd-clear-results', () => {
-                if (grid) grid.classList.remove('hidden-by-search');
-                if (input) input.value = '';
-              });
-            });
-          </script>
-
-          <!-- Standard Tech Cards (4x3 = 12 total) -->
-          <button class="tech-grid-card" onclick="quickSearch('CNC Machining')"><span class="tech-grid-card-title">CNC
-              Machining</span></button>
-          <button class="tech-grid-card" onclick="quickSearch('Injection Moulding')"><span
-              class="tech-grid-card-title">Injection Moulding</span></button>
-          <button class="tech-grid-card" onclick="quickSearch('Sheet Metal & Fabrication')"><span
-              class="tech-grid-card-title">Sheet Metal & Fabrication</span></button>
-          <button class="tech-grid-card" onclick="quickSearch('PCBA & Electronics')"><span
-              class="tech-grid-card-title">PCBA & Electronics</span></button>
-          <button class="tech-grid-card" onclick="quickSearch('Die Casting')"><span class="tech-grid-card-title">Die
-              Casting</span></button>
-          <button class="tech-grid-card" onclick="quickSearch('Advanced Assembly')"><span
-              class="tech-grid-card-title">Advanced Assembly</span></button>
-          <button class="tech-grid-card" onclick="quickSearch('Metal Stamping')"><span
-              class="tech-grid-card-title">Metal Stamping</span></button>
-          <button class="tech-grid-card" onclick="quickSearch('Tooling Fabrication')"><span
-              class="tech-grid-card-title">Tooling Fabrication</span></button>
-          <button class="tech-grid-card" onclick="quickSearch('Surface Treatment')"><span
-              class="tech-grid-card-title">Surface Treatment</span></button>
-          <button class="tech-grid-card" onclick="quickSearch('3D Printing & Additive')"><span
-              class="tech-grid-card-title">3D Printing & Additive</span></button>
-          <button class="tech-grid-card" onclick="quickSearch('Extrusion')"><span
-              class="tech-grid-card-title">Extrusion</span></button>
-          <button class="tech-grid-card" onclick="quickSearch('Casting & Forging')"><span
-              class="tech-grid-card-title">Casting & Forging</span></button>
         </div>
 
       </div> <!-- Closes hero__title-container originally placed too early -->
@@ -1968,24 +1824,97 @@
     <!-- ═══════════════════════════════════════════════════
          FIND DESIGNERS ENGINE (v4 — Light Theme UI)
          ═══════════════════════════════════════════════════ -->
-    <div class="designers-engine hidden" id="designers-engine">
-      <!-- Injected by designers-controller.js -->
-    </div>
-
     <!-- ═══════════════════════════════════════════════════
-         HS TARIFF OPTIMIZER (v5 — Stub)
+         FIND DESIGNERS ENGINE (v4 — Minimalist UI)
          ═══════════════════════════════════════════════════ -->
-    <div class="tariff-engine hidden" id="tariff-engine" style="padding: 120px 40px; text-align: center;">
-      <h2 style="font-size: 2.5rem; color: var(--color-white); margin-bottom: 16px;">HS Tariff Optimizer</h2>
-      <p style="color: var(--color-steel-300); max-width: 600px; margin: 0 auto; line-height: 1.6;">
-        Our intelligent tariff optimizer reduces import duties by finding optimal HS codes
-        and analyzing free trade agreements across different countries of origin.
-      </p>
-      <div
-        style="margin-top: 40px; padding: 40px; border: var(--border-dim); border-radius: var(--radius-lg); display: inline-block; background: var(--glass-bg);">
-        <span
-          style="display: inline-block; padding: 6px 12px; font-size: 13px; font-weight: bold; text-transform: uppercase; background: var(--color-amber-glow); color: #000; border-radius: 40px;">Coming
-          Soon</span>
+    <div class="designers-engine hidden" id="designers-engine" style="padding: 60px 40px; text-align: left; max-width: 100%; margin: 0 auto; width: 100%;">
+      <div style="margin-bottom: 40px;">
+        <h2 style="font-size: 2.5rem; color: var(--color-white); margin-bottom: 8px; font-weight: 700;">Network of Experts</h2>
+        <p style="color: var(--color-steel-300); font-size: 1.1rem;">Top-tier industrial designers and hardware engineers available for your project.</p>
+      </div>
+
+      <div class="designers-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
+        
+        <div class="designer-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'; this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
+          <img src="" alt="Avatar" style="width: 86px; height: 86px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid rgba(255,255,255,0.05);" onerror="this.src='https://ui-avatars.com/api/?name=J+D&background=0D8ABC&color=fff'">
+          <h3 style="color: #fff; font-size: 1.25rem; font-weight: 600; margin: 0 0 4px 0;">Jonathan Davis</h3>
+          <p style="color: #c4b5fd; font-size: 0.9rem; font-weight: 500; margin: 0 0 16px 0;">Senior Industrial Designer</p>
+          
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px;">
+            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">SolidWorks</span>
+            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Consumer Tech</span>
+            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">DFM</span>
+          </div>
+          
+          <div style="margin-top: auto; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="text-align: left;">
+              <span style="display: block; font-size: 0.75rem; color: #888;">Hourly Rate</span>
+              <span style="color: #fff; font-weight: 600;">$95/hr</span>
+            </div>
+            <button style="background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(139,92,246,0.25)'" onmouseout="this.style.background='rgba(139,92,246,0.15)'">Contact</button>
+          </div>
+        </div>
+
+        <div class="designer-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'; this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
+          <img src="" alt="Avatar" style="width: 86px; height: 86px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid rgba(255,255,255,0.05);" onerror="this.src='https://ui-avatars.com/api/?name=S+K&background=10B981&color=fff'">
+          <h3 style="color: #fff; font-size: 1.25rem; font-weight: 600; margin: 0 0 4px 0;">Sarah Knowles</h3>
+          <p style="color: #c4b5fd; font-size: 0.9rem; font-weight: 500; margin: 0 0 16px 0;">Mechanical Engineer</p>
+          
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px;">
+            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Fusion 360</span>
+            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Robotics</span>
+            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Tolerance Analysis</span>
+          </div>
+          
+          <div style="margin-top: auto; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="text-align: left;">
+              <span style="display: block; font-size: 0.75rem; color: #888;">Hourly Rate</span>
+              <span style="color: #fff; font-weight: 600;">$110/hr</span>
+            </div>
+            <button style="background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(139,92,246,0.25)'" onmouseout="this.style.background='rgba(139,92,246,0.15)'">Contact</button>
+          </div>
+        </div>
+
+        <div class="designer-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'; this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
+          <img src="" alt="Avatar" style="width: 86px; height: 86px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid rgba(255,255,255,0.05);" onerror="this.src='https://ui-avatars.com/api/?name=L+C&background=F59E0B&color=fff'">
+          <h3 style="color: #fff; font-size: 1.25rem; font-weight: 600; margin: 0 0 4px 0;">Lucas Chen</h3>
+          <p style="color: #c4b5fd; font-size: 0.9rem; font-weight: 500; margin: 0 0 16px 0;">Product Design Head</p>
+          
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px;">
+            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Rhino 3D</span>
+            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Wearables</span>
+            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">CMF</span>
+          </div>
+          
+          <div style="margin-top: auto; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="text-align: left;">
+              <span style="display: block; font-size: 0.75rem; color: #888;">Hourly Rate</span>
+              <span style="color: #fff; font-weight: 600;">$140/hr</span>
+            </div>
+            <button style="background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(139,92,246,0.25)'" onmouseout="this.style.background='rgba(139,92,246,0.15)'">Contact</button>
+          </div>
+        </div>
+        
+        <div class="designer-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'; this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
+          <img src="" alt="Avatar" style="width: 86px; height: 86px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid rgba(255,255,255,0.05);" onerror="this.src='https://ui-avatars.com/api/?name=M+V&background=8B5CF6&color=fff'">
+          <h3 style="color: #fff; font-size: 1.25rem; font-weight: 600; margin: 0 0 4px 0;">Marcus Voss</h3>
+          <p style="color: #c4b5fd; font-size: 0.9rem; font-weight: 500; margin: 0 0 16px 0;">Mold Design Specialist</p>
+          
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px;">
+            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">NX Unigraphics</span>
+            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Injection Molding</span>
+            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Moldflow</span>
+          </div>
+          
+          <div style="margin-top: auto; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="text-align: left;">
+              <span style="display: block; font-size: 0.75rem; color: #888;">Hourly Rate</span>
+              <span style="color: #fff; font-weight: 600;">$75/hr</span>
+            </div>
+            <button style="background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(139,92,246,0.25)'" onmouseout="this.style.background='rgba(139,92,246,0.15)'">Contact</button>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -4002,15 +3931,7 @@
             <p>Join the procurement intelligence platform</p>
           </div>
           <form id="signup-form" class="auth-form">
-            <div class="auth-input-group">
-              <label for="signup-tier">Select Your Plan</label>
-              <select id="signup-tier" required
-                style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 13px; margin-bottom: 2px;">
-                <option value="basic">Basic (Free)</option>
-                <option value="professional">Professional ($49/mo)</option>
-                <option value="enterprise">Enterprise (Custom)</option>
-              </select>
-            </div>
+
             <div class="auth-input-group" style="display: flex; flex-direction: row; gap: 8px;">
               <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
                 <label for="signup-first">First Name</label>

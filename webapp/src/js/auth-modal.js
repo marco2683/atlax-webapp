@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Auto-open if query parameter has login=true (e.g. from email verification links or splash screens)
-  if (window.location.search.includes('login=true')) {
+  if (window.location.search.includes('login=true') || window.location.search.includes('auth=login')) {
     authModal.classList.remove('hidden');
     // Ensure login form is displayed
     const containerLogin = document.getElementById('form-login');
@@ -92,6 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const { data: profile } = await supabase.from('profiles').select('tier').eq('id', data.user.id).single();
         if (profile && profile.tier) {
           sessionStorage.setItem('atlasdt_tier', profile.tier);
+        } else {
+          sessionStorage.setItem('atlasdt_tier', 'basic');
         }
         window.location.reload();
       }
@@ -114,17 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
       signupBtn.innerText = 'Creating Account...';
       signupBtn.disabled = true;
 
-      const pendingTier = document.getElementById('signup-tier')?.value || 'basic';
       const metadata = {
         first_name: first,
         last_name: last,
         company: company,
-        tier: pendingTier
+        tier: 'basic'
       };
-      
-      if (pendingTier !== 'basic') {
-        sessionStorage.setItem('pending_tier_subscription', pendingTier);
-      }
 
       const { data, error } = await signUpUser(email, pass, metadata);
       

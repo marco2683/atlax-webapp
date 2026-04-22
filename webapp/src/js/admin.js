@@ -5,6 +5,7 @@ import { renderPricingConfigurator } from './admin-pricing.js';
 import { renderMarketplaceTaxonomy } from './admin-taxonomy.js';
 import { renderAdminProducts } from './admin-products.js';
 import { loadPricingConfig } from './utils/pricing-loader.js';
+import { initRfiImporter } from './admin-rfi.js';
 
 /* ================================================================
    Atlas DT Admin Panel — Full CRM with Add/Edit Forms
@@ -203,6 +204,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (t === 'website')   { pageTitle.textContent = 'Website Content Manager';  renderWebsiteContent(); }
         if (t === 'marketplace-taxonomy') { pageTitle.textContent = 'Marketplace Admin'; renderMarketplaceTaxonomy(contentRouting); }
         if (t === 'products') { pageTitle.textContent = 'Products Catalog'; renderAdminProducts(contentRouting); }
+        if (t === 'designers') { pageTitle.textContent = 'Designer Applications Hub'; renderDesignersHub(); }
         if (t === 'staff')     { pageTitle.textContent = 'Staff Directory';  renderStaffTable(); }
       });
     });
@@ -727,6 +729,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                <button class="btn btn-secondary" id="admin-bulk-deactivate" style="padding: 8px 12px; font-size:12px;">Deactivate</button>
                <button class="btn btn-secondary" id="admin-bulk-delete" style="color:#ef4444; border-color:rgba(239,68,68,0.2); padding: 8px 12px; font-size:12px;">Delete</button>
              </div>
+             <button class="btn btn-secondary" id="admin-add-rfi-btn">+ Add RFI</button>
+             <input type="file" id="rfi-upload-input" accept=".xlsx" style="display:none;">
              <button class="btn btn-primary" id="admin-add-supplier-btn">+ Add New Supplier</button>
           </div>
         </div>
@@ -744,6 +748,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('admin-filter-tech')?.addEventListener('change', e => { adminSupplierFilters.techGroup = e.target.value; renderSuppliersTable(true); });
       document.getElementById('admin-filter-country')?.addEventListener('change', e => { adminSupplierFilters.country = e.target.value; renderSuppliersTable(true); });
       document.getElementById('admin-filter-hide-disabled')?.addEventListener('change', e => { adminSupplierFilters.hideDisabled = e.target.checked; renderSuppliersTable(true); });
+
+      document.getElementById('admin-add-rfi-btn')?.addEventListener('click', () => {
+        document.getElementById('rfi-upload-input').click();
+      });
+
+      document.getElementById('rfi-upload-input')?.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        await initRfiImporter(file, async () => {
+          await loadCRMData(); // Reload data explicitly to fetch new supplier
+          renderSuppliersTable(false); // Refresh UI
+        });
+        e.target.value = ''; // Reset input so same file can be selected again
+      });
 
       document.getElementById('admin-filter-clear')?.addEventListener('click', () => {
         adminSupplierFilters = {
@@ -3231,6 +3249,98 @@ document.addEventListener('DOMContentLoaded', async () => {
       } catch(err) {
         alert('Failed to save staff member');
       }
+    });
+  function renderDesignersHub() {
+    let pendingDesigners = loadedCustomers.filter(c => c.designer_status === 'pending');
+
+    const rows = pendingDesigners.map(s => `
+      <tr>
+        <td>
+          <div style="font-weight:600; color:var(--color-electric);">${s.first_name || ''} ${s.last_name || ''}</div>
+          <div style="font-size:12px; color:var(--color-steel-400);">${s.email || '—'}</div>
+        </td>
+        <td>${s.job_title || s.company || '—'}</td>
+        <td style="max-width:300px;">
+          <div style="max-height:80px; overflow-y:auto; font-size:12px; background:rgba(255,255,255,0.05); padding:8px; border-radius:4px; white-space:pre-wrap;">${s.cover_letter || 'No pitch provided.'}</div>
+        </td>
+        <td>
+          ${s.resume_url ? `<a href="${s.resume_url}" target="_blank" class="admin-badge active" style="text-decoration:none;">View CV</a>` : `<span class="admin-badge">No CV</span>`}
+        </td>
+        <td>
+          ${s.portfolio_assets && s.portfolio_assets.length ? `<a href="${JSON.parse(s.portfolio_assets)[0]}" target="_blank" class="admin-badge active" style="text-decoration:none;">View Portfolio</a>` : `<span class="admin-badge">No Portfolio</span>`}
+        </td>
+        <td class="admin-table-actions">
+           <button class="admin-action-btn admin-approve-designer" data-id="${s.id}" style="color:var(--color-emerald); border-color:var(--color-emerald);">Approve</button>
+           <button class="admin-action-btn admin-reject-designer" data-id="${s.id}" style="color:#ef4444; border-color:rgba(239,68,68,.2);">Reject</button>
+        </td>
+      </tr>
+    `).join('');
+
+    contentRouting.innerHTML = `
+      <div style="margin-bottom:24px;">
+        <h2 style="font-size: 20px; margin-bottom: 8px;">Pending Designer Applications</h2>
+        <p style="color: var(--color-steel-400); font-size: 14px;">Review CVs and Cover Letters before approving them to the global Designer directory.</p>
+      </div>
+
+      <div class="admin-table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Applicant</th>
+              <th>Current Role</th>
+              <th>Cover Letter / Pitch</th>
+              <th>Resume</th>
+              <th>Portfolio</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.length ? rows : '<tr><td colspan="6" style="text-align:center; padding: 40px; color:var(--color-steel-400);">No pending applications found.</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    document.querySelectorAll('.admin-approve-designer').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const id = e.target.dataset.id;
+        btn.textContent = 'Approving...';
+        btn.disabled = true;
+        try {
+          const { error } = await supabase.from('profiles').update({ designer_status: 'approved' }).eq('id', id);
+          if (error) throw error;
+          
+          const approved = loadedCustomers.find(c => c.id === id);
+          if (approved) approved.designer_status = 'approved';
+          renderDesignersHub();
+        } catch(err) {
+          alert('Error approving designer: ' + err.message);
+          btn.textContent = 'Approve';
+          btn.disabled = false;
+        }
+      });
+    });
+
+    document.querySelectorAll('.admin-reject-designer').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        if (!confirm("Are you sure you want to reject this applicant? They will be removed from pending.")) return;
+        const id = e.target.dataset.id;
+        btn.textContent = 'Rejecting...';
+        btn.disabled = true;
+        try {
+           // We can set it back to null or 'rejected'
+          const { error } = await supabase.from('profiles').update({ designer_status: 'rejected' }).eq('id', id);
+          if (error) throw error;
+          
+          const rejected = loadedCustomers.find(c => c.id === id);
+          if (rejected) rejected.designer_status = 'rejected';
+          renderDesignersHub();
+        } catch(err) {
+          alert('Error rejecting designer: ' + err.message);
+          btn.textContent = 'Reject';
+          btn.disabled = false;
+        }
+      });
     });
   }
 
