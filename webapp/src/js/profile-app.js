@@ -410,6 +410,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    // 4. Format Spoken Languages
+    const languagePills = Array.from(document.querySelectorAll('#languages-container .skill-pill'));
+    const spokenLanguages = languagePills.map(pill => pill.dataset.language);
+
+    if (spokenLanguages.length === 0) {
+      alert("Please add at least one spoken language.");
+      return;
+    }
+
     // Fetch previously attached files from the UI dataset
     const coverUrl = document.getElementById('z-cover')?.dataset?.url || null;
     const resumeUrl = document.getElementById('z-resume')?.dataset?.url || null;
@@ -440,6 +449,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       working_hours: document.getElementById('app-working-hours')?.value || '',
       specialized_skills: specializedSkillsIds,
       software_used: softwareUsed,
+      spoken_languages: spokenLanguages,
       comms_tools: JSON.stringify(Array.from(document.querySelectorAll('.comm-row')).map(row => ({
         type: row.querySelector('.comm-type').value,
         detail: row.querySelector('.comm-detail').value
@@ -625,6 +635,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <p style="font-size: 11px; opacity: 0.6; margin-bottom: 8px; margin-top:-4px;">Type a software tool and press Enter (e.g. Solidworks, AutoCAD...).</p>
                 <div id="software-container" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; min-height: 48px; background: rgba(0,0,0,0.2);">
                   <input type="text" id="app-software-input" style="background: transparent; border: none; color: inherit; outline: none; flex: 1; min-width: 150px;" placeholder="Add software...">
+                </div>
+              </div>
+
+              <!-- Spoken Languages Tagging -->
+              <div class="profile-form-group">
+                <label>Spoken Languages <span class="req">*</span></label>
+                <p style="font-size: 11px; opacity: 0.6; margin-bottom: 8px; margin-top:-4px;">Type a language and press Enter (e.g. English, Mandarin...).</p>
+                <div id="languages-container" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; min-height: 48px; background: rgba(0,0,0,0.2);">
+                  <input type="text" id="app-language-input" style="background: transparent; border: none; color: inherit; outline: none; flex: 1; min-width: 150px;" placeholder="Add language...">
                 </div>
               </div>
 
@@ -831,6 +850,32 @@ document.addEventListener('DOMContentLoaded', async () => {
           });
         }
 
+        // Spoken Languages Tagging Logic
+        const languageInput = document.getElementById('app-language-input');
+        const languageContainer = document.getElementById('languages-container');
+        if (languageInput) {
+          languageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ',') {
+              e.preventDefault();
+              const val = languageInput.value.trim();
+              if (val) {
+                const count = languageContainer.querySelectorAll('.skill-pill').length + 1;
+                const pill = document.createElement('div');
+                pill.className = 'skill-pill';
+                pill.dataset.language = val;
+                pill.style = `display: flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 4px; font-size: 13px; background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.3);`;
+                pill.innerHTML = `${val} <span style="cursor:pointer; margin-left:4px; opacity:0.7;">✕</span>`;
+                languageContainer.insertBefore(pill, languageInput);
+                languageInput.value = '';
+                
+                pill.querySelector('span:last-child').addEventListener('click', () => {
+                   pill.remove();
+                });
+              }
+            }
+          });
+        }
+
         const submitBtn = document.getElementById('btn-submit-application');
         if (submitBtn) {
           submitBtn.addEventListener('click', () => performApplication(submitBtn));
@@ -993,7 +1038,43 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // ── Theme Toggle Logic ──────────────────────────────────────
+  const themeToggle = document.getElementById('theme-toggle');
+  const iconLight = document.getElementById('theme-icon-light');
+  const iconDark = document.getElementById('theme-icon-dark');
+
+  const updateThemeUI = (theme) => {
+    if (theme === 'light') {
+      document.body.classList.add('theme-light');
+      if(iconLight) iconLight.style.display = 'block';
+      if(iconDark) iconDark.style.display = 'none';
+      
+      const logo = document.querySelector('.profile-nav img');
+      if(logo) logo.src = '/logos/atlasdt-logo-dark.png'; // Swap to dark logo for light theme
+    } else {
+      document.body.classList.remove('theme-light');
+      if(iconLight) iconLight.style.display = 'none';
+      if(iconDark) iconDark.style.display = 'block';
+      
+      const logo = document.querySelector('.profile-nav img');
+      if(logo) logo.src = '/logos/atlasdt-logo-light.png'; // Swap back
+    }
+  };
+
+  if (themeToggle) {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    updateThemeUI(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.body.classList.contains('theme-light');
+      const newTheme = isLight ? 'dark' : 'light';
+      localStorage.setItem('theme', newTheme);
+      updateThemeUI(newTheme);
+    });
+  } else {
+    // Just enforce saved theme on load if button is missing
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    if(savedTheme === 'light') document.body.classList.add('theme-light');
+  }
+
 });
-
-
-
