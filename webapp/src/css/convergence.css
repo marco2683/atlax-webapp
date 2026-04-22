@@ -21,7 +21,7 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1.2fr 1.0fr;
-  gap: 30px;
+  gap: 80px;
   align-items: start;
 }
 
