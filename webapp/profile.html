@@ -385,6 +385,25 @@
     body.theme-light label.btn-save[for$="-input"] svg {
       color: var(--color-electric) !important;
     }
+    body.theme-light .account-mgmt-section {
+      border-top-color: rgba(0, 0, 0, 0.1) !important;
+    }
+    body.theme-light .account-mgmt-desc,
+    body.theme-light .account-mgmt-text {
+      color: #6b7280 !important;
+    }
+    body.theme-light .account-mgmt-card {
+      background: rgba(0, 0, 0, 0.02) !important;
+      border-color: rgba(0, 0, 0, 0.08) !important;
+    }
+    body.theme-light .account-mgmt-btn {
+      background: rgba(0, 0, 0, 0.05) !important;
+      border-color: rgba(0, 0, 0, 0.15) !important;
+      color: #374151 !important;
+    }
+    body.theme-light .account-mgmt-btn:hover {
+      background: rgba(0, 0, 0, 0.1) !important;
+    }
 
     /* ── AUTH MODAL LIGHT THEME OVERRIDES ────────────────────────────── */
     body.theme-light .auth-modal-overlay {
@@ -565,28 +584,28 @@
           </div>
 
           <!-- Account Management Section -->
-          <div style="margin-top: 48px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 32px;">
+          <div class="account-mgmt-section" style="margin-top: 48px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 32px;">
             <h3 style="font-size: 1.4rem; margin-bottom: 16px; font-family: 'Space Grotesk', sans-serif;">Account Management</h3>
-            <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 24px; max-width: 600px;">
+            <p class="account-mgmt-desc" style="color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 24px; max-width: 600px;">
               Manage your security credentials and data permanence. Note that changing your email or password will require verification.
             </p>
             
             <div style="display: flex; flex-direction: column; gap: 16px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;">
+              <div class="account-mgmt-card" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;">
                 <div>
                   <h4 style="font-size: 15px; margin: 0 0 4px 0; font-weight: 500;">Update Email Address</h4>
-                  <p style="font-size: 13px; color: rgba(255,255,255,0.5); margin: 0;">Change the email associated with your account.</p>
+                  <p class="account-mgmt-text" style="font-size: 13px; color: rgba(255,255,255,0.5); margin: 0;">Change the email associated with your account.</p>
                 </div>
-                <button type="button" class="btn-save" id="btn-change-email" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; font-size: 13px;">Change Email</button>
+                <button type="button" class="btn-save account-mgmt-btn" id="btn-change-email" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; font-size: 13px;">Change Email</button>
               </div>
 
-              <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;">
+              <div class="account-mgmt-card" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;">
                 <div>
                   <h4 style="font-size: 15px; margin: 0 0 4px 0; font-weight: 500;">Update Password</h4>
-                  <p style="font-size: 13px; color: rgba(255,255,255,0.5); margin: 0;">Ensure your account maintains strong security credentials.</p>
+                  <p class="account-mgmt-text" style="font-size: 13px; color: rgba(255,255,255,0.5); margin: 0;">Ensure your account maintains strong security credentials.</p>
                 </div>
                 <!-- We can trigger the global nav-changepwd-btn functionality here -->
-                <button type="button" class="btn-save" id="btn-route-password" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; font-size: 13px;">Change Password</button>
+                <button type="button" class="btn-save account-mgmt-btn" id="btn-route-password" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; font-size: 13px;">Change Password</button>
               </div>
 
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px;">
