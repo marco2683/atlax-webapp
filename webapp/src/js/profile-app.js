@@ -388,6 +388,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       designer_status: 'pending',
       cover_letter: coverLetter,
       contact_email: document.getElementById('app-contact-email')?.value || '',
+      linkedin_url: document.getElementById('app-linkedin-url')?.value || '',
+      online_portfolio_url: document.getElementById('app-online-portfolio')?.value || '',
       hourly_rate_currency: document.getElementById('app-currency')?.value || 'USD',
       hourly_rate: document.getElementById('app-hourly-rate')?.value ? parseFloat(document.getElementById('app-hourly-rate').value) : null,
       availability: document.getElementById('app-availability')?.value || '',
@@ -501,6 +503,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="profile-form-group">
                   <label>Availability</label>
                   <input type="text" id="app-availability" class="profile-input" placeholder="e.g. 20 hours/week, GMT+8">
+                </div>
+              </div>
+
+              <div class="profile-form-grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="profile-form-group">
+                  <label>Online Portfolio URL</label>
+                  <input type="url" id="app-online-portfolio" class="profile-input" placeholder="https://dribbble.com/yourprofile">
+                </div>
+                <div class="profile-form-group">
+                  <label>LinkedIn Profile URL</label>
+                  <input type="url" id="app-linkedin-url" class="profile-input" placeholder="https://linkedin.com/in/yourprofile">
                 </div>
               </div>
 
