@@ -1,4 +1,4 @@
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const { Resend } = require('resend');
 
 exports.handler = async (event, context) => {
   if (event.httpMethod !== 'POST') {
@@ -90,34 +90,23 @@ exports.handler = async (event, context) => {
         `;
     }
 
-    // We can use native fetch or node-fetch for compatibility 
-    const isGlobalFetch = typeof globalThis.fetch === 'function';
-    const _fetch = isGlobalFetch ? globalThis.fetch : fetch;
+    const resend = new Resend(RESEND_API_KEY);
 
-    const resendReq = await _fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${RESEND_API_KEY}`
-      },
-      body: JSON.stringify({
-        from: 'AtlasDT System <system@atlasdt.com>', // Or a verified domain you own on Resend
-        to: toEmailAddr,
-        subject: subject,
-        html: htmlContent
-      })
+    const { data: resendRes, error: resendError } = await resend.emails.send({
+      from: 'AtlasDT System <system@atlasdt.com>',
+      to: toEmailAddr,
+      subject: subject,
+      html: htmlContent
     });
 
-    const resendRes = await resendReq.json();
-
-    if (!resendReq.ok) {
-        console.error("Resend API Error:", resendRes);
-        return { statusCode: 500, body: JSON.stringify({ error: 'Failed to send email' }) };
+    if (resendError) {
+        console.error("Resend API Error:", resendError);
+        return { statusCode: 500, body: JSON.stringify({ error: resendError }) };
     }
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, message: "Email dispatched successfully.", id: resendRes.id })
+      body: JSON.stringify({ success: true, message: "Email dispatched successfully.", id: resendRes?.id })
     };
 
   } catch (error) {
