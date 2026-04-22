@@ -201,8 +201,16 @@ export default defineConfig({
         workspace: resolve(__dirname, 'workspace.html'),
         admin: resolve(__dirname, 'admin.html'),
         profile: resolve(__dirname, 'profile.html'),
-
-        "supplier-dashboard": resolve(__dirname, 'supplier-dashboard.html')
+        "supplier-dashboard": resolve(__dirname, 'supplier-dashboard.html'),
+        blog: resolve(__dirname, 'blog.html'),
+        "conditions-of-sale": resolve(__dirname, 'conditions-of-sale.html'),
+        "cookie-policy": resolve(__dirname, 'cookie-policy.html'),
+        "data-protection": resolve(__dirname, 'data-protection.html'),
+        "email-security": resolve(__dirname, 'email-security.html'),
+        faq: resolve(__dirname, 'faq.html'),
+        nda: resolve(__dirname, 'nda.html'),
+        "privacy-policy": resolve(__dirname, 'privacy-policy.html'),
+        "website-terms": resolve(__dirname, 'website-terms.html')
       }
     }
   }
