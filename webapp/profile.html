@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/src/css/design-system.css">
   <link rel="stylesheet" href="/src/css/auth.css">
   <link rel="stylesheet" href="/src/css/responsive.css">
+  <link rel="stylesheet" href="/src/css/light-theme.css">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     body {
@@ -295,6 +296,121 @@
       .profile-nav {
         padding: 16px 20px;
       }
+    }
+
+    /* ── LIGHT THEME OVERRIDES ────────────────────────────── */
+    body.theme-light {
+      background: #fdfdfd;
+      color: #111827;
+      background-image: none;
+    }
+    body.theme-light .profile-nav {
+      background: rgba(255, 255, 255, 0.8);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    body.theme-light .profile-nav a {
+      color: #374151;
+      background: rgba(0, 0, 0, 0.05);
+    }
+    body.theme-light .profile-nav a:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    body.theme-light #theme-toggle {
+      color: #374151 !important;
+    }
+    body.theme-light .profile-content-pane {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+    body.theme-light .section-title {
+      border-bottom-color: rgba(0, 0, 0, 0.1);
+      color: #111827;
+    }
+    body.theme-light .profile-form-group label {
+      color: #4b5563;
+    }
+    body.theme-light .profile-input,
+    body.theme-light textarea.profile-input {
+      background: #f9fafb;
+      border: 1px solid #d1d5db;
+      color: #111827;
+    }
+    body.theme-light .profile-input:focus,
+    body.theme-light textarea.profile-input:focus {
+      border-color: var(--color-electric);
+      background: #ffffff;
+    }
+    body.theme-light .profile-tab {
+      color: #4b5563;
+    }
+    body.theme-light .profile-tab:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: #111827;
+    }
+    body.theme-light .profile-tab.active {
+      background: rgba(31, 111, 235, 0.1);
+      color: var(--color-electric);
+      border-color: rgba(31, 111, 235, 0.2);
+    }
+    body.theme-light #approved-designer-tabs span {
+      color: #6b7280 !important;
+    }
+    body.theme-light .logout-tab {
+      color: #dc2626 !important;
+    }
+    body.theme-light .logout-tab:hover {
+      background: rgba(220, 38, 38, 0.1) !important;
+    }
+    body.theme-light .billing-card {
+      background: #f9fafb;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    body.theme-light .tier-badge {
+      background: rgba(0, 0, 0, 0.05);
+      color: #6b7280;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    body.theme-light .tier-badge.professional {
+      background: rgba(31, 111, 235, 0.1);
+      color: var(--color-electric);
+      border: 1px solid rgba(31, 111, 235, 0.2);
+      box-shadow: none;
+    }
+
+    /* ── AUTH MODAL LIGHT THEME OVERRIDES ────────────────────────────── */
+    body.theme-light .auth-modal-overlay {
+      background: rgba(255, 255, 255, 0.85);
+    }
+    body.theme-light .auth-modal-panel {
+      background: #ffffff;
+      color: #111827;
+      border-color: rgba(0,0,0,0.1) !important;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.1) !important;
+    }
+    body.theme-light .auth-modal-panel h2,
+    body.theme-light .auth-modal-panel h3,
+    body.theme-light .auth-modal-panel label {
+      color: #111827 !important;
+    }
+    body.theme-light .auth-modal-panel .profile-input,
+    body.theme-light .auth-modal-panel textarea.profile-input {
+      background: #f9fafb;
+      border: 1px solid #d1d5db;
+      color: #111827;
+    }
+    body.theme-light .auth-modal-panel .profile-input::placeholder {
+      color: #9ca3af;
+    }
+    body.theme-light .auth-modal-panel .btn-primary {
+      background: #2563eb;
+      color: white;
+    }
+    body.theme-light .auth-modal-panel .btn-primary:disabled {
+      background: #93c5fd;
+    }
+    body.theme-light .auth-modal-panel .close-auth-modal {
+      color: #4b5563;
     }
   </style>
 </head>
