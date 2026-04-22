@@ -242,6 +242,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // Setup remove single Portfolio Document (PDF)
+  const removePortfolioBtn = document.getElementById('remove-portfolio-link-btn');
+  if (removePortfolioBtn) {
+    removePortfolioBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!confirm("Are you sure you want to remove your attached portfolio PDF?")) return;
+      
+      removePortfolioBtn.innerText = 'Removing...';
+      const { error } = await updateMyProfile({ portfolio_url: null });
+      if (!error) {
+        document.getElementById('current-portfolio-container').style.display = 'none';
+      } else {
+        alert("Failed to remove portfolio document: " + error.message);
+      }
+      removePortfolioBtn.innerText = 'Remove';
+    });
+  }
+
   // Handle Portfolio Uploads
   const portfolioInput = document.getElementById('portfolio-upload-input');
   if (portfolioInput) {
@@ -332,6 +350,15 @@ document.addEventListener('DOMContentLoaded', async () => {
           pContainer.appendChild(img);
         });
       } catch(e) { console.error('Failed to parse portfolio assets', e); }
+    }
+
+    // Single Portfolio PDF Document (From Application Flow)
+    if (profile.portfolio_url) {
+      const portLinkCont = document.getElementById('current-portfolio-container');
+      if (portLinkCont) {
+        portLinkCont.style.display = 'block';
+        document.getElementById('current-portfolio-link').href = profile.portfolio_url;
+      }
     }
 
     // Company
