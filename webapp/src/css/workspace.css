@@ -465,13 +465,23 @@
 
 .ws-status--submitted,
 .ws-status--pending_supplier {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+}
+
+.ws-status--under_review {
   background: rgba(245, 158, 11, 0.12);
   color: #fbbf24;
 }
 
-.ws-status--under_review {
-  background: rgba(59, 130, 246, 0.12);
-  color: #60a5fa;
+.ws-status--in_progress {
+  background: rgba(20, 184, 166, 0.12);
+  color: #2dd4bf;
+}
+
+.ws-status--done {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
 }
 
 .ws-status--quoted {

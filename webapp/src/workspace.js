@@ -309,94 +309,62 @@ async function loadRFQs() {
   const container = document.getElementById('rfqs-table-body');
   if (!container) return;
 
-  container.innerHTML = '<tr><td colspan="6" class="ws-td-muted" style="text-align:center; padding:40px;">Loading...</td></tr>';
+  container.innerHTML = '<tr><td colspan="5" class="ws-td-muted" style="text-align:center; padding:40px;">Loading...</td></tr>';
 
   rfqsCache = await getRFQs();
 
   if (rfqsCache.length === 0) {
     container.innerHTML = `
-      <tr><td colspan="6">
+      <tr><td colspan="5">
         <div class="ws-empty">
           <div class="ws-empty__icon">📨</div>
           <div class="ws-empty__title">No RFQs Yet</div>
-          <div class="ws-empty__desc">When you send a Request for Quotation from a supplier card, it will appear here for tracking.</div>
+          <div class="ws-empty__desc">When you submit a Project Quote request, it will appear here for tracking.</div>
         </div>
       </td></tr>`;
     return;
   }
 
-  const statusLabels = {
-    draft: 'Draft',
-    submitted: 'Submitted',
-    pending_supplier: 'Pending Supplier',
-    under_review: 'Under Review',
-    quoted: 'Quoted',
-    cancelled: 'Cancelled'
+  const statusConfig = {
+    submitted:    { label: 'Submitted',    cssClass: 'ws-status--submitted' },
+    under_review: { label: 'Under Review', cssClass: 'ws-status--under_review' },
+    in_progress:  { label: 'In Progress',  cssClass: 'ws-status--in_progress' },
+    done:         { label: 'Done',         cssClass: 'ws-status--done' },
+    cancelled:    { label: 'Cancelled',    cssClass: 'ws-status--cancelled' }
+  };
+
+  const serviceLabels = {
+    'mfg-only': 'Manufacturing Only',
+    'design-mfg': 'Design + Mfg',
+    'prototype': 'Prototyping',
+    'full-turnkey': 'Full Turnkey',
+    'consult': 'Consultation'
   };
 
   container.innerHTML = rfqsCache.map(rfq => {
     const data = rfq.rfq_data || {};
     const date = new Date(rfq.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const supplier = data.supplier_name || data.supplierName || 'Unknown Supplier';
-    const product = data.product_description || data.description || data.query || 'No description';
-    const shortDesc = product.length > 60 ? product.substring(0, 60) + '...' : product;
-    const statusClass = `ws-status--${rfq.status}`;
-    const statusText = statusLabels[rfq.status] || rfq.status;
-    const isCancellable = !['cancelled', 'quoted'].includes(rfq.status);
-    const isSolicitable = ['submitted', 'pending_supplier'].includes(rfq.status);
-    const solicitCount = data.solicit_count || 0;
+    const projectName = data.project_name || data.supplier_name || 'Unnamed Project';
+    const service = serviceLabels[data.service] || data.service || '—';
+    const fileCount = (data.files || []).length;
+    const cfg = statusConfig[rfq.status] || { label: rfq.status, cssClass: '' };
 
     return `
       <tr data-rfq-id="${rfq.id}">
-        <td style="max-width: 200px;">
-          <div class="ws-td-primary" style="font-weight: 500;">${supplier}</div>
-          <div class="ws-td-muted" style="font-size: 11px; margin-top: 2px;">${shortDesc}</div>
-        </td>
-        <td>${date}</td>
         <td>
-          <span class="ws-status ${statusClass}">
+          <div class="ws-td-primary" style="font-weight: 600;">${projectName}</div>
+        </td>
+        <td class="ws-td-muted" style="font-size: 12px;">${service}</td>
+        <td class="ws-td-muted">${date}</td>
+        <td>
+          <span class="ws-status ${cfg.cssClass}">
             <span class="ws-status__dot"></span>
-            ${statusText}
+            ${cfg.label}
           </span>
         </td>
-        <td class="ws-td-muted" style="font-size: 12px;">
-          ${solicitCount > 0 ? `Nudged ${solicitCount}×` : '—'}
-        </td>
-        <td>
-          <div class="ws-action-btns">
-            ${isSolicitable ? `
-              <button class="ws-action-btn ws-action-btn--solicit" data-action="solicit" data-id="${rfq.id}" title="Send reminder to supplier">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>
-              </button>` : ''}
-            <button class="ws-action-btn ws-action-btn--view" data-action="view-rfq" data-id="${rfq.id}" title="View details">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-            ${isCancellable ? `
-              <button class="ws-action-btn ws-action-btn--cancel" data-action="cancel-rfq" data-id="${rfq.id}" title="Cancel this RFQ">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>` : ''}
-          </div>
-        </td>
+        <td class="ws-td-muted" style="font-size: 12px;">${fileCount} file${fileCount !== 1 ? 's' : ''}</td>
       </tr>`;
   }).join('');
-
-  // Attach handlers
-  container.querySelectorAll('[data-action="cancel-rfq"]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      if (confirm('Cancel this RFQ? This cannot be undone.')) {
-        await cancelRFQ(btn.dataset.id);
-        await loadRFQs();
-      }
-    });
-  });
-
-  container.querySelectorAll('[data-action="solicit"]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      await solicitRFQ(btn.dataset.id);
-      btn.style.color = '#34d399';
-      setTimeout(() => loadRFQs(), 800);
-    });
-  });
 }
 
 

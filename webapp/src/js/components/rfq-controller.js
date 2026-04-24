@@ -14,6 +14,7 @@
 import { analyzeFile, renderThumbnail } from './geometry-analyzer.js';
 import { calculateQuote, getMaterialsForTech, getFinishesForTech, techHasTooling } from './quote-engine.js';
 import { supabase } from '../utils/supabaseClient.js';
+import JSZip from 'jszip';
 
 // ── State ───────────────────────────────────────────────
 let partCount = 1;
@@ -275,11 +276,84 @@ export function initRFQController() {
   // Wire checkout and request quote buttons
   document.getElementById('rfq-checkout-btn')?.addEventListener('click', () => {
     if (quotedParts.size === 0) return;
-    alert('Checkout initiated! Redirecting to payment...');
+    // alert('Checkout initiated! Redirecting to payment...');
+    showRFQSuccessModal('order');
   });
-  document.getElementById('rfq-request-formal-quote')?.addEventListener('click', () => {
+  document.getElementById('rfq-request-formal-quote')?.addEventListener('click', async () => {
     if (quotedParts.size === 0) return;
-    alert('Formal quote request submitted! Our engineers will contact you within 24 hours.');
+    
+    const user = await getCurrentUser();
+    if (!user) { alert('Please log in to submit a quote request.'); return; }
+    
+    const btn = document.getElementById('rfq-request-formal-quote');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    const rfqId = window.crypto?.randomUUID?.() || Date.now().toString();
+    const partsArray = Array.from(quotedParts.values());
+    const totalVolume = partsArray.reduce((acc, p) => acc + (p.volume || 0), 0);
+    const projName = partsArray[0]?.file?.name?.split('.')[0] || 'Instant RFQ Project';
+
+    const rfqData = {
+      type: 'instant',
+      project_name: projName,
+      service: 'Instant Quote',
+      estimated_quantity: partsArray.reduce((acc, p) => acc + (p.qty || 1), 0),
+      target_timeline: 'Flexible',
+      notes: 'Generated via Instant Quoting Engine',
+      parts: partsArray.map(p => ({
+        name: p.file?.name,
+        qty: p.qty,
+        material: p.material,
+        finish: p.finish,
+        price: p.price
+      })),
+      submitted_at: new Date().toISOString()
+    };
+
+    try {
+      // 1. Save to DB
+      const { error: rfqError } = await supabase.from('rfq_history').insert({
+        id: rfqId,
+        user_id: user.id,
+        rfq_data: rfqData,
+        status: 'submitted'
+      });
+      if (rfqError) throw rfqError;
+
+      // 2. Dispatch Email
+      const { data: profileData } = await supabase.from('profiles').select('first_name, last_name, company').eq('id', user.id).single();
+      const userName = profileData ? `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim() : user.email;
+      
+      await fetch('/.netlify/functions/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'project_rfq',
+          email: user.email,
+          userId: user.id,
+          name: userName,
+          company: profileData?.company || '',
+          projectName: projName,
+          service: 'Instant Quote',
+          quantity: rfqData.estimated_quantity,
+          timeline: 'Flexible',
+          fileCount: partsArray.length,
+          fileNames: partsArray.map(p => p.file?.name)
+        })
+      }).catch(e => console.warn('Email notify error:', e));
+
+      showRFQSuccessModal('rfq');
+      quotedParts.clear();
+      renderQuoteResult();
+    } catch (e) {
+      console.error('[RFQ] Instant quote error:', e);
+      alert('Failed to submit quote: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
   });
 
   // ── Rich Text Editor Handlers ────────────────────────
@@ -1004,20 +1078,38 @@ function renderQuoteResult() {
  * Uploads all files to Supabase Storage and creates an RFQ record.
  */
 async function handleBulkSubmit() {
-  const projName = document.getElementById('rfq-bulk-project-name')?.value || 'Unnamed Project';
-  const service = document.getElementById('rfq-bulk-service')?.value;
-  const qty = document.getElementById('rfq-bulk-qty')?.value || '';
-  const timeline = document.getElementById('rfq-bulk-timeline')?.value || 'flexible';
-  const notes = document.getElementById('rfq-bulk-notes')?.innerHTML || '';
-  const contactMe = document.getElementById('rfq-bulk-contact')?.checked || false;
+  // Determine which panel is active: Project Quote (pq-*) or RFQ Bulk (rfq-bulk-*)
+  const pqPanel = document.getElementById('project-quote-engine');
+  const isPQ = pqPanel && !pqPanel.classList.contains('hidden');
+  const prefix = isPQ ? 'pq-bulk' : 'rfq-bulk';
+
+  const projNameEl = document.getElementById(`${prefix}-project-name`);
+  const projName = projNameEl?.value?.trim() || '';
+  const service = document.getElementById(`${prefix}-service`)?.value;
+  const qty = document.getElementById(`${prefix}-qty`)?.value || '';
+  const timeline = document.getElementById(`${prefix}-timeline`)?.value || 'flexible';
+  const notes = document.getElementById(`${prefix}-notes`)?.innerHTML || '';
+  const contactMe = document.getElementById(`${prefix}-contact`)?.checked || false;
+
+  // Validate mandatory project name
+  if (!projName) {
+    if (projNameEl) {
+      projNameEl.style.borderColor = '#ef4444';
+      projNameEl.focus();
+      projNameEl.setAttribute('placeholder', '⚠ Project name is required');
+      setTimeout(() => { projNameEl.style.borderColor = ''; projNameEl.setAttribute('placeholder', 'e.g. Drone Housing Assembly...'); }, 3000);
+    }
+    alert('Please enter a Project Name before submitting.');
+    return;
+  }
 
   if (bulkFiles.length === 0) {
     alert('Please select at least one file to upload before submitting.');
     return;
   }
 
-  const submitBtn = document.getElementById('rfq-bulk-submit-btn');
-  const bulkPanel = document.getElementById('rfq-bulk-panel');
+  const submitBtn = document.getElementById(`${prefix}-submit-btn`);
+  const targetPanel = isPQ ? document.querySelector('#project-quote-engine .rfq-engine__card') : document.getElementById('rfq-bulk-panel');
 
   // Show progress UI
   const progressHTML = `
@@ -1030,7 +1122,7 @@ async function handleBulkSubmit() {
   `;
   const progressContainer = document.createElement('div');
   progressContainer.innerHTML = progressHTML;
-  bulkPanel?.appendChild(progressContainer);
+  targetPanel?.appendChild(progressContainer);
 
   if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Uploading...'; }
 
@@ -1126,7 +1218,7 @@ async function handleBulkSubmit() {
         id: rfqId,
         user_id: user.id,
         rfq_data: rfqData,
-        status: 'under_review'
+        status: 'submitted'
       });
 
     if (rfqError) {
@@ -1136,18 +1228,37 @@ async function handleBulkSubmit() {
 
     if (progressBar) progressBar.style.width = '100%';
 
-    // 4. Show success
-    progressContainer.innerHTML = `
-      <div class="rfq-bulk-submit-success">
-        <div class="rfq-bulk-submit-success__icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        </div>
-        <h3>Quote Request Submitted!</h3>
-        <p>${uploadedFiles.length} file${uploadedFiles.length > 1 ? 's' : ''} uploaded for "${projName}". Our engineers will review your project and get back to you within 24 hours.</p>
-      </div>
-    `;
+    // 4. Send email notification
+    try {
+      const { data: profileData } = await supabase.from('profiles').select('first_name, last_name, company').eq('id', user.id).single();
+      const userName = profileData ? `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim() : user.email;
+      const userCompany = profileData?.company || '';
+
+      await fetch('/.netlify/functions/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'project_rfq',
+          email: user.email,
+          userId: user.id,
+          name: userName,
+          company: userCompany,
+          projectName: projName,
+          service: service,
+          quantity: qty,
+          timeline: timeline,
+          fileCount: uploadedFiles.length,
+          fileNames: uploadedFiles.map(f => f.name)
+        })
+      });
+      console.log('[RFQ] Email notification dispatched.');
+    } catch (emailErr) {
+      console.warn('[RFQ] Email notification failed (non-blocking):', emailErr);
+    }
+
+    // 5. Show success modal
+    if (progressContainer) progressContainer.remove();
+    showRFQSuccessModal('rfq');
 
     if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Request Project Quote'; }
 
@@ -1177,6 +1288,39 @@ function formatFileSize(bytes) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / 1048576).toFixed(1)} MB`;
+}
+
+export function showRFQSuccessModal(type) {
+  const title = type === 'order' ? 'Order Placed Successfully!' : 'Quote Request Submitted!';
+  const msg = type === 'order' 
+    ? 'Your instant order has been placed. You can track your production status and manage your files directly in your workspace.' 
+    : 'Our engineers will review your project and get back to you within 24 hours. You can access and manage your RFQ through your workspace.';
+    
+  const modalHTML = `
+    <div id="rfq-success-modal-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px); z-index:9999; display:flex; align-items:center; justify-content:center;">
+      <div style="background:#0f172a; border:1px solid rgba(255,255,255,0.1); border-radius:24px; padding:40px; max-width:440px; width:90%; text-align:center; box-shadow:0 30px 60px rgba(0,0,0,0.6); animation: rfqFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div style="width:64px; height:64px; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#22c55e; margin:0 auto 24px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+        <h2 style="color:white; font-size:22px; font-weight:800; margin-bottom:14px;">${title}</h2>
+        <p style="color:#94a3b8; font-size:15px; line-height:1.6; margin-bottom:32px;">${msg}</p>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <a href="/workspace.html" style="background:var(--color-electric); color:white; padding:14px; border-radius:12px; text-decoration:none; font-weight:700; font-size:15px; box-shadow:0 8px 24px rgba(59,130,246,0.3); transition:all 0.2s;">Go to Workspace</a>
+          <button id="rfq-success-modal-close" style="background:transparent; color:#94a3b8; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:12px; cursor:pointer; font-weight:600; font-size:14px; transition:all 0.2s;">Close</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = modalHTML;
+  document.body.appendChild(wrapper.firstElementChild);
+
+  document.getElementById('rfq-success-modal-close').addEventListener('click', (e) => {
+    e.target.closest('#rfq-success-modal-overlay').remove();
+  });
 }
 
 /**
@@ -1236,8 +1380,47 @@ export function initProjectQuoteController() {
   pqBulkFileInput?.addEventListener('change', () => {
     if (pqBulkFileInput.files.length > 0) appendPQFiles(pqBulkFileInput.files);
   });
-  pqBulkFolderInput?.addEventListener('change', () => {
-    if (pqBulkFolderInput.files.length > 0) appendPQFiles(pqBulkFolderInput.files);
+  pqBulkFolderInput?.addEventListener('change', async () => {
+    if (pqBulkFolderInput.files.length > 0) {
+      const files = Array.from(pqBulkFolderInput.files);
+      if (files.length === 0) return;
+      
+      // Determine folder name from the first file's relative path
+      const firstPath = files[0].webkitRelativePath || '';
+      const folderName = firstPath.split('/')[0] || 'Project_Folder';
+      const zipFileName = `${folderName}.zip`;
+
+      if (pqBulkSubmitBtn) {
+        pqBulkSubmitBtn.disabled = true;
+        pqBulkSubmitBtn.textContent = 'Zipping files...';
+      }
+
+      try {
+        const zip = new JSZip();
+        files.forEach(f => {
+          // Use webkitRelativePath to maintain folder structure inside the zip
+          zip.file(f.webkitRelativePath || f.name, f);
+        });
+
+        const zipBlob = await zip.generateAsync({type: "blob"}, function updateCallback(metadata) {
+          if (pqBulkSubmitBtn) {
+            pqBulkSubmitBtn.textContent = `Zipping: ${metadata.percent.toFixed(0)}%`;
+          }
+        });
+
+        const zipFile = new File([zipBlob], zipFileName, { type: 'application/zip', lastModified: new Date().getTime() });
+        appendPQFiles([zipFile]);
+      } catch (err) {
+        console.error('[PQ] Zipping failed:', err);
+        alert('Failed to zip folder. Please try selecting files instead.');
+      } finally {
+        if (pqBulkSubmitBtn) {
+          pqBulkSubmitBtn.disabled = false;
+          pqBulkSubmitBtn.textContent = 'Request Project Quote';
+        }
+        pqBulkFolderInput.value = '';
+      }
+    }
   });
 
   pqBulkFileList?.addEventListener('click', (e) => {

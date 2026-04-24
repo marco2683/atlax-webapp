@@ -1702,17 +1702,411 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ═══════════════════════════════════════════════════════════
   //  R F Q s   T A B L E
   // ═══════════════════════════════════════════════════════════
-  function renderRFQs() {
+  async function renderRFQs() {
+    contentRouting.innerHTML = `
+      <div class="admin-table-container">
+        <div style="text-align:center; padding:40px; color:#94a3b8;">Loading RFQ data...</div>
+      </div>`;
+
+    // Fetch all RFQs
+    let rfqs = [];
+    try {
+      const { data, error } = await supabase
+        .from('rfq_history')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      rfqs = data || [];
+    } catch (e) {
+      console.error('[Admin RFQ] Fetch error:', e);
+      contentRouting.innerHTML = `<div style="padding:40px; color:#f87171; text-align:center;">Failed to load RFQs: ${e.message}</div>`;
+      return;
+    }
+
+    // Build profile lookup from loadedCustomers
+    const profileMap = {};
+    (loadedCustomers || []).forEach(p => {
+      profileMap[p.id] = p;
+    });
+
+    const statusOptions = [
+      { value: 'submitted',    label: 'Submitted',    color: '#3b82f6' },
+      { value: 'under_review', label: 'Under Review', color: '#f59e0b' },
+      { value: 'in_progress',  label: 'In Progress',  color: '#14b8a6' },
+      { value: 'done',         label: 'Done',         color: '#10b981' }
+    ];
+
+    const serviceLabels = {
+      'mfg-only': 'Manufacturing Only',
+      'design-mfg': 'Design + Mfg',
+      'prototype': 'Prototyping',
+      'full-turnkey': 'Full Turnkey',
+      'consult': 'Consultation'
+    };
+
+    if (rfqs.length === 0) {
+      contentRouting.innerHTML = `
+        <div class="admin-table-container" style="text-align:center; padding:60px;">
+          <div style="font-size:48px; margin-bottom:16px;">📋</div>
+          <div style="color:#94a3b8; font-size:15px; font-weight:500;">No RFQ submissions yet</div>
+          <div style="color:#64748b; font-size:13px; margin-top:4px;">Project Quote submissions will appear here in real-time.</div>
+        </div>`;
+      return;
+    }
+
+    const rows = rfqs.map(rfq => {
+      const data = rfq.rfq_data || {};
+      const profile = profileMap[rfq.user_id] || {};
+      const requesterName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.email || '—';
+      const requesterEmail = profile.email || '';
+      const projectName = data.project_name || 'Unnamed Project';
+      const service = serviceLabels[data.service] || data.service || '—';
+      const qty = data.quantity || '—';
+      const timeline = data.timeline || '—';
+      const fileCount = (data.files || []).length;
+      const date = new Date(rfq.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const currentStatus = rfq.status || 'submitted';
+
+      const statusOptionsHTML = statusOptions.map(s =>
+        `<option value="${s.value}" ${s.value === currentStatus ? 'selected' : ''}>${s.label}</option>`
+      ).join('');
+
+      const currentStatusColor = (statusOptions.find(s => s.value === currentStatus) || statusOptions[0]).color;
+
+      return `
+        <tr data-rfq-id="${rfq.id}">
+          <td style="max-width:180px;">
+            <div style="font-weight:600; color:#0f172a; font-size:13px;">${projectName}</div>
+          </td>
+          <td>
+            <div style="font-weight:500; color:#0f172a; font-size:12px;">${requesterName}</div>
+            <div style="color:#94a3b8; font-size:11px;">${requesterEmail}</div>
+          </td>
+          <td style="font-size:12px; color:#64748b;">${service}</td>
+          <td style="font-size:12px; color:#64748b; text-align:center;">${qty}</td>
+          <td style="font-size:12px; color:#64748b; text-align:center;">${fileCount}</td>
+          <td>
+            <select class="admin-rfq-status-select" data-rfq-id="${rfq.id}"
+              style="padding:5px 8px; border-radius:6px; border:1px solid ${currentStatusColor}40; background:${currentStatusColor}15; color:${currentStatusColor}; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit;">
+              ${statusOptionsHTML}
+            </select>
+          </td>
+          <td style="font-size:11px; color:#94a3b8;">${date}</td>
+          <td class="admin-table-actions">
+            <div class="admin-table-actions-wrapper">
+              <button class="admin-action-btn admin-rfq-view-btn" data-rfq-id="${rfq.id}">View</button>
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+
     contentRouting.innerHTML = `
       <div class="admin-table-container">
         <table class="admin-table">
-          <thead><tr><th>Project ID</th><th>Requester</th><th>Budget</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            <tr><td>PRJ-A8012</td><td>Sarah Connor (InnovateX)</td><td>$45,000</td><td><span class="admin-badge pending">Quoting</span></td><td class="admin-table-actions"><div class="admin-table-actions-wrapper"><button class="admin-action-btn">Review</button></div></td></tr>
-            <tr><td>PRJ-B9921</td><td>John Doe (TechCorp)</td><td>$12,500</td><td><span class="admin-badge active">In Production</span></td><td class="admin-table-actions"><div class="admin-table-actions-wrapper"><button class="admin-action-btn">Manage</button></div></td></tr>
-          </tbody>
+          <thead>
+            <tr>
+              <th>Project Name</th>
+              <th>Requester</th>
+              <th>Service</th>
+              <th style="text-align:center;">Qty</th>
+              <th style="text-align:center;">Files</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
         </table>
       </div>`;
+
+    // Status change handlers
+    contentRouting.querySelectorAll('.admin-rfq-status-select').forEach(select => {
+      select.addEventListener('change', async (e) => {
+        const rfqId = e.target.dataset.rfqId;
+        const newStatus = e.target.value;
+        try {
+          const { error } = await supabase
+            .from('rfq_history')
+            .update({ status: newStatus })
+            .eq('id', rfqId);
+          if (error) throw error;
+
+          // Update visual styling
+          const opt = statusOptions.find(s => s.value === newStatus);
+          if (opt) {
+            e.target.style.borderColor = opt.color + '40';
+            e.target.style.background = opt.color + '15';
+            e.target.style.color = opt.color;
+          }
+        } catch (err) {
+          alert('Failed to update status: ' + err.message);
+          renderRFQs(); // Reload on error
+        }
+      });
+    });
+
+    // View detail modal handlers
+    contentRouting.querySelectorAll('.admin-rfq-view-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const rfqId = btn.dataset.rfqId;
+        const rfq = rfqs.find(r => r.id === rfqId);
+        if (rfq) openRFQDetailModal(rfq, profileMap);
+      });
+    });
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  R F Q   D E T A I L   M O D A L
+  // ═══════════════════════════════════════════════════════════
+  function openRFQDetailModal(rfq, profileMap) {
+    const data = rfq.rfq_data || {};
+    const profile = profileMap[rfq.user_id] || {};
+    const requesterName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.email || '—';
+    const requesterEmail = profile.email || '';
+    const requesterCompany = profile.company || '';
+    const projectName = data.project_name || 'Unnamed Project';
+
+    const serviceLabels = {
+      'mfg-only': 'Manufacturing Only',
+      'design-mfg': 'Design + Manufacturing',
+      'prototype': 'Prototyping',
+      'full-turnkey': 'Full Turnkey (Design → Assembly)',
+      'consult': 'Consultation / DFM Review'
+    };
+    const timelineLabels = {
+      'flexible': 'Flexible',
+      '4-weeks': '4 Weeks',
+      '8-weeks': '8 Weeks',
+      '12-weeks': '12 Weeks',
+      'custom': 'Custom'
+    };
+
+    const service = serviceLabels[data.service] || data.service || '—';
+    const qty = data.estimated_quantity || data.quantity || '—';
+    const timeline = timelineLabels[data.target_timeline] || data.target_timeline || timelineLabels[data.timeline] || data.timeline || '—';
+    const notes = data.notes || '<span style="color:#94a3b8; font-style:italic;">No notes provided</span>';
+    const contactMe = data.contact_me ? '✅ Yes' : '—';
+    const files = data.files || [];
+    const date = new Date(rfq.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+    const statusOptions = [
+      { value: 'submitted',    label: 'Submitted' },
+      { value: 'under_review', label: 'Under Review' },
+      { value: 'in_progress',  label: 'In Progress' },
+      { value: 'done',         label: 'Done' }
+    ];
+    const statusSelectHTML = statusOptions.map(s =>
+      `<option value="${s.value}" ${s.value === rfq.status ? 'selected' : ''}>${s.label}</option>`
+    ).join('');
+
+    // Build file list
+    const fileListHTML = files.length > 0 ? files.map((f, i) => {
+      const fileName = f.name || f.file_name || `File ${i + 1}`;
+      const filePath = f.storage_path || f.path || '';
+      const fileSize = f.size ? `${(f.size / 1024).toFixed(1)} KB` : '';
+      const downloadUrl = filePath
+        ? `${import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co'}/storage/v1/object/public/rfq-uploads/${filePath}`
+        : '#';
+      return `
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:#f8fafc; border-radius:8px; margin-bottom:6px; border:1px solid #e2e8f0;">
+          <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+            <span style="font-size:18px;">📄</span>
+            <div style="min-width:0;">
+              <div style="font-size:12px; font-weight:600; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${fileName}</div>
+              ${fileSize ? `<div style="font-size:10px; color:#94a3b8;">${fileSize}</div>` : ''}
+            </div>
+          </div>
+          <a href="${downloadUrl}" download="${fileName}" target="_blank"
+            style="flex-shrink:0; padding:4px 12px; background:#3b82f610; color:#3b82f6; border:1px solid #3b82f630; border-radius:6px; font-size:11px; font-weight:600; text-decoration:none; cursor:pointer;">
+            Download
+          </a>
+        </div>`;
+    }).join('') : '<div style="color:#94a3b8; font-size:13px; font-style:italic; padding:12px 0;">No files uploaded</div>';
+
+    const modal = document.createElement('div');
+    modal.id = 'admin-rfq-detail-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;';
+    modal.innerHTML = `
+      <div style="background:#fff;border-radius:16px;width:680px;max-width:92vw;max-height:90vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,0.25);font-family:Inter,sans-serif;">
+        <!-- Header -->
+        <div style="padding:24px 28px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:#fff; border-radius:16px 16px 0 0; z-index:1;">
+          <div>
+            <h2 style="margin:0; font-size:18px; color:#0f172a; font-weight:700;">${projectName}</h2>
+            <div style="font-size:12px; color:#94a3b8; margin-top:2px;">Submitted ${date}</div>
+          </div>
+          <button id="rfq-modal-close" style="background:none; border:none; font-size:22px; cursor:pointer; color:#94a3b8; padding:4px 8px; border-radius:6px;">&times;</button>
+        </div>
+
+        <div style="padding:24px 28px;">
+          <!-- Status -->
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px;">
+            <label style="font-size:12px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Status</label>
+            <select id="rfq-modal-status" data-rfq-id="${rfq.id}"
+              style="padding:6px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">
+              ${statusSelectHTML}
+            </select>
+            <button id="rfq-remove-btn" style="margin-left:auto; padding:6px 12px; background:#fee2e2; color:#ef4444; border:1px solid #fecaca; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              Remove RFQ
+            </button>
+          </div>
+
+          <!-- Project Details -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
+            <div style="background:#f8fafc; padding:14px 16px; border-radius:10px; border:1px solid #f1f5f9;">
+              <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:4px;">Service</div>
+              <div style="font-size:14px; color:#0f172a; font-weight:600;">${service}</div>
+            </div>
+            <div style="background:#f8fafc; padding:14px 16px; border-radius:10px; border:1px solid #f1f5f9;">
+              <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:4px;">Est. Quantity</div>
+              <div style="font-size:14px; color:#0f172a; font-weight:600;">${qty}</div>
+            </div>
+            <div style="background:#f8fafc; padding:14px 16px; border-radius:10px; border:1px solid #f1f5f9;">
+              <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:4px;">Timeline</div>
+              <div style="font-size:14px; color:#0f172a; font-weight:600;">${timeline}</div>
+            </div>
+            <div style="background:#f8fafc; padding:14px 16px; border-radius:10px; border:1px solid #f1f5f9;">
+              <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:4px;">Engineer Contact</div>
+              <div style="font-size:14px; color:#0f172a; font-weight:600;">${contactMe}</div>
+            </div>
+          </div>
+
+          <!-- Requester -->
+          <div style="background:#f0f9ff; padding:16px; border-radius:10px; border:1px solid #bae6fd; margin-bottom:24px;">
+            <div style="font-size:10px; color:#0369a1; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:8px;">Requester</div>
+            <div style="font-size:14px; color:#0f172a; font-weight:600;">${requesterName}</div>
+            ${requesterEmail ? `<div style="font-size:12px; color:#0369a1; margin-top:2px;">${requesterEmail}</div>` : ''}
+            ${requesterCompany ? `<div style="font-size:12px; color:#64748b; margin-top:2px;">${requesterCompany}</div>` : ''}
+          </div>
+
+          <!-- Notes -->
+          <div style="margin-bottom:24px;">
+            <div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:8px;">Project Notes</div>
+            <div style="background:#f8fafc; padding:16px; border-radius:10px; border:1px solid #f1f5f9; font-size:13px; line-height:1.6; color:#334155;">${notes}</div>
+          </div>
+
+          <!-- Files -->
+          <div>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+              <div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">
+                Project Files (${files.length})
+              </div>
+              ${files.length > 1 ? `
+                <button id="rfq-download-all-btn" style="padding:6px 14px; background:#3b82f6; color:#fff; border:none; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:6px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Download All
+                </button>
+              ` : ''}
+            </div>
+            ${fileListHTML}
+          </div>
+        </div>
+      </div>`;
+
+    document.body.appendChild(modal);
+
+    // Close modal
+    modal.querySelector('#rfq-modal-close').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+
+    // Status change in modal
+    const modalStatusSelect = modal.querySelector('#rfq-modal-status');
+    if (modalStatusSelect) {
+      modalStatusSelect.addEventListener('change', async (e) => {
+        const rfqId = e.target.dataset.rfqId;
+        const newStatus = e.target.value;
+        try {
+          const { error } = await supabase
+            .from('rfq_history')
+            .update({ status: newStatus })
+            .eq('id', rfqId);
+          if (error) throw error;
+          // Update the table row's select too
+          const tableSelect = contentRouting.querySelector(`.admin-rfq-status-select[data-rfq-id="${rfqId}"]`);
+          if (tableSelect) tableSelect.value = newStatus;
+        } catch (err) {
+          alert('Failed to update status: ' + err.message);
+        }
+      });
+    }
+
+    // Remove RFQ
+    const removeBtn = modal.querySelector('#rfq-remove-btn');
+    if (removeBtn) {
+      removeBtn.addEventListener('click', async () => {
+        const reason = prompt("Enter a reason for removing this RFQ. This will be sent to the client:");
+        if (reason === null) return; // cancelled
+        if (!reason.trim()) {
+          alert("A reason is required to notify the client.");
+          return;
+        }
+
+        const confirmRemove = confirm("Are you sure? This will delete the RFQ and all associated files from storage.");
+        if (!confirmRemove) return;
+        
+        removeBtn.disabled = true;
+        removeBtn.textContent = 'Removing...';
+        
+        try {
+          // 1. Delete files from storage
+          const filesByBucket = {};
+          files.forEach(f => {
+             const path = f.storage_path || f.path;
+             if (!path) return;
+             const b = f.bucket || 'rfq-uploads';
+             if (!filesByBucket[b]) filesByBucket[b] = [];
+             filesByBucket[b].push(path);
+          });
+          
+          await Promise.all(Object.entries(filesByBucket).map(([bucketName, paths]) => 
+             supabase.storage.from(bucketName).remove(paths)
+          ));
+
+          // 2. Delete RFQ record
+          const { error: deleteError } = await supabase.from('rfq_history').delete().eq('id', rfq.id);
+          if (deleteError) throw deleteError;
+
+          // 3. Send email to client (mocked or actual)
+          await fetch('/.netlify/functions/send-email', {
+            method: 'POST',
+            body: JSON.stringify({ type: 'rfq_removed', email: requesterEmail, reason, projectName })
+          }).catch(e => console.warn('Email send skipped locally', e));
+
+          alert("RFQ removed successfully.");
+          modal.remove();
+          
+          // remove from DOM
+          const row = contentRouting.querySelector(`tr[data-rfq-id="${rfq.id}"]`);
+          if (row) row.remove();
+        } catch (err) {
+          alert("Failed to remove: " + err.message);
+          removeBtn.disabled = false;
+          removeBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Remove RFQ';
+        }
+      });
+    }
+
+    // Download All
+    const downloadAllBtn = modal.querySelector('#rfq-download-all-btn');
+    if (downloadAllBtn && files.length > 0) {
+      downloadAllBtn.addEventListener('click', () => {
+        files.forEach((f, i) => {
+          const filePath = f.storage_path || f.path || '';
+          if (!filePath) return;
+          const url = `${import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co'}/storage/v1/object/public/rfq-uploads/${filePath}`;
+          // Stagger downloads to prevent browser blocking
+          setTimeout(() => {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = f.name || f.file_name || `file_${i + 1}`;
+            a.target = '_blank';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+          }, i * 400);
+        });
+      });
+    }
   }
 
 

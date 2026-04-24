@@ -179,6 +179,26 @@ function crudPlugin() {
               res.end(JSON.stringify({ error: e.message }));
             }
           });
+        } else if (req.url.startsWith('/.netlify/functions/send-email') && req.method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk.toString(); });
+          req.on('end', () => {
+            try {
+              const payload = JSON.parse(body);
+              console.log('\n=======================================');
+              console.log('📧 MOCK EMAIL DISPATCHED (Local Dev)');
+              console.log('Type:', payload.type);
+              console.log('To:', payload.email || 'info@atlasdt.com');
+              console.log('Subject/Project:', payload.projectName || 'N/A');
+              if (payload.reason) console.log('Reason:', payload.reason);
+              console.log('=======================================\n');
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ success: true, message: "Mock email dispatched successfully." }));
+            } catch (e) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: e.message }));
+            }
+          });
         } else {
           next();
         }
