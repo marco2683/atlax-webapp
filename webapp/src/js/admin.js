@@ -1774,7 +1774,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const currentStatusColor = (statusOptions.find(s => s.value === currentStatus) || statusOptions[0]).color;
 
       return `
-        <tr data-rfq-id="${rfq.id}">
+        <tr data-rfq-id="${rfq.id}" data-status="${currentStatus}">
           <td style="max-width:180px;">
             <div style="font-weight:600; color:#0f172a; font-size:13px;">${projectName}</div>
           </td>
@@ -1801,8 +1801,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     }).join('');
 
     contentRouting.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="margin:0; font-size: 20px; color: #0f172a; font-weight: 700;">RFQ Tracker</h2>
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: #475569; cursor: pointer;">
+          <input type="checkbox" id="admin-rfq-hide-done" style="cursor:pointer;" checked>
+          Hide 'Done' RFQs
+        </label>
+      </div>
       <div class="admin-table-container">
-        <table class="admin-table">
+        <table class="admin-table" id="admin-rfq-table">
           <thead>
             <tr>
               <th>Project Name</th>
@@ -1818,6 +1825,18 @@ document.addEventListener('DOMContentLoaded', async () => {
           <tbody>${rows}</tbody>
         </table>
       </div>`;
+
+    const toggleDoneFilter = () => {
+      const isHidden = document.getElementById('admin-rfq-hide-done').checked;
+      document.querySelectorAll('#admin-rfq-table tbody tr').forEach(row => {
+        if (row.dataset.status === 'done') {
+          row.style.display = isHidden ? 'none' : '';
+        }
+      });
+    };
+
+    document.getElementById('admin-rfq-hide-done')?.addEventListener('change', toggleDoneFilter);
+    toggleDoneFilter();
 
     // Status change handlers
     contentRouting.querySelectorAll('.admin-rfq-status-select').forEach(select => {
@@ -1837,6 +1856,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             e.target.style.borderColor = opt.color + '40';
             e.target.style.background = opt.color + '15';
             e.target.style.color = opt.color;
+          }
+
+          // Update row state and re-apply filter
+          const row = e.target.closest('tr');
+          if (row) {
+            row.dataset.status = newStatus;
+            toggleDoneFilter();
           }
         } catch (err) {
           alert('Failed to update status: ' + err.message);
