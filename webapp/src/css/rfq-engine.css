@@ -578,7 +578,7 @@
 }
 
 .rfq-editor__content {
-  min-height: 140px;
+  min-height: 280px;
   padding: 12px;
   color: var(--color-white);
   font-size: 13px;
@@ -1773,4 +1773,53 @@
   .rfq-header-spacer {
     display: none;
   }
+}
+
+/* ══ Book Call Button ══ */
+.rfq-book-call-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  transition: all var(--duration-fast);
+}
+
+.rfq-book-call-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.rfq-book-call-btn__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--color-electric);
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: var(--radius-sm);
+}
+
+.rfq-book-call-btn__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rfq-book-call-btn__text strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-white);
+  line-height: 1.2;
+}
+
+.rfq-book-call-btn__text small {
+  font-size: 11px;
+  color: var(--color-steel-400);
+  line-height: 1.2;
 }
