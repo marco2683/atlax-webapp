@@ -1318,6 +1318,30 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
           </div>
 
+          <div style="margin: 16px 0 8px 0; font-size: 11px; font-weight: bold; color: var(--color-electric); text-transform: uppercase;">Business Profile & Export</div>
+          <div class="admin-form-grid cols-3">
+            <div class="admin-field">
+              <label>Business Type</label>
+              <select name="businessType">
+                <option value="" ${!s.businessType ? 'selected' : ''}>Select...</option>
+                <option value="Manufacturer" ${s.businessType === 'Manufacturer' ? 'selected' : ''}>Manufacturer</option>
+                <option value="Trading Company" ${s.businessType === 'Trading Company' ? 'selected' : ''}>Trading Company</option>
+                <option value="OEM" ${s.businessType === 'OEM' ? 'selected' : ''}>OEM</option>
+                <option value="ODM" ${s.businessType === 'ODM' ? 'selected' : ''}>ODM</option>
+                <option value="Distributor" ${s.businessType === 'Distributor' ? 'selected' : ''}>Distributor</option>
+                <option value="Service Provider" ${s.businessType === 'Service Provider' ? 'selected' : ''}>Service Provider</option>
+              </select>
+            </div>
+            <div class="admin-field">
+              <label>Annual Revenue <span class="hint">(text)</span></label>
+              <input type="text" name="revenue" value="${s.revenue || ''}" placeholder="$5M - $10M USD">
+            </div>
+            <div class="admin-field">
+              <label>Export Markets <span class="hint">(comma-separated)</span></label>
+              <input type="text" name="exportMarkets" value="${(s.exportMarkets || []).join ? (s.exportMarkets || []).join(', ') : (s.exportMarkets || '')}" placeholder="North America, Europe, Southeast Asia">
+            </div>
+          </div>
+
           <div style="margin: 16px 0 8px 0; font-size: 11px; font-weight: bold; color: var(--color-electric); text-transform: uppercase;">Employee Split by Department</div>
           <div class="admin-form-grid cols-5">
             <div class="admin-field">
@@ -1619,6 +1643,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         freeCapacity: parseInt(fd.get('freeCapacity') || 0),
         outsourcingRatio: parseInt(fd.get('outsourcingRatio') || 0),
         factoryArea: fd.get('factoryArea'),
+        businessType: fd.get('businessType'),
+        revenue: fd.get('revenue'),
+        exportMarkets: fd.get('exportMarkets') ? fd.get('exportMarkets').split(',').map(s => s.trim()).filter(Boolean) : [],
         website: fd.get('website'),
         url: fd.get('website'),
         logo: fd.get('logo'),
@@ -2994,6 +3021,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <td>${c.job_title || '—'}</td>
         <td><span class="tag-segment ${tierClass}" style="text-transform: capitalize;">${tier}</span></td>
         <td>${dateJoined}</td>
+        <td>${c.marketing_opt_in ? '<span class="tag-segment tag-tier1" style="background: rgba(14, 165, 233, 0.1); color: var(--color-electric); border: 1px solid rgba(14, 165, 233, 0.3);">Opted In</span>' : '<span style="color: var(--color-steel-400); font-size: 12px;">No</span>'}</td>
         <td class="admin-table-actions">
           <button class="admin-action-btn admin-view-customer" data-id="${c.id}">Manage User</button>
         </td>
@@ -3017,6 +3045,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               <th>Job Title</th>
               <th>Account Tier</th>
               <th>Join Date</th>
+              <th>Marketing</th>
               <th>Actions</th>
             </tr></thead>
             <tbody>${rows || '<tr><td colspan="6" style="text-align:center;padding:40px;">No customers found.</td></tr>'}</tbody>
@@ -3043,65 +3072,139 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cust = loadedCustomers.find(c => c.id === id);
     if (!cust) return;
 
-    // Fetch their RFQ history simply to show activity stats
     let rfqCount = 0;
     try {
       const { count } = await supabase.from('rfq_history').select('*', { count: 'exact', head: true }).eq('user_id', id);
       rfqCount = count || 0;
     } catch(e) {}
 
+    const dateJoined = cust.created_at ? new Date(cust.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+    const isDesigner = cust.designer_status && cust.designer_status !== 'none';
+    const dsColor = cust.designer_status === 'approved' ? '#059669' : cust.designer_status === 'pending' ? '#d97706' : cust.designer_status === 'rejected' ? '#dc2626' : '#64748b';
+    const dsLabel = (cust.designer_status || 'none').charAt(0).toUpperCase() + (cust.designer_status || 'none').slice(1);
+
+    // Helper for field rows
+    const field = (label, val) => `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#64748b;font-size:13px;font-weight:500;">${label}</span><span style="color:#0f172a;font-size:13px;font-weight:600;text-align:right;max-width:60%;word-break:break-word;">${val || '—'}</span></div>`;
+
     const modalHTML = `
-      <div id="admin-cust-modal" class="admin-modal-overlay">
-        <div class="admin-modal-content" style="max-width: 600px;">
-          <header class="admin-modal-header">
-            <h3>Manage Customer: ${cust.first_name || ''} ${cust.last_name || ''}</h3>
-            <button class="admin-modal-close" onclick="document.getElementById('admin-cust-modal').remove()">×</button>
-          </header>
-          
-          <div class="admin-modal-body" style="display: flex; flex-direction: column; gap: 24px;">
-            <!-- Profile Info -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: rgba(0,0,0,0.1); padding: 16px; border-radius: 8px;">
-              <div><strong>Email:</strong> <span style="color:var(--color-slate-400);">${cust.email || '—'}</span></div>
-              <div><strong>Phone:</strong> <span style="color:var(--color-slate-400);">${cust.phone || '—'}</span></div>
-              <div><strong>Company:</strong> <span style="color:var(--color-slate-400);">${cust.company || '—'}</span></div>
-              <div><strong>Job Title:</strong> <span style="color:var(--color-slate-400);">${cust.job_title || '—'}</span></div>
-              <div><strong>Address:</strong> <span style="color:var(--color-slate-400);">${cust.address || '—'}</span></div>
-              <div><strong>Age:</strong> <span style="color:var(--color-slate-400);">${cust.age || '—'}</span></div>
-              <div><strong>Gender:</strong> <span style="color:var(--color-slate-400); text-transform: capitalize;">${cust.gender || '—'}</span></div>
-            </div>
-            <!-- Activity -->
-            <div style="border-left: 3px solid var(--color-emerald); padding-left: 16px;">
-              <h4 style="margin-bottom: 8px; color: #fff;">Account Activity</h4>
-              <p style="color: var(--color-slate-400); font-size: 14px;">This user has generated <strong>${rfqCount}</strong> RFQs/quotes in the system.</p>
-            </div>
+      <div id="admin-cust-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;">
+        <div style="background:#ffffff;border-radius:16px;width:90%;max-width:820px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,0.18);overflow:hidden;">
 
-             <!-- Subscription Tier Management -->
-            <div class="admin-form-group">
-              <label>Subscription Tier Allocation</label>
-              <select id="cust-tier-select" class="admin-input">
-                <option value="basic" ${cust.tier === 'basic' || !cust.tier ? 'selected' : ''}>Basic (Free)</option>
-                <option value="professional" ${cust.tier === 'professional' ? 'selected' : ''}>Professional ($49/mo)</option>
-                <option value="enterprise" ${cust.tier === 'enterprise' ? 'selected' : ''}>Enterprise (Custom)</option>
-              </select>
-              <small style="color:var(--color-slate-400); display:block; margin-top:8px;">Modifying this will instantly restrict or grant access to the Supplier Globe and Product Builder tools on the user's end.</small>
+          <!-- Header -->
+          <div style="padding:20px 28px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+            <div>
+              <h2 style="margin:0;font-size:18px;font-weight:800;color:#0f172a;">${cust.first_name || ''} ${cust.last_name || ''}</h2>
+              <div style="font-size:13px;color:#64748b;margin-top:2px;">${cust.email || '—'} · Joined ${dateJoined}</div>
             </div>
-
-            <!-- Internal Notes / Billing History Mockup -->
-            <div class="admin-form-group">
-              <label>Billing & Admin Notes</label>
-              <textarea id="cust-admin-notes" class="admin-input" rows="3" placeholder="Enter manual billing refs, stripe ids, or notes..."></textarea>
-              <small style="color:var(--color-slate-400); display:block; margin-top:8px;">These notes are only visible to SysAdmins.</small>
+            <div style="display:flex;align-items:center;gap:12px;">
+              ${isDesigner ? `<span style="background:${dsColor}15;color:${dsColor};border:1px solid ${dsColor}40;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;">Designer: ${dsLabel}</span>` : ''}
+              <span style="background:${cust.tier === 'professional' ? '#dbeafe' : cust.tier === 'enterprise' ? '#fef3c7' : '#f1f5f9'};color:${cust.tier === 'professional' ? '#1d4ed8' : cust.tier === 'enterprise' ? '#92400e' : '#475569'};padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;">${cust.tier || 'basic'}</span>
+              <button onclick="document.getElementById('admin-cust-modal').remove()" style="background:none;border:none;cursor:pointer;font-size:22px;color:#94a3b8;line-height:1;">×</button>
             </div>
-
           </div>
-          
-          <footer class="admin-modal-footer" style="justify-content: space-between;">
-            <button class="btn btn-secondary" style="color: #ef4444; border-color: rgba(239,68,68,0.3);" onclick="if(confirm('Suspend account? User will not be able to log in.')){ alert('Account suspended'); document.getElementById('admin-cust-modal').remove(); }">Suspend Account</button>
-            <div style="display:flex; gap:12px;">
-              <button class="btn btn-secondary" onclick="document.getElementById('admin-cust-modal').remove()">Cancel</button>
-              <button class="btn btn-primary" id="cust-save-btn">Save Changes</button>
+
+          <!-- Scrollable Body -->
+          <div style="flex:1;overflow-y:auto;padding:28px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;">
+
+              <!-- LEFT COLUMN -->
+              <div style="display:flex;flex-direction:column;gap:24px;">
+
+                <!-- Personal Information -->
+                <div>
+                  <div style="font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">Personal Information</div>
+                  <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
+                    ${field('First Name', cust.first_name)}
+                    ${field('Last Name', cust.last_name)}
+                    ${field('Email', cust.email)}
+                    ${field('Phone', cust.phone)}
+                    ${field('Age', cust.age)}
+                    ${field('Gender', cust.gender ? cust.gender.charAt(0).toUpperCase() + cust.gender.slice(1) : null)}
+                    ${field('Address', cust.address)}
+                    ${field('Shipping Address', cust.shipping_address)}
+                    ${field('LinkedIn', cust.linkedin_url ? '<a href="' + cust.linkedin_url + '" target="_blank" style="color:#2563eb;text-decoration:none;">View Profile ↗</a>' : null)}
+                  </div>
+                </div>
+
+                <!-- Company Information -->
+                <div>
+                  <div style="font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">Company Information</div>
+                  <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
+                    ${field('Company', cust.company)}
+                    ${field('Job Title', cust.job_title)}
+                    ${field('Website', cust.company_website)}
+                    ${field('Industry', cust.company_industry)}
+                    ${field('Company Size', cust.company_size)}
+                    ${field('Tax ID', cust.tax_id)}
+                    ${field('Registration No.', cust.registration_number)}
+                  </div>
+                </div>
+              </div>
+
+              <!-- RIGHT COLUMN -->
+              <div style="display:flex;flex-direction:column;gap:24px;">
+
+                <!-- Professional Profile -->
+                <div>
+                  <div style="font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">Professional Profile</div>
+                  <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
+                    ${field('Skills', cust.skills)}
+                    ${field('Career Description', cust.career_description ? (cust.career_description.length > 80 ? cust.career_description.slice(0,80) + '…' : cust.career_description) : null)}
+                    ${field('Experience (yrs)', cust.experience_years)}
+                    ${field('Methodologies', cust.methodologies)}
+                    ${field('Work History', cust.work_history ? (cust.work_history.length > 80 ? cust.work_history.slice(0,80) + '…' : cust.work_history) : null)}
+                    ${field('Resume', cust.resume_url ? '<a href="' + cust.resume_url + '" target="_blank" style="color:#2563eb;text-decoration:none;">View Resume ↗</a>' : null)}
+                    ${field('Portfolio', cust.portfolio_url ? '<a href="' + cust.portfolio_url + '" target="_blank" style="color:#2563eb;text-decoration:none;">View Portfolio ↗</a>' : null)}
+                  </div>
+                </div>
+
+                <!-- Account Activity -->
+                <div>
+                  <div style="font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">Account Activity</div>
+                  <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px;display:flex;align-items:center;gap:16px;">
+                    <div style="background:#dcfce7;border-radius:10px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#059669;">${rfqCount}</div>
+                    <div><div style="font-size:14px;font-weight:700;color:#166534;">RFQs / Quotes Generated</div><div style="font-size:12px;color:#4ade80;">Total activity in the system</div></div>
+                  </div>
+                  <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-top:12px;">
+                    ${field('Marketing Opt-In', cust.marketing_opt_in ? '<span style="color:#059669;font-weight:700;">✓ Opted In</span>' : '<span style="color:#94a3b8;">No</span>')}
+                    ${field('Designer Status', `<span style="color:${dsColor};font-weight:700;">${dsLabel}</span>`)}
+                    ${field('Account Created', dateJoined)}
+                  </div>
+                </div>
+
+                <!-- Admin Controls -->
+                <div>
+                  <div style="font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">Admin Controls</div>
+                  <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
+                    <div style="margin-bottom:12px;">
+                      <label style="font-size:12px;font-weight:700;color:#475569;display:block;margin-bottom:6px;">Subscription Tier</label>
+                      <select id="cust-tier-select" style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;color:#0f172a;background:#ffffff;">
+                        <option value="basic" ${cust.tier === 'basic' || !cust.tier ? 'selected' : ''}>Basic (Free)</option>
+                        <option value="professional" ${cust.tier === 'professional' ? 'selected' : ''}>Professional ($49/mo)</option>
+                        <option value="enterprise" ${cust.tier === 'enterprise' ? 'selected' : ''}>Enterprise (Custom)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style="font-size:12px;font-weight:700;color:#475569;display:block;margin-bottom:6px;">Admin Notes</label>
+                      <textarea id="cust-admin-notes" rows="3" placeholder="Billing refs, stripe IDs, internal notes…" style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;color:#0f172a;background:#ffffff;resize:vertical;box-sizing:border-box;font-family:inherit;">${cust.admin_notes || ''}</textarea>
+                      <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Only visible to SysAdmins.</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </div>
-          </footer>
+          </div>
+
+          <!-- Footer -->
+          <div style="padding:16px 28px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;background:#f8fafc;">
+            <button onclick="if(confirm('Suspend this account? The user will be locked out.')){alert('Account suspended.');document.getElementById('admin-cust-modal').remove();}" style="background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Suspend Account</button>
+            <div style="display:flex;gap:10px;">
+              <button onclick="document.getElementById('admin-cust-modal').remove()" style="background:#ffffff;color:#475569;border:1px solid #cbd5e1;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
+              <button id="cust-save-btn" style="background:#2563eb;color:#ffffff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Save Changes</button>
+            </div>
+          </div>
+
         </div>
       </div>
     `;
@@ -3112,18 +3215,23 @@ document.addEventListener('DOMContentLoaded', async () => {
       const btn = e.target;
       const originalText = btn.textContent;
       btn.textContent = 'Saving...';
+      btn.style.opacity = '0.6';
       const newTier = document.getElementById('cust-tier-select').value;
-      
-      const { error } = await supabase.from('profiles').update({ tier: newTier }).eq('id', id);
-      
+      const adminNotes = document.getElementById('cust-admin-notes').value;
+
+      const { error } = await supabase.from('profiles').update({ tier: newTier, admin_notes: adminNotes }).eq('id', id);
+
       if(error) {
         console.error(error);
-        alert('Failed to update customer tier.');
+        alert('Failed to save changes.');
         btn.textContent = originalText;
+        btn.style.opacity = '1';
       } else {
         cust.tier = newTier;
-        btn.textContent = 'Saved!';
-        renderCustomersTable(); // Refresh the table behind modal
+        cust.admin_notes = adminNotes;
+        btn.textContent = '✓ Saved!';
+        btn.style.background = '#059669';
+        renderCustomersTable();
         setTimeout(() => document.getElementById('admin-cust-modal')?.remove(), 800);
       }
     });
@@ -3295,9 +3403,17 @@ document.addEventListener('DOMContentLoaded', async () => {
           ${s.portfolio_url ? `<a href="${s.portfolio_url}" target="_blank" class="admin-badge active" style="text-decoration:none;">Doc</a>` : ''}
           ${parseArray(s.portfolio_assets).length ? `<a href="${parseArray(s.portfolio_assets)[0]}" target="_blank" class="admin-badge active" style="text-decoration:none; margin-left: ${s.portfolio_url ? '4px' : '0'};">Images</a>` : (!s.portfolio_url ? `<span class="admin-badge">None</span>` : '')}
         </td>
+        <td style="white-space: nowrap;">
+          ${s.hourly_rate || s.rate ? `<span style="font-weight: 500; color: var(--color-electric);">${s.hourly_rate || s.rate}</span>` : `<span style="opacity:0.5;">—</span>`}
+        </td>
+        <td style="max-width: 200px;">
+          <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+            ${parseArray(s.specialized_skills).length ? parseArray(s.specialized_skills).map(sk => `<span class="admin-badge" style="font-size: 9px; padding: 2px 4px;">${sk.skill || sk}</span>`).join('') : '<span style="opacity:0.5;">—</span>'}
+          </div>
+        </td>
         <td class="admin-table-actions">
            <button class="admin-action-btn admin-view-designer" data-id="${s.id}" style="color:white; background:var(--color-electric); border-color:var(--color-electric);">Review</button>
-           ${s.designer_status === 'pending' ? `
+           ${s.designer_status === 'pending' || s.designer_status === 'unverified' ? `
              <button class="admin-action-btn admin-approve-designer" data-id="${s.id}" style="color:var(--color-emerald); border-color:var(--color-emerald);">Approve</button>
              <button class="admin-action-btn admin-reject-designer" data-id="${s.id}" style="color:#ef4444; border-color:rgba(239,68,68,.2);">Reject</button>
            ` : ''}
@@ -3333,6 +3449,8 @@ document.addEventListener('DOMContentLoaded', async () => {
               <th>Cover Letter / Pitch</th>
               <th>Resume</th>
               <th>Portfolio</th>
+              <th>Rate</th>
+              <th>Skills</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -3359,7 +3477,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           
           const approved = loadedCustomers.find(c => c.id === id);
           if (approved) {
-             const wasPending = approved.designer_status === 'pending';
+             const wasPending = approved.designer_status === 'pending' || approved.designer_status === 'unverified';
              approved.designer_status = 'approved';
              if (wasPending) {
                try {
@@ -3392,7 +3510,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           
           const rejected = loadedCustomers.find(c => c.id === id);
           if (rejected) {
-             const wasPending = rejected.designer_status === 'pending';
+             const wasPending = rejected.designer_status === 'pending' || rejected.designer_status === 'unverified';
              rejected.designer_status = 'rejected';
              if (wasPending) {
                try {

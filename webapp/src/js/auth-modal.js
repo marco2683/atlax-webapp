@@ -112,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const first = document.getElementById('signup-first').value;
       const last = document.getElementById('signup-last').value;
       const company = document.getElementById('signup-company').value;
+      const marketingOptIn = document.getElementById('signup-marketing')?.checked || false;
       
       signupBtn.innerText = 'Creating Account...';
       signupBtn.disabled = true;
@@ -120,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
         first_name: first,
         last_name: last,
         company: company,
+        marketing_opt_in: marketingOptIn,
         tier: 'basic'
       };
 

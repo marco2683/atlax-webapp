@@ -82,7 +82,8 @@ export function openSupplierGrid(techName, suppliers) {
     return;
   }
 
-  title.textContent = `${techName} — ${suppliers.length} Supplier${suppliers.length !== 1 ? 's' : ''}`;
+  const displayTitle = techName.length < 3 || techName === techName.toLowerCase() ? `Search Results: "${techName}"` : techName;
+  title.textContent = `${displayTitle} — ${suppliers.length} Supplier${suppliers.length !== 1 ? 's' : ''}`;
 
   const regions = [...new Set(suppliers.map(s => s.country).filter(Boolean))].sort();
 
@@ -207,10 +208,10 @@ function renderGridCards(suppliers) {
 
   if (suppliers.length === 0) {
     body.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.35);">
+      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #94a3b8;">
         <div style="font-size: 32px; margin-bottom: 12px;">🔍</div>
-        <div style="font-size: 14px;">No suppliers match your filters</div>
-        <div style="font-size: 12px; margin-top: 6px; color: rgba(255,255,255,0.2);">Try deselecting some chips</div>
+        <div style="font-size: 14px; color: #64748b;">No suppliers match your filters</div>
+        <div style="font-size: 12px; margin-top: 6px; color: #94a3b8;">Try deselecting some chips</div>
       </div>
     `;
     return;
@@ -248,33 +249,38 @@ function renderGridCards(suppliers) {
     const isAdded = Array.from(document.querySelectorAll('.shortlist-item')).some(item => item.dataset.id === String(s.id || s.name));
 
     card.innerHTML = `
-      <div class="sgrid-card__banner">
-        <div class="sgrid-carousel-track">
-          ${images.map(url => `<div class="sgrid-carousel-slide" style="background-image: url('${url}')"></div>`).join('')}
-        </div>
-        <div class="sgrid-carousel-nav">
-          ${images.map((_, i) => `<button class="sgrid-carousel-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></button>`).join('')}
-        </div>
-        <button class="sgrid-carousel-arrow sgrid-carousel-arrow--left" disabled aria-label="Previous image">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-        </button>
-        <button class="sgrid-carousel-arrow sgrid-carousel-arrow--right" aria-label="Next image">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </button>
-        ${s.factoryScore ? `<div class="sgrid-card__score" style="color: ${scoreColor}">
-          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          ${s.factoryScore}
-        </div>` : ''}
-      </div>
       <div class="sgrid-card__body">
-        <h3 class="sgrid-card__name">${s.name}</h3>
-        <div class="sgrid-card__location">📍 ${s.city || '—'}, ${s.country || '—'}</div>
-        <div class="sgrid-card__tags">${techTags}</div>
-        <p class="sgrid-card__desc">${(s.description || '').slice(0, 130)}${(s.description || '').length > 130 ? '…' : ''}</p>
+        <!-- Row 1: Name + Best For -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+          <div style="min-width: 0; flex: 1;">
+            <h3 class="sgrid-card__name">${s.name}</h3>
+            <div class="sgrid-card__location">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              ${s.city || '—'}, ${s.country || '—'}
+            </div>
+          </div>
+          ${s.technologies && s.technologies.length > 0 ? `
+          <div style="background: #f0fdf4; color: #166534; padding: 6px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; border: 1px solid #bbf7d0; text-transform: uppercase; letter-spacing: 0.04em; flex-shrink: 0; max-width: 180px; line-height: 1.5; text-align: center;">
+            <span style="color: #22c55e;">★</span> BEST FOR<br><span style="font-size: 11px; color: #15803d;">${s.technologies[0]}</span>
+          </div>` : ''}
+        </div>
+
+        <!-- Row 2: Sub-Technologies -->
+        <div style="margin-bottom: 16px;">
+          <div style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.06em;">Sub-Technologies</div>
+          <div class="sgrid-card__tags">
+            ${(s.technologies || []).slice(0, 5).map(t => `<span class="sgrid-tag">${t}</span>`).join('')}
+          </div>
+        </div>
+
+        <!-- Row 3: Description -->
+        <p class="sgrid-card__desc">${(s.description || '').slice(0, 160)}${(s.description || '').length > 160 ? '…' : ''}</p>
       </div>
+
+      <!-- Action bar -->
       <div class="sgrid-card__actions">
         <button class="sgrid-card__shortlist-btn ${isAdded ? 'sgrid-card__shortlist-btn--added' : ''}" data-supplier-id="${s.id || s.name}">
-          ${isAdded ? '<span>✓ ADDED</span>' : `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> <span>SHORTLIST</span>`}
+          ${isAdded ? '<span style="display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg> ADDED</span>' : '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> <span>SHORTLIST</span>'}
         </button>
         <button class="sgrid-card__details-btn">
           <span>VIEW DETAILS</span> →
@@ -282,42 +288,8 @@ function renderGridCards(suppliers) {
       </div>
     `;
 
-    // Mini carousel interaction
-    let currentSlide = 0;
-    const track = card.querySelector('.sgrid-carousel-track');
-    const dots = card.querySelectorAll('.sgrid-carousel-dot');
-    const btnLeft = card.querySelector('.sgrid-carousel-arrow--left');
-    const btnRight = card.querySelector('.sgrid-carousel-arrow--right');
 
-    const updateCarousel = (i) => {
-      currentSlide = i;
-      track.style.transform = `translateX(-${i * 100}%)`;
-      dots.forEach(d => d.classList.remove('active'));
-      dots[i].classList.add('active');
-      
-      if (currentSlide === 0) btnLeft.setAttribute('disabled', 'true');
-      else btnLeft.removeAttribute('disabled');
-      
-      if (currentSlide === images.length - 1) btnRight.setAttribute('disabled', 'true');
-      else btnRight.removeAttribute('disabled');
-    };
 
-    dots.forEach(dot => {
-      dot.addEventListener('click', (e) => {
-        e.stopPropagation();
-        updateCarousel(parseInt(dot.dataset.idx, 10));
-      });
-    });
-
-    btnLeft.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (currentSlide > 0) updateCarousel(currentSlide - 1);
-    });
-
-    btnRight.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (currentSlide < images.length - 1) updateCarousel(currentSlide + 1);
-    });
 
     // Shortlist button - toggles persistent state
     card.querySelector('.sgrid-card__shortlist-btn').addEventListener('click', (e) => {

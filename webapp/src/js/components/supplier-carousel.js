@@ -118,26 +118,35 @@ function renderCurrentCard() {
         </div>
       </div>
       
-      <div style="display: flex; gap: 32px; border-left: 1px solid #e2e8f0; padding-left: 24px; flex-shrink: 0; justify-content: flex-end;">
+      <div style="display: flex; gap: 48px; border-left: 1px solid #e2e8f0; padding-left: 32px; flex: 1.5; justify-content: center; align-items: center;">
         <!-- Quality Score -->
-        <div style="display: flex; flex-direction: column; gap: 4px;">
-          <span style="font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Quality Score</span>
-          <div style="font-size: 18px; font-weight: 800; color: #0f172a; line-height: 1;">${s.factoryScore || '92'}<span style="font-size: 12px; color: #64748b; font-weight: 600;">/100</span>
-             <span class="sup-pill sup-pill--green" style="margin-left: 6px; font-size: 9px;">Excellent</span>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Quality Score</span>
+          <div style="font-size: 24px; font-weight: 800; color: #0f172a; line-height: 1; display: flex; align-items: baseline;">
+            ${s.factoryScore || '92'}<span style="font-size: 14px; color: #64748b; font-weight: 600; margin-left: 2px;">/100</span>
+            <span class="sup-pill sup-pill--green" style="margin-left: 8px; font-size: 11px; vertical-align: middle;">Excellent</span>
           </div>
         </div>
 
         <!-- Foundation -->
-        <div style="display: flex; flex-direction: column; gap: 4px;">
-          <span style="font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Company Foundation</span>
-          <div style="font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1; padding-top: 3px;">Est. ${s.yearEstablished || '2008'} <span style="font-size: 12px; color: #64748b; font-weight: 500;">(${new Date().getFullYear() - parseInt(s.yearEstablished || 2008)} yrs)</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Company Foundation</span>
+          <div style="font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1; padding-top: 3px;">
+            Est. ${s.yearEstablished || '2008'} <span style="font-size: 13px; color: #64748b; font-weight: 500;">(${new Date().getFullYear() - parseInt(s.yearEstablished || 2008)} yrs)</span>
+          </div>
         </div>
 
         <!-- Certifications -->
-        <div style="display: flex; flex-direction: column; gap: 4px;">
-          <span style="font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Certifications & Compliance</span>
-          <div style="font-size: 13px; font-weight: 600; color: #166534; line-height: 1; padding-top: 3px;">
-            ${(s.certifications || []).slice(0, 3).join(', ') || 'ISO 9001:2015, ISO 14001'}
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Certifications & Compliance</span>
+          <div style="display: flex; align-items: center; gap: 12px; padding-top: 3px;">
+            <div style="font-size: 15px; font-weight: 700; color: #166534; line-height: 1;">
+              ${(s.certifications || []).slice(0, 3).join(', ') || 'ISO 9001:2015, ISO 14001'}
+            </div>
+            <button onclick="alert('Downloading Certificates...')" style="background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; box-shadow: 0 1px 2px rgba(21, 128, 61, 0.05);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Download
+            </button>
           </div>
         </div>
       </div>
@@ -234,37 +243,95 @@ function renderCurrentCard() {
     
     <!-- Left Column -->
     <div>
-      <!-- Specialties -->
-      <div style="margin-bottom: 32px;">
-        <h3 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Specialties</h3>
-        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-          ${(s.technologies || []).concat(s.tags || []).slice(0, 8).map(t => 
-            `<span style="background: #f8fafc; border: 1px solid #e2e8f0; color: #334155; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600;">${t}</span>`
-          ).join('')}
+      <!-- Overview Row -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px;">
+        
+        <!-- Company Description -->
+        <div>
+          <h3 style="font-size: 14px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; letter-spacing: 0.05em;">Company Overview</h3>
+          <p style="font-size: 14px; color: #475569; line-height: 1.7; margin: 0;">
+            ${s.description || 'This supplier is a leading manufacturer in the Pearl River Delta region, specializing in high-quality production and engineering services. They have a proven track record of delivering consistent results for international clients, adhering strictly to global quality standards and providing exceptional customer support.'}
+          </p>
+        </div>
+
+        <!-- Specialties & Best For -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+          
+          <!-- Specialties Tags -->
+          <div>
+            <h3 style="font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">Specialties</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              ${(s.technologies || []).concat(s.tags || []).slice(0, 8).map(t => 
+                `<span style="background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">${t}</span>`
+              ).join('')}
+            </div>
+          </div>
+
+          <!-- What They Are Best For -->
+          <div style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1px solid #7dd3fc; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.05);">
+            <h3 style="font-size: 14px; font-weight: 800; color: #0369a1; text-transform: uppercase; margin-bottom: 16px; border-bottom: 1px solid rgba(2, 132, 199, 0.2); padding-bottom: 10px; display: flex; align-items: center; gap: 8px; letter-spacing: 0.05em;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              What They Are Best For
+            </h3>
+            <ul style="margin: 0; padding-left: 24px; color: #0c4a6e; font-size: 14px; line-height: 1.8; font-weight: 600;">
+              ${(s.technologies || []).concat(s.tags || []).slice(0, 5).map(t => 
+                `<li style="margin-bottom: 6px;">${t}</li>`
+              ).join('')}
+            </ul>
+          </div>
+          
         </div>
       </div>
 
-      <!-- Capability Scores -->
-      <div style="margin-bottom: 32px;">
-         <h3 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Capability Scores</h3>
-         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
-               <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Technical Capacity</div>
-               <div style="font-size: 16px; font-weight: 700; color: #4f46e5;">${(!s.scoreTc || s.scoreTc == 0) ? 'Limited' : (s.scoreTc == 1 ? 'Moderate' : 'Advanced')}</div>
+      <!-- Scores & Stats Row -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px;">
+        
+        <!-- Capability Scores -->
+        <div>
+          <h3 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Capability Scores</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+                <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Technical Capacity</div>
+                <div style="font-size: 16px; font-weight: 700; color: #4f46e5;">${(!s.scoreTc || s.scoreTc == 0) ? 'Limited' : (s.scoreTc == 1 ? 'Moderate' : 'Advanced')}</div>
+             </div>
+             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+                <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Cost Index</div>
+                <div style="font-size: 16px; font-weight: 700; color: #0ea5e9;">${s.scoreCost ? s.scoreCost + '/10' : '8/10'}</div>
+             </div>
+             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+                <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Quality Assurance</div>
+                <div style="font-size: 16px; font-weight: 700; color: #059669;">${(!s.scoreQs || s.scoreQs == 0) ? 'Basic' : (s.scoreQs == 1 ? 'Capable' : 'Exceptional')}</div>
+             </div>
+             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+                <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Ownership Ethos</div>
+                <div style="font-size: 16px; font-weight: 700; color: #d97706;">${(!s.scoreOe || s.scoreOe == 0) ? 'Passive' : (s.scoreOe == 1 ? 'Moderate' : 'Proactive')}</div>
+             </div>
+          </div>
+        </div>
+
+        <!-- Operational Stats -->
+        <div>
+          <h3 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Operational Details</h3>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
+              <span style="font-size: 13px; color: #64748b; font-weight: 500;">Business Type</span>
+              <span style="font-size: 13px; color: #0f172a; font-weight: 700;">${s.businessType || 'Manufacturer'}</span>
             </div>
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
-               <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Cost Index</div>
-               <div style="font-size: 16px; font-weight: 700; color: #0ea5e9;">${s.scoreCost ? s.scoreCost + '/10' : '8/10'}</div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
+              <span style="font-size: 13px; color: #64748b; font-weight: 500;">Total Employees</span>
+              <span style="font-size: 13px; color: #0f172a; font-weight: 700;">${s.employees || '50 - 200'}</span>
             </div>
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
-               <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Quality Assurance</div>
-               <div style="font-size: 16px; font-weight: 700; color: #059669;">${(!s.scoreQs || s.scoreQs == 0) ? 'Basic' : (s.scoreQs == 1 ? 'Capable' : 'Exceptional')}</div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
+              <span style="font-size: 13px; color: #64748b; font-weight: 500;">Annual Revenue</span>
+              <span style="font-size: 13px; color: #0f172a; font-weight: 700;">${s.revenue || '$5M - $10M USD'}</span>
             </div>
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
-               <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Ownership Ethos</div>
-               <div style="font-size: 16px; font-weight: 700; color: #d97706;">${(!s.scoreOe || s.scoreOe == 0) ? 'Passive' : (s.scoreOe == 1 ? 'Moderate' : 'Proactive')}</div>
+            <div style="display: flex; justify-content: space-between; padding-bottom: 8px;">
+              <span style="font-size: 13px; color: #64748b; font-weight: 500;">Export Markets</span>
+              <span style="font-size: 13px; color: #0f172a; font-weight: 700;">${s.exportMarkets ? s.exportMarkets.join(', ') : 'North America, Europe'}</span>
             </div>
-         </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- Photo Gallery -->
