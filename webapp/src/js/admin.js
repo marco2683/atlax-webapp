@@ -1904,8 +1904,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       const fileName = f.name || f.file_name || `File ${i + 1}`;
       const filePath = f.storage_path || f.path || '';
       const fileSize = f.size ? `${(f.size / 1024).toFixed(1)} KB` : '';
+      const bucketName = f.bucket || 'rfq-uploads';
       const downloadUrl = filePath
-        ? `${import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co'}/storage/v1/object/public/rfq-uploads/${filePath}`
+        ? `${import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co'}/storage/v1/object/public/${bucketName}/${filePath}`
         : '#';
       return `
         <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:#f8fafc; border-radius:8px; margin-bottom:6px; border:1px solid #e2e8f0;">
