@@ -1381,7 +1381,7 @@ export function showRFQSuccessModal(type) {
         <h2 style="color:white; font-size:22px; font-weight:800; margin-bottom:14px;">${title}</h2>
         <p style="color:#94a3b8; font-size:15px; line-height:1.6; margin-bottom:32px;">${msg}</p>
         <div style="display:flex; flex-direction:column; gap:12px;">
-          <a href="/workspace.html" style="background:var(--color-electric); color:white; padding:14px; border-radius:12px; text-decoration:none; font-weight:700; font-size:15px; box-shadow:0 8px 24px rgba(59,130,246,0.3); transition:all 0.2s;">Go to Workspace</a>
+          <a href="/workspace.html?tab=rfqs" style="background:var(--color-electric); color:white; padding:14px; border-radius:12px; text-decoration:none; font-weight:700; font-size:15px; box-shadow:0 8px 24px rgba(59,130,246,0.3); transition:all 0.2s;">Go to Workspace</a>
           <button id="rfq-success-modal-close" style="background:transparent; color:#94a3b8; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:12px; cursor:pointer; font-weight:600; font-size:14px; transition:all 0.2s;">Close</button>
         </div>
       </div>

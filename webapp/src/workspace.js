@@ -36,7 +36,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   profileCache = await getMyProfile();
   initTheme();
   initSidebar();
-  switchTab('shortlists');
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialTab = urlParams.get('tab') || 'shortlists';
+  switchTab(initialTab);
 });
 
 // ── Theme State ──────────────────────────────────────────
