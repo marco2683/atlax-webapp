@@ -406,7 +406,7 @@ import { signUpUser } from './services/auth.js';
   // To bypass the 500 error / CSP block, we must open the booking page in a new secure tab.
   window.openBookingsModal = function(e) {
     if (e) e.preventDefault();
-    window.open('https://outlook.office.com/book/AtlasDTConsultations@atlasdt.com/', '_blank', 'noopener,noreferrer');
+    window.open('https://outlook.office.com/book/AtlasDTConsultations1@atlasdt.com/', '_blank', 'noopener,noreferrer');
   };
   
   // Attach to any .book-consultation button
