@@ -521,7 +521,10 @@ function openRFQPreviewModal(rfq) {
               <div style="font-size:14px; color:#0f172a; font-weight:600;">${data.assigned_to_name || 'Unassigned'}</div>
               <div style="font-size:12px; color:#64748b;">${data.assigned_to_email || 'Waiting for assignment'}</div>
             </div>
-            <button id="rfq-preview-close" style="background:none; border:none; color:#94a3b8; font-size:28px; cursor:pointer; padding:0 0 0 16px; line-height:1; transition:0.2s;">&times;</button>
+            <div style="display:flex; align-items:center; padding-left:24px; border-left:1px solid #e2e8f0;">
+              ${rfq.status === 'rejected' ? `<button id="rfq-preview-delete" style="background:#fef2f2; border:1px solid #fecaca; color:#dc2626; font-size:12px; font-weight:700; cursor:pointer; padding:6px 12px; border-radius:6px; margin-right:16px; display:flex; align-items:center; gap:6px; transition:0.2s;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete Quote</button>` : ''}
+              <button id="rfq-preview-close" style="background:none; border:none; color:#94a3b8; font-size:28px; cursor:pointer; line-height:1; transition:0.2s;">&times;</button>
+            </div>
           </div>
         </div>
 
@@ -649,9 +652,26 @@ function openRFQPreviewModal(rfq) {
     renderCurrentPart();
   });
 
-  document.getElementById('rfq-preview-close').addEventListener('click', () => {
+  document.getElementById('rfq-preview-close')?.addEventListener('click', () => {
     modal.remove();
   });
+  document.getElementById('rfq-preview-delete')?.addEventListener('click', async () => {
+    if (!confirm('Are you sure you want to permanently delete this rejected quote?')) return;
+    const btn = document.getElementById('rfq-preview-delete');
+    btn.disabled = true;
+    btn.textContent = 'Deleting...';
+    try {
+      const { error } = await supabase.from('rfq_history').delete().eq('id', rfq.id);
+      if (error) throw error;
+      modal.remove();
+      await loadRFQs(); // Refresh the workspace table
+    } catch (e) {
+      alert('Failed to delete quote: ' + e.message);
+      btn.disabled = false;
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete Quote`;
+    }
+  });
+
   modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
 
   renderCurrentPart();

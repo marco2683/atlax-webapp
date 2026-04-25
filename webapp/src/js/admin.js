@@ -1802,6 +1802,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const profile = profileMap[rfq.user_id] || {};
       const requesterName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.email || '—';
       const requesterEmail = profile.email || '';
+      const requesterCompany = profile.company || data.company || '';
       const projectName = data.project_name || 'Unnamed Project';
       const service = serviceLabels[data.service] || data.service || '—';
       const qty = data.estimated_quantity || data.quantity || '—';
@@ -1833,6 +1834,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <td>
             <div style="font-weight:500; color:#0f172a; font-size:12px;">${requesterName}</div>
             <div style="color:#94a3b8; font-size:11px;">${requesterEmail}</div>
+            ${requesterCompany ? `<div style="color:#64748b; font-size:10px; font-weight:600; text-transform:uppercase; margin-top:2px;">${requesterCompany}</div>` : ''}
           </td>
           <td style="font-size:12px; color:#64748b;">${service}</td>
           <td style="font-size:12px; color:#64748b;">${tech}</td>
