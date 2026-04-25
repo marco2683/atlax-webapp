@@ -540,8 +540,22 @@ function openRFQPreviewModal(rfq) {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         Action Required — Upload Receipt
       </div>
-      <div style="font-size:14px; color:#92400e; line-height:1.6;">
-        You have selected Bank Transfer. Please send your payment receipt to <strong>info@atlasdt.com</strong> and use reference <strong style="font-family:'SF Mono','Fira Code',monospace; background:#fde68a; padding:2px 6px; border-radius:4px;">ADT-${(rfq.id||'').slice(0,8).toUpperCase()}</strong> to begin production.
+      <div style="font-size:14px; color:#92400e; line-height:1.6; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          You have selected Bank Transfer. Please send your payment receipt to <strong>info@atlasdt.com</strong> and use reference <strong style="font-family:'SF Mono','Fira Code',monospace; background:#fde68a; padding:2px 6px; border-radius:4px;">ADT-${(rfq.id||'').slice(0,8).toUpperCase()}</strong> to begin production.
+        </div>
+        <button onclick="const el = document.getElementById('rfq-preview-bank-details'); el.style.display = el.style.display === 'none' ? 'block' : 'none';" style="background:#92400e; color:#fff; border:none; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; margin-left:16px; transition:0.2s;">View Bank Details</button>
+      </div>
+      <div id="rfq-preview-bank-details" style="display:none; margin-top:16px; background:#fff; border:1px solid #fcd34d; border-radius:12px; padding:16px;">
+        <div style="font-size:11px; color:#92400e; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">🏦 Bank Transfer Details</div>
+        <div style="display:grid; gap:6px; font-size:13px; color:#92400e;">
+          <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #fef3c7;"><span style="color:#b45309;">Bank Name</span><strong>NAB — National Australia Bank</strong></div>
+          <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #fef3c7;"><span style="color:#b45309;">Account Name</span><strong>Paniani Products Pty Ltd</strong></div>
+          <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #fef3c7;"><span style="color:#b45309;">BSB</span><strong>083-004</strong></div>
+          <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #fef3c7;"><span style="color:#b45309;">Account No.</span><strong>978 360 554</strong></div>
+          <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #fef3c7;"><span style="color:#b45309;">SWIFT / BIC</span><strong>NATAAU3303</strong></div>
+          <div style="display:flex; justify-content:space-between; padding:6px 0;"><span style="color:#b45309;">Amount</span><strong style="color:#b45309;">$${Number(data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} AUD</strong></div>
+        </div>
       </div>
     </div>
   ` : '';
@@ -894,6 +908,29 @@ function injectPaymentPanel(rfq, data, modal) {
       panel.querySelector('#rfq-payment-success-msg').style.display = 'block';
       panel.querySelector('#rfq-pay-bank-btn').style.display = 'none';
       panel.querySelector('#rfq-pay-stripe-btn').style.display = 'none';
+
+      // Send Bank Details Email
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase.from('profiles').select('first_name, last_name, company').eq('id', user.id).single();
+        const clientName = profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : user.email;
+        const amountFmt = Number(data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        const bankRef = `ADT-${(rfq.id||'').slice(0,8).toUpperCase()}`;
+        
+        await fetch('/.netlify/functions/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'bank_transfer_details',
+            email: user.email,
+            name: clientName,
+            projectName: data.project_name,
+            amount: amountFmt,
+            bankRef: bankRef
+          })
+        }).catch(e => console.warn('Bank details email skipped:', e));
+      }
+
     } catch (err) {
       alert('Failed to confirm order: ' + err.message);
       btn.disabled = false;

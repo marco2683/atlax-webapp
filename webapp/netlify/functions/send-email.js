@@ -241,6 +241,81 @@ exports.handler = async (event, context) => {
           </div>
         `;
     }
+    
+    // ── bank_transfer_details ──────────────────────────────────
+    if (type === 'bank_transfer_details') {
+      const { projectName, name: clientName, amount, bankRef } = body;
+      toEmailAddr = [email];
+      subject = `Bank Transfer Instructions — ${projectName || bankRef}`;
+      htmlContent = `
+        <div style="font-family:'Inter',sans-serif;max-width:620px;margin:0 auto;padding:32px 24px;color:#0f172a;">
+          <div style="text-align:center;margin-bottom:32px;">
+            <img src="${logoUrl}" alt="AtlasDT" style="height:36px;" />
+          </div>
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:16px;padding:32px;text-align:center;margin-bottom:32px;">
+            <div style="font-size:48px;margin-bottom:12px;">🏦</div>
+            <h1 style="margin:0;color:#15803d;font-size:22px;font-weight:700;">Bank Transfer Instructions</h1>
+            <div style="color:#16a34a;font-size:14px;margin-top:8px;">Please complete your payment to begin production</div>
+          </div>
+          <p style="font-size:15px;line-height:1.7;color:#334155;margin-bottom:24px;">
+            Dear ${clientName || 'Valued Customer'},<br/><br/>
+            Thank you for confirming your order for <strong>${projectName || 'your project'}</strong>. 
+            Below are the bank details to complete your transfer. <strong>Please reply directly to this email and attach your payment receipt</strong> once the transfer is complete to speed up your order processing.
+          </p>
+          
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:28px;">
+            <div style="font-size:12px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:16px;border-bottom:1px solid #f1f5f9;padding-bottom:8px;">Transfer Details</div>
+            
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:14px;">
+              <span style="color:#64748b;">Bank Name</span>
+              <strong style="color:#0f172a;">NAB — National Australia Bank</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:14px;">
+              <span style="color:#64748b;">Account Name</span>
+              <strong style="color:#0f172a;">Paniani Products Pty Ltd</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:14px;">
+              <span style="color:#64748b;">BSB</span>
+              <strong style="color:#0f172a;">083-004</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:14px;">
+              <span style="color:#64748b;">Account No.</span>
+              <strong style="color:#0f172a;">978 360 554</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:16px; font-size:14px;">
+              <span style="color:#64748b;">SWIFT / BIC</span>
+              <strong style="color:#0f172a;">NATAAU3303</strong>
+            </div>
+            
+            <div style="background:#f8fafc;border-radius:8px;padding:16px;margin-top:20px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="color:#64748b;font-size:14px;">Total Amount</span>
+                <strong style="color:#15803d;font-size:18px;">$${amount} AUD</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Prominent reference box -->
+          <div style="background:#fffbeb;border:2px solid #f59e0b;border-radius:12px;padding:20px;margin-bottom:28px;text-align:center;">
+            <div style="font-size:12px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">⚠️ Required Payment Reference</div>
+            <div style="font-size:24px;font-weight:800;color:#0f172a;letter-spacing:2px;font-family:monospace;background:#fff;padding:12px;border-radius:8px;border:1px dashed #fcd34d;display:inline-block;margin-bottom:8px;">
+              ${bankRef}
+            </div>
+            <div style="font-size:13px;color:#b45309;line-height:1.5;">
+              You MUST include this exact reference in your bank transfer description.<br/>
+              <strong>Do not forget to reply to this email with your receipt.</strong>
+            </div>
+          </div>
+
+          <div style="text-align:center;margin-bottom:28px;">
+            <a href="mailto:info@atlasdt.com?subject=Payment Receipt - ${bankRef}&body=Hi AtlasDT team,%0D%0A%0D%0APlease find attached the payment receipt for ${bankRef}.%0D%0A%0D%0AThank you," style="display:inline-block;background:#0f172a;color:#fff;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;font-size:14px;">Reply With Receipt</a>
+          </div>
+          
+          <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;"/>
+          <p style="text-align:center;font-size:11px;color:#94a3b8;">AtlasDT Manufacturing Hub &bull; Questions? <a href="mailto:info@atlasdt.com" style="color:#0ea5e9;">info@atlasdt.com</a></p>
+        </div>
+      `;
+    }
 
     // ── rfq_confirmed ──────────────────────────────────────────
     if (type === 'rfq_confirmed') {
