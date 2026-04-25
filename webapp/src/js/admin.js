@@ -1942,6 +1942,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       { value: 'submitted',    label: 'Submitted' },
       { value: 'under_review', label: 'Under Review' },
       { value: 'in_progress',  label: 'In Progress' },
+      { value: 'confirmed',    label: 'Confirmed (Awaiting Payment)' },
+      { value: 'processing',   label: 'Processing (Payment Received)' },
       { value: 'done',         label: 'Done' }
     ];
     const statusSelectHTML = statusOptions.map(s =>
