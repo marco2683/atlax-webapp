@@ -60,7 +60,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('prof-phone').value = profile.phone || '';
     document.getElementById('prof-company').value = profile.company || '';
     document.getElementById('prof-title').value = profile.job_title || '';
-    document.getElementById('prof-address').value = profile.address || '';
     document.getElementById('prof-age').value = profile.age || '';
     document.getElementById('prof-gender').value = profile.gender || '';
     
