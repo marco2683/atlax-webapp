@@ -1811,6 +1811,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           data-sort-date="${rfq.created_at || ''}">
           <td style="max-width:180px;">
             <div style="font-weight:600; color:#0f172a; font-size:13px;">${projectName}</div>
+            <div style="font-size:10px; color:#64748b; font-family:'SF Mono','Fira Code',monospace; margin-top:2px; letter-spacing:0.3px;">ADT-${rfq.id.slice(0,8).toUpperCase()}</div>
           </td>
           <td>
             <div style="font-weight:500; color:#0f172a; font-size:12px;">${requesterName}</div>
@@ -2041,7 +2042,19 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div>
             <div style="font-size:11px; font-weight:700; color:#3b82f6; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:4px;">RFQ Detail — Admin View</div>
             <h2 style="margin:0; font-size:20px; color:#0f172a; font-weight:700;">${projectName}</h2>
-            <div style="font-size:12px; color:#94a3b8; margin-top:2px;">Submitted ${date} · ID: ${rfq.id?.slice(0,8) || '—'}</div>
+            <div style="display:flex; align-items:center; gap:10px; margin-top:4px; flex-wrap:wrap;">
+              <span style="font-size:12px; color:#94a3b8;">Submitted ${date}</span>
+              <span style="font-size:11px; color:#94a3b8;">·</span>
+              <!-- Bank reference — always shown, key for reconciliation -->
+              <span style="display:inline-flex; align-items:center; gap:6px; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:6px; padding:3px 10px;">
+                <span style="font-size:10px; color:#64748b; font-weight:600; text-transform:uppercase;">Ref</span>
+                <span style="font-size:12px; font-weight:800; color:#0f172a; font-family:'SF Mono','Fira Code',monospace; letter-spacing:0.5px;">ADT-${(rfq.id||'').slice(0,8).toUpperCase()}</span>
+                <button onclick="navigator.clipboard.writeText('ADT-${(rfq.id||'').slice(0,8).toUpperCase()}').then(()=>{this.textContent='✓';this.style.color='#16a34a';setTimeout(()=>{this.textContent='⎘';this.style.color='';},1500)})"
+                  style="background:none;border:none;cursor:pointer;font-size:13px;color:#94a3b8;padding:0;line-height:1;" title="Copy reference">⎘</button>
+              </span>
+              ${data.payment_method === 'bank_transfer' ? `<span style="background:#fef9c3; color:#854d0e; font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; border:1px solid #fde68a;">🏦 BANK TRANSFER</span>` : ''}
+              ${data.payment_method === 'stripe' ? `<span style="background:#eff6ff; color:#1d4ed8; font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; border:1px solid #bfdbfe;">💳 STRIPE</span>` : ''}
+            </div>
           </div>
           <button id="rfq-modal-close" style="background:none; border:none; font-size:26px; cursor:pointer; color:#94a3b8; line-height:1; padding:4px 8px; border-radius:6px;">&times;</button>
         </div>

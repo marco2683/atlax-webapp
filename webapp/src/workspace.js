@@ -673,21 +673,33 @@ function injectPaymentPanel(rfq, data, modal) {
 
     <!-- Bank Transfer details (hidden by default) -->
     <div id="rfq-bank-details" style="display:none; margin-top:16px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:16px;">
-      <div style="font-size:11px; color:#15803d; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">Bank Transfer Details</div>
-      <div style="display:grid; gap:8px; font-size:13px; color:#334155;">
-        <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">Bank Name</span><strong>Commonwealth Bank of Australia</strong></div>
-        <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">Account Name</span><strong>AtlasDT Pty Ltd</strong></div>
-        <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">BSB</span><strong>062-692</strong></div>
-        <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">Account No.</span><strong>1234 5678</strong></div>
-        <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">Reference</span><strong>RFQ-${rfq.id?.slice(0,8).toUpperCase()}</strong></div>
-        <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">Amount</span><strong style="color:#15803d;">${amountFmt} USD</strong></div>
+      <div style="font-size:11px; color:#15803d; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">🏦 Bank Transfer Details</div>
+      <div style="display:grid; gap:6px; font-size:13px; color:#334155;">
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #dcfce7;"><span style="color:#64748b;">Bank Name</span><strong>NAB — National Australia Bank</strong></div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #dcfce7;"><span style="color:#64748b;">Account Name</span><strong>Paniani Products Pty Ltd</strong></div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #dcfce7;"><span style="color:#64748b;">BSB</span><strong>083-004</strong></div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #dcfce7;"><span style="color:#64748b;">Account No.</span><strong>978 360 554</strong></div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #dcfce7;"><span style="color:#64748b;">SWIFT / BIC</span><strong>NATAAU3303</strong></div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0;"><span style="color:#64748b;">Amount</span><strong style="color:#15803d;">${amountFmt} AUD</strong></div>
       </div>
-      <div style="margin-top:14px; padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; font-size:12px; color:#64748b; line-height:1.6;">
-        ⏱ Please use the reference code above and allow 2–3 business days for your payment to clear. Once confirmed, your order will move to production.
+
+      <!-- Prominent reference box -->
+      <div style="margin-top:14px; background:#fff; border:2px solid #16a34a; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10px; font-weight:700; color:#15803d; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">⚠️ Payment Reference — use exactly as shown</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+          <span id="bank-ref-code" style="font-size:17px; font-weight:800; color:#0f172a; letter-spacing:1px; font-family:'SF Mono','Fira Code',monospace;">ADT-${rfq.id?.slice(0,8).toUpperCase()}</span>
+          <button id="copy-ref-btn" onclick="navigator.clipboard.writeText('ADT-${rfq.id?.slice(0,8).toUpperCase()}').then(()=>{this.textContent='Copied!';this.style.background='#16a34a';this.style.color='#fff';setTimeout(()=>{this.textContent='Copy';this.style.background='';this.style.color='';},2000)})"
+            style="padding:5px 12px; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; color:#0f172a; transition:0.2s; flex-shrink:0;">Copy</button>
+        </div>
+        <div style="font-size:11px; color:#64748b; margin-top:5px;">This reference is unique to your order and is how we match your payment.</div>
+      </div>
+
+      <div style="margin-top:12px; padding:10px 12px; background:#fffbeb; border-radius:8px; border:1px solid #fde68a; font-size:12px; color:#92400e; line-height:1.6;">
+        ⏱ Allow <strong>2–3 business days</strong> for the transfer to clear. Your order moves to production once payment is confirmed by our team.
       </div>
       <button id="rfq-accept-bank-btn"
         style="width:100%; margin-top:14px; padding:12px; background:#15803d; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;">
-        ✔ I Confirm & Accept — Bank Transfer
+        ✔ I Confirm &amp; Accept — Bank Transfer
       </button>
     </div>
 
