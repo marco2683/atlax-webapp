@@ -23,7 +23,10 @@ import { signUpUser } from './services/auth.js';
           <h2>Get In Touch</h2>
           <p>We'd love to hear about your project</p>
         </div>
-        <button class="contact-modal-close" id="atlasdt-contact-close">&times;</button>
+        <div style="display:flex; gap:16px; align-items:center;">
+          <button class="book-consultation" style="background:var(--color-electric); color:#fff; padding:10px 20px; border-radius:30px; font-weight:600; font-size:14px; border:none; cursor:pointer; box-shadow:0 4px 12px rgba(59,130,246,0.3); transition:all 0.2s;" onclick="document.getElementById('atlasdt-contact-close').click();">Book a Teams Call</button>
+          <button class="contact-modal-close" id="atlasdt-contact-close">&times;</button>
+        </div>
       </div>
 
       <!-- Contact Info -->
