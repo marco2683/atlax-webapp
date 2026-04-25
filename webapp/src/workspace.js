@@ -376,6 +376,7 @@ async function loadRFQs() {
             <span class="ws-status__dot"></span>
             ${cfg.label}
           </span>
+          ${statusVal === 'paid' && data.paid_at ? `<div style="font-size:10px;color:#16a34a;margin-top:3px;font-weight:600;">Paid ${new Date(data.paid_at).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})}</div>` : ''}
         </td>
         <td class="ws-td-muted" style="font-size: 12px;">${fileCount} file${fileCount !== 1 ? 's' : ''}</td>
       </tr>`;

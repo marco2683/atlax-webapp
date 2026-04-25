@@ -1754,10 +1754,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const statusOptions = [
-      { value: 'submitted',    label: 'Submitted',    color: '#3b82f6' },
-      { value: 'under_review', label: 'Under Review', color: '#f59e0b' },
-      { value: 'in_progress',  label: 'In Progress',  color: '#14b8a6' },
-      { value: 'done',         label: 'Done',         color: '#10b981' }
+      { value: 'submitted',    label: 'Submitted',                    color: '#3b82f6' },
+      { value: 'under_review', label: 'Under Review',                 color: '#f59e0b' },
+      { value: 'in_progress',  label: 'In Progress',                  color: '#14b8a6' },
+      { value: 'confirmed',    label: 'Confirmed (Awaiting Payment)',  color: '#f59e0b' },
+      { value: 'processing',   label: 'Processing (Payment Received)', color: '#14b8a6' },
+      { value: 'paid',         label: '🟢 Paid',                      color: '#16a34a' },
+      { value: 'done',         label: 'Done',                         color: '#10b981' },
     ];
 
     const serviceLabels = {
