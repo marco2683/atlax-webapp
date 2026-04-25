@@ -91,8 +91,8 @@ exports.handler = async (event, context) => {
         `;
     } else if (type === 'project_rfq') {
         const { projectName, service, quantity, timeline, fileCount, fileNames, company } = body;
-        toEmailAddr = ['info@atlasdt.com'];
-        subject = `New Project RFQ | ${projectName || 'Unnamed Project'}`;
+        toEmailAddr = ['info@atlasdt.com', email];
+        subject = `Quote Confirmation | ${projectName || 'Unnamed Project'}`;
 
         const serviceLabels = {
           'mfg-only': 'Manufacturing Only',

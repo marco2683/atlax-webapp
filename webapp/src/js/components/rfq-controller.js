@@ -312,10 +312,11 @@ export function initRFQController() {
       target_timeline: 'Flexible',
       notes: 'Generated via Instant Quoting Engine',
       parts: partsArray.map(p => ({
-        name: p.file?.name,
-        qty: p.qty,
-        material: p.material,
-        finish: p.finish,
+        name: p.partName || `Part ${p.config?.process || ''}`,
+        process: p.config?.process || p.quote?.techLabel || '',
+        qty: p.config?.quantity || 1,
+        material: p.config?.material || p.quote?.materialLabel || '',
+        finish: p.config?.finish || '',
         price: p.quote?.totalPrice || 0
       })),
       submitted_at: new Date().toISOString()
@@ -349,7 +350,7 @@ export function initRFQController() {
           quantity: rfqData.estimated_quantity,
           timeline: 'Flexible',
           fileCount: partsArray.length,
-          fileNames: partsArray.map(p => p.file?.name)
+          fileNames: partsArray.map(p => p.partName)
         })
       }).catch(e => console.warn('Email notify error:', e));
 

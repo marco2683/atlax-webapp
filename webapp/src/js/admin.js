@@ -1992,10 +1992,17 @@ document.addEventListener('DOMContentLoaded', async () => {
               <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:4px;">Timeline</div>
               <div style="font-size:14px; color:#0f172a; font-weight:600;">${timeline}</div>
             </div>
+            ${data.type === 'instant' ? `
+            <div style="background:#f0fdf4; padding:14px 16px; border-radius:10px; border:1px solid #bbf7d0;">
+              <div style="font-size:10px; color:#166534; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:4px;">Quoted Total</div>
+              <div style="font-size:16px; color:#15803d; font-weight:800;">$${(data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+            </div>
+            ` : `
             <div style="background:#f8fafc; padding:14px 16px; border-radius:10px; border:1px solid #f1f5f9;">
               <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:4px;">Engineer Contact</div>
               <div style="font-size:14px; color:#0f172a; font-weight:600;">${contactMe}</div>
             </div>
+            `}
           </div>
 
           <!-- Requester -->
@@ -2012,8 +2019,35 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div style="background:#f8fafc; padding:16px; border-radius:10px; border:1px solid #f1f5f9; font-size:13px; line-height:1.6; color:#334155;">${notes}</div>
           </div>
 
-          <!-- Files -->
+          <!-- Items / Files -->
           <div>
+            ${data.type === 'instant' ? `
+            <div style="margin-bottom:10px;">
+              <div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:8px;">Quoted Parts (${data.parts?.length || 0})</div>
+              <table style="width:100%; border-collapse:collapse; font-size:12px; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                <thead style="background:#f8fafc;">
+                  <tr style="border-bottom:1px solid #e2e8f0; text-align:left;">
+                    <th style="padding:10px; font-weight:600; color:#475569;">Part Name</th>
+                    <th style="padding:10px; font-weight:600; color:#475569;">Technology</th>
+                    <th style="padding:10px; font-weight:600; color:#475569;">Material</th>
+                    <th style="padding:10px; font-weight:600; color:#475569;">Qty</th>
+                    <th style="padding:10px; font-weight:600; color:#475569;">Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${(data.parts || []).map(p => `
+                  <tr style="border-bottom:1px solid #f1f5f9;">
+                    <td style="padding:10px; color:#0f172a;">${p.name || '—'}</td>
+                    <td style="padding:10px; color:#334155;">${p.process || '—'}</td>
+                    <td style="padding:10px; color:#334155;">${p.material || '—'}</td>
+                    <td style="padding:10px; color:#0f172a; font-weight:600;">${p.qty || 1}</td>
+                    <td style="padding:10px; color:#10b981; font-weight:600;">$${(p.price || 0).toLocaleString(undefined, {minimumFractionDigits:2})}</td>
+                  </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+            ` : `
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
               <div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">
                 Project Files (${files.length})
@@ -2026,6 +2060,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               ` : ''}
             </div>
             ${fileListHTML}
+            `}
           </div>
         </div>
       </div>`;
