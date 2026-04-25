@@ -131,8 +131,8 @@
       <script>
         function slowScrollToCards() {
           const target = document.getElementById('home-cards-section');
-          // Calculate the position so the cards sit beautifully in the center of the dark area
-          const offset = window.innerHeight * 0.15; // 15% from the top
+          // Calculate the position so the cards sit higher on the screen (scrolling lower)
+          const offset = window.innerHeight * 0.05; // 5% from the top
           const targetY = target.getBoundingClientRect().top + window.scrollY - offset;
           
           window.scrollTo({
@@ -270,7 +270,7 @@
 
       <!-- USP Display Area -->
       <div class="pb-usp-container" style="position: absolute; bottom: 15vh; left: 0; right: 0; display: flex; justify-content: center; align-items: center; perspective: 1200px; padding: 0 20px; pointer-events: none;">
-        <p id="usp-text" class="pb-usp-text" style="color: rgba(255, 255, 255, 0.75); font-family: 'Rajdhani', sans-serif; font-size: clamp(16px, 1.3vw, 20px); font-weight: 600; text-transform: uppercase; letter-spacing: 3px; text-align: center; max-width: 1000px; line-height: 1.8; opacity: 0; transform: translateZ(-1000px) scale(0.4); transition: all 2.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; margin: 0;"></p>
+        <p id="usp-text" class="pb-usp-text" style="color: rgba(255, 255, 255, 0.85); font-family: 'Outfit', sans-serif; font-size: clamp(18px, 1.5vw, 24px); font-weight: 200; letter-spacing: 0.5px; text-align: center; max-width: 1000px; line-height: 1.5; opacity: 0; transform: translateZ(-1000px) scale(0.4); transition: all 2.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; margin: 0;"></p>
       </div>
 
       <script>
