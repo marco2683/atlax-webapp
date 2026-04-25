@@ -337,13 +337,11 @@ export function initGlobe(containerId, suppliers = []) {
       controls.autoRotate = false;
       globe.arcDashAnimateTime(0);
       globe.ringPropagationSpeed(0);
-      globe.pointerEvents(false); // Disable raycasting/hover while typing
     } else {
       // Resume only if not globally stopped by search
       if (!rotationStopped) controls.autoRotate = true;
       globe.arcDashAnimateTime(shortlistActive ? 5000 : 0);
       globe.ringPropagationSpeed(1.5);
-      globe.pointerEvents(true);
     }
   }
 

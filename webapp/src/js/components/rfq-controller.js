@@ -14,6 +14,7 @@
 import { analyzeFile, renderThumbnail } from './geometry-analyzer.js';
 import { calculateQuote, getMaterialsForTech, getFinishesForTech, techHasTooling } from './quote-engine.js';
 import { supabase } from '../utils/supabaseClient.js';
+import { getCurrentUser } from '../services/auth.js';
 import JSZip from 'jszip';
 
 // ── State ───────────────────────────────────────────────
@@ -64,9 +65,12 @@ function createPartPanelHTML(partIdx) {
   return `
     <div class="rfq-part-panel" data-part="${partIdx}">
       <div class="rfq-top-row">
-        <div class="rfq-upload-col">
-          <!-- 3D Files Dropzone -->
-          <div class="rfq-engine__upload-zone" id="rfq-upload-zone-${partIdx}" style="min-height: 220px;">
+        <div class="rfq-upload-col" style="display: flex; flex-direction: column; height: 100%;">
+          <div class="rfq-field" style="margin-bottom: 16px;">
+            <label>Part Name</label>
+            <input type="text" class="rfq-part-name" data-part="${partIdx}" placeholder="e.g. Housing Top..." style="font-size: 14px;" />
+          </div>
+          <div class="rfq-engine__upload-zone" id="rfq-upload-zone-${partIdx}" style="flex: 1; min-height: 220px; display: flex; flex-direction: column; justify-content: center;">
             <input type="file" class="rfq-file-input" data-part="${partIdx}" multiple accept=".step,.stp,.stl,.obj,.3mf,.iges,.igs,.dxf,.sldprt,.ipt,.x_t,.x_b,.3dxml,.catpart,.prt,.sat,.jt" hidden />
             <div class="upload-icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -96,60 +100,61 @@ function createPartPanelHTML(partIdx) {
             <div class="upload-formats" style="margin-top: 4px;">
               <p>PDF · DWG · DXF · PNG · JPG</p>
             </div>
+        </div>
+        <div class="rfq-fields-col" style="display: flex; flex-direction: column; gap: 12px; height: 100%;">
+          <!-- Row 1: Technology & Quantity -->
+          <div class="rfq-fields-grid" style="grid-template-columns: 2fr 1fr; margin-bottom: 0; padding: 12px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-lg);">
+            <div class="rfq-field rfq-field--accent">
+              <label style="color: var(--color-electric); font-size: 11px;">Primary Technology</label>
+              <select class="rfq-process" data-part="${partIdx}" style="font-size: 15px; font-weight: 600; padding: 12px 14px; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.05);">
+                <option value="cnc">CNC Machining</option>
+                <option value="vac_casting">Silicone Vacuum Casting</option>
+                <option value="injection">Injection moulding</option>
+                <option value="sheet">Sheet metal</option>
+                <option value="casting">Die-Casting</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="rfq-field">
+              <label>Quantity</label>
+              <input type="number" class="rfq-quantity" data-part="${partIdx}" value="1" min="1" style="font-size: 15px; font-weight: 600; padding: 12px 14px;" />
+            </div>
           </div>
 
-          <!-- DFM Toggle -->
-          <div class="rfq-engine__dfm-toggle" style="margin-top: var(--space-3);">
-            <label class="rfq-toggle" style="width: 100%; box-sizing: border-box; justify-content: center; padding: 12px;">
-              <input type="checkbox" class="rfq-dfm-check" data-part="${partIdx}" />
-              <span class="rfq-toggle__slider"></span>
-              <span class="rfq-toggle__text" style="text-align: left;">
-                <strong>DFM Feedback</strong>
-                <small>Get manufacturing analysis</small>
-              </span>
-            </label>
-          </div>
-        </div>
-        <div class="rfq-fields-col">
-          <div class="rfq-fields-grid rfq-fields-grid--3x3">
-            <div class="rfq-field"><label>Part Name</label>
-              <input type="text" class="rfq-part-name" data-part="${partIdx}" placeholder="e.g. Housing Top..." />
-            </div>
-            <div class="rfq-field"><label>Process</label>
-              <select class="rfq-process" data-part="${partIdx}">
-                <option value="cnc">CNC Machining</option><option value="injection">Injection Moulding</option>
-                <option value="3dp">3D Printing</option><option value="sheet">Sheet Metal</option>
-                <option value="pcba">PCBA</option><option value="casting">Die Casting</option>
-                <option value="vac_casting">Vacuum Casting</option><option value="stamping">Metal Stamping</option>
-                <option value="extrusion">Extrusion</option>
-              </select>
-            </div>
-            <div class="rfq-field"><label>Material</label>
+          <!-- Row 2: Material, Color, Surface Finish -->
+          <div class="rfq-fields-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 0;">
+            <div class="rfq-field">
+              <label>Material</label>
               <select class="rfq-material" data-part="${partIdx}"></select>
             </div>
-            <div class="rfq-field"><label>Quantity</label>
-              <input type="number" class="rfq-quantity" data-part="${partIdx}" value="1" min="1" />
-            </div>
-            <div class="rfq-field"><label>Lead Time</label>
-              <select class="rfq-lead-time" data-part="${partIdx}">
-                <option value="economy">Economy (30+ days)</option><option value="standard" selected>Standard (15–20 days)</option>
-                <option value="express">Express (7–10 days)</option><option value="rush">Rush (3–5 days)</option>
-              </select>
-            </div>
-            <div class="rfq-field"><label>Surface Finish</label>
-              <select class="rfq-finish" data-part="${partIdx}"></select>
-            </div>
-            <div class="rfq-field"><label>Tolerances</label>
-              <select class="rfq-tolerance" data-part="${partIdx}">
-                <option value="standard">Standard (±0.1mm)</option><option value="precision">Precision (±0.05mm)</option>
-                <option value="tight">Tight (±0.01mm)</option>
-              </select>
-            </div>
-            <div class="rfq-field"><label>Color</label>
+            <div class="rfq-field">
+              <label>Color</label>
               <input type="text" class="rfq-color" data-part="${partIdx}" placeholder="White, RAL 7016..." />
             </div>
-            <div class="rfq-field"><label>Threads & Inserts</label>
-              <input type="text" class="rfq-threads" data-part="${partIdx}" placeholder="M3×0.5, brass..." />
+            <div class="rfq-field">
+              <label>Surface Finish</label>
+              <select class="rfq-finish" data-part="${partIdx}">
+                <option value="as-machined">As Machined</option>
+                <option value="bead-blast">Bead Blasted</option>
+                <option value="anodized">Anodized</option>
+                <option value="powder-coat">Powder Coated</option>
+                <option value="polished">Polished</option>
+                <option value="sandblast">Sandblasted</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 3: Lead Time -->
+          <div class="rfq-fields-grid" style="grid-template-columns: 1fr; margin-bottom: 0;">
+            <div class="rfq-field">
+              <label>Lead Time</label>
+              <select class="rfq-lead-time" data-part="${partIdx}">
+                <option value="economy">Economy (30+ days)</option>
+                <option value="standard" selected>Standard (15–20 days)</option>
+                <option value="express">Express (7–10 days)</option>
+                <option value="rush">Rush (3–5 days)</option>
+              </select>
             </div>
           </div>
 
@@ -274,18 +279,13 @@ export function initRFQController() {
   });
 
   // Wire checkout and request quote buttons
-  document.getElementById('rfq-checkout-btn')?.addEventListener('click', () => {
-    if (quotedParts.size === 0) return;
-    // alert('Checkout initiated! Redirecting to payment...');
-    showRFQSuccessModal('order');
-  });
-  document.getElementById('rfq-request-formal-quote')?.addEventListener('click', async () => {
+  document.getElementById('rfq-submit-verification-btn')?.addEventListener('click', async () => {
     if (quotedParts.size === 0) return;
     
     const user = await getCurrentUser();
     if (!user) { alert('Please log in to submit a quote request.'); return; }
     
-    const btn = document.getElementById('rfq-request-formal-quote');
+    const btn = document.getElementById('rfq-submit-verification-btn');
     const originalText = btn.textContent;
     btn.disabled = true;
     btn.textContent = 'Submitting...';
@@ -294,12 +294,18 @@ export function initRFQController() {
     const partsArray = Array.from(quotedParts.values());
     const totalVolume = partsArray.reduce((acc, p) => acc + (p.volume || 0), 0);
     const projName = partsArray[0]?.file?.name?.split('.')[0] || 'Instant RFQ Project';
+    
+    let grandTotal = 0;
+    partsArray.forEach(p => {
+        grandTotal += (p.quote?.totalPrice || 0);
+    });
 
     const rfqData = {
       type: 'instant',
       project_name: projName,
       service: 'Instant Quote',
       estimated_quantity: partsArray.reduce((acc, p) => acc + (p.qty || 1), 0),
+      total_price: grandTotal,
       target_timeline: 'Flexible',
       notes: 'Generated via Instant Quoting Engine',
       parts: partsArray.map(p => ({
@@ -307,7 +313,7 @@ export function initRFQController() {
         qty: p.qty,
         material: p.material,
         finish: p.finish,
-        price: p.price
+        price: p.quote?.totalPrice || 0
       })),
       submitted_at: new Date().toISOString()
     };
@@ -344,7 +350,7 @@ export function initRFQController() {
         })
       }).catch(e => console.warn('Email notify error:', e));
 
-      showRFQSuccessModal('rfq');
+      showRFQSuccessModal('quote');
       quotedParts.clear();
       renderQuoteResult();
     } catch (e) {

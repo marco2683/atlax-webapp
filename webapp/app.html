@@ -1190,14 +1190,14 @@
                   <!-- ── Top Row: Upload (left) + 9 Fields (right) ── -->
                                     <div class="rfq-top-row">
                     <!-- LEFT: Part Name & Upload Zone -->
-                    <div class="rfq-upload-col">
+                    <div class="rfq-upload-col" style="display: flex; flex-direction: column; height: 100%;">
                       <div class="rfq-field" style="margin-bottom: 16px;">
                         <label>Part Name</label>
                         <input type="text" class="rfq-part-name" data-part="0" placeholder="e.g. Housing Top..." style="font-size: 14px;" />
                       </div>
                       
                       <!-- 3D Files Dropzone -->
-                      <div class="rfq-engine__upload-zone" id="rfq-upload-zone-0" style="min-height: 220px;">
+                      <div class="rfq-engine__upload-zone" id="rfq-upload-zone-0" style="flex: 1; min-height: 220px; display: flex; flex-direction: column; justify-content: center;">
                         <input type="file" class="rfq-file-input" data-part="0" multiple
                           accept=".step,.stp,.stl,.obj,.3mf,.iges,.igs,.dxf,.sldprt,.ipt,.x_t,.x_b,.3dxml,.catpart,.prt,.sat,.jt"
                           hidden />
@@ -1249,9 +1249,9 @@
                     </div>
 
                     <!-- RIGHT: Filter Fields -->
-                    <div class="rfq-fields-col">
+                    <div class="rfq-fields-col" style="display: flex; flex-direction: column; gap: 12px; height: 100%;">
                       <!-- Row 1: Technology & Quantity -->
-                      <div class="rfq-fields-grid" style="grid-template-columns: 2fr 1fr; margin-bottom: 12px; padding: 12px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-lg);">
+                      <div class="rfq-fields-grid" style="grid-template-columns: 2fr 1fr; margin-bottom: 0; padding: 12px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-lg);">
                         <div class="rfq-field rfq-field--accent">
                           <label style="color: var(--color-electric); font-size: 11px;">Primary Technology</label>
                           <select class="rfq-process" data-part="0" style="font-size: 15px; font-weight: 600; padding: 12px 14px; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.05);">
@@ -1270,7 +1270,7 @@
                       </div>
 
                       <!-- Row 2: Material, Color, Surface Finish -->
-                      <div class="rfq-fields-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 12px;">
+                      <div class="rfq-fields-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 0;">
                         <div class="rfq-field">
                           <label>Material</label>
                           <select class="rfq-material" data-part="0"></select>
@@ -1294,7 +1294,7 @@
                       </div>
 
                       <!-- Row 3: Lead Time -->
-                      <div class="rfq-fields-grid" style="grid-template-columns: 1fr;">
+                      <div class="rfq-fields-grid" style="grid-template-columns: 1fr; margin-bottom: 0;">
                         <div class="rfq-field">
                           <label>Lead Time</label>
                           <select class="rfq-lead-time" data-part="0">
