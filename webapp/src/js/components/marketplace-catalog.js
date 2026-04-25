@@ -45,6 +45,13 @@ export async function initMarketplaceCatalog() {
   // 3. Wire up event listeners
   wireEventListeners();
 
+  // ── Coming Soon guard (production only) ────────────────────
+  const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+  if (!isLocal) {
+    injectComingSoonOverlay();
+    return; // Don't load products in production
+  }
+
   // 4. Initial fetch — all products
   await fetchAndRenderProducts();
 
@@ -52,6 +59,84 @@ export async function initMarketplaceCatalog() {
   if (typeof window.updateCartBadge === 'function') {
       window.updateCartBadge();
   }
+}
+
+/**
+ * Injects a beautiful "Coming Soon" card over the main catalog content area.
+ * Only called in production builds to prevent users from operating in the marketplace.
+ */
+function injectComingSoonOverlay() {
+  const mainContent = document.getElementById('catalog-layout');
+  if (!mainContent) return;
+
+  // Find the right-side content container (everything except the tree sidebar)
+  const rightSide = mainContent.querySelector('.dk-catalog-main') || mainContent;
+
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.id = 'mkt-coming-soon-overlay';
+  overlay.style.cssText = `
+    position: absolute; inset: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(241, 245, 249, 0.92);
+    backdrop-filter: blur(6px);
+  `;
+  overlay.innerHTML = `
+    <div style="
+      text-align: center; max-width: 480px; padding: 48px 40px;
+      background: #ffffff; border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(15,23,42,0.10), 0 1px 3px rgba(15,23,42,0.06);
+      border: 1px solid #e2e8f0;
+    ">
+      <div style="
+        width: 72px; height: 72px; margin: 0 auto 20px;
+        background: linear-gradient(135deg, #0ea5e9, #14b8a6);
+        border-radius: 18px; display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 4px 16px rgba(14, 165, 233, 0.25);
+      ">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <h2 style="font-size: 26px; font-weight: 800; color: #0f172a; margin: 0 0 8px; letter-spacing: -0.5px;">
+        Marketplace Coming Soon
+      </h2>
+      <p style="font-size: 15px; line-height: 1.7; color: #64748b; margin: 0 0 24px;">
+        We're building a world-class OEM components marketplace with parametric search, 
+        real-time pricing, and instant procurement. Stay tuned for the launch.
+      </p>
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <a href="mailto:info@atlasdt.com" style="
+          display: inline-flex; align-items: center; gap: 8px;
+          padding: 10px 22px; background: linear-gradient(135deg, #0f172a, #1e293b);
+          color: #fff; border-radius: 10px; font-size: 13px; font-weight: 600;
+          text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;
+          box-shadow: 0 2px 8px rgba(15,23,42,0.18);
+        " onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(15,23,42,0.25)'"
+           onmouseout="this.style.transform='';this.style.boxShadow='0 2px 8px rgba(15,23,42,0.18)'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          Get Notified
+        </a>
+        <a href="/services.html" style="
+          display: inline-flex; align-items: center; gap: 8px;
+          padding: 10px 22px; background: #f1f5f9; color: #475569;
+          border: 1px solid #e2e8f0; border-radius: 10px;
+          font-size: 13px; font-weight: 600; text-decoration: none;
+          transition: background 0.2s;
+        " onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+          Explore Services
+        </a>
+      </div>
+      <p style="font-size: 11px; color: #94a3b8; margin: 20px 0 0;">
+        Need components now? <a href="mailto:info@atlasdt.com" style="color: #0ea5e9; font-weight: 600;">Contact our sourcing team</a> for immediate assistance.
+      </p>
+    </div>
+  `;
+
+  // Make the right-side container position:relative so overlay positions correctly
+  rightSide.style.position = 'relative';
+  rightSide.appendChild(overlay);
 }
 
 // ═══════════════════════════════════════════════════════════════
