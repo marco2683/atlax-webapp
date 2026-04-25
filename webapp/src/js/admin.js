@@ -2013,7 +2013,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               placeholder="Override price"
               style="padding:7px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; font-family:inherit; width:130px; background:#fff;">
             <button id="rfq-save-price-btn" data-rfq-id="${rfq.id}"
-              style="padding:7px 14px; background:#0f172a; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;">Save</button>
+              style="padding:7px 14px; background:#0f172a; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;">Update</button>
           </div>
           <button id="rfq-remove-btn" style="margin-left:auto; padding:7px 14px; background:#fee2e2; color:#ef4444; border:1px solid #fecaca; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
@@ -2052,7 +2052,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               ${data.type === 'instant' ? `
               <div style="background:#f0fdf4; padding:12px 14px; border-radius:10px; border:1px solid #bbf7d0;">
                 <div style="font-size:10px; color:#166534; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Quoted Total</div>
-                <div style="font-size:15px; color:#15803d; font-weight:800;">$${(data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+                <div id="admin-quoted-total-display" style="font-size:15px; color:#15803d; font-weight:800;">$${(data.admin_final_price || data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
               </div>` : `
               <div style="background:#f8fafc; padding:12px 14px; border-radius:10px; border:1px solid #f1f5f9;">
                 <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Contact Requested</div>
@@ -2201,20 +2201,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       } catch (err) { alert('Failed to save notes: ' + err.message); }
     });
 
-    // Save final price override
+    // Update final price — overrides total_price on both admin and user side
     modal.querySelector('#rfq-save-price-btn')?.addEventListener('click', async (e) => {
       const rfqId = e.target.dataset.rfqId;
       const priceVal = parseFloat(modal.querySelector('#rfq-modal-final-price')?.value);
       if (isNaN(priceVal)) { alert('Please enter a valid price.'); return; }
-      const updatedData = { ...data, admin_final_price: priceVal };
+      // Overwrite total_price so user-side workspace reflects the admin price
+      const updatedData = { ...data, admin_final_price: priceVal, total_price: priceVal };
       try {
         const { error } = await supabase.from('rfq_history').update({ rfq_data: updatedData }).eq('id', rfqId);
         if (error) throw error;
-        e.target.textContent = 'Saved ✓';
-        setTimeout(() => e.target.textContent = 'Save', 2000);
+        // Update button
+        e.target.textContent = 'Updated ✓';
+        setTimeout(() => e.target.textContent = 'Update', 2000);
+        // Update Quoted Total display live in the modal
+        const totalEl = modal.querySelector('#admin-quoted-total-display');
+        if (totalEl) totalEl.textContent = `$${priceVal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+        // Update cache
         const rfqObj = rfqs.find(r => r.id === rfqId);
         if (rfqObj) rfqObj.rfq_data = updatedData;
-      } catch (err) { alert('Failed to save price: ' + err.message); }
+      } catch (err) { alert('Failed to update price: ' + err.message); }
     });
 
     // Remove RFQ
