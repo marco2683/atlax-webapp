@@ -506,6 +506,12 @@
   font-weight: 700;
 }
 
+.ws-status--shipped {
+  background: rgba(139, 92, 246, 0.15);
+  color: #8b5cf6;
+  font-weight: 700;
+}
+
 .ws-status__dot {
   width: 6px;
   height: 6px;

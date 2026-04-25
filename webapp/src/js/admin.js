@@ -1754,13 +1754,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const statusOptions = [
-      { value: 'submitted',    label: 'Submitted',                    color: '#3b82f6' },
-      { value: 'under_review', label: 'Under Review',                 color: '#f59e0b' },
-      { value: 'in_progress',  label: 'In Progress',                  color: '#14b8a6' },
-      { value: 'confirmed',    label: 'Confirmed (Awaiting Payment)',  color: '#f59e0b' },
-      { value: 'processing',   label: 'Processing (Payment Received)', color: '#14b8a6' },
-      { value: 'paid',         label: '🟢 Paid',                      color: '#16a34a' },
-      { value: 'done',         label: 'Done',                         color: '#10b981' },
+      { value: 'submitted',    label: 'Submitted',                   color: '#3b82f6' },
+      { value: 'under_review', label: 'Under Review',                color: '#f59e0b' },
+      { value: 'confirmed',    label: 'Confirmed (Awaiting Payment)', color: '#f59e0b' },
+      { value: 'paid',         label: '🟢 Paid',                     color: '#16a34a' },
+      { value: 'processing',   label: 'Processing',                  color: '#14b8a6' },
+      { value: 'shipped',      label: '🚧 Shipped',                   color: '#8b5cf6' },
     ];
 
     const serviceLabels = {
@@ -1968,11 +1967,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const statusOptions = [
       { value: 'submitted',    label: 'Submitted' },
       { value: 'under_review', label: 'Under Review' },
-      { value: 'in_progress',  label: 'In Progress' },
       { value: 'confirmed',    label: 'Confirmed (Awaiting Payment)' },
-      { value: 'processing',   label: 'Processing (Payment Received)' },
       { value: 'paid',         label: '🟢 Paid' },
-      { value: 'done',         label: 'Done' }
+      { value: 'processing',   label: 'Processing' },
+      { value: 'shipped',      label: '🚧 Shipped' },
     ];
     const statusSelectHTML = statusOptions.map(s =>
       `<option value="${s.value}" ${s.value === rfq.status ? 'selected' : ''}>${s.label}</option>`

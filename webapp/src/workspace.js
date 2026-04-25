@@ -331,14 +331,16 @@ async function loadRFQs() {
   }
 
   const statusConfig = {
-    submitted:    { label: 'Submitted',                cssClass: 'ws-status--submitted' },
-    under_review: { label: 'Under Review',             cssClass: 'ws-status--under_review' },
-    in_progress:  { label: 'In Progress',              cssClass: 'ws-status--in_progress' },
+    submitted:    { label: 'Submitted',                   cssClass: 'ws-status--submitted' },
+    under_review: { label: 'Under Review',                cssClass: 'ws-status--under_review' },
     confirmed:    { label: 'Confirmed — Awaiting Payment', cssClass: 'ws-status--confirmed' },
-    processing:   { label: 'Processing',               cssClass: 'ws-status--in_progress' },
     paid:         { label: '🟢 Paid',                    cssClass: 'ws-status--paid' },
-    done:         { label: 'Done',                     cssClass: 'ws-status--done' },
-    cancelled:    { label: 'Cancelled',                cssClass: 'ws-status--cancelled' }
+    processing:   { label: 'Processing',                  cssClass: 'ws-status--in_progress' },
+    shipped:      { label: '🚧 Shipped',                  cssClass: 'ws-status--shipped' },
+    // legacy fallbacks
+    in_progress:  { label: 'In Progress',                 cssClass: 'ws-status--in_progress' },
+    done:         { label: 'Done',                        cssClass: 'ws-status--done' },
+    cancelled:    { label: 'Cancelled',                   cssClass: 'ws-status--cancelled' }
   };
 
   const serviceLabels = {
