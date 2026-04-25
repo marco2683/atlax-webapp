@@ -309,13 +309,13 @@ async function loadRFQs() {
   const container = document.getElementById('rfqs-table-body');
   if (!container) return;
 
-  container.innerHTML = '<tr><td colspan="5" class="ws-td-muted" style="text-align:center; padding:40px;">Loading...</td></tr>';
+  container.innerHTML = '<tr><td colspan="7" class="ws-td-muted" style="text-align:center; padding:40px;">Loading...</td></tr>';
 
   rfqsCache = await getRFQs();
 
   if (rfqsCache.length === 0) {
     container.innerHTML = `
-      <tr><td colspan="5">
+      <tr><td colspan="7">
         <div class="ws-empty">
           <div class="ws-empty__icon">📨</div>
           <div class="ws-empty__title">No RFQs Yet</div>
@@ -345,17 +345,24 @@ async function loadRFQs() {
     const data = rfq.rfq_data || {};
     const date = new Date(rfq.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     const projectName = data.project_name || data.supplier_name || 'Unnamed Project';
-    const service = serviceLabels[data.service] || data.service || '—';
+    
+    const typeLabel = data.type === 'instant' ? 'Instant Quote' : 'Project Quote';
+    const service = data.type === 'instant' ? 'Instant RFQ' : (serviceLabels[data.service] || data.service || '—');
+    const totalEstimate = data.type === 'instant' && data.total_price ? `$${data.total_price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '—';
+    
+    const statusVal = rfq.status || data.status || 'submitted';
     const fileCount = (data.files || []).length;
-    const cfg = statusConfig[rfq.status] || { label: rfq.status, cssClass: '' };
+    const cfg = statusConfig[statusVal] || statusConfig[rfq.status] || { label: statusVal, cssClass: '' };
 
     return `
       <tr data-rfq-id="${rfq.id}">
         <td>
           <div class="ws-td-primary" style="font-weight: 600;">${projectName}</div>
         </td>
+        <td class="ws-td-muted" style="font-size: 12px; font-weight: 600; color: var(--color-electric);">${typeLabel}</td>
         <td class="ws-td-muted" style="font-size: 12px;">${service}</td>
         <td class="ws-td-muted">${date}</td>
+        <td class="ws-td-muted" style="font-weight: 600; color: #16a34a;">${totalEstimate}</td>
         <td>
           <span class="ws-status ${cfg.cssClass}">
             <span class="ws-status__dot"></span>
