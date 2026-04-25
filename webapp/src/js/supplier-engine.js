@@ -84,8 +84,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     suppliersData = allSupData.map(row => {
       const s = { ...row.data, id: row.id, name: row.name, segment: row.segment, techGroup: row.tech_group };
       if (row.isActive !== undefined) s.isActive = row.isActive;
+      // Reconstruct techGroups array: prefer data.techGroups, fallback to single tech_group
+      if (!s.techGroups || !Array.isArray(s.techGroups) || s.techGroups.length === 0) {
+        s.techGroups = s.techGroup ? [s.techGroup] : [];
+      }
+      if (!s.techGroup && s.techGroups.length > 0) {
+        s.techGroup = s.techGroups[0];
+      }
       if (!s.techGroup && s.technologies && s.technologies.length > 0) {
         s.techGroup = s.technologies[0];
+        s.techGroups = [s.techGroup];
       }
       if (!s.segment) {
         s.segment = 'TIER 1';
@@ -522,7 +530,7 @@ function rebuildTechGroupFilter() {
      validData = validData.filter(s => s.country === selectedCountry);
   }
 
-  const activeTechGroups = [...new Set(validData.map(s => s.techGroup).filter(Boolean))].sort();
+  const activeTechGroups = [...new Set(validData.flatMap(s => (s.techGroups || [s.techGroup]).filter(Boolean)))].sort();
 
   techGroupFilter.innerHTML = '<option value="">All Tech Groups</option>';
   
@@ -560,7 +568,7 @@ function applyFilters() {
         s.name, 
         s.nameZh,
         s.country, 
-        s.techGroup,
+        ...(s.techGroups || [s.techGroup]).filter(Boolean),
         ...(s.technologies || []), 
         ...(s.tags || [])
       ].filter(Boolean).map(t => String(t).toLowerCase());
@@ -577,7 +585,7 @@ function applyFilters() {
     }
 
     // 3. Tech Group
-    if (techGroup && s.techGroup !== techGroup) return false;
+    if (techGroup && !(s.techGroups || [s.techGroup]).filter(Boolean).includes(techGroup)) return false;
 
     // 4. Certifications
     if (!showAllCerts) {
@@ -728,7 +736,7 @@ function renderTable(data) {
         </div>
       </td>
       <td>${supplier.country || '—'}</td>
-      <td style="color: #7ee787;">${supplier.techGroup || '—'}</td>
+      <td style="color: #7ee787;">${(supplier.techGroups || [supplier.techGroup]).filter(Boolean).join(', ') || '—'}</td>
       <td>${techsHtml || '—'}</td>
       <td style="text-align:center; padding:12px 2px;">${getTrafficLightSvg(supplier.scoreTc)}</td>
       <td style="text-align:center; padding:12px 2px;">${getTrafficLightSvg(supplier.scoreOe)}</td>

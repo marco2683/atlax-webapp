@@ -111,7 +111,7 @@ function renderCurrentCard() {
         <span style="font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Specializations</span>
         <div style="display: flex; flex-direction: column; gap: 4px;">
           <div style="display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">
-            <span style="background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; text-transform: uppercase;">${s.techGroup || currentTechName}</span>
+            ${(s.techGroups || [s.techGroup || currentTechName]).filter(Boolean).map(tg => `<span style="background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; text-transform: uppercase;">${tg}</span>`).join('')}
           </div>
           ${techPills ? `<div style="display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">${techPills}</div>` : ''}
           ${tagPills ? `<div style="display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">${tagPills}</div>` : ''}

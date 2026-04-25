@@ -65,6 +65,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     appState.suppliersData = allSupData.map(row => {
       const s = { ...row.data, id: row.id, name: row.name, segment: row.segment, techGroup: row.tech_group };
       if (row.isActive !== undefined) s.isActive = row.isActive;
+      // Reconstruct techGroups array
+      if (!s.techGroups || !Array.isArray(s.techGroups) || s.techGroups.length === 0) {
+        s.techGroups = s.techGroup ? [s.techGroup] : [];
+      }
+      if (!s.techGroup && s.techGroups.length > 0) {
+        s.techGroup = s.techGroups[0];
+      }
       return s;
     }).filter(s => s.isActive !== false);
   } catch(err) {

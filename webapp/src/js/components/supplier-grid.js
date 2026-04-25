@@ -182,7 +182,7 @@ function applyFilters() {
   }
   if (tagVal) {
     filtered = filtered.filter(s => {
-      const text = `${s.name} ${s.techGroup} ${(s.technologies || []).join(' ')} ${s.city} ${s.country} ${s.description || ''}`.toLowerCase();
+      const text = `${s.name} ${(s.techGroups || [s.techGroup]).filter(Boolean).join(' ')} ${(s.technologies || []).join(' ')} ${s.city} ${s.country} ${s.description || ''}`.toLowerCase();
       return text.includes(tagVal);
     });
   }

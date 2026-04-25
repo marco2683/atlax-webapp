@@ -134,12 +134,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       loadedSuppliers = allSupData.map(row => {
         const s = { ...row.data, id: row.id, name: row.name, segment: row.segment, techGroup: row.tech_group };
+        // Reconstruct techGroups array: prefer data.techGroups, fallback to single tech_group
+        if (!s.techGroups || !Array.isArray(s.techGroups) || s.techGroups.length === 0) {
+          s.techGroups = s.techGroup ? [s.techGroup] : [];
+        }
+        if (!s.techGroup && s.techGroups.length > 0) {
+          s.techGroup = s.techGroups[0];
+        }
         if (!s.techGroup && s.technologies && s.technologies.length > 0) {
           s.techGroup = s.technologies[0];
+          s.techGroups = [s.techGroup];
         }
         return s;
       });
-      TECH_GROUPS = [...new Set(loadedSuppliers.map(s => s.techGroup).filter(Boolean))].sort();
+      TECH_GROUPS = [...new Set(loadedSuppliers.flatMap(s => (s.techGroups || []).filter(Boolean)))].sort();
     } catch(err) {
       console.error("Failed to fetch Supabase data", err);
       loadedSuppliers = [];
@@ -681,9 +689,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           </span>
         </td>
         <td>
-          <span class="tag-tech-group">
-            ${s.techGroup || '—'}
-          </span>
+          ${((s.techGroups || [s.techGroup]).filter(Boolean)).map(tg => `<span class="tag-tech-group" style="display:inline-block;margin:1px 2px;">${tg}</span>`).join('') || '—'}
         </td>
         <td class="admin-tooltip-container">
           <span class="admin-tooltip-label">${(s.technologies || []).slice(0,2).join(', ') || '—'}</span>
@@ -733,7 +739,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           const seg = adminSupplierFilters.segment;
           dynamicSupList = dynamicSupList.filter(s => (s.segment || '').toUpperCase().includes(seg));
         }
-        const availableTechGroups = [...new Set(dynamicSupList.map(s=>s.techGroup).filter(Boolean))].sort();
+        const availableTechGroups = [...new Set(dynamicSupList.flatMap(s => (s.techGroups || [s.techGroup]).filter(Boolean)))].sort();
         if (adminSupplierFilters.techGroup && !availableTechGroups.includes(adminSupplierFilters.techGroup)) {
           adminSupplierFilters.techGroup = '';
         }
@@ -757,7 +763,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                   const seg = adminSupplierFilters.segment;
                   dynamicSupList = dynamicSupList.filter(s => (s.segment || '').toUpperCase().includes(seg));
                 }
-                const availableTechGroups = [...new Set(dynamicSupList.map(s=>s.techGroup).filter(Boolean))].sort();
+                const availableTechGroups = [...new Set(dynamicSupList.flatMap(s => (s.techGroups || [s.techGroup]).filter(Boolean)))].sort();
                 return `<option value="">All Technologies...</option>` + availableTechGroups.map(t => `<option value="${t}" ${adminSupplierFilters.techGroup === t ? 'selected':''}>${t}</option>`).join('');
               })()}
             </select>
@@ -839,7 +845,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           sup.isActive = false;
           try {
             const dbPayload = {
-              id: sup.id, name: sup.name, segment: sup.segment, tech_group: sup.techGroup || '',
+              id: sup.id, name: sup.name, segment: sup.segment, tech_group: (sup.techGroups || [sup.techGroup]).filter(Boolean)[0] || '',
               data: (() => { const c = { ...sup }; delete c.id; delete c.name; delete c.segment; delete c.techGroup; return c; })()
             };
             const { error } = await supabase.from('suppliers').upsert(dbPayload);
@@ -979,7 +985,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
           const dbPayload = {
-            id: sup.id, name: sup.name, segment: sup.segment, tech_group: sup.techGroup || '',
+            id: sup.id, name: sup.name, segment: sup.segment, tech_group: (sup.techGroups || [sup.techGroup]).filter(Boolean)[0] || '',
             data: (() => { const c = { ...sup }; delete c.id; delete c.name; delete c.segment; delete c.techGroup; return c; })()
           };
           const { error } = await supabase.from('suppliers').upsert(dbPayload);
@@ -1048,12 +1054,20 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
           <div class="admin-form-grid cols-2">
             <div class="admin-field">
-              <label>Primary Tech Group <span class="req">*</span></label>
-              <select name="techGroup" id="admin-form-techgroup" required>
-                <option value="">Select…</option>
-                ${TECH_GROUPS.map(tg => `<option value="${tg}" ${s.techGroup === tg ? 'selected' : ''}>${tg}</option>`).join('')}
-              </select>
+              <label>Primary Tech Groups <span class="req">*</span> <span class="hint">(select one or more)</span></label>
+              <div id="admin-techgroup-tags" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;min-height:32px;padding:8px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.08);border-radius:8px;">
+                ${((s.techGroups || (s.techGroup ? [s.techGroup] : [])).filter(Boolean)).map(tg => `<span class="admin-tg-tag" data-value="${tg}" style="display:inline-flex;align-items:center;gap:4px;background:rgba(94,162,255,0.12);color:#5ea2ff;border:1px solid rgba(94,162,255,0.3);padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:default;">${tg} <button type="button" class="admin-tg-remove" data-value="${tg}" style="background:none;border:none;color:#5ea2ff;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;">&times;</button></span>`).join('')}
+              </div>
+              <div style="display:flex;gap:8px;">
+                <select id="admin-form-techgroup" style="flex:1;">
+                  <option value="">Add tech group…</option>
+                  ${TECH_GROUPS.map(tg => `<option value="${tg}">${tg}</option>`).join('')}
+                  <option value="__NEW__" style="font-weight:bold;">+ Add New Tech Group...</option>
+                </select>
+                <button type="button" id="admin-tg-add-btn" class="btn btn-secondary" style="padding:6px 14px;font-size:12px;white-space:nowrap;">+ Add</button>
+              </div>
               <input type="text" id="admin-form-new-techgroup" name="newTechGroup" style="display:none; margin-top:8px; width:100%; box-sizing:border-box;" class="admin-input-filter" placeholder="e.g. Advanced Assembly">
+              <input type="hidden" name="techGroups" id="admin-form-techgroups-hidden" value='${JSON.stringify((s.techGroups || (s.techGroup ? [s.techGroup] : [])).filter(Boolean))}'>
             </div>
             <div class="admin-field">
               <label>General Tags <span class="hint">(comma-separated)</span></label>
@@ -1542,11 +1556,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Wire interactive bits
     wireFormDynamics();
 
-    // Tech Group Dynamics
+    // Tech Group Multi-Tag Dynamics
     const segmentSelect = document.getElementById('admin-form-segment');
     const techGroupSelect = document.getElementById('admin-form-techgroup');
     const newTechGroupInput = document.getElementById('admin-form-new-techgroup');
-    
+    const techGroupTagsContainer = document.getElementById('admin-techgroup-tags');
+    const techGroupsHidden = document.getElementById('admin-form-techgroups-hidden');
+    const tgAddBtn = document.getElementById('admin-tg-add-btn');
+
+    function getSelectedTechGroups() {
+      try { return JSON.parse(techGroupsHidden.value || '[]'); } catch { return []; }
+    }
+
+    function setSelectedTechGroups(groups) {
+      techGroupsHidden.value = JSON.stringify(groups);
+      renderTechGroupTags();
+    }
+
+    function renderTechGroupTags() {
+      const groups = getSelectedTechGroups();
+      techGroupTagsContainer.innerHTML = groups.length === 0
+        ? '<span style="color:rgba(255,255,255,0.3);font-size:12px;font-style:italic;">No tech groups selected</span>'
+        : groups.map(tg => `<span class="admin-tg-tag" data-value="${tg}" style="display:inline-flex;align-items:center;gap:4px;background:rgba(94,162,255,0.12);color:#5ea2ff;border:1px solid rgba(94,162,255,0.3);padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:default;">${tg} <button type="button" class="admin-tg-remove" data-value="${tg}" style="background:none;border:none;color:#5ea2ff;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;">&times;</button></span>`).join('');
+      // Wire remove buttons
+      techGroupTagsContainer.querySelectorAll('.admin-tg-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const val = btn.dataset.value;
+          setSelectedTechGroups(getSelectedTechGroups().filter(g => g !== val));
+        });
+      });
+    }
+
+    function addTechGroup(value) {
+      if (!value || value === '__NEW__') return;
+      const current = getSelectedTechGroups();
+      if (!current.includes(value)) {
+        current.push(value);
+        setSelectedTechGroups(current);
+      }
+      techGroupSelect.value = '';
+    }
+
     function updateTechGroupOptions() {
       if (!segmentSelect || !techGroupSelect) return;
       const selectedTier = segmentSelect.value;
@@ -1554,26 +1604,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       if (selectedTier) {
         validGroups = [...new Set(loadedSuppliers
-          .filter(sup => (sup.segment || '').toUpperCase() === selectedTier)
-          .map(sup => sup.techGroup)
-          .filter(Boolean)
+          .flatMap(sup => (sup.segment || '').toUpperCase() === selectedTier ? (sup.techGroups || [sup.techGroup]).filter(Boolean) : [])
         )].sort();
       }
 
-      const currentSupTech = s.techGroup;
-      if (currentSupTech && !validGroups.includes(currentSupTech)) {
-        validGroups.push(currentSupTech);
-      }
-      
-      const isNewMode = techGroupSelect.value === '__NEW__';
-      const previouslySelected = isNewMode ? '__NEW__' : (techGroupSelect.value || currentSupTech);
+      // Ensure currently selected groups are in the list
+      const currentGroups = getSelectedTechGroups();
+      currentGroups.forEach(g => { if (!validGroups.includes(g)) validGroups.push(g); });
+      validGroups.sort();
 
-      techGroupSelect.innerHTML = '<option value="">Select...</option>';
+      techGroupSelect.innerHTML = '<option value="">Add tech group…</option>';
       validGroups.forEach(tg => {
         const opt = document.createElement('option');
         opt.value = tg;
         opt.textContent = tg;
-        if (tg === previouslySelected) opt.selected = true;
         techGroupSelect.appendChild(opt);
       });
 
@@ -1581,28 +1625,38 @@ document.addEventListener('DOMContentLoaded', async () => {
       newOpt.value = '__NEW__';
       newOpt.textContent = '+ Add New Tech Group...';
       newOpt.style.fontWeight = 'bold';
-      if (previouslySelected === '__NEW__') newOpt.selected = true;
       techGroupSelect.appendChild(newOpt);
-
-      handleToggleNewTech();
     }
 
     function handleToggleNewTech() {
       if (techGroupSelect.value === '__NEW__') {
         newTechGroupInput.style.display = 'block';
-        newTechGroupInput.required = true;
-        techGroupSelect.required = false;
       } else {
         newTechGroupInput.style.display = 'none';
-        newTechGroupInput.required = false;
         newTechGroupInput.value = '';
-        techGroupSelect.required = true;
       }
     }
+
+    tgAddBtn?.addEventListener('click', () => {
+      if (techGroupSelect.value === '__NEW__') {
+        const newVal = newTechGroupInput.value.trim();
+        if (newVal) {
+          addTechGroup(newVal);
+          newTechGroupInput.value = '';
+          newTechGroupInput.style.display = 'none';
+          // Add to global list for future use
+          if (!TECH_GROUPS.includes(newVal)) TECH_GROUPS.push(newVal);
+          updateTechGroupOptions();
+        }
+      } else if (techGroupSelect.value) {
+        addTechGroup(techGroupSelect.value);
+      }
+    });
 
     segmentSelect?.addEventListener('change', updateTechGroupOptions);
     techGroupSelect?.addEventListener('change', handleToggleNewTech);
     updateTechGroupOptions();
+    renderTechGroupTags();
 
     document.getElementById('admin-sup-back')?.addEventListener('click', () => { pageTitle.textContent = 'Suppliers CRM Directory'; renderSuppliersTable(); });
     document.getElementById('admin-sup-cancel')?.addEventListener('click', () => { pageTitle.textContent = 'Suppliers CRM Directory'; renderSuppliersTable(); });
@@ -1634,7 +1688,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         addressZh: fd.get('addressZh'),
         segment: fd.get('segment'),
         stages: fd.getAll('stages'),
-        techGroup: fd.get('techGroup') === '__NEW__' ? fd.get('newTechGroup').trim() : fd.get('techGroup'),
+        techGroups: (() => { try { return JSON.parse(fd.get('techGroups') || '[]'); } catch { return []; } })(),
+        techGroup: (() => { try { const g = JSON.parse(fd.get('techGroups') || '[]'); return g[0] || ''; } catch { return ''; } })(),
         tags: fd.get('tags') ? fd.get('tags').split(',').map(s => s.trim()).filter(Boolean) : [],
         technologies: fd.get('technologies') ? fd.get('technologies').split(',').map(s => s.trim()).filter(Boolean) : [],
         certifications: fd.getAll('certifications'),
@@ -1705,7 +1760,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           id: payload.id,
           name: payload.name,
           segment: payload.segment,
-          tech_group: payload.techGroup || '',
+          tech_group: (payload.techGroups || [payload.techGroup]).filter(Boolean)[0] || '',
           data: (() => {
              const clone = { ...payload };
              delete clone.id; delete clone.name; delete clone.segment; delete clone.techGroup;
