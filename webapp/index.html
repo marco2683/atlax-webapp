@@ -150,7 +150,7 @@
     <!-- Phase Gate Cards -->
     <div id="home-cards-section" class="pb-stages-container"
       style="max-width: 1600px; padding: 40px 1.5% 50vh; margin: 0 auto; width: 100%; box-sizing: border-box; position: relative; z-index: 10;">
-      <div class="hero-prompt">
+      <div class="hero-prompt" style="margin-bottom: 60px;">
         <span class="hero-prompt__line"></span>
         <span class="hero-prompt__text">How can we help you</span><br>
         <span class="hero-prompt__line"></span>
@@ -159,7 +159,7 @@
       <div class="pb-stages-grid" style="grid-template-columns: repeat(4, 1fr); padding-bottom: 20px;">
 
         <!-- CARD 1: I HAVE AN IDEA -->
-        <div class="pb-stage-card" data-color="purple">
+        <div class="pb-stage-card" data-color="purple" onmouseenter="showUSP(0)" onmouseleave="hideUSP()">
           <div class="pb-stage-bg" style="background-image: url('/assets/images/phases/idea.png');"></div>
           <div class="pb-stage-avatar-overlay"></div>
           <div class="pb-stage-content">
@@ -186,7 +186,7 @@
         </div>
 
         <!-- CARD 2: I HAVE A DESIGN -->
-        <div class="pb-stage-card" data-color="blue">
+        <div class="pb-stage-card" data-color="blue" onmouseenter="showUSP(1)" onmouseleave="hideUSP()">
           <div class="pb-stage-bg" style="background-image: url('/assets/images/phases/concept.png');"></div>
           <div class="pb-stage-avatar-overlay"></div>
           <div class="pb-stage-content">
@@ -213,7 +213,7 @@
         </div>
 
         <!-- CARD 3: I WANT TO MANUFACTURE IN ASIA -->
-        <div class="pb-stage-card" data-color="teal">
+        <div class="pb-stage-card" data-color="teal" onmouseenter="showUSP(2)" onmouseleave="hideUSP()">
           <div class="pb-stage-bg" style="background-image: url('/assets/images/phases/manufacture.png');"></div>
           <div class="pb-stage-avatar-overlay"></div>
           <div class="pb-stage-content">
@@ -240,7 +240,7 @@
         </div>
 
         <!-- CARD 4: MY PRODUCT COSTS TOO MUCH -->
-        <div class="pb-stage-card" data-color="orange">
+        <div class="pb-stage-card" data-color="orange" onmouseenter="showUSP(3)" onmouseleave="hideUSP()">
           <div class="pb-stage-bg" style="background-image: url('/assets/images/phases/market.png');"></div>
           <div class="pb-stage-avatar-overlay"></div>
           <div class="pb-stage-content">
@@ -267,6 +267,32 @@
         </div>
 
       </div>
+
+      <!-- USP Display Area -->
+      <div class="pb-usp-container" style="height: 100px; display: flex; justify-content: center; align-items: center; margin-top: 40px; perspective: 1000px; padding: 0 20px;">
+        <p id="usp-text" class="pb-usp-text" style="color: rgba(255, 255, 255, 0.9); font-family: 'Outfit', sans-serif; font-size: clamp(15px, 1.3vw, 18px); font-weight: 300; text-align: center; max-width: 900px; line-height: 1.6; opacity: 0; transform: translateZ(-150px) scale(0.9); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; margin: 0;"></p>
+      </div>
+
+      <script>
+        const usps = [
+          "We bridge the gap between vision and reality. By evaluating your idea through the lenses of deep manufacturing expertise and market viability, we define the exact technologies and business strategies needed to succeed.",
+          "Engineering excellence is our core strength. We proactively critique and optimize your designs, ensuring they are robust, manufacturable, and primed for flawless production.",
+          "Leverage our two decades of boots-on-the-ground experience. We connect you with a strictly vetted, highly qualified network of suppliers capable of delivering the most competitive products on the market.",
+          "We combine instant algorithmic quoting with hands-on engineering intelligence to ruthlessly cut costs, re-engineer for manufacturability, and maximize your profit margins."
+        ];
+        
+        function showUSP(index) {
+          const uspEl = document.getElementById('usp-text');
+          uspEl.textContent = usps[index];
+          uspEl.style.opacity = '1';
+          uspEl.style.transform = 'translateZ(0) scale(1)';
+        }
+        function hideUSP() {
+          const uspEl = document.getElementById('usp-text');
+          uspEl.style.opacity = '0';
+          uspEl.style.transform = 'translateZ(-150px) scale(0.9)';
+        }
+      </script>
     </div>
   </header>
   <!-- WHO WE ARE SECTION -->
