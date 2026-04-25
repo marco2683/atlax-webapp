@@ -1776,6 +1776,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       { value: 'paid',         label: '🟢 Paid',                     color: '#16a34a' },
       { value: 'processing',   label: 'Processing',                  color: '#14b8a6' },
       { value: 'shipped',      label: '🚧 Shipped',                   color: '#8b5cf6' },
+      { value: 'rejected',     label: '❌ Rejected',                  color: '#dc2626' },
     ];
 
     const serviceLabels = {
@@ -1856,10 +1857,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     contentRouting.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2 style="margin:0; font-size: 20px; color: #0f172a; font-weight: 700;">RFQ Tracker</h2>
-        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: #475569; cursor: pointer;">
-          <input type="checkbox" id="admin-rfq-hide-done" style="cursor:pointer;" checked>
-          Hide 'Done' RFQs
-        </label>
+        <div style="display:flex; gap:16px;">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="admin-rfq-hide-rejected" style="cursor:pointer;" checked>
+            Hide Rejected RFQs
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="admin-rfq-hide-done" style="cursor:pointer;" checked>
+            Hide 'Done' RFQs
+          </label>
+        </div>
       </div>
       <div class="admin-table-container">
         <table class="admin-table" id="admin-rfq-table">
@@ -1906,15 +1913,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const toggleDoneFilter = () => {
-      const isHidden = document.getElementById('admin-rfq-hide-done').checked;
+      const isDoneHidden = document.getElementById('admin-rfq-hide-done')?.checked;
+      const isRejectedHidden = document.getElementById('admin-rfq-hide-rejected')?.checked;
       document.querySelectorAll('#admin-rfq-table tbody tr').forEach(row => {
-        if (row.dataset.status === 'done') {
-          row.style.display = isHidden ? 'none' : '';
-        }
+        let show = true;
+        if (row.dataset.status === 'done' && isDoneHidden) show = false;
+        if (row.dataset.status === 'rejected' && isRejectedHidden) show = false;
+        row.style.display = show ? '' : 'none';
       });
     };
 
     document.getElementById('admin-rfq-hide-done')?.addEventListener('change', toggleDoneFilter);
+    document.getElementById('admin-rfq-hide-rejected')?.addEventListener('change', toggleDoneFilter);
     toggleDoneFilter();
 
     // Status change handlers
@@ -2020,6 +2030,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       { value: 'paid',         label: '🟢 Paid' },
       { value: 'processing',   label: 'Processing' },
       { value: 'shipped',      label: '🚧 Shipped' },
+      { value: 'rejected',     label: '❌ Rejected' },
     ];
     const statusSelectHTML = statusOptions.map(s =>
       `<option value="${s.value}" ${s.value === rfq.status ? 'selected' : ''}>${s.label}</option>`
@@ -2123,10 +2134,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
 
         <!-- Reject reason panel (hidden by default) -->
-        <div id="rfq-reject-panel" style="display:none; padding:12px 28px; background:#fff7ed; border-bottom:2px solid #fed7aa;">
+        <div id="rfq-reject-panel" style="display:${rfq.status === 'rejected' ? 'block' : 'none'}; padding:12px 28px; background:#fff7ed; border-bottom:2px solid #fed7aa;">
           <div style="font-size:12px; font-weight:700; color:#9a3412; margin-bottom:6px;">Rejection Reason(s) — will be emailed to the client as bullet points</div>
           <textarea id="rfq-reject-reason" rows="3" placeholder="e.g. Insufficient technical specification&#10;Quantity below minimum order&#10;Material not available in requested tolerance"
-            style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #fed7aa; font-size:13px; font-family:inherit; resize:vertical; background:#fff; color:#0f172a; outline:none;"></textarea>
+            style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #fed7aa; font-size:13px; font-family:inherit; resize:vertical; background:#fff; color:#0f172a; outline:none;">${data.rejected_reason || ''}</textarea>
           <div style="display:flex; gap:8px; margin-top:8px; justify-content:flex-end;">
             <button id="rfq-reject-cancel-btn" style="padding:7px 14px; background:#fff; border:1px solid #e2e8f0; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:#64748b;">Cancel</button>
             <button id="rfq-reject-confirm-btn" style="padding:7px 16px; background:#ea580c; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;">Send Rejection &amp; Notify Client</button>
@@ -2494,7 +2505,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Sync UI
         const statusSel = modal.querySelector('#rfq-modal-status');
-        if (statusSel) { /* rejected not in dropdown, just show visually */ }
+        if (statusSel) statusSel.value = 'rejected';
+        const tableSelect = contentRouting.querySelector(`.admin-rfq-status-select[data-rfq-id="${rfq.id}"]`);
+        if (tableSelect) tableSelect.value = 'rejected';
+        
+        // Update local cache
+        const rfqObj = rfqs.find(r => r.id === rfq.id);
+        if (rfqObj) {
+          rfqObj.status = 'rejected';
+          rfqObj.rfq_data = { ...data, rejected_reason: rawReason };
+        }
+        
         updateNavBadges();
 
       } catch (err) {
