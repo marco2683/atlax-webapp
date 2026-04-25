@@ -23,10 +23,19 @@ import { signUpUser } from './services/auth.js';
           <h2>Get In Touch</h2>
           <p>We'd love to hear about your project</p>
         </div>
-        <div style="display:flex; gap:16px; align-items:center;">
-          <button class="book-consultation" style="background:var(--color-electric); color:#fff; padding:10px 20px; border-radius:30px; font-weight:600; font-size:14px; border:none; cursor:pointer; box-shadow:0 4px 12px rgba(59,130,246,0.3); transition:all 0.2s;" onclick="document.getElementById('atlasdt-contact-close').click();">Book a Teams Call</button>
-          <button class="contact-modal-close" id="atlasdt-contact-close">&times;</button>
+        <button class="contact-modal-close" id="atlasdt-contact-close">&times;</button>
+      </div>
+
+      <!-- Book a Call — Top, prominent -->
+      <div class="contact-booking-banner">
+        <div class="contact-booking-banner__text">
+          <strong>Prefer a live conversation?</strong>
+          <span>Schedule a free 30-min consultation with our team</span>
         </div>
+        <button class="contact-booking-btn book-consultation">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Book a Teams Call
+        </button>
       </div>
 
       <!-- Contact Info -->
@@ -313,9 +322,9 @@ import { signUpUser } from './services/auth.js';
         body.innerHTML = `
           <div style="text-align:center; padding: 60px 20px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <h3 style="color:#fff; margin:20px 0 8px 0; font-size:22px;">Inquiry Sent Successfully</h3>
-            <p style="color:rgba(255,255,255,0.5); font-size:14px; max-width:400px; margin:0 auto;">Thank you for reaching out. Our team will review your inquiry and get back to you within 24 hours.</p>
-            <button onclick="document.getElementById('atlasdt-contact-overlay').classList.remove('open'); document.body.style.overflow='';" style="margin-top:28px; padding:12px 28px; background:#3b82f6; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer; font-family:inherit;">Close</button>
+            <h3 style="color:#0f172a; margin:20px 0 8px 0; font-size:22px;">Inquiry Sent Successfully</h3>
+            <p style="color:#64748b; font-size:14px; max-width:400px; margin:0 auto;">Thank you for reaching out. Our team will review your inquiry and get back to you within 24 hours.</p>
+            <button onclick="document.getElementById('atlasdt-contact-overlay').classList.remove('open'); document.body.style.overflow='';" style="margin-top:28px; padding:12px 28px; background:#0f172a; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer; font-family:inherit;">Close</button>
           </div>`;
       }
     } catch (err) {
@@ -384,8 +393,8 @@ import { signUpUser } from './services/auth.js';
         footerForm.innerHTML = `
           <div style="text-align:center; padding: 20px 0;">
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" style="margin-bottom:12px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <h4 style="color:#fff; margin:0 0 8px 0; font-size:18px;">Message Sent</h4>
-            <p style="color:rgba(255,255,255,0.6); font-size:13px;">Thank you! We'll be in touch shortly.</p>
+            <h4 style="color:#0f172a; margin:0 0 8px 0; font-size:18px;">Message Sent</h4>
+            <p style="color:#64748b; font-size:13px;">Thank you! We'll be in touch shortly.</p>
           </div>
         `;
       } catch (error) {

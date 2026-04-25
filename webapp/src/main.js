@@ -74,8 +74,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 0. Auth Guard — protect the engine
   const user = await getCurrentUser();
   if (!user) {
-    console.warn('[PRD] Unauthenticated. Redirecting to login...');
-    window.location.href = '/index.html?auth=login';
+    console.warn('[PRD] Unauthenticated — showing login modal.');
+    const authModal = document.getElementById('auth-modal');
+    if (authModal) {
+      authModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+
+      // If closed without logging in → bounce to homepage
+      const redirectHome = () => { window.location.href = '/index.html'; };
+      const closeBtn = document.getElementById('close-auth-modal');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', redirectHome);
+      }
+      // Also catch backdrop clicks
+      authModal.addEventListener('click', (e) => {
+        if (e.target === authModal) redirectHome();
+      });
+    }
     return;
   }
   if (user) console.log('[PRD] Authenticated as:', user.email);

@@ -55,20 +55,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('sales-funnel')?.classList.add('hidden');
     }
   } else {
-    // Hide the globe elements initially to show selection screen
-    const searchBar = document.getElementById('search-bar');
-    const tagline = document.getElementById('search-tagline');
-    const regionRow = document.getElementById('region-row-hero');
+    // Not authenticated → show auth modal immediately, skip sales funnel
+    selectionScreen.classList.add('hidden');
     
-    if (globeContainer) {
-      globeContainer.style.transition = 'opacity 0.6s ease';
-      globeContainer.style.opacity = '0.2';
+    const authModal = document.getElementById('auth-modal');
+    if (authModal) {
+      authModal.classList.remove('hidden');
+    } else {
+      // Fallback: redirect to home with login param
+      window.location.href = '/index.html?auth=login';
+      return;
     }
-    if (searchBar) searchBar.style.display = 'none';
-    if (tagline) tagline.style.display = 'none';
-    if (regionRow) regionRow.style.display = 'none';
-    
-    selectionScreen.classList.remove('hidden');
   }
 
   // Load unified data
