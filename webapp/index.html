@@ -58,7 +58,7 @@
         <a href="/app.html#rfq" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">Component</span>
           <span class="global-nav-link__sub">Instant Quote</span>
-        </a>        <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
+        </a> <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">OEMs</span>
           <span class="global-nav-link__sub">Marketplace</span>
         </a>
@@ -74,7 +74,8 @@
         <div id="nav-user-menu" class="nav-user-menu">
           <div class="nav-avatar" id="nav-avatar">?</div>
           <div class="dropdown-content" style="right: 20px;">
-            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter Platform</a>
+            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter
+              Platform</a>
             <a href="/workspace.html" class="dropdown-item">Workspace</a>
             <a href="/profile.html" class="dropdown-item">Profile Settings</a>
             <a href="/workspace.html" class="dropdown-item" id="nav-notifications-link"
@@ -99,15 +100,19 @@
     <div class="hero-grid-flash hero-grid-flash--1"></div>
     <div class="hero-grid-flash hero-grid-flash--2"></div>
     <div class="hero-grid-flash hero-grid-flash--3"></div>
-    
+
     <!-- 100vh Top Section -->
-    <div style="min-height: 100vh; min-height: 100dvh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding-bottom: 25vh; box-sizing: border-box;">
+    <div
+      style="min-height: 100vh; min-height: 100dvh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding-bottom: 25vh; box-sizing: border-box;">
       <div class="m-hero__content m-fade-up"
         style="text-align: center; align-items: center; max-width: 900px; margin: 0 auto;">
 
-        <div style="display: inline-flex; flex-direction: column; align-items: stretch; justify-content: center; margin-bottom: 8px; max-width: max-content; margin-left: auto; margin-right: auto; padding: 0 10px;">
-          <img src="/logos/atlasdt-logo-light.png" alt="AtlasDT" style="height: clamp(80px, 14vw, 140px); width: auto; margin-bottom: -12px; object-fit: contain;">
-          <div style="display: flex; justify-content: space-between; width: 100%; font-family: 'Outfit', sans-serif; font-size: clamp(14px, 2.8vw, 24px); font-weight: 300; text-transform: uppercase; color: rgba(255, 255, 255, 0.8); position: relative; z-index: 2;">
+        <div
+          style="display: inline-flex; flex-direction: column; align-items: stretch; justify-content: center; margin-bottom: 8px; max-width: max-content; margin-left: auto; margin-right: auto; padding: 0 10px;">
+          <img src="/logos/atlasdt-logo-light.png" alt="AtlasDT"
+            style="height: clamp(80px, 14vw, 140px); width: auto; margin-bottom: -12px; object-fit: contain;">
+          <div
+            style="display: flex; justify-content: space-between; width: 100%; font-family: 'Outfit', sans-serif; font-size: clamp(14px, 2.8vw, 24px); font-weight: 300; text-transform: uppercase; color: rgba(255, 255, 255, 0.8); position: relative; z-index: 2;">
             <span>D</span><span>E</span><span>S</span><span>I</span><span>G</span><span>N</span>
             <span style="visibility: hidden; width: 1px;">-</span>
             <span>&amp;</span>
@@ -123,9 +128,22 @@
       <!-- Discover More Arrow -->
       <style>
         @keyframes bounce-arrow {
-          0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-          40% { transform: translateY(-10px); }
-          60% { transform: translateY(-5px); }
+
+          0%,
+          20%,
+          50%,
+          80%,
+          100% {
+            transform: translateY(0);
+          }
+
+          40% {
+            transform: translateY(-10px);
+          }
+
+          60% {
+            transform: translateY(-5px);
+          }
         }
       </style>
       <script>
@@ -134,16 +152,25 @@
           // Calculate the position so the cards sit higher on the screen (scrolling lower)
           const offset = window.innerHeight * 0.05; // 5% from the top
           const targetY = target.getBoundingClientRect().top + window.scrollY - offset;
-          
+
           window.scrollTo({
             top: targetY,
             behavior: 'smooth'
           });
         }
       </script>
-      <div style="position: absolute; bottom: 13vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 10; transition: opacity 0.3s;" onclick="slowScrollToCards()" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" style="opacity: 0.7;">
-          <span style="color: rgba(255,255,255,0.7); font-family: 'Outfit', sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; font-weight: 600;">Discover More</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: bounce-arrow 2s infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      <div
+        style="position: absolute; bottom: 13vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 10; transition: opacity 0.3s;"
+        onclick="slowScrollToCards()" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'"
+        style="opacity: 0.7;">
+        <span
+          style="color: rgba(255,255,255,0.7); font-family: 'Outfit', sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; font-weight: 600;">Discover
+          More</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          style="animation: bounce-arrow 2s infinite;">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
       </div>
     </div>
 
@@ -269,28 +296,31 @@
       </div>
 
       <!-- USP Display Area -->
-      <div class="pb-usp-container" style="position: absolute; bottom: 28vh; left: 0; right: 0; display: flex; justify-content: center; align-items: center; perspective: 1200px; padding: 0 20px; pointer-events: none;">
-        <p id="usp-text" class="pb-usp-text" style="color: rgba(255, 255, 255, 0.85); font-family: 'Outfit', sans-serif; font-size: clamp(18px, 1.5vw, 24px); font-weight: 200; letter-spacing: 0.5px; text-align: center; max-width: 1000px; line-height: 1.5; opacity: 0; transform: translateZ(-1000px) scale(0.4); transition: all 2.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; margin: 0;"></p>
+      <div class="pb-usp-container"
+        style="position: absolute; bottom: 28vh; left: 0; right: 0; display: flex; justify-content: center; align-items: center; perspective: 1200px; padding: 0 20px; pointer-events: none;">
+        <p id="usp-text" class="pb-usp-text"
+          style="color: rgba(255, 255, 255, 0.85); font-family: 'Outfit', sans-serif; font-size: clamp(18px, 1.5vw, 24px); font-weight: 200; letter-spacing: 0.5px; text-align: center; max-width: 1000px; line-height: 1.5; opacity: 0; transform: scale(0.85); transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; margin: 0;">
+        </p>
       </div>
 
       <script>
         const usps = [
-          "We’re here to help turn that spark into something real. We’ll sit down with you, look at the big picture, and figure out the smartest, most practical path to bring your idea to life.",
-          "We’ve got your back on the engineering side. Our team loves diving into designs to catch the tricky details early, so when you’re ready to build, you can be completely confident.",
-          "Navigating overseas manufacturing can be daunting, but we’re on the ground here in Asia. We’ll introduce you to factory partners we trust personally, so you get the quality you expect without the headaches.",
+          "We’re here to help you turn that spark into something real. We've done it countless times. We’ll sit down with you, look at the big picture, and figure out the smartest, most practical path to bring your idea to life.",
+          "We’ve got your back on the engineering side. Our team loves diving into designs to catch the tricky details early and remove the hardest challenges first, so when you’re ready to build, you can be completely confident.",
+          "Navigating overseas manufacturing can be daunting, but we’re local to you and also on the ground in Asia. We’ll introduce you to factory partners we trust personally, so you get the quality you expect without the headaches.",
           "We know margins matter. Instead of just tweaking numbers, we’ll roll up our sleeves and look for creative engineering and sourcing solutions to thoughtfully lower your costs without cutting corners."
         ];
-        
+
         function showUSP(index) {
           const uspEl = document.getElementById('usp-text');
           uspEl.textContent = usps[index];
           uspEl.style.opacity = '1';
-          uspEl.style.transform = 'translateZ(0) scale(1)';
+          uspEl.style.transform = 'scale(1)';
         }
         function hideUSP() {
           const uspEl = document.getElementById('usp-text');
           uspEl.style.opacity = '0';
-          uspEl.style.transform = 'translateZ(-1000px) scale(0.4)';
+          uspEl.style.transform = 'scale(0.85)';
         }
       </script>
     </div>
@@ -303,29 +333,33 @@
       <div class="prd-who-left">
         <!-- LEFT ALIGNED EYEBROW KEY TO GRID: must be inside column -->
         <p class="prd-who-eyebrow">Who We Are</p>
-        
-        <ul style="list-style: none; padding: 0; margin: 16px 0 32px 0; display: flex; flex-direction: column; gap: 12px;">
-          <li class="prd-who-title" style="font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
+
+        <ul
+          style="list-style: none; padding: 0; margin: 16px 0 32px 0; display: flex; flex-direction: column; gap: 12px;">
+          <li class="prd-who-title"
+            style="font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
             <span style="color: #0e7a6c; margin-top: -2px;">&bull;</span> Hands-on designers &amp; engineers.
           </li>
-          <li class="prd-who-title" style="font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
+          <li class="prd-who-title"
+            style="font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
             <span style="color: #0e7a6c; margin-top: -2px;">&bull;</span> On-the-ground procurement &amp; quality.
           </li>
-          <li class="prd-who-title" style="font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
+          <li class="prd-who-title"
+            style="font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
             <span style="color: #0e7a6c; margin-top: -2px;">&bull;</span> Not just a corporate agency.
           </li>
         </ul>
-          <p class="prd-who-body">
-            We're a lean team of engineers and designers headquartered in Melbourne, with boots on the ground in China
-            and
-            deep roots in the Pearl River Delta supplier network. We've stripped out every layer of corporate overhead
-            so
-            our clients never pay for a corner office — they pay for results.
-          </p>
-          <p class="prd-who-body">
-            Whether your idea is groundbreaking or incremental, we plug you into the most competitive manufacturing
-            ecosystem in the world. You start from an advantage that most companies spend years trying to reach.
-          </p>
+        <p class="prd-who-body">
+          We're a lean team of engineers and designers headquartered in Melbourne, with boots on the ground in China
+          and
+          deep roots in the Pearl River Delta supplier network. We've stripped out every layer of corporate overhead
+          so
+          our clients never pay for a corner office — they pay for results.
+        </p>
+        <p class="prd-who-body">
+          Whether your idea is groundbreaking or incremental, we plug you into the most competitive manufacturing
+          ecosystem in the world. You start from an advantage that most companies spend years trying to reach.
+        </p>
 
       </div>
 
@@ -353,66 +387,66 @@
 
     <!-- Second Row: Pillars and Quote (Vertically Centered) -->
     <div class="prd-who-inner" style="align-items: center; margin-top: 80px;">
-      
+
       <div class="prd-who-left">
-          <div class="prd-pillars" style="margin-top: 0;">
-            <div class="prd-pillar">
-              <span class="prd-pillar-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
-                  stroke-linecap="round">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                  <polyline points="9 22 9 12 15 12 15 22" />
-                </svg>
-              </span>
-              <div>
-                <strong>Melbourne HQ</strong>
-                <span>Western design rigour &amp; accountability</span>
-              </div>
-            </div>
-            <div class="prd-pillar">
-              <span class="prd-pillar-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
-                  stroke-linecap="round">
-                  <rect x="2" y="7" width="20" height="14" rx="1" />
-                  <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
-                  <line x1="12" y1="12" x2="12" y2="15" />
-                  <line x1="10" y1="14" x2="14" y2="14" />
-                </svg>
-              </span>
-              <div>
-                <strong>China Presence</strong>
-                <span>On-the-ground factory oversight &amp; QC</span>
-              </div>
-            </div>
-            <div class="prd-pillar">
-              <span class="prd-pillar-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
-                  stroke-linecap="round">
-                  <circle cx="18" cy="5" r="3" />
-                  <circle cx="6" cy="12" r="3" />
-                  <circle cx="18" cy="19" r="3" />
-                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-                </svg>
-              </span>
-              <div>
-                <strong>Vetted Network</strong>
-                <span>500+ qualified suppliers across 12 categories</span>
-              </div>
-            </div>
-            <div class="prd-pillar">
-              <span class="prd-pillar-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
-                  stroke-linecap="round">
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                </svg>
-              </span>
-              <div>
-                <strong>Lean Structure</strong>
-                <span>No overhead. Every dollar goes to your product.</span>
-              </div>
+        <div class="prd-pillars" style="margin-top: 0;">
+          <div class="prd-pillar">
+            <span class="prd-pillar-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
+                stroke-linecap="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+            </span>
+            <div>
+              <strong>Melbourne HQ</strong>
+              <span>Western design rigour &amp; accountability</span>
             </div>
           </div>
+          <div class="prd-pillar">
+            <span class="prd-pillar-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
+                stroke-linecap="round">
+                <rect x="2" y="7" width="20" height="14" rx="1" />
+                <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+                <line x1="12" y1="12" x2="12" y2="15" />
+                <line x1="10" y1="14" x2="14" y2="14" />
+              </svg>
+            </span>
+            <div>
+              <strong>China Presence</strong>
+              <span>On-the-ground factory oversight &amp; QC</span>
+            </div>
+          </div>
+          <div class="prd-pillar">
+            <span class="prd-pillar-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
+                stroke-linecap="round">
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              </svg>
+            </span>
+            <div>
+              <strong>Vetted Network</strong>
+              <span>500+ qualified suppliers across 12 categories</span>
+            </div>
+          </div>
+          <div class="prd-pillar">
+            <span class="prd-pillar-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
+                stroke-linecap="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+            </span>
+            <div>
+              <strong>Lean Structure</strong>
+              <span>No overhead. Every dollar goes to your product.</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="prd-who-right">
@@ -756,7 +790,9 @@
             Live Expert Network
           </span>
           <h3 class="prd-tool-name">Find Designers &amp; Engineers</h3>
-          <p class="prd-tool-desc">Need extra hands to prepare your designs for mass production? Access our Global Designer Network to find pre-vetted industrial designers and mechanical engineers. Seamlessly augment your team, collaborate on CAD, and transition concepts to reality inside a single unified workspace.</p>
+          <p class="prd-tool-desc">Need extra hands to prepare your designs for mass production? Access our Global
+            Designer Network to find pre-vetted industrial designers and mechanical engineers. Seamlessly augment your
+            team, collaborate on CAD, and transition concepts to reality inside a single unified workspace.</p>
           <ul class="prd-tool-list">
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="2">
                 <polyline points="20 6 9 17 4 12" />
@@ -1408,9 +1444,11 @@
               <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars:
                 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
             </div>
-                        <div class="auth-input-group" style="display: flex; gap: 10px; align-items: start; margin-top: 10px; margin-bottom: 15px;">
+            <div class="auth-input-group"
+              style="display: flex; gap: 10px; align-items: start; margin-top: 10px; margin-bottom: 15px;">
               <input type="checkbox" id="signup-marketing" style="margin-top: 4px;">
-              <label for="signup-marketing" style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
+              <label for="signup-marketing"
+                style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
                 I would like to receive newsletters, promotions, and updates from Atlas DT.
               </label>
             </div>
@@ -1536,4 +1574,3 @@
 </body>
 
 </html>
-
