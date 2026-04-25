@@ -483,12 +483,56 @@ function openRFQPreviewModal(rfq) {
 
   const isBankTransferPending = data.payment_method === 'bank_transfer' && !['paid', 'shipped', 'done', 'cancelled'].includes(rfq.status);
 
-  const statusHtml = rfq.status === 'paid' 
-    ? `<span style="font-size:13px; font-weight:700; background:#dcfce7; color:#15803d; padding:6px 12px; border-radius:6px; text-transform:uppercase;">🟢 PAID</span>
-       ${data.paid_at ? `<span style="font-size:12px; color:#15803d; font-weight:600; margin-left:8px;">Paid ${new Date(data.paid_at).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})}</span>` : ''}`
-    : isBankTransferPending
-      ? `<span style="font-size:13px; font-weight:800; background:#fef9c3; color:#854d0e; border:1px solid #fde68a; padding:6px 12px; border-radius:6px; text-transform:uppercase; box-shadow: 0 2px 4px rgba(253,230,138,0.5);">🏦 BANK TRANSFER PENDING</span>`
-      : `<span style="font-size:13px; font-weight:700; background:#e0e7ff; color:#4338ca; padding:6px 12px; border-radius:6px; text-transform:uppercase;">Status: ${rfq.status || 'Pending'}</span>`;
+  const statusLabels = {
+    'submitted': 'Submitted',
+    'under_review': 'Under Review',
+    'confirmed': 'Confirmed',
+    'processing': 'Processing',
+    'paid': 'Paid',
+    'shipped': 'Shipped',
+    'rejected': 'Rejected',
+    'done': 'Done',
+    'cancelled': 'Cancelled'
+  };
+  
+  const statusDescriptions = {
+    'submitted': 'One of our experts will review and take the quotation on board and bring it forward shortly.',
+    'under_review': 'Our engineering team is currently reviewing your files and requirements.',
+    'confirmed': 'Your quote is confirmed! Please proceed with payment to begin production.',
+    'processing': 'Your project is currently in active production.',
+    'paid': 'Payment received. Your project is preparing for production.',
+    'shipped': 'Your order has been shipped and is on its way.',
+    'rejected': 'This quote could not be processed. Please see the communication history for details.',
+    'done': 'This project has been completed.',
+    'cancelled': 'This project has been cancelled.'
+  };
+
+  const currentStatus = rfq.status || 'submitted';
+  const label = isBankTransferPending ? 'Bank Transfer Pending' : (statusLabels[currentStatus] || currentStatus);
+  const tooltipText = isBankTransferPending 
+    ? 'Please upload your bank transfer receipt. We will confirm it shortly.'
+    : statusDescriptions[currentStatus] || 'Status update pending.';
+
+  let badgeBg = '#eef2ff', badgeColor = '#3730a3', badgeBorder = '#c7d2fe';
+  if (currentStatus === 'paid' || currentStatus === 'shipped' || currentStatus === 'done') { badgeBg = '#dcfce7'; badgeColor = '#15803d'; badgeBorder = '#bbf7d0'; }
+  else if (isBankTransferPending || currentStatus === 'under_review' || currentStatus === 'confirmed') { badgeBg = '#fef9c3'; badgeColor = '#854d0e'; badgeBorder = '#fde68a'; }
+  else if (currentStatus === 'rejected' || currentStatus === 'cancelled') { badgeBg = '#fef2f2'; badgeColor = '#dc2626'; badgeBorder = '#fecaca'; }
+
+  const statusHtml = `
+    <div style="display:flex; align-items:center;">
+      <span style="font-size:12px; font-weight:800; background:${badgeBg}; color:${badgeColor}; padding:6px 12px; border-radius:6px; border:1px solid ${badgeBorder}; text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+        STATUS: ${label}
+      </span>
+      <div class="rfq-status-tooltip" data-tooltip="${tooltipText}" style="position:relative; margin-left:8px; color:#94a3b8; cursor:help; display:flex; align-items:center; transition: color 0.2s;" onmouseover="this.style.color='#475569'" onmouseout="this.style.color='#94a3b8'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </div>
+      ${currentStatus === 'paid' && data.paid_at ? `<span style="font-size:12px; color:#15803d; font-weight:600; margin-left:12px;">Paid ${new Date(data.paid_at).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})}</span>` : ''}
+    </div>
+  `;
 
   const reminderHtml = isBankTransferPending ? `
     <div style="background:#fffbeb; border:2px solid #f59e0b; border-radius:12px; padding:16px 20px; margin-bottom:24px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);">
@@ -504,6 +548,21 @@ function openRFQPreviewModal(rfq) {
 
   const modalHtml = `
     <div id="rfq-preview-modal" style="position:fixed;inset:0;background:rgba(15,23,42,0.8);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center; font-family: 'Inter', sans-serif;">
+      <style>
+        .rfq-status-tooltip::after {
+          content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+          margin-bottom: 8px; padding: 8px 12px; background: #0f172a; color: #fff; font-size: 12px;
+          font-weight: 500; white-space: normal; width: max-content; max-width: 280px; text-align: center;
+          border-radius: 6px; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10; line-height: 1.4; text-transform: none; letter-spacing: 0;
+        }
+        .rfq-status-tooltip::before {
+          content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+          margin-bottom: 4px; border-width: 5px; border-style: solid; border-color: #0f172a transparent transparent transparent;
+          opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 10;
+        }
+        .rfq-status-tooltip:hover::after, .rfq-status-tooltip:hover::before { opacity: 1; }
+      </style>
       <div style="background:#fff;border-radius:16px;width:1100px;max-width:95vw;height:700px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
         
         <!-- Top Summary Bar -->
