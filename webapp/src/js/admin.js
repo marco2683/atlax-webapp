@@ -2014,6 +2014,11 @@ document.addEventListener('DOMContentLoaded', async () => {
               style="padding:7px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; font-family:inherit; width:130px; background:#fff;">
             <button id="rfq-save-price-btn" data-rfq-id="${rfq.id}"
               style="padding:7px 14px; background:#0f172a; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;">Update</button>
+            <button id="rfq-confirm-client-btn" data-rfq-id="${rfq.id}"
+              style="padding:7px 16px; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(22,163,74,0.35);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Confirm to Client
+            </button>
           </div>
           <button id="rfq-remove-btn" style="margin-left:auto; padding:7px 14px; background:#fee2e2; color:#ef4444; border:1px solid #fecaca; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
@@ -2221,6 +2226,62 @@ document.addEventListener('DOMContentLoaded', async () => {
         const rfqObj = rfqs.find(r => r.id === rfqId);
         if (rfqObj) rfqObj.rfq_data = updatedData;
       } catch (err) { alert('Failed to update price: ' + err.message); }
+    });
+
+    // Confirm to Client — triggers payment flow on user side
+    modal.querySelector('#rfq-confirm-client-btn')?.addEventListener('click', async (e) => {
+      const rfqId = e.target.dataset.rfqId;
+      const confirmedPrice = parseFloat(modal.querySelector('#rfq-modal-final-price')?.value) || data.total_price || 0;
+      if (!confirmedPrice || confirmedPrice <= 0) {
+        alert('Please set a valid Final Price before confirming to the client.');
+        return;
+      }
+      if (!confirm(`Confirm this quote to the client?\n\nThey will be notified and asked to pay $${confirmedPrice.toLocaleString(undefined, {minimumFractionDigits:2})} via card or bank transfer.`)) return;
+
+      const btn = e.target.closest('button');
+      btn.disabled = true;
+      btn.textContent = 'Confirming…';
+
+      const updatedData = {
+        ...data,
+        confirmed_price: confirmedPrice,
+        total_price: confirmedPrice,
+        admin_final_price: confirmedPrice,
+        payment_status: 'awaiting_payment',
+      };
+
+      try {
+        const { error } = await supabase
+          .from('rfq_history')
+          .update({ status: 'confirmed', rfq_data: updatedData })
+          .eq('id', rfqId);
+        if (error) throw error;
+
+        // Update local cache
+        const rfqObj = rfqs.find(r => r.id === rfqId);
+        if (rfqObj) { rfqObj.status = 'confirmed'; rfqObj.rfq_data = updatedData; }
+
+        // Visual feedback
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Confirmed ✓`;
+        btn.style.background = '#15803d';
+        setTimeout(() => {
+          btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Confirm to Client`;
+          btn.style.background = 'linear-gradient(135deg,#16a34a,#15803d)';
+          btn.disabled = false;
+        }, 3000);
+
+        // Update status dropdown in modal
+        const statusSelect = modal.querySelector('#rfq-modal-status');
+        if (statusSelect) statusSelect.value = 'confirmed';
+        // Update in table
+        const tableSelect = contentRouting.querySelector(`.admin-rfq-status-select[data-rfq-id="${rfqId}"]`);
+        if (tableSelect) tableSelect.value = 'confirmed';
+
+      } catch (err) {
+        alert('Failed to confirm: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = 'Confirm to Client';
+      }
     });
 
     // Remove RFQ

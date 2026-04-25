@@ -444,7 +444,7 @@ function openRFQPreviewModal(rfq) {
           </div>
           
           <!-- Info Column -->
-          <div style="width:360px; background:#fff; padding:24px; border-left:1px solid #e2e8f0; display:flex; flex-direction:column; overflow-y:auto;">
+          <div id="rfq-info-col" style="width:360px; background:#fff; padding:24px; border-left:1px solid #e2e8f0; display:flex; flex-direction:column; overflow-y:auto;">
             <div style="margin-bottom:20px;">
               <div style="font-size:11px; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Part Details</div>
               <h3 id="rfq-part-name" style="margin:0; font-size:16px; color:#0f172a; font-weight:700; word-break:break-word;"></h3>
@@ -543,7 +543,144 @@ function openRFQPreviewModal(rfq) {
   modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
 
   renderCurrentPart();
+
+  // ── Payment Panel (shown when admin has confirmed the quote) ──
+  if (data.payment_status === 'awaiting_payment' && rfq.status === 'confirmed') {
+    injectPaymentPanel(rfq, data, modal);
+  }
 }
+
+function injectPaymentPanel(rfq, data, modal) {
+  const infoCol = modal.querySelector('#rfq-info-col');
+  if (!infoCol) return; // fallback guard
+
+  const amount = data.confirmed_price || data.total_price || 0;
+  const amountFmt = `$${Number(amount).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+
+  const panel = document.createElement('div');
+  panel.id = 'rfq-payment-panel';
+  panel.style.cssText = 'margin-top:24px; border-top:2px solid #e2e8f0; padding-top:20px;';
+  panel.innerHTML = `
+    <div style="font-size:10px; color:#15803d; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:12px;">
+      ✅ Quote Confirmed — Payment Required
+    </div>
+    <div style="font-size:13px; color:#334155; margin-bottom:16px; line-height:1.5;">
+      Your quote has been confirmed at <strong style="color:#15803d;">${amountFmt}</strong>.<br>
+      Choose how you'd like to proceed:
+    </div>
+
+    <!-- Option A: Card payment via Stripe -->
+    <button id="rfq-pay-stripe-btn"
+      style="width:100%; padding:14px 20px; background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; border:none; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:10px; box-shadow:0 4px 14px rgba(59,130,246,0.35); transition:opacity 0.2s;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Pay ${amountFmt} by Card (Stripe)
+    </button>
+
+    <div style="text-align:center; font-size:11px; color:#94a3b8; margin-bottom:10px;">— or —</div>
+
+    <!-- Option B: Bank Transfer -->
+    <button id="rfq-pay-bank-btn"
+      style="width:100%; padding:12px 20px; background:#f8fafc; color:#0f172a; border:1.5px solid #e2e8f0; border-radius:12px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:10px; transition:background 0.2s;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 9 12 2 21 9"/><path d="M3 9v12h18V9"/><line x1="9" y1="21" x2="9" y2="12"/><line x1="15" y1="21" x2="15" y2="12"/></svg>
+      Pay via Bank Transfer
+    </button>
+
+    <!-- Bank Transfer details (hidden by default) -->
+    <div id="rfq-bank-details" style="display:none; margin-top:16px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:16px;">
+      <div style="font-size:11px; color:#15803d; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">Bank Transfer Details</div>
+      <div style="display:grid; gap:8px; font-size:13px; color:#334155;">
+        <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">Bank Name</span><strong>Commonwealth Bank of Australia</strong></div>
+        <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">Account Name</span><strong>AtlasDT Pty Ltd</strong></div>
+        <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">BSB</span><strong>062-692</strong></div>
+        <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">Account No.</span><strong>1234 5678</strong></div>
+        <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">Reference</span><strong>RFQ-${rfq.id?.slice(0,8).toUpperCase()}</strong></div>
+        <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">Amount</span><strong style="color:#15803d;">${amountFmt} USD</strong></div>
+      </div>
+      <div style="margin-top:14px; padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; font-size:12px; color:#64748b; line-height:1.6;">
+        ⏱ Please use the reference code above and allow 2–3 business days for your payment to clear. Once confirmed, your order will move to production.
+      </div>
+      <button id="rfq-accept-bank-btn"
+        style="width:100%; margin-top:14px; padding:12px; background:#15803d; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;">
+        ✔ I Confirm & Accept — Bank Transfer
+      </button>
+    </div>
+
+    <div id="rfq-payment-success-msg" style="display:none; margin-top:16px; text-align:center; padding:16px; background:#f0fdf4; border-radius:12px; border:1px solid #bbf7d0;">
+      <div style="font-size:22px; margin-bottom:6px;">🎉</div>
+      <div style="font-size:14px; font-weight:700; color:#15803d;">Order Accepted!</div>
+      <div style="font-size:12px; color:#64748b; margin-top:4px;">Bank transfer confirmation received. Our team will start production once payment clears.</div>
+    </div>
+  `;
+
+  infoCol.appendChild(panel);
+
+  // Stripe button
+  panel.querySelector('#rfq-pay-stripe-btn')?.addEventListener('click', async () => {
+    const btn = panel.querySelector('#rfq-pay-stripe-btn');
+    btn.disabled = true;
+    btn.textContent = 'Redirecting to Stripe…';
+    try {
+      const { supabase } = await import('./js/utils/supabaseClient.js');
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user = sessionData?.session?.user;
+
+      const res = await fetch('/.netlify/functions/rfq-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          rfqId: rfq.id,
+          amount: amount,
+          projectName: data.project_name || 'Manufacturing Order',
+          userEmail: user?.email || '',
+          userId: user?.id || '',
+        }),
+      });
+      const result = await res.json();
+      if (result.url) {
+        window.location.href = result.url;
+      } else {
+        alert('Could not initiate payment: ' + (result.error || 'Unknown error'));
+        btn.disabled = false;
+        btn.textContent = `Pay ${amountFmt} by Card (Stripe)`;
+      }
+    } catch (err) {
+      alert('Payment error: ' + err.message);
+      btn.disabled = false;
+    }
+  });
+
+  // Bank transfer toggle
+  panel.querySelector('#rfq-pay-bank-btn')?.addEventListener('click', () => {
+    const details = panel.querySelector('#rfq-bank-details');
+    details.style.display = details.style.display === 'none' ? 'block' : 'none';
+  });
+
+  // Accept bank transfer
+  panel.querySelector('#rfq-accept-bank-btn')?.addEventListener('click', async () => {
+    const btn = panel.querySelector('#rfq-accept-bank-btn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+    try {
+      const { supabase } = await import('./js/utils/supabaseClient.js');
+      const updatedData = { ...data, payment_method: 'bank_transfer', payment_status: 'bank_transfer_pending' };
+      const { error } = await supabase
+        .from('rfq_history')
+        .update({ status: 'processing', rfq_data: updatedData })
+        .eq('id', rfq.id);
+      if (error) throw error;
+
+      panel.querySelector('#rfq-bank-details').style.display = 'none';
+      panel.querySelector('#rfq-payment-success-msg').style.display = 'block';
+      panel.querySelector('#rfq-pay-bank-btn').style.display = 'none';
+      panel.querySelector('#rfq-pay-stripe-btn').style.display = 'none';
+    } catch (err) {
+      alert('Failed to confirm order: ' + err.message);
+      btn.disabled = false;
+      btn.textContent = '✔ I Confirm & Accept — Bank Transfer';
+    }
+  });
+
+
 
 
 // ── Files Tab ───────────────────────────────────────────
