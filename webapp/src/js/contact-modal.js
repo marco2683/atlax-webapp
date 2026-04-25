@@ -401,39 +401,13 @@ import { signUpUser } from './services/auth.js';
     });
   });
 
-  // --- MICROSOFT BOOKINGS MODAL ---
-  // Create Bookings Modal HTML
-  const bookingsHTML = `
-    <div id="atlasdt-bookings-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); z-index:99999; display:none; justify-content:center; align-items:center; opacity:0; transition:opacity 0.3s ease;">
-      <div style="background:#fff; width:90%; max-width:1000px; height:85vh; border-radius:12px; overflow:hidden; position:relative; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
-        <button id="close-bookings-modal" style="position:absolute; top:12px; right:12px; background:rgba(0,0,0,0.1); border:none; width:36px; height:36px; border-radius:50%; font-size:24px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#333; z-index:10;">&times;</button>
-        <iframe src="https://outlook.office.com/book/AtlasDTConsultations@atlasdt.com/" width="100%" height="100%" scrolling="yes" style="border:0;"></iframe>
-      </div>
-    </div>
-  `;
-  document.body.insertAdjacentHTML('beforeend', bookingsHTML);
-
-  const bookingsOverlay = document.getElementById('atlasdt-bookings-overlay');
-  const closeBookingsBtn = document.getElementById('close-bookings-modal');
-
+  // --- MICROSOFT BOOKINGS ---
+  // Microsoft "Bookings with me" explicitly blocks iframe embedding via Content-Security-Policy (CSP)
+  // To bypass the 500 error / CSP block, we must open the booking page in a new secure tab.
   window.openBookingsModal = function(e) {
     if (e) e.preventDefault();
-    bookingsOverlay.style.display = 'flex';
-    // tiny delay for transition
-    setTimeout(() => bookingsOverlay.style.opacity = '1', 10);
-    document.body.style.overflow = 'hidden';
+    window.open('https://outlook.office.com/book/AtlasDTConsultations@atlasdt.com/', '_blank', 'noopener,noreferrer');
   };
-
-  function closeBookings() {
-    bookingsOverlay.style.opacity = '0';
-    setTimeout(() => {
-      bookingsOverlay.style.display = 'none';
-      document.body.style.overflow = '';
-    }, 300);
-  }
-
-  closeBookingsBtn?.addEventListener('click', closeBookings);
-  bookingsOverlay?.addEventListener('click', e => { if (e.target === bookingsOverlay) closeBookings(); });
   
   // Attach to any .book-consultation button
   document.querySelectorAll('.book-consultation').forEach(btn => {
