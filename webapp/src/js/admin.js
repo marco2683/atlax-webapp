@@ -1975,122 +1975,148 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const modal = document.createElement('div');
     modal.id = 'admin-rfq-detail-modal';
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
     modal.innerHTML = `
-      <div style="background:#fff;border-radius:16px;width:680px;max-width:92vw;max-height:90vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,0.25);font-family:Inter,sans-serif;">
-        <!-- Header -->
-        <div style="padding:24px 28px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:#fff; border-radius:16px 16px 0 0; z-index:1;">
+      <div style="background:#fff;border-radius:20px;width:1020px;max-width:96vw;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 32px 64px rgba(0,0,0,0.3);font-family:Inter,sans-serif;">
+
+        <!-- ── Sticky Header ── -->
+        <div style="padding:20px 28px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#fff; flex-shrink:0;">
           <div>
-            <h2 style="margin:0; font-size:18px; color:#0f172a; font-weight:700;">${projectName}</h2>
-            <div style="font-size:12px; color:#94a3b8; margin-top:2px;">Submitted ${date}</div>
+            <div style="font-size:11px; font-weight:700; color:#3b82f6; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:4px;">RFQ Detail — Admin View</div>
+            <h2 style="margin:0; font-size:20px; color:#0f172a; font-weight:700;">${projectName}</h2>
+            <div style="font-size:12px; color:#94a3b8; margin-top:2px;">Submitted ${date} · ID: ${rfq.id?.slice(0,8) || '—'}</div>
           </div>
-          <button id="rfq-modal-close" style="background:none; border:none; font-size:22px; cursor:pointer; color:#94a3b8; padding:4px 8px; border-radius:6px;">&times;</button>
+          <button id="rfq-modal-close" style="background:none; border:none; font-size:26px; cursor:pointer; color:#94a3b8; line-height:1; padding:4px 8px; border-radius:6px;">&times;</button>
         </div>
 
-        <div style="padding:24px 28px;">
-          <!-- Status -->
-          <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px;">
-            <label style="font-size:12px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Status</label>
+        <!-- ── Action Bar ── -->
+        <div style="padding:14px 28px; background:#f8fafc; border-bottom:1px solid #e2e8f0; display:flex; align-items:center; gap:16px; flex-wrap:wrap; flex-shrink:0;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <label style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Status</label>
             <select id="rfq-modal-status" data-rfq-id="${rfq.id}"
-              style="padding:6px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">
+              style="padding:7px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; background:#fff;">
               ${statusSelectHTML}
             </select>
-            
-            <label style="font-size:12px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-left:16px;">Assigned To</label>
+          </div>
+          <div style="width:1px; height:28px; background:#e2e8f0;"></div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <label style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Assigned To</label>
             <select id="rfq-modal-assignee" data-rfq-id="${rfq.id}"
-              style="padding:6px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">
+              style="padding:7px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; background:#fff; min-width:200px;">
               ${assigneeOptionsHTML}
             </select>
-
-            <button id="rfq-remove-btn" style="margin-left:auto; padding:6px 12px; background:#fee2e2; color:#ef4444; border:1px solid #fecaca; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-              Remove RFQ
-            </button>
           </div>
-
-          <!-- Project Details -->
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
-            <div style="background:#f8fafc; padding:14px 16px; border-radius:10px; border:1px solid #f1f5f9;">
-              <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:4px;">Service</div>
-              <div style="font-size:14px; color:#0f172a; font-weight:600;">${service}</div>
-            </div>
-            <div style="background:#f8fafc; padding:14px 16px; border-radius:10px; border:1px solid #f1f5f9;">
-              <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:4px;">Est. Quantity</div>
-              <div style="font-size:14px; color:#0f172a; font-weight:600;">${qty}</div>
-            </div>
-            <div style="background:#f8fafc; padding:14px 16px; border-radius:10px; border:1px solid #f1f5f9;">
-              <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:4px;">Timeline</div>
-              <div style="font-size:14px; color:#0f172a; font-weight:600;">${timeline}</div>
-            </div>
-            ${data.type === 'instant' ? `
-            <div style="background:#f0fdf4; padding:14px 16px; border-radius:10px; border:1px solid #bbf7d0;">
-              <div style="font-size:10px; color:#166534; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:4px;">Quoted Total</div>
-              <div style="font-size:16px; color:#15803d; font-weight:800;">$${(data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
-            </div>
-            ` : `
-            <div style="background:#f8fafc; padding:14px 16px; border-radius:10px; border:1px solid #f1f5f9;">
-              <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:4px;">Engineer Contact</div>
-              <div style="font-size:14px; color:#0f172a; font-weight:600;">${contactMe}</div>
-            </div>
-            `}
+          <div style="display:flex; align-items:center; gap:8px;">
+            <label style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Final Price (USD)</label>
+            <input id="rfq-modal-final-price" type="number" step="0.01" min="0"
+              value="${data.admin_final_price || data.total_price || ''}"
+              placeholder="Override price"
+              style="padding:7px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; font-family:inherit; width:130px; background:#fff;">
+            <button id="rfq-save-price-btn" data-rfq-id="${rfq.id}"
+              style="padding:7px 14px; background:#0f172a; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;">Save</button>
           </div>
+          <button id="rfq-remove-btn" style="margin-left:auto; padding:7px 14px; background:#fee2e2; color:#ef4444; border:1px solid #fecaca; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Remove
+          </button>
+        </div>
 
-          <!-- Requester -->
-          <div style="background:#f0f9ff; padding:16px; border-radius:10px; border:1px solid #bae6fd; margin-bottom:24px;">
-            <div style="font-size:10px; color:#0369a1; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:8px;">Requester</div>
-            <div style="font-size:14px; color:#0f172a; font-weight:600;">${requesterName}</div>
-            ${requesterEmail ? `<div style="font-size:12px; color:#0369a1; margin-top:2px;">${requesterEmail}</div>` : ''}
-            ${requesterCompany ? `<div style="font-size:12px; color:#64748b; margin-top:2px;">${requesterCompany}</div>` : ''}
-          </div>
+        <!-- ── Body (scrollable) ── -->
+        <div style="flex:1; overflow-y:auto; padding:28px; display:grid; grid-template-columns:1fr 1fr; gap:24px;">
 
-          <!-- Notes -->
-          <div style="margin-bottom:24px;">
-            <div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:8px;">Project Notes</div>
-            <div style="background:#f8fafc; padding:16px; border-radius:10px; border:1px solid #f1f5f9; font-size:13px; line-height:1.6; color:#334155;">${notes}</div>
-          </div>
+          <!-- LEFT COLUMN -->
+          <div style="display:flex; flex-direction:column; gap:20px;">
 
-          <!-- Items / Files -->
-          <div>
-            ${data.type === 'instant' ? `
-            <div style="margin-bottom:10px;">
-              <div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:8px;">Quoted Parts (${data.parts?.length || 0})</div>
-              <table style="width:100%; border-collapse:collapse; font-size:12px; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
-                <thead style="background:#f8fafc;">
-                  <tr style="border-bottom:1px solid #e2e8f0; text-align:left;">
-                    <th style="padding:10px; font-weight:600; color:#475569;">Part Name</th>
-                    <th style="padding:10px; font-weight:600; color:#475569;">Technology</th>
-                    <th style="padding:10px; font-weight:600; color:#475569;">Material</th>
-                    <th style="padding:10px; font-weight:600; color:#475569;">Qty</th>
-                    <th style="padding:10px; font-weight:600; color:#475569;">Price</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${(data.parts || []).map(p => `
-                  <tr style="border-bottom:1px solid #f1f5f9;">
-                    <td style="padding:10px; color:#0f172a;">${p.name || '—'}</td>
-                    <td style="padding:10px; color:#334155;">${p.process || '—'}</td>
-                    <td style="padding:10px; color:#334155;">${p.material || '—'}</td>
-                    <td style="padding:10px; color:#0f172a; font-weight:600;">${p.qty || 1}</td>
-                    <td style="padding:10px; color:#10b981; font-weight:600;">$${(p.price || 0).toLocaleString(undefined, {minimumFractionDigits:2})}</td>
-                  </tr>
-                  `).join('')}
-                </tbody>
-              </table>
+            <!-- Requester card -->
+            <div style="background:#f0f9ff; padding:16px 20px; border-radius:12px; border:1px solid #bae6fd;">
+              <div style="font-size:10px; color:#0369a1; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:10px;">Requester</div>
+              <div style="font-size:15px; color:#0f172a; font-weight:700;">${requesterName}</div>
+              ${requesterEmail ? `<a href="mailto:${requesterEmail}" style="font-size:12px; color:#0369a1; margin-top:4px; display:block;">${requesterEmail}</a>` : ''}
+              ${requesterCompany ? `<div style="font-size:12px; color:#64748b; margin-top:2px;">${requesterCompany}</div>` : ''}
             </div>
-            ` : `
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-              <div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">
-                Project Files (${files.length})
+
+            <!-- Project info grid -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div style="background:#f8fafc; padding:12px 14px; border-radius:10px; border:1px solid #f1f5f9;">
+                <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Service</div>
+                <div style="font-size:13px; color:#0f172a; font-weight:600;">${service}</div>
               </div>
-              ${files.length > 1 ? `
-                <button id="rfq-download-all-btn" style="padding:6px 14px; background:#3b82f6; color:#fff; border:none; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:6px;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                  Download All
-                </button>
-              ` : ''}
+              <div style="background:#f8fafc; padding:12px 14px; border-radius:10px; border:1px solid #f1f5f9;">
+                <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Quantity</div>
+                <div style="font-size:13px; color:#0f172a; font-weight:600;">${qty}</div>
+              </div>
+              <div style="background:#f8fafc; padding:12px 14px; border-radius:10px; border:1px solid #f1f5f9;">
+                <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Timeline</div>
+                <div style="font-size:13px; color:#0f172a; font-weight:600;">${timeline}</div>
+              </div>
+              ${data.type === 'instant' ? `
+              <div style="background:#f0fdf4; padding:12px 14px; border-radius:10px; border:1px solid #bbf7d0;">
+                <div style="font-size:10px; color:#166534; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Quoted Total</div>
+                <div style="font-size:15px; color:#15803d; font-weight:800;">$${(data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+              </div>` : `
+              <div style="background:#f8fafc; padding:12px 14px; border-radius:10px; border:1px solid #f1f5f9;">
+                <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Contact Requested</div>
+                <div style="font-size:13px; color:#0f172a; font-weight:600;">${contactMe}</div>
+              </div>`}
             </div>
-            ${fileListHTML}
-            `}
+
+            <!-- Project Notes -->
+            <div>
+              <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:8px;">Client Notes</div>
+              <div style="background:#f8fafc; padding:14px; border-radius:10px; border:1px solid #f1f5f9; font-size:13px; line-height:1.6; color:#334155; min-height:80px;">${notes}</div>
+            </div>
+
+            <!-- Admin Internal Notes -->
+            <div>
+              <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:8px;">Internal Notes (Admin Only)</div>
+              <textarea id="rfq-admin-notes" rows="4" placeholder="Add internal notes, pricing rationale, supplier contacts..."
+                style="width:100%; box-sizing:border-box; padding:12px 14px; border-radius:10px; border:1px solid #e2e8f0; font-size:13px; font-family:inherit; line-height:1.6; color:#334155; resize:vertical; background:#fff;">${data.admin_notes || ''}</textarea>
+              <button id="rfq-save-notes-btn" data-rfq-id="${rfq.id}"
+                style="margin-top:8px; padding:7px 16px; background:#0f172a; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;">Save Notes</button>
+            </div>
+
+          </div>
+
+          <!-- RIGHT COLUMN -->
+          <div style="display:flex; flex-direction:column; gap:20px;">
+
+            <!-- Parts table (instant) or Files (bulk) -->
+            ${data.type === 'instant' ? `
+            <div>
+              <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:10px;">Quoted Parts (${data.parts?.length || 0})</div>
+              <div style="border:1px solid #e2e8f0; border-radius:12px; overflow:hidden;">
+                <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                  <thead style="background:#f8fafc;">
+                    <tr style="border-bottom:1px solid #e2e8f0; text-align:left;">
+                      <th style="padding:10px 12px; font-weight:600; color:#475569;">Part</th>
+                      <th style="padding:10px 12px; font-weight:600; color:#475569;">Technology</th>
+                      <th style="padding:10px 12px; font-weight:600; color:#475569;">Material</th>
+                      <th style="padding:10px 12px; font-weight:600; color:#475569;">Qty</th>
+                      <th style="padding:10px 12px; font-weight:600; color:#475569;">Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${(data.parts || []).map(p => `
+                    <tr style="border-bottom:1px solid #f1f5f9;">
+                      <td style="padding:10px 12px; color:#0f172a; font-weight:500;">${p.name || '—'}</td>
+                      <td style="padding:10px 12px; color:#334155;">${p.process || '—'}</td>
+                      <td style="padding:10px 12px; color:#334155;">${p.material || '—'}</td>
+                      <td style="padding:10px 12px; color:#0f172a; font-weight:600;">${p.qty || 1}</td>
+                      <td style="padding:10px 12px; color:#10b981; font-weight:700;">$${(p.price || 0).toLocaleString(undefined, {minimumFractionDigits:2})}</td>
+                    </tr>`).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            ` : `
+            <div>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+                <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:700; letter-spacing:0.5px;">Project Files (${files.length})</div>
+                ${files.length > 1 ? `<button id="rfq-download-all-btn" style="padding:6px 12px; background:#3b82f6; color:#fff; border:none; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit;">Download All</button>` : ''}
+              </div>
+              ${fileListHTML}
+            </div>`}
+
           </div>
         </div>
       </div>`;
@@ -2159,6 +2185,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       });
     }
+
+    // Save internal admin notes
+    modal.querySelector('#rfq-save-notes-btn')?.addEventListener('click', async (e) => {
+      const rfqId = e.target.dataset.rfqId;
+      const notes = modal.querySelector('#rfq-admin-notes')?.value || '';
+      const updatedData = { ...data, admin_notes: notes };
+      try {
+        const { error } = await supabase.from('rfq_history').update({ rfq_data: updatedData }).eq('id', rfqId);
+        if (error) throw error;
+        e.target.textContent = 'Saved ✓';
+        setTimeout(() => e.target.textContent = 'Save Notes', 2000);
+        const rfqObj = rfqs.find(r => r.id === rfqId);
+        if (rfqObj) rfqObj.rfq_data = updatedData;
+      } catch (err) { alert('Failed to save notes: ' + err.message); }
+    });
+
+    // Save final price override
+    modal.querySelector('#rfq-save-price-btn')?.addEventListener('click', async (e) => {
+      const rfqId = e.target.dataset.rfqId;
+      const priceVal = parseFloat(modal.querySelector('#rfq-modal-final-price')?.value);
+      if (isNaN(priceVal)) { alert('Please enter a valid price.'); return; }
+      const updatedData = { ...data, admin_final_price: priceVal };
+      try {
+        const { error } = await supabase.from('rfq_history').update({ rfq_data: updatedData }).eq('id', rfqId);
+        if (error) throw error;
+        e.target.textContent = 'Saved ✓';
+        setTimeout(() => e.target.textContent = 'Save', 2000);
+        const rfqObj = rfqs.find(r => r.id === rfqId);
+        if (rfqObj) rfqObj.rfq_data = updatedData;
+      } catch (err) { alert('Failed to save price: ' + err.message); }
+    });
 
     // Remove RFQ
     const removeBtn = modal.querySelector('#rfq-remove-btn');

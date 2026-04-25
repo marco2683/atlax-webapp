@@ -519,7 +519,8 @@ function openRFQPreviewModal(rfq) {
       dlBtn.download = fileName;
       dlBtn.style.display = 'block';
       
-      const fileExt = fileName.split('.').pop()?.toLowerCase() || '';
+      // Derive extension from storage path (real filename) — not the user-facing part name
+      const fileExt = (path.split('.').pop() || fileName.split('.').pop() || '').toLowerCase();
       render3DPreview({ storage_path: path, file_type: fileExt, bucket: bucket }, container);
     } else {
       dlBtn.style.display = 'none';
