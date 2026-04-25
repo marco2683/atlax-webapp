@@ -540,11 +540,11 @@ function openRFQPreviewModal(rfq) {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         Action Required — Upload Receipt
       </div>
-      <div style="font-size:14px; color:#92400e; line-height:1.6; display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-size:14px; color:#92400e; line-height:1.6; display:flex; flex-direction:column; gap:12px;">
         <div>
           You have selected Bank Transfer. Please send your payment receipt to <strong>info@atlasdt.com</strong> and use reference <strong style="font-family:'SF Mono','Fira Code',monospace; background:#fde68a; padding:2px 6px; border-radius:4px;">ADT-${(rfq.id||'').slice(0,8).toUpperCase()}</strong> to begin production.
         </div>
-        <button onclick="const el = document.getElementById('rfq-preview-bank-details'); el.style.display = el.style.display === 'none' ? 'block' : 'none';" style="background:#92400e; color:#fff; border:none; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; margin-left:16px; transition:0.2s;">View Bank Details</button>
+        <button onclick="const el = document.getElementById('rfq-preview-bank-details'); el.style.display = el.style.display === 'none' ? 'block' : 'none';" style="background:#92400e; color:#fff; border:none; padding:10px 16px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; width:100%; transition:0.2s;">View Bank Details</button>
       </div>
       <div id="rfq-preview-bank-details" style="display:none; margin-top:16px; background:#fff; border:1px solid #fcd34d; border-radius:12px; padding:16px;">
         <div style="font-size:11px; color:#92400e; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">🏦 Bank Transfer Details</div>
