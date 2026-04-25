@@ -2134,13 +2134,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                   </thead>
                   <tbody>
                     ${(data.parts || []).map(p => `
-                    <tr style="border-bottom:1px solid #f1f5f9;">
+                    <tr style="border-bottom:${p.customDetails ? '0' : '1px solid #f1f5f9'};">
                       <td style="padding:10px 12px; color:#0f172a; font-weight:500;">${p.name || '—'}</td>
                       <td style="padding:10px 12px; color:#334155;">${p.process || '—'}</td>
                       <td style="padding:10px 12px; color:#334155;">${p.material || '—'}</td>
                       <td style="padding:10px 12px; color:#0f172a; font-weight:600;">${p.qty || 1}</td>
                       <td style="padding:10px 12px; color:#10b981; font-weight:700;">$${(p.price || 0).toLocaleString(undefined, {minimumFractionDigits:2})}</td>
-                    </tr>`).join('')}
+                    </tr>
+                    ${p.customDetails ? `<tr style="border-bottom:1px solid #f1f5f9;background:#fffbeb;"><td colspan="5" style="padding:6px 12px 10px;font-size:11px;color:#92400e;"><span style="font-weight:700;margin-right:6px;">📝 Notes:</span>${p.customDetails}</td></tr>` : ''}`).join('')}
                   </tbody>
                 </table>
               </div>

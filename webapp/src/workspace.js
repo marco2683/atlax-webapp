@@ -517,6 +517,18 @@ function openRFQPreviewModal(rfq) {
       infoHtml += addRow('Material', p.material || '—');
       infoHtml += addRow('Finish', p.finish || '—');
       infoHtml += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">${addRow('Qty', p.qty || 1)}${addRow('Price', '$' + (p.price||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}))}</div>`;
+
+      // Customer notes / additional requirements
+      const partNotes = p.customDetails || p.notes || '';
+      if (partNotes && partNotes.trim()) {
+        infoHtml += `
+          <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:12px 16px;">
+            <div style="font-size:10px; color:#92400e; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:6px;">
+              📝 Customer Notes
+            </div>
+            <div style="font-size:13px; color:#1c1917; line-height:1.6; white-space:pre-wrap;">${partNotes.trim()}</div>
+          </div>`;
+      }
       
       // Geometry Details
       if (p.analysis) {
