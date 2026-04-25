@@ -289,47 +289,22 @@ import { signUpUser } from './services/auth.js';
 
     submitBtn.textContent = 'Sending...';
 
-    // Reconstruct the file input from the uploadedFiles array
-    // (the input was cleared after each selection for UX reasons)
-    if (fileInput && uploadedFiles && uploadedFiles.length > 0) {
-      const dataTransfer = new DataTransfer();
-      uploadedFiles.forEach(file => dataTransfer.items.add(file));
-      fileInput.files = dataTransfer.files;
-    }
-
-    // Create hidden iframe to receive the form POST (avoids page redirect)
-    const iframeName = 'atlasdt-contact-iframe-' + Date.now();
-    const iframe = document.createElement('iframe');
-    iframe.name = iframeName;
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-
-    // Inject hidden fields for FormSubmit config
-    const addHidden = (name, value) => {
-      let input = form.querySelector(`input[name="${name}"]`);
-      if (!input) {
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = name;
-        form.appendChild(input);
-      }
-      input.value = value;
+    // Create JSON payload
+    const payload = {
+      name: (fname + ' ' + lname).trim() || 'Not provided',
+      email: email,
+      company: company || 'Not provided',
+      message: form.querySelector('textarea[name="message"]')?.value || 'No message'
     };
-    addHidden('_captcha', 'false');
-    addHidden('_template', 'table');
-    addHidden('_next', window.location.href); // FormSubmit redirects iframe here after submit
 
-    // Point the form at FormSubmit's standard endpoint (not /ajax/)
-    form.action = 'https://formsubmit.co/info@atlasdt.com';
-    form.method = 'POST';
-    form.enctype = 'multipart/form-data';
-    form.target = iframeName;
-
-    // Listen for iframe load = submission complete
-    iframe.addEventListener('load', () => {
-      // Clean up
-      setTimeout(() => iframe.remove(), 2000);
-
+    try {
+      const res = await fetch('/.netlify/functions/submit-contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('Network response was not ok');
+      
       const body = document.querySelector('.contact-modal-body');
       if (body) {
         body.innerHTML = `
@@ -340,10 +315,12 @@ import { signUpUser } from './services/auth.js';
             <button onclick="document.getElementById('atlasdt-contact-overlay').classList.remove('open'); document.body.style.overflow='';" style="margin-top:28px; padding:12px 28px; background:#3b82f6; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer; font-family:inherit;">Close</button>
           </div>`;
       }
-    });
-
-    // Actually submit the form
-    form.submit();
+    } catch (err) {
+      console.error(err);
+      submitBtn.textContent = 'Error! Try Again';
+      submitBtn.disabled = false;
+      setTimeout(() => submitBtn.textContent = originalText, 3000);
+    }
   });
 
   // Footer forms AJAX submission
@@ -386,13 +363,17 @@ import { signUpUser } from './services/auth.js';
       if (submitBtn) submitBtn.textContent = 'Sending...';
       
       try {
-        const formData = new FormData(footerForm);
-        formData.append('_captcha', 'false');
-        formData.append('_template', 'table');
+        const payload = {
+          name: fullName || 'Not provided',
+          email: email,
+          company: company || 'Not provided',
+          message: footerForm.querySelector('textarea[name="message"]')?.value || 'No message'
+        };
         
-        const response = await fetch('https://formsubmit.co/ajax/info@atlasdt.com', {
+        const response = await fetch('/.netlify/functions/submit-contact', {
           method: 'POST',
-          body: formData
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
         
         if (!response.ok) throw new Error('Network response was not ok');
