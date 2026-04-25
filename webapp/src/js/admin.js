@@ -1883,7 +1883,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       btn.addEventListener('click', () => {
         const rfqId = btn.dataset.rfqId;
         const rfq = rfqs.find(r => r.id === rfqId);
-        if (rfq) openRFQDetailModal(rfq, profileMap);
+        if (rfq) openRFQDetailModal(rfq, profileMap, rfqs);
       });
     });
   }
@@ -1891,7 +1891,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ═══════════════════════════════════════════════════════════
   //  R F Q   D E T A I L   M O D A L
   // ═══════════════════════════════════════════════════════════
-  async function openRFQDetailModal(rfq, profileMap) {
+  async function openRFQDetailModal(rfq, profileMap, rfqs = []) {
     const data = rfq.rfq_data || {};
 
     // Fetch staff list for assignee dropdown
