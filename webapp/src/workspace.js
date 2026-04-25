@@ -468,6 +468,22 @@ function openRFQPreviewModal(rfq) {
   }
   let currentPartIndex = 0;
 
+  const isBankTransferPending = data.payment_status === 'bank_transfer_pending' || (rfq.status === 'processing' && data.payment_method === 'bank_transfer');
+
+  const statusHtml = rfq.status === 'paid' 
+    ? `<span style="font-size:11px; font-weight:600; background:#dcfce7; color:#15803d; padding:4px 8px; border-radius:4px; text-transform:uppercase;">🟢 PAID</span>
+       ${data.paid_at ? `<span style="font-size:11px; color:#15803d; font-weight:600; margin-left:8px;">Paid ${new Date(data.paid_at).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})}</span>` : ''}`
+    : isBankTransferPending
+      ? `<span style="font-size:11px; font-weight:700; background:#fef9c3; color:#854d0e; border:1px solid #fde68a; padding:4px 8px; border-radius:4px; text-transform:uppercase;">🏦 BANK TRANSFER PENDING</span>`
+      : `<span style="font-size:11px; font-weight:600; background:#e0e7ff; color:#4338ca; padding:4px 8px; border-radius:4px; text-transform:uppercase;">Status: ${rfq.status || 'Pending'}</span>`;
+
+  const reminderHtml = isBankTransferPending ? `
+    <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:12px 16px; margin-bottom:20px;">
+      <div style="font-size:11px; color:#92400e; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">⚠️ Action Required</div>
+      <div style="font-size:12px; color:#92400e; line-height:1.5;">Please send your bank transfer receipt to <strong>info@atlasdt.com</strong> with reference <strong style="font-family:'SF Mono','Fira Code',monospace;">ADT-${(rfq.id||'').slice(0,8).toUpperCase()}</strong> to begin production.</div>
+    </div>
+  ` : '';
+
   const modalHtml = `
     <div id="rfq-preview-modal" style="position:fixed;inset:0;background:rgba(15,23,42,0.8);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center; font-family: 'Inter', sans-serif;">
       <div style="background:#fff;border-radius:16px;width:1100px;max-width:95vw;height:700px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
@@ -478,8 +494,7 @@ function openRFQPreviewModal(rfq) {
             <div style="font-size:12px; color:#3b82f6; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">${data.project_name || 'Instant RFQ Project'}</div>
             <div style="display:flex; align-items:center; gap: 12px;">
               <h2 style="margin:0; font-size:20px; color:#0f172a; font-weight:700;">Quote Overview</h2>
-              <span style="font-size:11px; font-weight:600; background:${rfq.status === 'paid' ? '#dcfce7' : '#e0e7ff'}; color:${rfq.status === 'paid' ? '#15803d' : '#4338ca'}; padding:4px 8px; border-radius:4px; text-transform:uppercase;">${rfq.status === 'paid' ? '🟢 PAID' : `Status: ${rfq.status || 'Pending'}`}</span>
-              ${rfq.status === 'paid' && data.paid_at ? `<span style="font-size:11px; color:#15803d; font-weight:600; margin-left:8px;">Paid ${new Date(data.paid_at).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})}</span>` : ''}
+              ${statusHtml}
             </div>
           </div>
           <div style="display:flex; gap: 24px; align-items:center;">
@@ -519,6 +534,7 @@ function openRFQPreviewModal(rfq) {
           
           <!-- Info Column -->
           <div id="rfq-info-col" style="width:360px; background:#fff; padding:24px; border-left:1px solid #e2e8f0; display:flex; flex-direction:column; overflow-y:auto;">
+            ${reminderHtml}
             <div style="margin-bottom:20px;">
               <div style="font-size:11px; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Part Details</div>
               <h3 id="rfq-part-name" style="margin:0; font-size:16px; color:#0f172a; font-weight:700; word-break:break-word;"></h3>

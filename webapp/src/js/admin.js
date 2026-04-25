@@ -2072,6 +2072,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
     `).join('');
 
+    const hasBeenConfirmed = !!data.confirmed_price || ['confirmed', 'processing', 'paid', 'shipped'].includes(rfq.status);
+    const confirmBtnHtml = hasBeenConfirmed 
+      ? `<button id="rfq-confirm-client-btn" data-rfq-id="${rfq.id}" disabled
+            style="padding:7px 16px; background:#f1f5f9; color:#16a34a; border:1px solid #bbf7d0; border-radius:8px; font-size:12px; font-weight:700; cursor:default; font-family:inherit; display:flex; align-items:center; gap:6px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Confirmed
+          </button>`
+      : `<button id="rfq-confirm-client-btn" data-rfq-id="${rfq.id}"
+            style="padding:7px 16px; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(22,163,74,0.35);">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Confirm to Client
+          </button>`;
+
     const modal = document.createElement('div');
     modal.id = 'admin-rfq-detail-modal';
     modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
@@ -2125,11 +2138,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               style="padding:7px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; font-family:inherit; width:130px; background:#fff;">
             <button id="rfq-save-price-btn" data-rfq-id="${rfq.id}"
               style="padding:7px 14px; background:#0f172a; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;">Update</button>
-            <button id="rfq-confirm-client-btn" data-rfq-id="${rfq.id}"
-              style="padding:7px 16px; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(22,163,74,0.35);">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              Confirm to Client
-            </button>
+            ${confirmBtnHtml}
           </div>
           <!-- Reject + Delete on the right -->
           <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
@@ -2437,13 +2446,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (rfqObj) { rfqObj.status = 'confirmed'; rfqObj.rfq_data = updatedData; }
 
         // Visual feedback
-        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Confirmed ✓`;
-        btn.style.background = '#15803d';
-        setTimeout(() => {
-          btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Confirm to Client`;
-          btn.style.background = 'linear-gradient(135deg,#16a34a,#15803d)';
-          btn.disabled = false;
-        }, 3000);
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Confirmed`;
+        btn.style.cssText = 'padding:7px 16px; background:#f1f5f9; color:#16a34a; border:1px solid #bbf7d0; border-radius:8px; font-size:12px; font-weight:700; cursor:default; font-family:inherit; display:flex; align-items:center; gap:6px;';
+        btn.disabled = true;
 
         // Update status dropdown in modal to 'confirmed' (Confirmed - Awaiting Payment)
         const statusSelect = modal.querySelector('#rfq-modal-status');
