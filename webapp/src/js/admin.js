@@ -2061,6 +2061,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>`;
     }).join('') : '<div style="color:#94a3b8; font-size:13px; font-style:italic; padding:12px 0;">No files uploaded</div>';
 
+    const commLog = data.communication_log || [];
+    const commLogHtml = commLog.map(c => `
+      <div style="margin-bottom:12px; padding:10px 14px; border-radius:8px; background:${c.role === 'admin' ? '#dbeafe' : '#f1f5f9'}; border:1px solid ${c.role === 'admin' ? '#bfdbfe' : '#e2e8f0'};">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:11px; color:#64748b; font-weight:600;">
+          <span>${c.role === 'admin' ? \`You (\${c.name})\` : 'Client'}</span>
+          <span>${new Date(c.date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
+        </div>
+        <div style="font-size:13px; color:#0f172a; white-space:pre-wrap;">${c.text}</div>
+      </div>
+    `).join('');
+
     const modal = document.createElement('div');
     modal.id = 'admin-rfq-detail-modal';
     modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
@@ -2149,12 +2160,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
 
         <!-- Request info panel (hidden by default) -->
-        <div id="rfq-request-info-panel" style="display:none; padding:12px 28px; background:#eff6ff; border-bottom:2px solid #bfdbfe;">
-          <div style="font-size:12px; font-weight:700; color:#1e3a8a; margin-bottom:6px;">Request More Information — will be emailed from your assigned engineer email</div>
+        <div id="rfq-request-info-panel" style="display:${commLog.length > 0 ? 'block' : 'none'}; padding:12px 28px; background:#eff6ff; border-bottom:2px solid #bfdbfe;">
+          <div style="font-size:12px; font-weight:700; color:#1e3a8a; margin-bottom:12px;">Request More Information / Communication History</div>
+          
+          <div id="rfq-comm-log-container" style="max-height:300px; overflow-y:auto; margin-bottom:12px; display:${commLog.length > 0 ? 'block' : 'none'};">
+            ${commLogHtml}
+          </div>
+
           <textarea id="rfq-request-info-msg" rows="3" placeholder="e.g. Please clarify the tolerances for part X, or upload the missing STP file."
             style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #bfdbfe; font-size:13px; font-family:inherit; resize:vertical; background:#fff; color:#0f172a; outline:none;"></textarea>
           <div style="display:flex; gap:8px; margin-top:8px; justify-content:flex-end;">
-            <button id="rfq-request-info-cancel-btn" style="padding:7px 14px; background:#fff; border:1px solid #e2e8f0; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:#64748b;">Cancel</button>
+            <button id="rfq-request-info-cancel-btn" style="padding:7px 14px; background:#fff; border:1px solid #e2e8f0; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:#64748b;">Close</button>
             <button id="rfq-request-info-confirm-btn" style="padding:7px 16px; background:#2563eb; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;">Send Request &amp; Notify Client</button>
           </div>
         </div>
@@ -2509,14 +2525,33 @@ document.addEventListener('DOMContentLoaded', async () => {
           })
         });
 
-        reqInfoPanel.style.display = 'none';
-        reqInfoSend.textContent = '✓ Sent';
+        // Persist communication log
+        const newMsgObj = {
+          role: 'admin',
+          name: data.assigned_to_name,
+          text: msg,
+          date: new Date().toISOString()
+        };
+        const updatedLog = [...(data.communication_log || []), newMsgObj];
+        const updatedData = { ...data, communication_log: updatedLog };
+        
+        await fetch('/.netlify/functions/admin-rfqs', {
+          method: 'PATCH',
+          body: JSON.stringify({ id: rfq.id, updates: { rfq_data: updatedData } })
+        });
+        
+        // Update local cache
+        const rfqObj = rfqs.find(r => r.id === rfq.id);
+        if (rfqObj) {
+          rfqObj.rfq_data = updatedData;
+        }
+
+        reqInfoSend.textContent = '✓ Sent & Saved';
         reqInfoSend.style.background = '#64748b';
         setTimeout(() => {
-          reqInfoSend.textContent = 'Send Request & Notify Client';
-          reqInfoSend.style.background = '#2563eb';
-          reqInfoSend.disabled = false;
-        }, 3000);
+          document.body.removeChild(modal);
+          openRFQDetailModal(rfq, profileMap, rfqs);
+        }, 1500);
       } catch (err) {
         alert('Failed to send request: ' + err.message);
         reqInfoSend.disabled = false;
