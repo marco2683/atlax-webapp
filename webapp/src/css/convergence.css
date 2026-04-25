@@ -11,9 +11,10 @@
 /* ── WHO WE ARE SECTION ──────────────────────────────────── */
 .prd-who-section {
   background: linear-gradient(175deg, #f0fdf4 0%, #f8fafc 40%, #ffffff 100%);
-  padding: 80px 40px 40px;
+  padding: 100px 40px 40px;
   position: relative;
   overflow: hidden;
+  scroll-margin-top: 60px;
 }
 
 .prd-who-inner {
