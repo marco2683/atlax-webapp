@@ -313,7 +313,8 @@ export function initRFQController() {
     const rfqId = window.crypto?.randomUUID?.() || Date.now().toString();
     const partsArray = Array.from(quotedParts.values());
     const totalVolume = partsArray.reduce((acc, p) => acc + (p.volume || 0), 0);
-    const projName = partsArray[0]?.file?.name?.split('.')[0] || 'Instant RFQ Project';
+    const projNameInput = document.getElementById('instant-rfq-project-name')?.value?.trim();
+    const projName = projNameInput || partsArray[0]?.file?.name?.split('.')[0] || 'Instant RFQ Project';
     
     let grandTotal = 0;
     partsArray.forEach(p => {
