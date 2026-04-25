@@ -4005,11 +4005,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                   <div style="font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">Admin Controls</div>
                   <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
                     <div style="margin-bottom:12px;">
-                      <label style="font-size:12px;font-weight:700;color:#475569;display:block;margin-bottom:6px;">Subscription Tier</label>
-                      <select id="cust-tier-select" style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;color:#0f172a;background:#ffffff;">
-                        <option value="basic" ${cust.tier === 'basic' || !cust.tier ? 'selected' : ''}>Basic (Free)</option>
-                        <option value="professional" ${cust.tier === 'professional' ? 'selected' : ''}>Professional ($49/mo)</option>
-                        <option value="enterprise" ${cust.tier === 'enterprise' ? 'selected' : ''}>Enterprise (Custom)</option>
+                      <label style="font-size:12px;font-weight:700;color:#475569;display:block;margin-bottom:6px;">User Role</label>
+                      <select id="cust-role-select" style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;color:#0f172a;background:#ffffff;">
+                        <option value="user"         ${role === 'user'         ? 'selected' : ''}>User</option>
+                        <option value="designer"     ${role === 'designer'     ? 'selected' : ''}>Designer</option>
+                        <option value="entrepreneur" ${role === 'entrepreneur' ? 'selected' : ''}>Entrepreneur</option>
                       </select>
                     </div>
                     <div>
@@ -4044,10 +4044,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const originalText = btn.textContent;
       btn.textContent = 'Saving...';
       btn.style.opacity = '0.6';
-      const newTier = document.getElementById('cust-tier-select').value;
+      const newRole    = document.getElementById('cust-role-select').value;
       const adminNotes = document.getElementById('cust-admin-notes').value;
 
-      const { error } = await supabase.from('profiles').update({ tier: newTier, admin_notes: adminNotes }).eq('id', id);
+      const { error } = await supabase.from('profiles').update({ role: newRole, admin_notes: adminNotes }).eq('id', id);
 
       if(error) {
         console.error(error);
@@ -4055,7 +4055,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         btn.textContent = originalText;
         btn.style.opacity = '1';
       } else {
-        cust.tier = newTier;
+        cust.role = newRole;
         cust.admin_notes = adminNotes;
         btn.textContent = '✓ Saved!';
         btn.style.background = '#059669';
