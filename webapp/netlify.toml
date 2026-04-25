@@ -1,7 +1,3 @@
-[[edge_functions]]
-  path = "/*"
-  function = "protect"
-
 [build]
   command = "npm run build"
   publish = "dist"
