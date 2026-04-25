@@ -2122,6 +2122,10 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
           <!-- Reject + Delete on the right -->
           <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+            <button id="rfq-request-info-btn" style="padding:7px 14px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;" title="Ask the client for more details via email">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Request Info
+            </button>
             <button id="rfq-reject-btn" style="padding:7px 14px; background:#fff7ed; color:#ea580c; border:1px solid #fed7aa; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
               Reject Quote
@@ -2141,6 +2145,17 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div style="display:flex; gap:8px; margin-top:8px; justify-content:flex-end;">
             <button id="rfq-reject-cancel-btn" style="padding:7px 14px; background:#fff; border:1px solid #e2e8f0; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:#64748b;">Cancel</button>
             <button id="rfq-reject-confirm-btn" style="padding:7px 16px; background:#ea580c; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;">Send Rejection &amp; Notify Client</button>
+          </div>
+        </div>
+
+        <!-- Request info panel (hidden by default) -->
+        <div id="rfq-request-info-panel" style="display:none; padding:12px 28px; background:#eff6ff; border-bottom:2px solid #bfdbfe;">
+          <div style="font-size:12px; font-weight:700; color:#1e3a8a; margin-bottom:6px;">Request More Information — will be emailed from your assigned engineer email</div>
+          <textarea id="rfq-request-info-msg" rows="3" placeholder="e.g. Please clarify the tolerances for part X, or upload the missing STP file."
+            style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #bfdbfe; font-size:13px; font-family:inherit; resize:vertical; background:#fff; color:#0f172a; outline:none;"></textarea>
+          <div style="display:flex; gap:8px; margin-top:8px; justify-content:flex-end;">
+            <button id="rfq-request-info-cancel-btn" style="padding:7px 14px; background:#fff; border:1px solid #e2e8f0; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:#64748b;">Cancel</button>
+            <button id="rfq-request-info-confirm-btn" style="padding:7px 16px; background:#2563eb; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;">Send Request &amp; Notify Client</button>
           </div>
         </div>
 
@@ -2442,6 +2457,70 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert('Failed to confirm: ' + err.message);
         btn.disabled = false;
         btn.textContent = 'Confirm to Client';
+      }
+    });
+
+    // ── Request More Info ─────────────────────────────────────
+    const reqInfoBtn    = modal.querySelector('#rfq-request-info-btn');
+    const reqInfoPanel  = modal.querySelector('#rfq-request-info-panel');
+    const reqInfoCancel = modal.querySelector('#rfq-request-info-cancel-btn');
+    const reqInfoSend   = modal.querySelector('#rfq-request-info-confirm-btn');
+
+    reqInfoBtn?.addEventListener('click', () => {
+      // Check if assigned
+      if (!data.assigned_to_email) {
+        alert('Please assign an engineer to this project before requesting more information.');
+        return;
+      }
+      reqInfoPanel.style.display = reqInfoPanel.style.display === 'none' ? 'block' : 'none';
+      modal.querySelector('#rfq-request-info-msg')?.focus();
+    });
+    
+    reqInfoCancel?.addEventListener('click', () => {
+      reqInfoPanel.style.display = 'none';
+      modal.querySelector('#rfq-request-info-msg').value = '';
+    });
+
+    reqInfoSend?.addEventListener('click', async () => {
+      const msg = modal.querySelector('#rfq-request-info-msg').value.trim();
+      if (!msg) {
+        alert('Please enter the information required.');
+        return;
+      }
+
+      reqInfoSend.disabled = true;
+      reqInfoSend.textContent = 'Sending…';
+
+      const bankRef = `ADT-${rfq.id.slice(0,8).toUpperCase()}`;
+
+      try {
+        await fetch('/.netlify/functions/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'rfq_request_info',
+            email: requesterEmail,
+            name: requesterName,
+            projectName,
+            bankRef,
+            staffEmail: data.assigned_to_email,
+            staffName: data.assigned_to_name,
+            message: msg
+          })
+        });
+
+        reqInfoPanel.style.display = 'none';
+        reqInfoSend.textContent = '✓ Sent';
+        reqInfoSend.style.background = '#64748b';
+        setTimeout(() => {
+          reqInfoSend.textContent = 'Send Request & Notify Client';
+          reqInfoSend.style.background = '#2563eb';
+          reqInfoSend.disabled = false;
+        }, 3000);
+      } catch (err) {
+        alert('Failed to send request: ' + err.message);
+        reqInfoSend.disabled = false;
+        reqInfoSend.textContent = 'Send Request & Notify Client';
       }
     });
 

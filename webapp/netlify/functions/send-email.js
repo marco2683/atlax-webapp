@@ -9,7 +9,7 @@ exports.handler = async (event, context) => {
     const body = JSON.parse(event.body);
     const { email, userId, type, cover_letter, name } = body;
 
-    const validTypes = ['designer_application', 'designer_approved', 'designer_rejected', 'project_rfq', 'rfq_removed', 'rfq_payment', 'rfq_confirmed', 'rfq_rejected'];
+    const validTypes = ['designer_application', 'designer_approved', 'designer_rejected', 'project_rfq', 'rfq_removed', 'rfq_payment', 'rfq_confirmed', 'rfq_rejected', 'rfq_request_info'];
     if (!validTypes.includes(type)) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Invalid application type' }) };
     }
@@ -344,14 +344,56 @@ exports.handler = async (event, context) => {
       `;
     }
 
+    // ── rfq_request_info ──────────────────────────────────────────
+    if (type === 'rfq_request_info') {
+      const { projectName, name: clientName, bankRef, staffEmail, staffName, message } = body;
+      toEmailAddr = [email];
+      subject = `Information Required for your Project — ${projectName || bankRef}`;
+      htmlContent = `
+        <div style="font-family:'Inter',sans-serif;max-width:620px;margin:0 auto;padding:32px 24px;color:#0f172a;">
+          <div style="text-align:center;margin-bottom:32px;">
+            <img src="${logoUrl}" alt="AtlasDT" style="height:36px;" />
+          </div>
+          <p style="font-size:15px;line-height:1.7;color:#334155;margin-bottom:24px;">
+            Dear ${clientName || 'Valued Customer'},<br/><br/>
+            Our engineering team is currently reviewing your quotation request for <strong>${projectName || 'your project'}</strong>, 
+            but we need a bit more information before we can proceed.
+          </p>
+          <div style="background:#f8fafc;border-left:4px solid #3b82f6;padding:16px 20px;margin-bottom:28px;">
+            <p style="margin:0;font-size:14px;color:#1e293b;line-height:1.6;white-space:pre-wrap;">${message}</p>
+          </div>
+          <p style="font-size:14px;line-height:1.7;color:#334155;margin-bottom:20px;">
+            Please reply directly to this email with the requested details, or reach out to your assigned engineer:
+            <strong>${staffName || 'AtlasDT Engineering'}</strong> at <a href="mailto:${staffEmail}">${staffEmail}</a>.
+          </p>
+          <p style="font-size:14px;color:#64748b;">Thank you,<br/>— ${staffName || 'The AtlasDT Team'}</p>
+          <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;"/>
+          <p style="text-align:center;font-size:11px;color:#94a3b8;">AtlasDT Manufacturing Hub &bull; <a href="https://www.atlasdt.com" style="color:#0ea5e9;">atlasdt.com</a></p>
+        </div>
+      `;
+    }
+
     const resend = new Resend(RESEND_API_KEY);
 
-    const { data: resendRes, error: resendError } = await resend.emails.send({
-      from: 'AtlasDT System <system@atlasdt.com>',
+    let fromAddress = 'AtlasDT System <system@atlasdt.com>';
+    let replyToAddress = null;
+    
+    if (type === 'rfq_request_info' && body.staffEmail) {
+       fromAddress = `${body.staffName || 'AtlasDT Engineering'} <system@atlasdt.com>`;
+       replyToAddress = body.staffEmail;
+    }
+
+    const emailPayload = {
+      from: fromAddress,
       to: toEmailAddr,
       subject: subject,
       html: htmlContent
-    });
+    };
+    if (replyToAddress) {
+       emailPayload.reply_to = replyToAddress;
+    }
+
+    const { data: resendRes, error: resendError } = await resend.emails.send(emailPayload);
 
     if (resendError) {
         console.error("Resend API Error:", resendError);
