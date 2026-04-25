@@ -973,7 +973,49 @@ function initUploadZone() {
   uploadZone.addEventListener('drop', async (e) => {
     e.preventDefault();
     uploadZone.classList.remove('dragging');
-    await handleFileUpload(Array.from(e.dataTransfer.files));
+    
+    const items = e.dataTransfer.items;
+    if (!items) {
+      await handleFileUpload(Array.from(e.dataTransfer.files));
+      return;
+    }
+
+    const filesToUpload = [];
+    async function traverseFileTree(item, path = '') {
+      if (!item) return;
+      if (item.isFile) {
+        const file = await new Promise(resolve => item.file(resolve));
+        file.customPath = path; 
+        filesToUpload.push(file);
+      } else if (item.isDirectory) {
+        const dirReader = item.createReader();
+        const entries = await new Promise(resolve => {
+          dirReader.readEntries(resolve);
+        });
+        for (const entry of entries) {
+          // Pass the folder path along. If dropping "Project" which has "Specs", path becomes "Project/Specs/"
+          await traverseFileTree(entry, path + item.name + '/');
+        }
+      }
+    }
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.kind === 'file') {
+        const entry = item.webkitGetAsEntry();
+        if (entry) {
+          // If we want the root dropped folder to also be a folder name, we could pass it.
+          // But usually, entry.name is the folder name.
+          // If entry is a directory, it will add entry.name to path in traverseFileTree.
+          // If entry is a file, path is ''. This matches "same tree".
+          await traverseFileTree(entry);
+        }
+      }
+    }
+    
+    if (filesToUpload.length > 0) {
+      await handleFileUpload(filesToUpload);
+    }
   });
 
   fileInput.addEventListener('change', async () => {
@@ -1024,10 +1066,10 @@ function initUploadZone() {
       const folderName = input.value.trim();
       input.remove();
       if (!folderName) return;
-      if (!virtualFolders.includes(folderName)) {
-        virtualFolders.push(folderName);
+      const fullPath = currentFolder ? currentFolder + '/' + folderName : folderName;
+      if (!virtualFolders.includes(fullPath)) {
+        virtualFolders.push(fullPath);
       }
-      currentFolder = null;
       renderFiles();
     };
 
@@ -1095,7 +1137,22 @@ async function handleFileUpload(files) {
   for (const file of files) {
     const ext = file.name.split('.').pop().toLowerCase();
     const category = categorizeFile(ext);
-    const { error } = await uploadFile(file, category);
+    
+    // Determine the target folder string.
+    // Clean up trailing slash from customPath if any.
+    let cp = file.customPath || '';
+    if (cp.endsWith('/')) cp = cp.slice(0, -1);
+    
+    let targetFolder = null;
+    if (currentFolder && cp) {
+      targetFolder = currentFolder + '/' + cp;
+    } else if (currentFolder) {
+      targetFolder = currentFolder;
+    } else if (cp) {
+      targetFolder = cp;
+    }
+
+    const { error } = await uploadFile(file, category, targetFolder);
     if (!error) {
       successCount++;
     } else {
@@ -1142,7 +1199,7 @@ async function renderFiles() {
 
   filesCache = await getFiles();
 
-  if (filesCache.length === 0) {
+  if (filesCache.length === 0 && virtualFolders.length === 0) {
     grid.className = 'ws-file-grid';
     grid.innerHTML = `
       <div class="ws-empty" style="grid-column:1/-1;">
@@ -1160,42 +1217,83 @@ async function renderFiles() {
   }
 }
 
+function getDirectoryContents(files, virtuals, currentPath) {
+  const prefix = currentPath ? currentPath + '/' : '';
+  
+  const folders = new Set();
+  const fileList = [];
+
+  // Add virtual folders
+  virtuals.forEach(v => {
+    if (!currentPath && !v.includes('/')) folders.add(v);
+    else if (currentPath && v.startsWith(prefix)) {
+      const rest = v.substring(prefix.length);
+      const nextSlash = rest.indexOf('/');
+      if (nextSlash === -1) folders.add(rest);
+      else folders.add(rest.substring(0, nextSlash));
+    } else if (!currentPath && v.includes('/')) {
+      folders.add(v.split('/')[0]);
+    }
+  });
+
+  files.forEach(f => {
+    const folderPath = f.meta?.folder || '';
+    if (folderPath === (currentPath || '')) {
+      fileList.push(f);
+    } else if (!currentPath && folderPath) {
+      folders.add(folderPath.split('/')[0]);
+    } else if (currentPath && folderPath.startsWith(prefix)) {
+      const rest = folderPath.substring(prefix.length);
+      const nextSlash = rest.indexOf('/');
+      if (nextSlash === -1) {
+        if (rest !== '') folders.add(rest);
+      } else {
+        folders.add(rest.substring(0, nextSlash));
+      }
+    }
+  });
+
+  return { folders: Array.from(folders), files: fileList };
+}
+
 // ── Grid View ──────────────────────────────────────
 function renderFilesGrid(container) {
   container.className = 'ws-file-grid';
   
-  // Filter by current folder
-  const filtered = currentFolder
-    ? filesCache.filter(f => (f.meta?.folder || null) === currentFolder)
-    : filesCache;
+  const dir = getDirectoryContents(filesCache, virtualFolders, currentFolder);
 
   // Breadcrumb
-  const breadcrumb = currentFolder
-    ? `<div class="ws-breadcrumb" style="grid-column:1/-1;">
-         <span class="ws-breadcrumb__link" data-goto-root>📁 All Files</span>
-         <span class="ws-breadcrumb__sep">›</span>
-         <span class="ws-breadcrumb__current">${currentFolder}</span>
-       </div>`
-    : '';
+  let breadcrumb = '';
+  if (currentFolder) {
+    const parts = currentFolder.split('/');
+    let html = `<span class="ws-breadcrumb__link" data-goto-root>📁 All Files</span>`;
+    let currentPath = '';
+    parts.forEach((p, i) => {
+      currentPath += (currentPath ? '/' : '') + p;
+      html += `<span class="ws-breadcrumb__sep">›</span>`;
+      if (i === parts.length - 1) {
+        html += `<span class="ws-breadcrumb__current">${p}</span>`;
+      } else {
+        html += `<span class="ws-breadcrumb__link" data-goto-folder="${currentPath}">${p}</span>`;
+      }
+    });
+    breadcrumb = `<div class="ws-breadcrumb" style="grid-column:1/-1;">${html}</div>`;
+  }
 
-  // Get unique folders for folder cards (only at root level) — merge file-derived + virtual
-  const fileFolders = filesCache.map(f => f.meta?.folder).filter(Boolean);
-  const folders = [...new Set([...fileFolders, ...virtualFolders])];
-  const folderCards = (!currentFolder && folders.length > 0) ? folders.map(fname => {
-    const count = filesCache.filter(f => f.meta?.folder === fname).length;
-    return `<div class="ws-file-card ws-file-card--folder" data-folder-name="${fname}">
+  // Folder cards
+  const folderCards = dir.folders.map(fname => {
+    // We compute a full path to pass into data-folder-name
+    const fullPath = currentFolder ? currentFolder + '/' + fname : fname;
+    // Count files deep in this folder
+    const count = filesCache.filter(f => (f.meta?.folder || '').startsWith(fullPath)).length;
+    return `<div class="ws-file-card ws-file-card--folder" data-folder-name="${fullPath}">
               <div class="ws-file-card__icon ws-file-card__icon--folder">📂</div>
               <div class="ws-file-card__name" title="${fname}">${fname}</div>
               <div class="ws-file-card__meta">${count} file${count !== 1 ? 's' : ''}</div>
             </div>`;
-  }).join('') : '';
+  }).join('');
 
-  // Files without folder (at root) or files in current folder
-  const displayFiles = currentFolder
-    ? filtered
-    : filesCache.filter(f => !f.meta?.folder);
-
-  const fileCards = displayFiles.map(file => {
+  const fileCards = dir.files.map(file => {
     const ext = (file.file_type || '').toLowerCase();
     const iconClass = getFileIconClass(ext);
     const iconEmoji = getFileIcon(ext);
@@ -1221,20 +1319,28 @@ function renderFilesGrid(container) {
 function renderFilesList(container) {
   container.className = 'ws-file-list-container';
 
-  // Get unique folders
   const fileFolders = filesCache.map(f => f.meta?.folder).filter(Boolean);
-  const folders = [...new Set([...fileFolders, ...virtualFolders])];
-  const allFolderNames = folders;
-  const unfiled = filesCache.filter(f => !f.meta?.folder);
+  const allFolderNames = [...new Set([...fileFolders, ...virtualFolders])];
 
-  // Breadcrumb for folder view
-  const breadcrumb = currentFolder
-    ? `<div class="ws-breadcrumb">
-         <span class="ws-breadcrumb__link" data-goto-root>📁 All Files</span>
-         <span class="ws-breadcrumb__sep">›</span>
-         <span class="ws-breadcrumb__current">${currentFolder}</span>
-       </div>`
-    : '';
+  const dir = getDirectoryContents(filesCache, virtualFolders, currentFolder);
+
+  // Breadcrumb
+  let breadcrumb = '';
+  if (currentFolder) {
+    const parts = currentFolder.split('/');
+    let html = `<span class="ws-breadcrumb__link" data-goto-root>📁 All Files</span>`;
+    let currentPath = '';
+    parts.forEach((p, i) => {
+      currentPath += (currentPath ? '/' : '') + p;
+      html += `<span class="ws-breadcrumb__sep">›</span>`;
+      if (i === parts.length - 1) {
+        html += `<span class="ws-breadcrumb__current">${p}</span>`;
+      } else {
+        html += `<span class="ws-breadcrumb__link" data-goto-folder="${currentPath}">${p}</span>`;
+      }
+    });
+    breadcrumb = `<div class="ws-breadcrumb">${html}</div>`;
+  }
 
   let html = breadcrumb;
 
@@ -1254,36 +1360,29 @@ function renderFilesList(container) {
     </thead>
     <tbody>`;
 
-  // If at root, show folders first
-  if (!currentFolder) {
-    folders.forEach(fname => {
-      const count = filesCache.filter(f => f.meta?.folder === fname).length;
-      html += `
-        <tr class="ws-file-row ws-file-row--folder" data-folder-name="${fname}">
-          <td></td>
-          <td style="font-size:18px;">📂</td>
-          <td style="font-weight:600; cursor:pointer;" class="ws-folder-link ws-td-primary" data-folder-name="${fname}">${fname}</td>
-          <td class="ws-td-muted">Folder</td>
-          <td class="ws-td-muted">${count} item${count !== 1 ? 's' : ''}</td>
-          <td></td>
-          <td></td>
-          <td>
-            <div class="ws-action-btns">
-              <button class="ws-action-btn" data-action="rename-folder" data-folder="${fname}" title="Rename folder">
-                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              </button>
-            </div>
-          </td>
-        </tr>`;
-    });
-  }
+  dir.folders.forEach(fname => {
+    const fullPath = currentFolder ? currentFolder + '/' + fname : fname;
+    const count = filesCache.filter(f => (f.meta?.folder || '').startsWith(fullPath)).length;
+    html += `
+      <tr class="ws-file-row ws-file-row--folder" data-folder-name="${fullPath}">
+        <td></td>
+        <td style="font-size:18px;">📂</td>
+        <td style="font-weight:600; cursor:pointer;" class="ws-folder-link ws-td-primary" data-folder-name="${fullPath}">${fname}</td>
+        <td class="ws-td-muted">Folder</td>
+        <td class="ws-td-muted">${count} item${count !== 1 ? 's' : ''}</td>
+        <td></td>
+        <td></td>
+        <td>
+          <div class="ws-action-btns">
+            <button class="ws-action-btn" data-action="rename-folder" data-folder="${fullPath}" title="Rename folder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+          </div>
+        </td>
+      </tr>`;
+  });
 
-  // Files to display
-  const displayFiles = currentFolder
-    ? filesCache.filter(f => (f.meta?.folder || null) === currentFolder)
-    : unfiled;
-
-  displayFiles.forEach(file => {
+  dir.files.forEach(file => {
     const ext = (file.file_type || '').toLowerCase();
     const iconEmoji = getFileIcon(ext);
     const size = formatBytes(file.file_size || 0);
@@ -1382,6 +1481,22 @@ function attachFileHandlers(container) {
   // Navigate to root
   container.querySelectorAll('[data-goto-root]').forEach(el => {
     el.addEventListener('click', () => { currentFolder = null; renderFiles(); });
+  });
+
+  // Navigate to specific folder from breadcrumb
+  container.querySelectorAll('[data-goto-folder]').forEach(el => {
+    el.addEventListener('click', () => { 
+      currentFolder = el.dataset.gotoFolder; 
+      renderFiles(); 
+    });
+  });
+
+  // Navigate to folder from grid card
+  container.querySelectorAll('.ws-file-card--folder').forEach(el => {
+    el.addEventListener('click', () => {
+      currentFolder = el.dataset.folderName;
+      renderFiles();
+    });
   });
 
   // ── Drag & Drop: File cards are draggable ──

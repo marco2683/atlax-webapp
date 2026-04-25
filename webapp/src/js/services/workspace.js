@@ -233,7 +233,7 @@ export async function updateFileMeta(fileId, updates) {
  * Upload a file to Supabase Storage and register it in the database.
  * Storage upload MUST succeed before we create a DB record.
  */
-export async function uploadFile(file, category = 'general') {
+export async function uploadFile(file, category = 'general', folder = null) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: new Error('Not authenticated') };
 
@@ -267,7 +267,7 @@ export async function uploadFile(file, category = 'general') {
     file.size,
     storagePath,
     category,
-    { storage_status: 'uploaded' }
+    { storage_status: 'uploaded', folder: folder }
   );
 }
 
