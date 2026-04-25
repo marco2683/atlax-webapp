@@ -147,11 +147,33 @@ export async function initNavbar() {
   });
 
   document.getElementById('btn-notifications')?.addEventListener('click', () => {
-    console.log('[PRD] Notifications — coming soon');
+    window.location.href = '/workspace.html';
   });
 
   document.getElementById('btn-settings')?.addEventListener('click', () => {
     openProfilePanel();
   });
+
+  // ── Notification Badge — Real-time RFQ count ──────────
+  if (user) {
+    try {
+      const { supabase } = await import('../supabase.js');
+      const { count, error } = await supabase
+        .from('rfq_history')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .in('status', ['confirmed', 'rejected', 'request_info']);
+
+      if (!error && count > 0) {
+        const badge = document.getElementById('nav-notif-badge');
+        if (badge) {
+          badge.textContent = count;
+          badge.style.display = 'inline-block';
+        }
+      }
+    } catch (e) {
+      console.warn('[Navbar] Notification badge fetch failed:', e);
+    }
+  }
 }
 
