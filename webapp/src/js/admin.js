@@ -2074,13 +2074,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
     `).join('');
 
-    const hasBeenConfirmed = !!data.confirmed_price || ['confirmed', 'processing', 'paid', 'shipped'].includes(rfq.status);
+    const currentStatusForConfirm = rfq.status || data.status || 'submitted';
+    const hasBeenConfirmed = !!data.confirmed_price || !!data.confirmed_at || ['confirmed', 'processing', 'paid', 'shipped'].includes(currentStatusForConfirm);
+    const confirmedDateStr = data.confirmed_at ? new Date(data.confirmed_at).toLocaleDateString() : (hasBeenConfirmed ? new Date(rfq.created_at).toLocaleDateString() : '');
+
     const confirmBtnHtml = hasBeenConfirmed 
-      ? `<button id="rfq-confirm-client-btn" data-rfq-id="${rfq.id}" disabled
-            style="padding:7px 16px; background:#f1f5f9; color:#16a34a; border:1px solid #bbf7d0; border-radius:8px; font-size:12px; font-weight:700; cursor:default; font-family:inherit; display:flex; align-items:center; gap:6px;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Confirmed
-          </button>`
+      ? `<div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+           <button id="rfq-confirm-client-btn" data-rfq-id="${rfq.id}" disabled
+             style="padding:7px 16px; background:#f1f5f9; color:#16a34a; border:1px solid #bbf7d0; border-radius:8px; font-size:12px; font-weight:700; cursor:default; font-family:inherit; display:flex; align-items:center; gap:6px;">
+             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+             Confirmed
+           </button>
+           <div style="font-size:10px; color:#64748b; font-weight:600;">${confirmedDateStr}</div>
+         </div>`
       : `<button id="rfq-confirm-client-btn" data-rfq-id="${rfq.id}"
             style="padding:7px 16px; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(22,163,74,0.35);">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -2425,12 +2431,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       btn.disabled = true;
       btn.textContent = 'Confirming…';
 
+      const confirmedAtIso = new Date().toISOString();
       const updatedData = {
         ...data,
         confirmed_price: confirmedPrice,
         total_price: confirmedPrice,
         admin_final_price: confirmedPrice,
         payment_status: 'awaiting_payment',
+        confirmed_at: confirmedAtIso
       };
 
       try {
@@ -2448,9 +2456,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (rfqObj) { rfqObj.status = 'confirmed'; rfqObj.rfq_data = updatedData; }
 
         // Visual feedback
-        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Confirmed`;
-        btn.style.cssText = 'padding:7px 16px; background:#f1f5f9; color:#16a34a; border:1px solid #bbf7d0; border-radius:8px; font-size:12px; font-weight:700; cursor:default; font-family:inherit; display:flex; align-items:center; gap:6px;';
-        btn.disabled = true;
+        const btnContainer = btn.parentElement;
+        const newHtml = `
+          <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <button disabled style="padding:7px 16px; background:#f1f5f9; color:#16a34a; border:1px solid #bbf7d0; border-radius:8px; font-size:12px; font-weight:700; cursor:default; font-family:inherit; display:flex; align-items:center; gap:6px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Confirmed
+            </button>
+            <div style="font-size:10px; color:#64748b; font-weight:600;">${new Date(confirmedAtIso).toLocaleDateString()}</div>
+          </div>
+        `;
+        btn.outerHTML = newHtml;
 
         // Update status dropdown in modal to 'confirmed' (Confirmed - Awaiting Payment)
         const statusSelect = modal.querySelector('#rfq-modal-status');
