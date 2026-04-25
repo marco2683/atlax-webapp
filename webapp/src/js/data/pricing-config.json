@@ -1,14 +1,14 @@
 {
   "_meta": {
     "version": "1.0.0",
-    "description": "PRD Instant RFQ Pricing Configuration — Technology-driven hierarchy. All values are human-adjustable. Prices in USD.",
+    "description": "PRD Instant RFQ Pricing Configuration \u2014 Technology-driven hierarchy. All values are human-adjustable. Prices in USD.",
     "lastUpdated": "2026-03-29",
     "notes": "Hierarchical costing model: Material Cost + Machining Time + Setup Fee + Tooling -> + Margin"
   },
   "technologies": {
     "cnc": {
       "label": "CNC Machining",
-      "description": "Subtractive manufacturing — milling, turning, drilling from solid stock",
+      "description": "Subtractive manufacturing \u2014 milling, turning, drilling from solid stock",
       "hasTooling": false,
       "toolingCost": null,
       "defaultLeadTimeDays": {
@@ -240,7 +240,7 @@
         },
         "steelGrade": {
           "aluminium_prototype": {
-            "label": "Aluminium (Proto — 1k-10k shots)",
+            "label": "Aluminium (Proto \u2014 1k-10k shots)",
             "multiplier": 0.45
           },
           "p20": {
@@ -451,7 +451,7 @@
     },
     "3dp": {
       "label": "3D Printing",
-      "description": "Additive manufacturing — FDM, SLA, SLS, MJF, Metal Printing",
+      "description": "Additive manufacturing \u2014 FDM, SLA, SLS, MJF, Metal Printing",
       "hasTooling": false,
       "toolingCost": null,
       "defaultLeadTimeDays": {
@@ -690,7 +690,7 @@
     },
     "sheet": {
       "label": "Sheet Metal",
-      "description": "Flat metal sheet forming — laser cutting, bending, punching, welding",
+      "description": "Flat metal sheet forming \u2014 laser cutting, bending, punching, welding",
       "hasTooling": false,
       "toolingCost": null,
       "defaultLeadTimeDays": {
@@ -946,7 +946,7 @@
     },
     "vac_casting": {
       "label": "Vacuum Casting",
-      "description": "Silicone mould + polyurethane casting for low-volume production (10–200 units)",
+      "description": "Silicone mould + polyurethane casting for low-volume production (10\u2013200 units)",
       "hasTooling": true,
       "tooling": {
         "baseCost": 250,
@@ -1272,7 +1272,7 @@
     },
     "pcba": {
       "label": "PCBA",
-      "description": "Printed Circuit Board Assembly — PCB fab + SMT component placement",
+      "description": "Printed Circuit Board Assembly \u2014 PCB fab + SMT component placement",
       "baseCostPerCm3": 0.5,
       "setupFee": 120,
       "hasTooling": false,
@@ -1345,6 +1345,129 @@
           "label": "Custom",
           "costPerCm2": 0.015
         }
+      }
+    },
+    "compression": {
+      "label": "Compression Moulding",
+      "description": "Moulding of rubber and elastomers",
+      "hasTooling": true,
+      "tooling": {
+        "baseCost": 1500,
+        "costPerCm2SurfaceArea": 0.6,
+        "cavityMultiplier": {
+          "1": 1,
+          "2": 1.6,
+          "4": 2.4,
+          "8": 3.5
+        },
+        "steelGrade": {
+          "p20": {
+            "label": "P20 Steel",
+            "multiplier": 1
+          }
+        },
+        "tierMultipliers": {
+          "prototype": 0.6,
+          "low_volume": 1,
+          "high_volume": 2.2
+        }
+      },
+      "defaultLeadTimeDays": {
+        "economy": 30,
+        "standard": 20,
+        "express": 12,
+        "rush": 7
+      },
+      "materials": {
+        "silicone_rubber": {
+          "label": "Silicone Rubber (VMQ)",
+          "density": 1.15,
+          "rawCostMultiplier": 1.5,
+          "processingDifficultyMultiplier": 1.2
+        },
+        "epdm": {
+          "label": "EPDM",
+          "density": 0.86,
+          "rawCostMultiplier": 0.9,
+          "processingDifficultyMultiplier": 1.0
+        },
+        "nbr": {
+          "label": "Nitrile Rubber (NBR)",
+          "density": 1.0,
+          "rawCostMultiplier": 0.95,
+          "processingDifficultyMultiplier": 1.0
+        },
+        "fkm": {
+          "label": "Viton (FKM)",
+          "density": 1.8,
+          "rawCostMultiplier": 5.0,
+          "processingDifficultyMultiplier": 1.5
+        },
+        "nr": {
+          "label": "Natural Rubber (NR)",
+          "density": 0.92,
+          "rawCostMultiplier": 0.8,
+          "processingDifficultyMultiplier": 1.0
+        },
+        "cr": {
+          "label": "Neoprene (CR)",
+          "density": 1.23,
+          "rawCostMultiplier": 1.1,
+          "processingDifficultyMultiplier": 1.1
+        }
+      },
+      "surfaceFinishes": {
+        "as-moulded": {
+          "label": "As Moulded",
+          "costPerCm2": 0
+        },
+        "textured": {
+          "label": "Textured",
+          "costPerCm2": 0.005
+        },
+        "custom": {
+          "label": "Custom",
+          "costPerCm2": 0.015
+        }
+      },
+      "manufacturingType": "formative",
+      "machineRateUsdPerHour": 30,
+      "baselineMaterialPriceKg": 4,
+      "baseCycleTimeSecs": 300,
+      "volumetricCoolingSecsPerCm3": 0.1,
+      "scrapWasteMultiplier": 1.1,
+      "setupConfig": {
+        "baseFee": 80,
+        "sizeTiers": [],
+        "applyComplexityToBase": false
+      }
+    },
+    "other": {
+      "label": "Other",
+      "description": "Custom manufacturing technology",
+      "hasTooling": false,
+      "toolingCost": null,
+      "defaultLeadTimeDays": {
+        "economy": 30,
+        "standard": 15,
+        "express": 7,
+        "rush": 3
+      },
+      "materials": {},
+      "surfaceFinishes": {
+        "custom": {
+          "label": "Custom",
+          "costPerCm2": 0
+        }
+      },
+      "manufacturingType": "subtractive",
+      "machineRateUsdPerHour": 40,
+      "baselineMaterialPriceKg": 5,
+      "scrapWasteMultiplier": 1.0,
+      "setupConfig": {
+        "baseFee": 0,
+        "sizeTiers": [],
+        "applyComplexityToBase": false
       }
     }
   },

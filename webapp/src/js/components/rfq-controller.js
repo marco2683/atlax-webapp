@@ -110,10 +110,12 @@ function createPartPanelHTML(partIdx) {
                 <option value="cnc">CNC Machining</option>
                 <option value="vac_casting">Silicone Vacuum Casting</option>
                 <option value="injection">Injection moulding</option>
+                <option value="compression">Compression Moulding</option>
                 <option value="sheet">Sheet metal</option>
                 <option value="casting">Die-Casting</option>
                 <option value="other">Other</option>
               </select>
+              <input type="text" class="rfq-other-tech hidden" data-part="${partIdx}" placeholder="Please specify technology..." style="font-size: 13px; font-weight: 500; padding: 10px 14px; margin-top: 8px;" />
             </div>
             <div class="rfq-field">
               <label>Quantity</label>
@@ -126,6 +128,7 @@ function createPartPanelHTML(partIdx) {
             <div class="rfq-field">
               <label>Material</label>
               <select class="rfq-material" data-part="${partIdx}"></select>
+              <input type="text" class="rfq-other-material hidden" data-part="${partIdx}" placeholder="Please specify material..." style="font-size: 13px; font-weight: 500; padding: 10px 14px; margin-top: 8px;" />
             </div>
             <div class="rfq-field">
               <label>Color</label>
@@ -568,6 +571,22 @@ function wirePartPanel(partIdx) {
   const processSelect = panel.querySelector('.rfq-process');
   processSelect?.addEventListener('change', () => {
     const techKey = processSelect.value;
+    
+    // Handle "Other" technology input visibility
+    const otherTechInput = panel.querySelector('.rfq-other-tech');
+    const materialSelect = panel.querySelector('.rfq-material');
+    const otherMaterialInput = panel.querySelector('.rfq-other-material');
+    
+    if (techKey === 'other') {
+      otherTechInput?.classList.remove('hidden');
+      materialSelect?.classList.add('hidden');
+      otherMaterialInput?.classList.remove('hidden');
+    } else {
+      otherTechInput?.classList.add('hidden');
+      materialSelect?.classList.remove('hidden');
+      otherMaterialInput?.classList.add('hidden');
+    }
+
     populateMaterialDropdown(partIdx, techKey);
     populateFinishDropdown(partIdx, techKey);
     
@@ -924,9 +943,15 @@ function calculateAndDisplayQuote() {
     return;
   }
 
+  const rawProcess = getField(activePanel, '.rfq-process');
+  const customProcess = activePanel.querySelector('.rfq-other-tech')?.value || '';
+  
+  const rawMaterial = getField(activePanel, '.rfq-material');
+  const customMaterial = activePanel.querySelector('.rfq-other-material')?.value || '';
+  
   const config = {
-    process:   getField(activePanel, '.rfq-process'),
-    material:  getField(activePanel, '.rfq-material'),
+    process:   rawProcess === 'other' && customProcess ? customProcess : rawProcess,
+    material:  rawProcess === 'other' && customMaterial ? customMaterial : rawMaterial,
     finish:    getField(activePanel, '.rfq-finish'),
     tolerance: getField(activePanel, '.rfq-tolerance'),
     leadTime:  getField(activePanel, '.rfq-lead-time'),

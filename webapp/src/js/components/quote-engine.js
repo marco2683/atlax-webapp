@@ -95,7 +95,10 @@ export function calculateQuote(geometry, config) {
 
   if (!tech) {
     console.warn('[QuoteEngine] Unknown process:', config.process);
-    return emptyQuote();
+    const eq = emptyQuote();
+    eq.techLabel = config.process || 'Other';
+    eq.materialLabel = config.material || 'Custom Material';
+    return eq;
   }
 
   // ── Material specifics ─────────────────────────────────────
