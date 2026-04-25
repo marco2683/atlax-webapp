@@ -411,7 +411,7 @@ function openRFQPreviewModal(rfq) {
           <div style="display:flex; gap: 24px; align-items:center;">
             <div style="text-align:right;">
               <div style="font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;">Total Value</div>
-              <div style="font-size:16px; color:#0f172a; font-weight:700;">$${data.total_price || '0.00'}</div>
+              <div style="font-size:16px; color:#15803d; font-weight:800;">$${Number(data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
             </div>
             <div style="text-align:right;">
               <div style="font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;">Total Parts</div>
@@ -492,7 +492,17 @@ function openRFQPreviewModal(rfq) {
       infoHtml += addRow('Technology', p.process || '—');
       infoHtml += addRow('Material', p.material || '—');
       infoHtml += addRow('Finish', p.finish || '—');
-      infoHtml += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">${addRow('Qty', p.qty || 1)}${addRow('Price', '$' + (p.price||0).toLocaleString(undefined, {minimumFractionDigits:2}))}</div>`;
+      infoHtml += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">${addRow('Qty', p.qty || 1)}${addRow('Price', '$' + (p.price||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}))}</div>`;
+      
+      // Geometry Details
+      if (p.analysis) {
+        infoHtml += `<div style="margin-top:24px; font-size:10px; color:#94a3b8; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; margin-bottom:8px;">Geometry Analysis</div>`;
+        const a = p.analysis;
+        const dims = a.boundingBox ? `${a.boundingBox.length.toFixed(1)} × ${a.boundingBox.width.toFixed(1)} × ${a.boundingBox.height.toFixed(1)} mm` : '—';
+        infoHtml += addRow('Bounding Box', dims);
+        if (a.volume) infoHtml += addRow('Volume', `${(a.volume / 1000).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})} cm³`);
+        if (a.surfaceArea) infoHtml += addRow('Surface Area', `${(a.surfaceArea / 100).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})} cm²`);
+      }
     } else {
       infoHtml += addRow('Service', data.service || '—');
       infoHtml += addRow('Timeline', data.timeline || '—');
@@ -510,7 +520,7 @@ function openRFQPreviewModal(rfq) {
       dlBtn.style.display = 'block';
       
       const fileExt = fileName.split('.').pop()?.toLowerCase() || '';
-      render3DPreview({ storage_path: path, file_type: fileExt }, container);
+      render3DPreview({ storage_path: path, file_type: fileExt, bucket: bucket }, container);
     } else {
       dlBtn.style.display = 'none';
       container.innerHTML = '<div style="display:flex; height:100%; align-items:center; justify-content:center; color:#64748b; flex-direction:column;"><div style="font-size:48px; margin-bottom:16px;">🧊</div><div>3D Preview Unavailable</div><div style="font-size:12px; margin-top:8px;">File not uploaded to storage</div></div>';
@@ -1284,7 +1294,7 @@ async function render3DPreview(file, container) {
         const occtImportJs = await import('occt-import-js');
         const occt = await occtImportJs.default();
         const { data: fileData } = await import('./js/utils/supabaseClient.js').then(m =>
-          m.supabase.storage.from('user-files').download(file.storage_path)
+          m.supabase.storage.from(file.bucket || 'user-files').download(file.storage_path)
         );
         if (fileData) {
           const buffer = await fileData.arrayBuffer();
@@ -1326,7 +1336,7 @@ async function render3DPreview(file, container) {
         const { STLLoader } = await import('three/addons/loaders/STLLoader.js');
         const loader = new STLLoader();
         const { data: fileData } = await import('./js/utils/supabaseClient.js').then(m =>
-          m.supabase.storage.from('user-files').download(file.storage_path)
+          m.supabase.storage.from(file.bucket || 'user-files').download(file.storage_path)
         );
         if (fileData) {
           const buffer = await fileData.arrayBuffer();
@@ -1350,7 +1360,9 @@ async function render3DPreview(file, container) {
 
     // Animation loop
     function animate() {
-      if (!document.getElementById('ws-preview-backdrop')?.classList.contains('ws-preview-backdrop--visible')) return;
+      // Check if container is still in DOM and part of a visible modal
+      if (!document.body.contains(container)) return;
+      
       activeAnimationId = requestAnimationFrame(animate);
       controls.update();
       renderer.render(scene, camera);

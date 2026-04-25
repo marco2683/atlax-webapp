@@ -1013,7 +1013,7 @@ function calculateAndDisplayQuote() {
   const partName = getField(activePanel, '.rfq-part-name') || `Part ${partIdx + 1}`;
 
   // Store/update in accumulated quotes
-  quotedParts.set(partIdx, { partName, quote, config, file: state.file });
+  quotedParts.set(partIdx, { partName, quote, config, file: state.file, analysis: state.analysis });
 
   // Re-render the result panel
   renderQuoteResult();
