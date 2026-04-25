@@ -203,6 +203,7 @@ function createPartPanelHTML(partIdx) {
             <textarea class="rfq-custom-notes" data-part="${partIdx}" rows="3" placeholder="Surface finish details, coating specs, heat treatments, certifications, special requirements..."></textarea>
           </div>
         </div>
+        </div> <!-- Closes rfq-upload-col -->
         
         <div class="rfq-results-col" style="display: flex; flex-direction: column; gap: 16px;">
           <!-- Geometry Analysis Placeholder (visible BEFORE upload) -->
