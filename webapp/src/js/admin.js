@@ -1803,7 +1803,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       const currentStatusColor = (statusOptions.find(s => s.value === currentStatus) || statusOptions[0]).color;
 
       return `
-        <tr data-rfq-id="${rfq.id}" data-status="${currentStatus}">
+        <tr data-rfq-id="${rfq.id}" data-status="${currentStatus}"
+          data-sort-name="${projectName.toLowerCase()}"
+          data-sort-requester="${requesterName.toLowerCase()}"
+          data-sort-price="${data.total_price || data.admin_final_price || 0}"
+          data-sort-status="${currentStatus}"
+          data-sort-date="${rfq.created_at || ''}">
           <td style="max-width:180px;">
             <div style="font-weight:600; color:#0f172a; font-size:13px;">${projectName}</div>
           </td>
@@ -1842,22 +1847,46 @@ document.addEventListener('DOMContentLoaded', async () => {
       <div class="admin-table-container">
         <table class="admin-table" id="admin-rfq-table">
           <thead>
-            <tr>
-              <th>Project Name</th>
-              <th>Requester</th>
+            <tr id="admin-rfq-table-head">
+              <th data-sort="name" style="cursor:pointer;user-select:none;">Project Name <span class="sort-icon"></span></th>
+              <th data-sort="requester" style="cursor:pointer;user-select:none;">Requester <span class="sort-icon"></span></th>
               <th>Service</th>
               <th>Tech</th>
               <th style="text-align:center;">Qty</th>
-              <th style="text-align:right;">Price</th>
+              <th data-sort="price" style="text-align:right;cursor:pointer;user-select:none;">Price <span class="sort-icon"></span></th>
               <th style="text-align:center;">Files</th>
-              <th>Status</th>
-              <th>Date</th>
+              <th data-sort="status" style="cursor:pointer;user-select:none;">Status <span class="sort-icon"></span></th>
+              <th data-sort="date" style="cursor:pointer;user-select:none;">Date <span class="sort-icon"></span></th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
         </table>
       </div>`;
+
+    // Wire up column sorting for admin RFQ table
+    const adminSortHead = contentRouting.querySelector('#admin-rfq-table-head');
+    const adminSortBody = contentRouting.querySelector('#admin-rfq-table tbody');
+    if (adminSortHead && adminSortBody) {
+      adminSortHead.querySelectorAll('th[data-sort]').forEach(th => {
+        let sortKey = null, sortDir = 1;
+        th.addEventListener('click', () => {
+          const key = th.dataset.sort;
+          if (sortKey === key) { sortDir *= -1; } else { sortKey = key; sortDir = 1; }
+          adminSortHead.querySelectorAll('.sort-icon').forEach(ic => ic.textContent = '');
+          th.querySelector('.sort-icon').textContent = sortDir === 1 ? ' ↑' : ' ↓';
+          const rows = Array.from(adminSortBody.querySelectorAll('tr[data-rfq-id]'));
+          rows.sort((a, b) => {
+            const camel = `sort${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+            let va = a.dataset[camel] || '', vb = b.dataset[camel] || '';
+            if (key === 'price') return (parseFloat(va) - parseFloat(vb)) * sortDir;
+            if (key === 'date')  return (new Date(va) - new Date(vb)) * sortDir;
+            return va.localeCompare(vb) * sortDir;
+          });
+          rows.forEach(r => adminSortBody.appendChild(r));
+        });
+      });
+    }
 
     const toggleDoneFilter = () => {
       const isHidden = document.getElementById('admin-rfq-hide-done').checked;

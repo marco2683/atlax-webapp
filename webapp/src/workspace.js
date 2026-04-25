@@ -365,7 +365,13 @@ async function loadRFQs() {
     const cfg = statusConfig[statusVal] || statusConfig[rfq.status] || { label: statusVal, cssClass: '' };
 
     return `
-      <tr data-rfq-id="${rfq.id}">
+      <tr data-rfq-id="${rfq.id}"
+          data-sort-name="${projectName.toLowerCase()}"
+          data-sort-type="${(data.type || '').toLowerCase()}"
+          data-sort-service="${(data.service || data.type || '').toLowerCase()}"
+          data-sort-date="${rfq.created_at || ''}"
+          data-sort-price="${data.total_price || 0}"
+          data-sort-status="${rfq.status || ''}">
         <td>
           <div class="ws-td-primary" style="font-weight: 600;">${projectName}</div>
         </td>
@@ -407,7 +413,51 @@ async function loadRFQs() {
       }
     });
   });
+
+  // Wire up sortable headers
+  makeSortable(document.getElementById('rfqs-table-head'), container);
 }
+
+/**
+ * Generic table sort utility.
+ * @param {HTMLElement} thead - The <tr> containing <th data-sort="key"> headers
+ * @param {HTMLElement} tbody - The <tbody> to sort
+ */
+function makeSortable(thead, tbody) {
+  if (!thead || !tbody) return;
+  let sortKey = null;
+  let sortDir = 1; // 1 = asc, -1 = desc
+
+  thead.querySelectorAll('th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.sort;
+      if (sortKey === key) {
+        sortDir *= -1;
+      } else {
+        sortKey = key;
+        sortDir = 1;
+      }
+
+      // Update all icons
+      thead.querySelectorAll('th[data-sort] .sort-icon').forEach(ic => ic.textContent = '');
+      th.querySelector('.sort-icon').textContent = sortDir === 1 ? ' ↑' : ' ↓';
+
+      // Sort rows
+      const rows = Array.from(tbody.querySelectorAll('tr[data-rfq-id]'));
+      rows.sort((a, b) => {
+        let va = a.dataset[`sort${key.charAt(0).toUpperCase()}${key.slice(1)}`] || '';
+        let vb = b.dataset[`sort${key.charAt(0).toUpperCase()}${key.slice(1)}`] || '';
+        // Numeric sort for price
+        if (key === 'price') return (parseFloat(va) - parseFloat(vb)) * sortDir;
+        // Date sort
+        if (key === 'date') return (new Date(va) - new Date(vb)) * sortDir;
+        return va.localeCompare(vb) * sortDir;
+      });
+      rows.forEach(r => tbody.appendChild(r));
+    });
+  });
+}
+
 
 function openRFQPreviewModal(rfq) {
   const data = rfq.rfq_data || {};
