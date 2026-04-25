@@ -2067,7 +2067,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const commLogHtml = commLog.map(c => `
       <div style="margin-bottom:12px; padding:10px 14px; border-radius:8px; background:${c.role === 'admin' ? '#dbeafe' : '#f1f5f9'}; border:1px solid ${c.role === 'admin' ? '#bfdbfe' : '#e2e8f0'};">
         <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:11px; color:#64748b; font-weight:600;">
-          <span>${c.role === 'admin' ? \`You (\${c.name})\` : 'Client'}</span>
+          <span>${c.role === 'admin' ? `You (${c.name})` : 'Client'}</span>
           <span>${new Date(c.date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
         </div>
         <div style="font-size:13px; color:#0f172a; white-space:pre-wrap;">${c.text}</div>
