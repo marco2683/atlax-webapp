@@ -11,7 +11,7 @@
 /* ── WHO WE ARE SECTION ──────────────────────────────────── */
 .prd-who-section {
   background: linear-gradient(175deg, #f0fdf4 0%, #f8fafc 40%, #ffffff 100%);
-  padding: 120px 40px;
+  padding: 80px 40px 40px;
   position: relative;
   overflow: hidden;
 }
@@ -80,15 +80,15 @@
 .prd-pillars {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-top: 16px;
+  gap: 10px;
+  margin-top: 0;
 }
 
 .prd-pillar {
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  padding: 14px 16px;
+  padding: 10px 14px;
   background: rgba(14, 122, 108, 0.04);
   border-radius: 12px;
   border: 1px solid rgba(14, 122, 108, 0.1);
