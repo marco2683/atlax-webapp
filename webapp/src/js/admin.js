@@ -1979,6 +1979,16 @@ document.addEventListener('DOMContentLoaded', async () => {
               style="padding:6px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">
               ${statusSelectHTML}
             </select>
+            
+            <label style="font-size:12px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-left:16px;">Assigned To</label>
+            <select id="rfq-modal-assignee" data-rfq-id="${rfq.id}"
+              style="padding:6px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">
+              <option value="">Unassigned</option>
+              <option value="sebastian@atlasdt.com|Sebastian B." ${data.assigned_to_email === 'sebastian@atlasdt.com' ? 'selected' : ''}>Sebastian B.</option>
+              <option value="max@atlasdt.com|Max K." ${data.assigned_to_email === 'max@atlasdt.com' ? 'selected' : ''}>Max K.</option>
+              <option value="engineering@atlasdt.com|Atlas Engineering" ${data.assigned_to_email === 'engineering@atlasdt.com' ? 'selected' : ''}>Atlas Engineering</option>
+            </select>
+
             <button id="rfq-remove-btn" style="margin-left:auto; padding:6px 12px; background:#fee2e2; color:#ef4444; border:1px solid #fecaca; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
               Remove RFQ
@@ -2079,6 +2089,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
 
     // Status change in modal
+    // Status change in modal
     const modalStatusSelect = modal.querySelector('#rfq-modal-status');
     if (modalStatusSelect) {
       modalStatusSelect.addEventListener('change', async (e) => {
@@ -2095,6 +2106,43 @@ document.addEventListener('DOMContentLoaded', async () => {
           if (tableSelect) tableSelect.value = newStatus;
         } catch (err) {
           alert('Failed to update status: ' + err.message);
+        }
+      });
+    }
+
+    // Assignee change in modal
+    const modalAssigneeSelect = modal.querySelector('#rfq-modal-assignee');
+    if (modalAssigneeSelect) {
+      modalAssigneeSelect.addEventListener('change', async (e) => {
+        const rfqId = e.target.dataset.rfqId;
+        const val = e.target.value;
+        let email = null;
+        let name = null;
+        if (val) {
+          const parts = val.split('|');
+          email = parts[0];
+          name = parts[1];
+        }
+
+        const updatedData = { ...data, assigned_to_email: email, assigned_to_name: name };
+
+        try {
+          const { error } = await supabase
+            .from('rfq_history')
+            .update({ rfq_data: updatedData })
+            .eq('id', rfqId);
+          if (error) throw error;
+          
+          // Visual success feedback
+          e.target.style.borderColor = '#22c55e';
+          setTimeout(() => e.target.style.borderColor = '#e2e8f0', 1500);
+          
+          // Update the local rfqs cache so closing/reopening is correct
+          const rfqObj = rfqs.find(r => r.id === rfqId);
+          if (rfqObj) rfqObj.rfq_data = updatedData;
+          
+        } catch (err) {
+          alert('Failed to assign engineer: ' + err.message);
         }
       });
     }
