@@ -80,11 +80,6 @@
 
       <!-- Footer -->
       <div class="ws-sidebar__footer">
-        <div class="ws-sidebar__item" id="ws-theme-toggle" style="margin-bottom: 8px;">
-          <svg class="theme-icon-sun" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          <svg class="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          Toggle Theme
-        </div>
         <a href="/app.html" class="ws-sidebar__back">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           Back to Engine
@@ -110,8 +105,25 @@
             <p class="ws-header__subtitle" id="ws-header-subtitle">Your curated lists of manufacturing partners</p>
           </div>
         </div>
-        <div class="ws-header__actions" id="ws-header-actions">
+        <div style="display: flex; align-items: center; gap: 24px;">
           <!-- Dynamic buttons injected per tab -->
+          <div class="ws-header__actions" id="ws-header-actions" style="margin-right: 8px; padding-right: 24px; border-right: 1px solid var(--border-light, #e2e8f0);">
+          </div>
+          <!-- Global Utilities -->
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <a href="mailto:info@atlasdt.com" style="color: var(--text-secondary, #64748b); text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              Contact Support
+            </a>
+            <div id="ws-theme-toggle" style="cursor: pointer; color: var(--text-secondary, #64748b); display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; transition: background 0.2s;">
+              <svg class="theme-icon-sun" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              <svg class="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </div>
+            <!-- User Avatar -->
+            <div id="ws-user-avatar" onclick="window.location.href='/profile.html'" title="Go to Profile" style="width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #0ea5e9, #14b8a6); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);">
+              U
+            </div>
+          </div>
         </div>
       </header>
 

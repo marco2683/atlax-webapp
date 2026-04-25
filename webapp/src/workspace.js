@@ -38,6 +38,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   profileCache = await getMyProfile();
   initTheme();
   initSidebar();
+
+  const avatarEl = document.getElementById('ws-user-avatar');
+  if (avatarEl && profileCache) {
+    const f = profileCache.first_name?.[0] || '';
+    const l = profileCache.last_name?.[0] || '';
+    const initials = (f + l).toUpperCase() || profileCache.email?.[0]?.toUpperCase() || 'U';
+    avatarEl.textContent = initials;
+  }
   
   const urlParams = new URLSearchParams(window.location.search);
   const initialTab = urlParams.get('tab') || 'shortlists';
