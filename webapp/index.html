@@ -269,8 +269,8 @@
       </div>
 
       <!-- USP Display Area -->
-      <div class="pb-usp-container" style="height: 100px; display: flex; justify-content: center; align-items: center; margin-top: 40px; perspective: 1000px; padding: 0 20px;">
-        <p id="usp-text" class="pb-usp-text" style="color: rgba(255, 255, 255, 0.9); font-family: 'Outfit', sans-serif; font-size: clamp(15px, 1.3vw, 18px); font-weight: 300; text-align: center; max-width: 900px; line-height: 1.6; opacity: 0; transform: translateZ(-150px) scale(0.9); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; margin: 0;"></p>
+      <div class="pb-usp-container" style="position: absolute; bottom: 15vh; left: 0; right: 0; display: flex; justify-content: center; align-items: center; perspective: 1200px; padding: 0 20px; pointer-events: none;">
+        <p id="usp-text" class="pb-usp-text" style="color: rgba(255, 255, 255, 0.75); font-family: 'Rajdhani', sans-serif; font-size: clamp(16px, 1.3vw, 20px); font-weight: 600; text-transform: uppercase; letter-spacing: 3px; text-align: center; max-width: 1000px; line-height: 1.8; opacity: 0; transform: translateZ(-1000px) scale(0.4); transition: all 2.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; margin: 0;"></p>
       </div>
 
       <script>
@@ -290,7 +290,7 @@
         function hideUSP() {
           const uspEl = document.getElementById('usp-text');
           uspEl.style.opacity = '0';
-          uspEl.style.transform = 'translateZ(-150px) scale(0.9)';
+          uspEl.style.transform = 'translateZ(-1000px) scale(0.4)';
         }
       </script>
     </div>
