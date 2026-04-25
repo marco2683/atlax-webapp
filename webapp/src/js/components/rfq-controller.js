@@ -303,6 +303,27 @@ export function initRFQController() {
         grandTotal += (p.quote?.totalPrice || 0);
     });
 
+    const uploadedParts = [];
+    for (const p of partsArray) {
+      let storagePath = null;
+      let bucket = 'rfq-uploads';
+      if (p.file) {
+        const fileExt = p.file.name.split('.').pop();
+        storagePath = `${user.id}/${rfqId}/${Date.now()}_${Math.random().toString(36).substring(2,9)}.${fileExt}`;
+        const { error } = await supabase.storage.from('rfq-uploads').upload(storagePath, p.file, {
+          cacheControl: '3600', upsert: false
+        });
+        if (error) {
+           const { error: fErr } = await supabase.storage.from('user-files').upload(storagePath, p.file, {
+             cacheControl: '3600', upsert: false
+           });
+           if (!fErr) bucket = 'user-files';
+           else storagePath = null;
+        }
+      }
+      uploadedParts.push({ ...p, storage_path: storagePath, bucket: bucket });
+    }
+
     const rfqData = {
       type: 'instant',
       project_name: projName,
@@ -311,13 +332,15 @@ export function initRFQController() {
       total_price: grandTotal,
       target_timeline: 'Flexible',
       notes: 'Generated via Instant Quoting Engine',
-      parts: partsArray.map(p => ({
+      parts: uploadedParts.map(p => ({
         name: p.partName || `Part ${p.config?.process || ''}`,
         process: p.config?.process || p.quote?.techLabel || '',
         qty: p.config?.quantity || 1,
         material: p.config?.material || p.quote?.materialLabel || '',
         finish: p.config?.finish || '',
-        price: p.quote?.totalPrice || 0
+        price: p.quote?.totalPrice || 0,
+        storage_path: p.storage_path,
+        bucket: p.bucket
       })),
       submitted_at: new Date().toISOString()
     };

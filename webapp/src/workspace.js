@@ -372,6 +372,136 @@ async function loadRFQs() {
         <td class="ws-td-muted" style="font-size: 12px;">${fileCount} file${fileCount !== 1 ? 's' : ''}</td>
       </tr>`;
   }).join('');
+
+  container.querySelectorAll('tr[data-rfq-id]').forEach(row => {
+    row.style.cursor = 'pointer';
+    row.addEventListener('dblclick', () => {
+      const rfqId = row.dataset.rfqId;
+      const rfq = rfqsCache.find(r => r.id === rfqId);
+      if (rfq) openRFQPreviewModal(rfq);
+    });
+  });
+}
+
+function openRFQPreviewModal(rfq) {
+  const data = rfq.rfq_data || {};
+  let parts = data.type === 'instant' ? (data.parts || []) : (data.files || []);
+  if (parts.length === 0) {
+    alert("No files or parts associated with this RFQ.");
+    return;
+  }
+  let currentPartIndex = 0;
+
+  const modalHtml = `
+    <div id="rfq-preview-modal" style="position:fixed;inset:0;background:rgba(15,23,42,0.8);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;width:900px;max-width:95vw;height:600px;max-height:90vh;display:flex;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
+        
+        <!-- Viewer Column -->
+        <div style="flex:1; background:#0e1117; position:relative; display:flex; flex-direction:column;">
+          <div id="rfq-preview-3d-container" style="flex:1; width:100%;"></div>
+          
+          <div style="position:absolute; bottom:20px; left:0; right:0; display:flex; justify-content:center; gap:16px; pointer-events:none;">
+            <button id="rfq-prev-btn" style="pointer-events:auto; background:rgba(255,255,255,0.1); color:#fff; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition:0.2s;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <div id="rfq-part-counter" style="color:#fff; display:flex; align-items:center; font-size:14px; font-weight:600;">1 / ${parts.length}</div>
+            <button id="rfq-next-btn" style="pointer-events:auto; background:rgba(255,255,255,0.1); color:#fff; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition:0.2s;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Info Column -->
+        <div style="width:340px; background:#fff; padding:32px 24px; border-left:1px solid #e2e8f0; display:flex; flex-direction:column; overflow-y:auto;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px;">
+            <div>
+              <div style="font-size:12px; color:#3b82f6; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">${data.project_name || 'RFQ Details'}</div>
+              <h3 id="rfq-part-name" style="margin:0; font-size:18px; color:#0f172a; font-weight:700; word-break:break-word;"></h3>
+            </div>
+            <button id="rfq-preview-close" style="background:none; border:none; color:#94a3b8; font-size:24px; cursor:pointer; padding:0; line-height:1;">&times;</button>
+          </div>
+          
+          <div id="rfq-part-info" style="display:flex; flex-direction:column; gap:16px;"></div>
+          
+          <div style="margin-top:auto; padding-top:24px; border-top:1px solid #e2e8f0;">
+             <a id="rfq-download-btn" href="#" target="_blank" style="display:block; width:100%; text-align:center; padding:12px; background:#f1f5f9; color:#0f172a; font-weight:600; font-size:14px; text-decoration:none; border-radius:8px; border:1px solid #e2e8f0; transition:0.2s;">Download Source File</a>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+  const modal = document.getElementById('rfq-preview-modal');
+  const prevBtn = document.getElementById('rfq-prev-btn');
+  const nextBtn = document.getElementById('rfq-next-btn');
+  const counterEl = document.getElementById('rfq-part-counter');
+  const nameEl = document.getElementById('rfq-part-name');
+  const infoEl = document.getElementById('rfq-part-info');
+  const dlBtn = document.getElementById('rfq-download-btn');
+  const container = document.getElementById('rfq-preview-3d-container');
+
+  if (parts.length <= 1) {
+    prevBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+    counterEl.style.display = 'none';
+  }
+
+  const renderCurrentPart = () => {
+    const p = parts[currentPartIndex];
+    const fileName = p.name || p.file_name || `Part ${currentPartIndex + 1}`;
+    counterEl.textContent = `${currentPartIndex + 1} / ${parts.length}`;
+    nameEl.textContent = fileName;
+    
+    // Info Panel
+    let infoHtml = '';
+    const addRow = (lbl, val) => `<div style="background:#f8fafc; padding:12px 16px; border-radius:8px; border:1px solid #f1f5f9;"><div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:2px;">${lbl}</div><div style="font-size:14px; color:#0f172a; font-weight:600;">${val}</div></div>`;
+    
+    if (data.type === 'instant') {
+      infoHtml += addRow('Technology', p.process || '—');
+      infoHtml += addRow('Material', p.material || '—');
+      infoHtml += addRow('Finish', p.finish || '—');
+      infoHtml += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">${addRow('Qty', p.qty || 1)}${addRow('Price', '$' + (p.price||0).toLocaleString(undefined, {minimumFractionDigits:2}))}</div>`;
+    } else {
+      infoHtml += addRow('Service', data.service || '—');
+      infoHtml += addRow('Timeline', data.timeline || '—');
+      infoHtml += addRow('Qty Required', data.quantity || '—');
+      if (p.size) infoHtml += addRow('File Size', `${(p.size/1024).toFixed(1)} KB`);
+    }
+    infoEl.innerHTML = infoHtml;
+    
+    // Download Link
+    const path = p.storage_path || p.path;
+    const bucket = p.bucket || 'rfq-uploads';
+    if (path) {
+      dlBtn.href = `${import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co'}/storage/v1/object/public/${bucket}/${path}`;
+      dlBtn.download = fileName;
+      dlBtn.style.display = 'block';
+      
+      const fileExt = fileName.split('.').pop()?.toLowerCase() || '';
+      render3DPreview({ storage_path: path, file_type: fileExt }, container);
+    } else {
+      dlBtn.style.display = 'none';
+      container.innerHTML = '<div style="display:flex; height:100%; align-items:center; justify-content:center; color:#64748b; flex-direction:column;"><div style="font-size:48px; margin-bottom:16px;">🧊</div><div>3D Preview Unavailable</div><div style="font-size:12px; margin-top:8px;">File not uploaded to storage</div></div>';
+    }
+  };
+
+  prevBtn.addEventListener('click', () => {
+    currentPartIndex = (currentPartIndex - 1 + parts.length) % parts.length;
+    renderCurrentPart();
+  });
+  nextBtn.addEventListener('click', () => {
+    currentPartIndex = (currentPartIndex + 1) % parts.length;
+    renderCurrentPart();
+  });
+
+  document.getElementById('rfq-preview-close').addEventListener('click', () => {
+    modal.remove();
+  });
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+
+  renderCurrentPart();
 }
 
 
