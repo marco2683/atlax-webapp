@@ -395,6 +395,19 @@ export function initRFQController() {
         })
       }).catch(e => console.warn('Email notify error:', e));
 
+      // 3. Send to Microsoft Planner
+      await fetch('/.netlify/functions/submit-rfq-planner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_name: userName,
+          email: user.email,
+          part_name: projName,
+          material: partsArray[0]?.quote?.materialLabel || 'Various',
+          estimated_cost: `$${grandTotal.toFixed(2)}`
+        })
+      }).catch(e => console.warn('Planner notify error:', e));
+
       showRFQSuccessModal('quote');
       quotedParts.clear();
       renderQuoteResult();
@@ -1327,6 +1340,20 @@ async function handleBulkSubmit() {
         })
       });
       console.log('[RFQ] Email notification dispatched.');
+
+      // 4.b Send to Microsoft Planner
+      await fetch('/.netlify/functions/submit-rfq-planner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_name: userName,
+          email: user.email,
+          part_name: projName,
+          material: service || 'Various',
+          estimated_cost: 'TBD'
+        })
+      });
+      console.log('[RFQ] Planner notification dispatched.');
     } catch (emailErr) {
       console.warn('[RFQ] Email notification failed (non-blocking):', emailErr);
     }
