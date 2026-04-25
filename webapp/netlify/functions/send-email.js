@@ -389,8 +389,13 @@ exports.handler = async (event, context) => {
       subject: subject,
       html: htmlContent
     };
+
+    if (type === 'rfq_request_info') {
+      emailPayload.cc = 'info@atlasdt.com';
+    }
+
     if (replyToAddress) {
-       emailPayload.reply_to = replyToAddress;
+       emailPayload.replyTo = replyToAddress;
     }
 
     const { data: resendRes, error: resendError } = await resend.emails.send(emailPayload);
