@@ -407,7 +407,7 @@ import { signUpUser } from './services/auth.js';
     <div id="atlasdt-bookings-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); z-index:99999; display:none; justify-content:center; align-items:center; opacity:0; transition:opacity 0.3s ease;">
       <div style="background:#fff; width:90%; max-width:1000px; height:85vh; border-radius:12px; overflow:hidden; position:relative; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
         <button id="close-bookings-modal" style="position:absolute; top:12px; right:12px; background:rgba(0,0,0,0.1); border:none; width:36px; height:36px; border-radius:50%; font-size:24px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#333; z-index:10;">&times;</button>
-        <iframe src="https://outlook.office365.com/owa/calendar/AtlasDTConsultations@atlasdt.com/bookings/" width="100%" height="100%" scrolling="yes" style="border:0;"></iframe>
+        <iframe src="https://outlook.office.com/book/AtlasDTConsultations@atlasdt.com/" width="100%" height="100%" scrolling="yes" style="border:0;"></iframe>
       </div>
     </div>
   `;
