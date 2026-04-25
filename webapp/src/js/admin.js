@@ -1968,6 +1968,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       { value: 'in_progress',  label: 'In Progress' },
       { value: 'confirmed',    label: 'Confirmed (Awaiting Payment)' },
       { value: 'processing',   label: 'Processing (Payment Received)' },
+      { value: 'paid',         label: '🟢 Paid' },
       { value: 'done',         label: 'Done' }
     ];
     const statusSelectHTML = statusOptions.map(s =>
@@ -2081,9 +2082,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div style="font-size:13px; color:#0f172a; font-weight:600;">${timeline}</div>
               </div>
               ${data.type === 'instant' ? `
-              <div style="background:#f0fdf4; padding:12px 14px; border-radius:10px; border:1px solid #bbf7d0;">
-                <div style="font-size:10px; color:#166534; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Quoted Total</div>
-                <div id="admin-quoted-total-display" style="font-size:15px; color:#15803d; font-weight:800;">$${(data.admin_final_price || data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+              <div style="background:${data.payment_status === 'paid' ? '#f0fdf4' : '#f0fdf4'}; padding:12px 14px; border-radius:10px; border:1px solid ${data.payment_status === 'paid' ? '#86efac' : '#bbf7d0'};">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <div style="font-size:10px; color:#166534; text-transform:uppercase; font-weight:600;">${data.payment_status === 'paid' ? '💳 Amount Paid' : 'Quoted Total'}</div>
+                  ${data.payment_status === 'paid' ? `<span style="background:#16a34a; color:#fff; font-size:9px; font-weight:800; padding:2px 7px; border-radius:20px; letter-spacing:0.5px;">PAID</span>` : ''}
+                </div>
+                <div id="admin-quoted-total-display" style="font-size:15px; color:#15803d; font-weight:800;">$${(data.amount_paid || data.admin_final_price || data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+                ${data.paid_at ? `<div style="font-size:11px; color:#4ade80; margin-top:4px;">Paid ${new Date(data.paid_at).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>` : ''}
               </div>` : `
               <div style="background:#f8fafc; padding:12px 14px; border-radius:10px; border:1px solid #f1f5f9;">
                 <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Contact Requested</div>

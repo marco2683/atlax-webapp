@@ -9,7 +9,7 @@ exports.handler = async (event, context) => {
     const body = JSON.parse(event.body);
     const { email, userId, type, cover_letter, name } = body;
 
-    const validTypes = ['designer_application', 'designer_approved', 'designer_rejected', 'project_rfq', 'rfq_removed'];
+    const validTypes = ['designer_application', 'designer_approved', 'designer_rejected', 'project_rfq', 'rfq_removed', 'rfq_payment'];
     if (!validTypes.includes(type)) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Invalid application type' }) };
     }
@@ -188,6 +188,56 @@ exports.handler = async (event, context) => {
             <div style="text-align: center; margin-top: 40px; padding: 20px; border-top: 1px solid #eee;">
               <span style="font-size: 12px; color: #999;">Copyright &copy; Atlas DT. All rights reserved.</span>
             </div>
+          </div>
+        `;
+    } else if (type === 'rfq_payment') {
+        const { projectName, rfqId, amountPaid, paidAt } = body;
+        const paidDate = paidAt ? new Date(paidAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Now';
+        const refCode = `RFQ-${(rfqId || '').slice(0, 8).toUpperCase()}`;
+        const amountFmt = `$${Number(amountPaid || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        toEmailAddr = [email, 'info@atlasdt.com'];
+        subject = `Payment Confirmed — ${projectName || refCode}`;
+        htmlContent = `
+          <div style="font-family:'Inter',sans-serif;max-width:620px;margin:0 auto;padding:32px 24px;color:#0f172a;">
+            <div style="text-align:center;margin-bottom:32px;">
+              <img src="${logoUrl}" alt="AtlasDT" style="height:36px;" />
+            </div>
+            <div style="background:linear-gradient(135deg,#16a34a,#15803d);border-radius:16px;padding:32px;text-align:center;margin-bottom:32px;">
+              <div style="font-size:48px;margin-bottom:12px;">✅</div>
+              <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;">Payment Confirmed</h1>
+              <div style="color:#bbf7d0;font-size:14px;margin-top:8px;">Your manufacturing order is now confirmed</div>
+            </div>
+            <p style="font-size:15px;line-height:1.7;color:#334155;margin-bottom:24px;">
+              Thank you for your payment. We've received your funds and your order is now in the production queue.
+              Our team will be in touch shortly with a production schedule.
+            </p>
+            <table style="width:100%;border-collapse:collapse;background:#f8fafc;border-radius:12px;overflow:hidden;margin-bottom:28px;">
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <td style="padding:14px 16px;font-weight:600;color:#64748b;font-size:13px;">Project</td>
+                <td style="padding:14px 16px;font-weight:700;color:#0f172a;font-size:13px;">${projectName || '—'}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <td style="padding:14px 16px;font-weight:600;color:#64748b;font-size:13px;">Reference</td>
+                <td style="padding:14px 16px;font-weight:700;color:#0f172a;font-size:13px;">${refCode}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <td style="padding:14px 16px;font-weight:600;color:#64748b;font-size:13px;">Amount Paid</td>
+                <td style="padding:14px 16px;font-weight:800;color:#15803d;font-size:15px;">${amountFmt} USD</td>
+              </tr>
+              <tr>
+                <td style="padding:14px 16px;font-weight:600;color:#64748b;font-size:13px;">Payment Date</td>
+                <td style="padding:14px 16px;font-weight:700;color:#0f172a;font-size:13px;">${paidDate}</td>
+              </tr>
+            </table>
+            <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px;margin-bottom:28px;font-size:13px;color:#1d4ed8;line-height:1.6;">
+              <strong>What happens next?</strong><br/>
+              Our engineering team will review your order and contact you within 1–2 business days with a production timeline and any questions.
+            </div>
+            <div style="text-align:center;margin-bottom:28px;">
+              <a href="https://www.atlasdt.com/workspace.html?tab=rfqs" style="display:inline-block;background:#0f172a;color:#fff;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;font-size:14px;">View Your Order</a>
+            </div>
+            <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;"/>
+            <p style="text-align:center;font-size:11px;color:#94a3b8;">AtlasDT Manufacturing Hub &bull; Questions? <a href="mailto:info@atlasdt.com" style="color:#0ea5e9;">info@atlasdt.com</a></p>
           </div>
         `;
     }

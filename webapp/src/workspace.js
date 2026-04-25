@@ -331,11 +331,14 @@ async function loadRFQs() {
   }
 
   const statusConfig = {
-    submitted:    { label: 'Submitted',    cssClass: 'ws-status--submitted' },
-    under_review: { label: 'Under Review', cssClass: 'ws-status--under_review' },
-    in_progress:  { label: 'In Progress',  cssClass: 'ws-status--in_progress' },
-    done:         { label: 'Done',         cssClass: 'ws-status--done' },
-    cancelled:    { label: 'Cancelled',    cssClass: 'ws-status--cancelled' }
+    submitted:    { label: 'Submitted',                cssClass: 'ws-status--submitted' },
+    under_review: { label: 'Under Review',             cssClass: 'ws-status--under_review' },
+    in_progress:  { label: 'In Progress',              cssClass: 'ws-status--in_progress' },
+    confirmed:    { label: 'Confirmed — Awaiting Payment', cssClass: 'ws-status--confirmed' },
+    processing:   { label: 'Processing',               cssClass: 'ws-status--in_progress' },
+    paid:         { label: '🟢 Paid',                    cssClass: 'ws-status--paid' },
+    done:         { label: 'Done',                     cssClass: 'ws-status--done' },
+    cancelled:    { label: 'Cancelled',                cssClass: 'ws-status--cancelled' }
   };
 
   const serviceLabels = {
@@ -422,7 +425,8 @@ function openRFQPreviewModal(rfq) {
             <div style="font-size:12px; color:#3b82f6; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">${data.project_name || 'Instant RFQ Project'}</div>
             <div style="display:flex; align-items:center; gap: 12px;">
               <h2 style="margin:0; font-size:20px; color:#0f172a; font-weight:700;">Quote Overview</h2>
-              <span style="font-size:11px; font-weight:600; background:#e0e7ff; color:#4338ca; padding:4px 8px; border-radius:4px; text-transform:uppercase;">Status: ${rfq.status || 'Pending'}</span>
+              <span style="font-size:11px; font-weight:600; background:${rfq.status === 'paid' ? '#dcfce7' : '#e0e7ff'}; color:${rfq.status === 'paid' ? '#15803d' : '#4338ca'}; padding:4px 8px; border-radius:4px; text-transform:uppercase;">${rfq.status === 'paid' ? '🟢 PAID' : `Status: ${rfq.status || 'Pending'}`}</span>
+              ${rfq.status === 'paid' && data.paid_at ? `<span style="font-size:11px; color:#15803d; font-weight:600; margin-left:8px;">Paid ${new Date(data.paid_at).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})}</span>` : ''}
             </div>
           </div>
           <div style="display:flex; gap: 24px; align-items:center;">
