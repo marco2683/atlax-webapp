@@ -419,8 +419,8 @@ function openRFQPreviewModal(rfq) {
             </div>
             <div style="text-align:right; padding-left:24px; border-left:1px solid #e2e8f0;">
               <div style="font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;">Assigned Engineer</div>
-              <div style="font-size:14px; color:#0f172a; font-weight:600;">${rfq.assigned_to_name || 'Unassigned'}</div>
-              <div style="font-size:12px; color:#64748b;">${rfq.assigned_to_email || 'Waiting for assignment'}</div>
+              <div style="font-size:14px; color:#0f172a; font-weight:600;">${data.assigned_to_name || 'Unassigned'}</div>
+              <div style="font-size:12px; color:#64748b;">${data.assigned_to_email || 'Waiting for assignment'}</div>
             </div>
             <button id="rfq-preview-close" style="background:none; border:none; color:#94a3b8; font-size:28px; cursor:pointer; padding:0 0 0 16px; line-height:1; transition:0.2s;">&times;</button>
           </div>
