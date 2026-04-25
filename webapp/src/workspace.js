@@ -14,6 +14,8 @@ import {
   getProjects, updateProjectStatus, addProject,
   getSandboxItems, addSandboxItem
 } from './js/services/workspace.js';
+import { supabase } from './js/utils/supabaseClient.js';
+
 
 // ── State ────────────────────────────────────────────────
 let currentTab = 'shortlists';
@@ -378,10 +380,25 @@ async function loadRFQs() {
 
   container.querySelectorAll('tr[data-rfq-id]').forEach(row => {
     row.style.cursor = 'pointer';
-    row.addEventListener('dblclick', () => {
+    row.addEventListener('dblclick', async () => {
       const rfqId = row.dataset.rfqId;
-      const rfq = rfqsCache.find(r => r.id === rfqId);
-      if (rfq) openRFQPreviewModal(rfq);
+      // Always fetch fresh from DB so payment_status / confirmed status is current
+      try {
+        const { data: freshRow, error } = await supabase
+          .from('rfq_history')
+          .select('*')
+          .eq('id', rfqId)
+          .single();
+        if (error) throw error;
+        // Update local cache too
+        const idx = rfqsCache.findIndex(r => r.id === rfqId);
+        if (idx !== -1) rfqsCache[idx] = freshRow;
+        openRFQPreviewModal(freshRow);
+      } catch (e) {
+        // Fallback to cached if fetch fails
+        const rfq = rfqsCache.find(r => r.id === rfqId);
+        if (rfq) openRFQPreviewModal(rfq);
+      }
     });
   });
 }
@@ -620,7 +637,6 @@ function injectPaymentPanel(rfq, data, modal) {
     btn.disabled = true;
     btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Redirecting to Stripe…`;
     try {
-      const { supabase } = await import('./js/utils/supabaseClient.js');
       const { data: sessionData } = await supabase.auth.getSession();
       const user = sessionData?.session?.user;
 
@@ -678,7 +694,6 @@ function injectPaymentPanel(rfq, data, modal) {
     btn.disabled = true;
     btn.textContent = 'Submitting…';
     try {
-      const { supabase } = await import('./js/utils/supabaseClient.js');
       const updatedData = { ...data, payment_method: 'bank_transfer', payment_status: 'bank_transfer_pending' };
       const { error } = await supabase
         .from('rfq_history')
@@ -1402,7 +1417,15 @@ async function render3DPreview(file, container) {
     container.innerHTML = '<div class="ws-preview-generic"><div class="ws-preview-generic__icon">🧊</div><div class="ws-preview-generic__name">3D Preview unavailable</div><div class="ws-preview-generic__type">File storage is pending — re-upload to enable preview</div></div>';
     return;
   }
+  // Show loading spinner while the 3D engine and file load
+  container.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;background:#0e1117;">
+      <div style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);border-top-color:#60a5fa;border-radius:50%;animation:spin3d 0.9s linear infinite;"></div>
+      <div style="font-size:12px;color:#64748b;font-family:Inter,sans-serif;">Loading 3D model…</div>
+    </div>
+    <style>@keyframes spin3d{to{transform:rotate(360deg)}}</style>`;
   try {
+
     const THREE = await import('three');
     const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
 

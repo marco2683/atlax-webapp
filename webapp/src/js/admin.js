@@ -185,15 +185,39 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ─── Dashboard Init ────────────────────────────────────────
-  function updateNavBadges() {
+  async function updateNavBadges() {
+    // Designer pending badge
     const pendingDesigners = loadedCustomers.filter(c => c.designer_status === 'pending').length;
     const designerTab = document.querySelector('.admin-nav-item[data-tab="designers"]');
     if (designerTab) {
       designerTab.innerHTML = `Designer Hub ${pendingDesigners > 0 ? '<span style="background:var(--color-electric); color:white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 6px; font-weight: bold;">' + pendingDesigners + '</span>' : ''}`;
     }
+
+    // RFQ submitted badge — lightweight count query
+    try {
+      const { count } = await supabase
+        .from('rfq_history')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'submitted');
+      const rfqTab = document.querySelector('.admin-nav-item[data-tab="rfqs"]');
+      if (rfqTab) {
+        // Preserve the original text (strip any previous badge)
+        const baseText = rfqTab.childNodes[0]?.textContent?.trim() || 'RFQ Tracker';
+        rfqTab.innerHTML = `${baseText} ${count > 0
+          ? `<span style="background:#ef4444; color:#fff; padding:2px 7px; border-radius:12px; font-size:11px; margin-left:6px; font-weight:700; animation:rfq-badge-pulse 2s ease-in-out infinite;">${count}</span>`
+          : ''}`;
+      }
+    } catch (e) { /* silently fail — badge is non-critical */ }
   }
 
   async function initDashboard() {
+    // Inject badge pulse keyframe once
+    if (!document.getElementById('rfq-badge-style')) {
+      const s = document.createElement('style');
+      s.id = 'rfq-badge-style';
+      s.textContent = `@keyframes rfq-badge-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.8;transform:scale(1.1)} }`;
+      document.head.appendChild(s);
+    }
     await loadCRMData();
     updateNavBadges();
     renderOverview();
@@ -2238,7 +2262,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert('Please set a valid Final Price before confirming to the client.');
         return;
       }
-      if (!confirm(`Confirm this quote to the client?\n\nThey will be notified and asked to pay $${confirmedPrice.toLocaleString(undefined, {minimumFractionDigits:2})} via card or bank transfer.`)) return;
 
       const btn = e.target.closest('button');
       btn.disabled = true;
@@ -2272,12 +2295,14 @@ document.addEventListener('DOMContentLoaded', async () => {
           btn.disabled = false;
         }, 3000);
 
-        // Update status dropdown in modal
+        // Update status dropdown in modal to 'confirmed' (Confirmed - Awaiting Payment)
         const statusSelect = modal.querySelector('#rfq-modal-status');
         if (statusSelect) statusSelect.value = 'confirmed';
-        // Update in table
+        // Update in table row
         const tableSelect = contentRouting.querySelector(`.admin-rfq-status-select[data-rfq-id="${rfqId}"]`);
         if (tableSelect) tableSelect.value = 'confirmed';
+        // Refresh nav badge count
+        updateNavBadges();
 
       } catch (err) {
         alert('Failed to confirm: ' + err.message);
