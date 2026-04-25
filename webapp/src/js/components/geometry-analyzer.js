@@ -130,7 +130,7 @@ export function renderThumbnail(geometry, container, size = 120) {
   const maxDim = Math.max(bSize.x, bSize.y, bSize.z);
   const fov = camera.fov * (Math.PI / 180);
   let dist = maxDim / (2 * Math.tan(fov / 2));
-  dist *= 1.6;
+  dist *= 1.0;
 
   // ISO angle
   camera.position.set(

@@ -1891,8 +1891,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ═══════════════════════════════════════════════════════════
   //  R F Q   D E T A I L   M O D A L
   // ═══════════════════════════════════════════════════════════
-  function openRFQDetailModal(rfq, profileMap) {
+  async function openRFQDetailModal(rfq, profileMap) {
     const data = rfq.rfq_data || {};
+
+    // Fetch staff list for assignee dropdown
+    let staffList = [];
+    try {
+      const { data: staffRows } = await supabase.from('staff').select('id, name, email');
+      staffList = staffRows || [];
+    } catch(_) {}
+
+    const assigneeOptionsHTML = [
+      '<option value="">Unassigned</option>',
+      ...staffList.map(s => {
+        const val = `${s.email}|${s.name}`;
+        const sel = data.assigned_to_email === s.email ? 'selected' : '';
+        return `<option value="${val}" ${sel}>${s.name} (${s.email})</option>`;
+      })
+    ].join('');
     const profile = profileMap[rfq.user_id] || {};
     const requesterName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.email || '—';
     const requesterEmail = profile.email || '';
@@ -1983,10 +1999,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <label style="font-size:12px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-left:16px;">Assigned To</label>
             <select id="rfq-modal-assignee" data-rfq-id="${rfq.id}"
               style="padding:6px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">
-              <option value="">Unassigned</option>
-              <option value="sebastian@atlasdt.com|Sebastian B." ${data.assigned_to_email === 'sebastian@atlasdt.com' ? 'selected' : ''}>Sebastian B.</option>
-              <option value="max@atlasdt.com|Max K." ${data.assigned_to_email === 'max@atlasdt.com' ? 'selected' : ''}>Max K.</option>
-              <option value="engineering@atlasdt.com|Atlas Engineering" ${data.assigned_to_email === 'engineering@atlasdt.com' ? 'selected' : ''}>Atlas Engineering</option>
+              ${assigneeOptionsHTML}
             </select>
 
             <button id="rfq-remove-btn" style="margin-left:auto; padding:6px 12px; background:#fee2e2; color:#ef4444; border:1px solid #fecaca; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;">
