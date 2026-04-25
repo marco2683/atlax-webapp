@@ -379,7 +379,7 @@ exports.handler = async (event, context) => {
     let replyToAddress = null;
     
     if (type === 'rfq_request_info' && body.staffEmail) {
-       fromAddress = `${body.staffName || 'AtlasDT Engineering'} <system@atlasdt.com>`;
+       fromAddress = `AtlasDT - ${body.staffName || 'Engineering'} <system@atlasdt.com>`;
        replyToAddress = body.staffEmail;
     }
 
