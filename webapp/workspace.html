@@ -162,12 +162,13 @@
           <div class="ws-upload-zone" id="upload-zone">
             <div class="ws-upload-zone__icon">📎</div>
             <div class="ws-upload-zone__text">
-              <strong>Drag & drop files here</strong> or click to browse<br />
+              <strong>Drag & drop files or folders here</strong> or <span id="btn-browse-files" style="text-decoration:underline; cursor:pointer;">browse files</span> / <span id="btn-browse-folders" style="text-decoration:underline; cursor:pointer;">browse folders</span><br />
               <span style="font-size: 11px;">
                 STEP · STL · OBJ · PDF · DXF · PNG · DOCX — up to 50MB
               </span>
             </div>
             <input type="file" id="file-input" multiple style="display: none;" accept=".step,.stp,.stl,.obj,.iges,.igs,.3mf,.pdf,.dxf,.dwg,.png,.jpg,.jpeg,.svg,.doc,.docx,.xlsx,.csv,.txt" />
+            <input type="file" id="folder-input" webkitdirectory directory multiple style="display: none;" />
           </div>
           <!-- File Toolbar -->
           <div class="ws-file-toolbar" id="file-toolbar">

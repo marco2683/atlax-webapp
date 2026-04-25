@@ -967,7 +967,17 @@ function initUploadZone() {
   const fileInput = document.getElementById('file-input');
   if (!uploadZone || !fileInput) return;
 
-  uploadZone.addEventListener('click', () => fileInput.click());
+  const folderInput = document.getElementById('folder-input');
+  
+  const btnFiles = document.getElementById('btn-browse-files');
+  const btnFolders = document.getElementById('btn-browse-folders');
+
+  // Prevent default click on uploadZone from opening fileInput if they clicked the buttons
+  uploadZone.addEventListener('click', (e) => {
+    if (e.target === btnFiles || e.target === btnFolders) return;
+    fileInput.click();
+  });
+
   uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('dragging'); });
   uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragging'));
   uploadZone.addEventListener('drop', async (e) => {
@@ -993,7 +1003,6 @@ function initUploadZone() {
           dirReader.readEntries(resolve);
         });
         for (const entry of entries) {
-          // Pass the folder path along. If dropping "Project" which has "Specs", path becomes "Project/Specs/"
           await traverseFileTree(entry, path + item.name + '/');
         }
       }
@@ -1004,10 +1013,6 @@ function initUploadZone() {
       if (item.kind === 'file') {
         const entry = item.webkitGetAsEntry();
         if (entry) {
-          // If we want the root dropped folder to also be a folder name, we could pass it.
-          // But usually, entry.name is the folder name.
-          // If entry is a directory, it will add entry.name to path in traverseFileTree.
-          // If entry is a file, path is ''. This matches "same tree".
           await traverseFileTree(entry);
         }
       }
@@ -1018,9 +1023,34 @@ function initUploadZone() {
     }
   });
 
+  btnFiles?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    fileInput.click();
+  });
+
+  btnFolders?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    folderInput.click();
+  });
+
   fileInput.addEventListener('change', async () => {
     await handleFileUpload(Array.from(fileInput.files));
     fileInput.value = '';
+  });
+
+  folderInput?.addEventListener('change', async () => {
+    const files = Array.from(folderInput.files);
+    // folderInput files have webkitRelativePath like "FolderName/Subfolder/file.ext"
+    files.forEach(f => {
+      if (f.webkitRelativePath) {
+        // We want the path excluding the filename itself
+        const parts = f.webkitRelativePath.split('/');
+        parts.pop(); // remove filename
+        f.customPath = parts.join('/');
+      }
+    });
+    await handleFileUpload(files);
+    folderInput.value = '';
   });
 
   // ── Toolbar: View toggles ──
