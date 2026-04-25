@@ -393,7 +393,7 @@ function openRFQPreviewModal(rfq) {
   let currentPartIndex = 0;
 
   const modalHtml = `
-    <div id="rfq-preview-modal" style="position:fixed;inset:0;background:rgba(15,23,42,0.8);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;">
+    <div id="rfq-preview-modal" style="position:fixed;inset:0;background:rgba(15,23,42,0.8);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center; font-family: 'Inter', sans-serif;">
       <div style="background:#fff;border-radius:16px;width:1100px;max-width:95vw;height:700px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
         
         <!-- Top Summary Bar -->

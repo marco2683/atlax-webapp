@@ -101,7 +101,9 @@ function createPartPanelHTML(partIdx) {
             <div class="upload-formats" style="margin-top: 4px;">
               <p>PDF · DWG · DXF · PNG · JPG</p>
             </div>
-        </div>
+          </div>
+        </div> <!-- Closes rfq-upload-col -->
+
         <div class="rfq-fields-col" style="display: flex; flex-direction: column; gap: 12px; height: 100%;">
           <!-- Row 1: Technology & Quantity -->
           <div class="rfq-fields-grid" style="grid-template-columns: 2fr 1fr; margin-bottom: 0; padding: 12px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-lg);">
@@ -202,13 +204,12 @@ function createPartPanelHTML(partIdx) {
           <div class="rfq-custom-details"><label>Additional Notes & Requirements</label>
             <textarea class="rfq-custom-notes" data-part="${partIdx}" rows="3" placeholder="Surface finish details, coating specs, heat treatments, certifications, special requirements..."></textarea>
           </div>
-        </div>
-        </div> <!-- Closes rfq-upload-col -->
-        
-        <div class="rfq-results-col" style="display: flex; flex-direction: column; gap: 16px;">
-          <!-- Geometry Analysis Placeholder (visible BEFORE upload) -->
-          <div class="rfq-results-placeholder" data-part="${partIdx}" style="border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: var(--radius-lg); min-height: 120px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--color-steel-500); background: rgba(0,0,0,0.2);">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        </div> <!-- Closes rfq-fields-col -->
+      </div> <!-- Closes rfq-top-row -->
+
+      <!-- Geometry Analysis Placeholder (visible BEFORE upload) -->
+      <div class="rfq-results-placeholder" data-part="${partIdx}" style="border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: var(--radius-lg); margin-top: 16px; min-height: 120px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--color-steel-500); background: rgba(0,0,0,0.2);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
               <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
               <line x1="12" y1="22.08" x2="12" y2="12"></line>
@@ -233,9 +234,8 @@ function createPartPanelHTML(partIdx) {
                 <div class="rfq-stat"><span class="rfq-stat__label">Dimensions</span><span class="rfq-stat__value" data-stat="dimensions">—</span></div>
               </div>
             </div>
+            </div>
           </div>
-        </div>
-      </div>
     </div>`;
 }
 
@@ -943,6 +943,7 @@ async function handleFiles(fileList, partIdx) {
       ]);
       
       state.analysis = analysis;
+      state.file = parseable;
 
       const bb = analysis.boundingBox;
       setStat(panel, 'bbox', `${bb.x}×${bb.y}×${bb.z}`);
@@ -1011,7 +1012,7 @@ function calculateAndDisplayQuote() {
   const partName = getField(activePanel, '.rfq-part-name') || `Part ${partIdx + 1}`;
 
   // Store/update in accumulated quotes
-  quotedParts.set(partIdx, { partName, quote, config });
+  quotedParts.set(partIdx, { partName, quote, config, file: state.file });
 
   // Re-render the result panel
   renderQuoteResult();
