@@ -1606,7 +1606,7 @@ body.theme-light .admin-toolbar-search {
 .admin-toolbar-search input {
   background: transparent;
   border: none;
-  color: #fff;
+  color: #0f172a;
   width: 100%;
   font-family: inherit;
   font-size: 14px;
@@ -1619,6 +1619,10 @@ body.theme-light .admin-toolbar-search {
 
 body.theme-light .admin-toolbar-search input {
   color: var(--color-slate-900);
+}
+
+body:not(.theme-light) .admin-toolbar-search input {
+  color: #fff;
 }
 
 body.theme-light .admin-toolbar-search input::placeholder {

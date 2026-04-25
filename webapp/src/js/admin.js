@@ -298,6 +298,19 @@ document.addEventListener('DOMContentLoaded', async () => {
           --dash-highlight: #0284c7;
         }
 
+        .admin-toolbar-search input {
+          background: transparent;
+          border: none;
+          color: white;
+          width: 100%;
+          font-family: inherit;
+          font-size: 14px;
+          outline: none;
+        }
+        body.theme-light .admin-toolbar-search input {
+          color: var(--color-slate-900);
+        }
+
         .admin-dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; margin-bottom: 40px; }
         .admin-dash-section { background: var(--dash-bg); border: 1px solid var(--dash-border); border-radius: 8px; padding: 24px; display: flex; flex-direction: column; gap: 16px; min-width:0; max-height: 450px; overflow-y: auto; transition: all 0.3s; position: relative; }
         body.theme-light .admin-dash-section { box-shadow: 0 4px 6px rgba(0,0,0,0.04); }
@@ -3813,19 +3826,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const rows = filtered.map(c => {
-      const tier = c.tier || 'basic';
-      const tierClass = tier.toLowerCase() === 'professional' ? 'tag-tier1' : tier.toLowerCase() === 'enterprise' ? 'tag-oem' : 'tag-tier2';
-      const dateJoined = new Date(c.created_at || Date.now()).toLocaleDateString();
+      const role = c.role || (c.designer_status && c.designer_status !== 'none' ? 'designer' : 'user');
+      const roleColors = {
+        designer:     { bg: '#ede9fe', color: '#6d28d9', border: '#c4b5fd' },
+        entrepreneur: { bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
+        user:         { bg: '#f1f5f9', color: '#475569', border: '#e2e8f0' },
+      };
+      const rc = roleColors[role] || roleColors.user;
+      const dateJoined = new Date(c.created_at || Date.now()).toLocaleDateString('en-GB', { day:'2-digit', month:'2-digit', year:'numeric' });
+      const signupEmail = c.email || '—';
 
       return `
       <tr>
         <td>
           <strong>${c.first_name || ''} ${c.last_name || ''}</strong><br>
-          <span style="font-size:12px; color:var(--color-steel-400);">${c.email || '—'}</span>
+          <span style="font-size:12px; color:var(--color-steel-400);">${signupEmail}</span>
         </td>
+        <td><a href="mailto:${c.email}" style="color:#3b82f6;font-size:13px;font-weight:500;text-decoration:none;">${signupEmail}</a></td>
         <td>${c.company || '—'}</td>
         <td>${c.job_title || '—'}</td>
-        <td><span class="tag-segment ${tierClass}" style="text-transform: capitalize;">${tier}</span></td>
+        <td><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:capitalize;background:${rc.bg};color:${rc.color};border:1px solid ${rc.border};">${role}</span></td>
         <td>${dateJoined}</td>
         <td>${c.marketing_opt_in ? '<span class="tag-segment tag-tier1" style="background: rgba(14, 165, 233, 0.1); color: var(--color-electric); border: 1px solid rgba(14, 165, 233, 0.3);">Opted In</span>' : '<span style="color: var(--color-steel-400); font-size: 12px;">No</span>'}</td>
         <td class="admin-table-actions">
@@ -3847,14 +3867,15 @@ document.addEventListener('DOMContentLoaded', async () => {
           <table class="admin-table">
             <thead><tr>
               <th>Customer</th>
+              <th>Email</th>
               <th>Company</th>
               <th>Job Title</th>
-              <th>Account Tier</th>
+              <th>Role</th>
               <th>Join Date</th>
               <th>Marketing</th>
               <th>Actions</th>
             </tr></thead>
-            <tbody>${rows || '<tr><td colspan="6" style="text-align:center;padding:40px;">No customers found.</td></tr>'}</tbody>
+            <tbody>${rows || '<tr><td colspan="8" style="text-align:center;padding:40px;">No customers found.</td></tr>'}</tbody>
           </table>
         </div>
     `;
@@ -3887,6 +3908,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const dateJoined = cust.created_at ? new Date(cust.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
     const isDesigner = cust.designer_status && cust.designer_status !== 'none';
     const dsColor = cust.designer_status === 'approved' ? '#059669' : cust.designer_status === 'pending' ? '#d97706' : cust.designer_status === 'rejected' ? '#dc2626' : '#64748b';
+    const role = cust.role || (isDesigner ? 'designer' : 'user');
     const dsLabel = (cust.designer_status || 'none').charAt(0).toUpperCase() + (cust.designer_status || 'none').slice(1);
 
     // Helper for field rows
@@ -3904,7 +3926,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
             <div style="display:flex;align-items:center;gap:12px;">
               ${isDesigner ? `<span style="background:${dsColor}15;color:${dsColor};border:1px solid ${dsColor}40;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;">Designer: ${dsLabel}</span>` : ''}
-              <span style="background:${cust.tier === 'professional' ? '#dbeafe' : cust.tier === 'enterprise' ? '#fef3c7' : '#f1f5f9'};color:${cust.tier === 'professional' ? '#1d4ed8' : cust.tier === 'enterprise' ? '#92400e' : '#475569'};padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;">${cust.tier || 'basic'}</span>
+              <span style="background:${role === 'designer' ? '#ede9fe' : role === 'entrepreneur' ? '#fef3c7' : '#f1f5f9'};color:${role === 'designer' ? '#6d28d9' : role === 'entrepreneur' ? '#92400e' : '#475569'};padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;border:1px solid ${role === 'designer' ? '#c4b5fd' : role === 'entrepreneur' ? '#fde68a' : '#e2e8f0'}">${role}</span>
               <button onclick="document.getElementById('admin-cust-modal').remove()" style="background:none;border:none;cursor:pointer;font-size:22px;color:#94a3b8;line-height:1;">×</button>
             </div>
           </div>
