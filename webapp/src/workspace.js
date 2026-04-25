@@ -618,7 +618,7 @@ function injectPaymentPanel(rfq, data, modal) {
   panel.querySelector('#rfq-pay-stripe-btn')?.addEventListener('click', async () => {
     const btn = panel.querySelector('#rfq-pay-stripe-btn');
     btn.disabled = true;
-    btn.textContent = 'Redirecting to Stripe…';
+    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Redirecting to Stripe…`;
     try {
       const { supabase } = await import('./js/utils/supabaseClient.js');
       const { data: sessionData } = await supabase.auth.getSession();
@@ -635,19 +635,36 @@ function injectPaymentPanel(rfq, data, modal) {
           userId: user?.id || '',
         }),
       });
+
+      // Guard: non-JSON or empty response (e.g. local dev without netlify dev)
+      const contentType = res.headers.get('content-type') || '';
+      if (!res.ok || !contentType.includes('application/json')) {
+        const text = await res.text().catch(() => '');
+        if (window.location.hostname === 'localhost') {
+          alert('ℹ️ Stripe checkout requires the deployed site or `netlify dev`.\n\nThis function is not available in the local Vite dev server.\n\nPlease test on the live site at atlasdt.com.');
+        } else {
+          alert('Payment service error. Please try again or contact support.\n\nDetails: ' + (text.slice(0,200) || `HTTP ${res.status}`));
+        }
+        btn.disabled = false;
+        btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Pay ${amountFmt} by Card (Stripe)`;
+        return;
+      }
+
       const result = await res.json();
       if (result.url) {
         window.location.href = result.url;
       } else {
         alert('Could not initiate payment: ' + (result.error || 'Unknown error'));
         btn.disabled = false;
-        btn.textContent = `Pay ${amountFmt} by Card (Stripe)`;
+        btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Pay ${amountFmt} by Card (Stripe)`;
       }
     } catch (err) {
       alert('Payment error: ' + err.message);
       btn.disabled = false;
+      btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Pay ${amountFmt} by Card (Stripe)`;
     }
   });
+
 
   // Bank transfer toggle
   panel.querySelector('#rfq-pay-bank-btn')?.addEventListener('click', () => {
