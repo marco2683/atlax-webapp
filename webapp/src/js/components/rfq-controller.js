@@ -21,6 +21,7 @@ import JSZip from 'jszip';
 let partCount = 1;
 let currentMode = 'detailed'; // Default to 'detailed' (bulk is now in Project Quote)
 const partState = new Map();
+let hasQuotedOnce = false;
 
 // Accumulated quotes for the right panel
 const quotedParts = new Map(); // partIdx → { partName, quote, config }
@@ -274,6 +275,19 @@ export function initRFQController() {
   wirePartPanel(0);
   populateMaterialDropdown(0, 'cnc');
   populateFinishDropdown(0, 'cnc');
+
+  // Real-time recalculation after first quote
+  panels.addEventListener('change', (e) => {
+    if (hasQuotedOnce && e.target.matches('.rfq-process, .rfq-material, .rfq-finish, .rfq-lead-time, .rfq-tooling-type, .rfq-tooling-cavities, .rfq-quantity, .rfq-other-tech, .rfq-other-material, .rfq-color, .rfq-threads, .rfq-tolerance')) {
+      calculateAndDisplayQuote();
+    }
+  });
+
+  panels.addEventListener('input', (e) => {
+    if (hasQuotedOnce && e.target.matches('.rfq-quantity, .rfq-other-tech, .rfq-other-material, .rfq-color, .rfq-threads, .rfq-tolerance')) {
+      calculateAndDisplayQuote();
+    }
+  });
 
   // Wire the "clear all" button in the quote result panel
   document.getElementById('rfq-clear-all-parts')?.addEventListener('click', () => {
@@ -956,6 +970,7 @@ async function handleFiles(fileList, partIdx) {
 }
 
 function calculateAndDisplayQuote() {
+  hasQuotedOnce = true;
   const activePanel = document.querySelector('.rfq-part-panel.active');
   if (!activePanel) return;
 
