@@ -1761,9 +1761,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       const requesterEmail = profile.email || '';
       const projectName = data.project_name || 'Unnamed Project';
       const service = serviceLabels[data.service] || data.service || '—';
-      const qty = data.quantity || '—';
+      const qty = data.estimated_quantity || data.quantity || '—';
       const timeline = data.timeline || '—';
       const fileCount = (data.files || []).length;
+      
+      const tech = data.type === 'instant' ? (data.parts && data.parts.length > 0 ? data.parts[0].process + (data.parts.length > 1 ? ` (+${data.parts.length-1})` : '') : 'Multiple') : '—';
+      const price = data.total_price ? `$${data.total_price.toLocaleString(undefined, {minimumFractionDigits: 2})}` : '—';
       const date = new Date(rfq.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       const currentStatus = rfq.status || 'submitted';
 
@@ -1783,7 +1786,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div style="color:#94a3b8; font-size:11px;">${requesterEmail}</div>
           </td>
           <td style="font-size:12px; color:#64748b;">${service}</td>
+          <td style="font-size:12px; color:#64748b;">${tech}</td>
           <td style="font-size:12px; color:#64748b; text-align:center;">${qty}</td>
+          <td style="font-size:12px; color:#10b981; text-align:right; font-weight:600;">${price}</td>
           <td style="font-size:12px; color:#64748b; text-align:center;">${fileCount}</td>
           <td>
             <select class="admin-rfq-status-select" data-rfq-id="${rfq.id}"
@@ -1815,7 +1820,9 @@ document.addEventListener('DOMContentLoaded', async () => {
               <th>Project Name</th>
               <th>Requester</th>
               <th>Service</th>
+              <th>Tech</th>
               <th style="text-align:center;">Qty</th>
+              <th style="text-align:right;">Price</th>
               <th style="text-align:center;">Files</th>
               <th>Status</th>
               <th>Date</th>
