@@ -9,7 +9,7 @@ exports.handler = async (event, context) => {
     const body = JSON.parse(event.body);
     const { email, userId, type, cover_letter, name } = body;
 
-    const validTypes = ['designer_application', 'designer_approved', 'designer_rejected', 'project_rfq', 'rfq_removed', 'rfq_payment'];
+    const validTypes = ['designer_application', 'designer_approved', 'designer_rejected', 'project_rfq', 'rfq_removed', 'rfq_payment', 'rfq_confirmed', 'rfq_rejected'];
     if (!validTypes.includes(type)) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Invalid application type' }) };
     }
@@ -240,6 +240,108 @@ exports.handler = async (event, context) => {
             <p style="text-align:center;font-size:11px;color:#94a3b8;">AtlasDT Manufacturing Hub &bull; Questions? <a href="mailto:info@atlasdt.com" style="color:#0ea5e9;">info@atlasdt.com</a></p>
           </div>
         `;
+    }
+
+    // ── rfq_confirmed ──────────────────────────────────────────
+    if (type === 'rfq_confirmed') {
+      const { projectName, name: clientName, confirmedPrice, bankRef } = body;
+      const priceFmt = `$${Number(confirmedPrice || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+      toEmailAddr = [email, 'info@atlasdt.com'];
+      subject = `Quote Accepted — ${projectName || bankRef}`;
+      htmlContent = `
+        <div style="font-family:'Inter',sans-serif;max-width:620px;margin:0 auto;padding:32px 24px;color:#0f172a;">
+          <div style="text-align:center;margin-bottom:32px;">
+            <img src="${logoUrl}" alt="AtlasDT" style="height:36px;" />
+          </div>
+          <div style="background:linear-gradient(135deg,#1d4ed8,#1e40af);border-radius:16px;padding:32px;text-align:center;margin-bottom:32px;">
+            <div style="font-size:48px;margin-bottom:12px;">🎉</div>
+            <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;">Your Quote Has Been Accepted</h1>
+            <div style="color:#bfdbfe;font-size:14px;margin-top:8px;">Payment is now awaiting to confirm your order</div>
+          </div>
+          <p style="font-size:15px;line-height:1.7;color:#334155;margin-bottom:24px;">
+            Dear ${clientName || 'Valued Customer'},<br/><br/>
+            We're pleased to inform you that we have reviewed and <strong>accepted your quotation request</strong> for the project listed below.
+            Your order is now confirmed at the price indicated — please proceed with payment to move your project into production.
+          </p>
+          <table style="width:100%;border-collapse:collapse;background:#f8fafc;border-radius:12px;overflow:hidden;margin-bottom:28px;">
+            <tr style="border-bottom:1px solid #e2e8f0;">
+              <td style="padding:14px 16px;font-weight:600;color:#64748b;font-size:13px;">Project</td>
+              <td style="padding:14px 16px;font-weight:700;color:#0f172a;font-size:13px;">${projectName || '—'}</td>
+            </tr>
+            <tr style="border-bottom:1px solid #e2e8f0;">
+              <td style="padding:14px 16px;font-weight:600;color:#64748b;font-size:13px;">Reference</td>
+              <td style="padding:14px 16px;font-weight:700;color:#0f172a;font-size:13px;font-family:monospace;letter-spacing:0.5px;">${bankRef || '—'}</td>
+            </tr>
+            <tr>
+              <td style="padding:14px 16px;font-weight:600;color:#64748b;font-size:13px;">Confirmed Total</td>
+              <td style="padding:14px 16px;font-weight:800;color:#1d4ed8;font-size:15px;">${priceFmt} AUD</td>
+            </tr>
+          </table>
+          <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px;margin-bottom:28px;font-size:13px;color:#1d4ed8;line-height:1.6;">
+            <strong>Next Step — Payment</strong><br/>
+            Please log in to your AtlasDT workspace to choose your preferred payment method (Stripe or Bank Transfer).
+            Use reference <strong>${bankRef}</strong> if paying by bank transfer.
+          </div>
+          <div style="text-align:center;margin-bottom:28px;">
+            <a href="https://www.atlasdt.com/workspace.html?tab=rfqs" style="display:inline-block;background:#1d4ed8;color:#fff;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;font-size:14px;">View &amp; Pay Now</a>
+          </div>
+          <p style="font-size:14px;line-height:1.7;color:#64748b;margin-bottom:8px;">
+            Questions about your quote? Reply to this email or contact us at
+            <a href="mailto:info@atlasdt.com" style="color:#1d4ed8;">info@atlasdt.com</a> quoting reference <strong>${bankRef}</strong>.
+          </p>
+          <p style="font-size:14px;color:#64748b;">We look forward to manufacturing your project!<br/>— The AtlasDT Team</p>
+          <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;"/>
+          <p style="text-align:center;font-size:11px;color:#94a3b8;">AtlasDT Manufacturing Hub &bull; <a href="https://www.atlasdt.com" style="color:#0ea5e9;">atlasdt.com</a></p>
+        </div>
+      `;
+    }
+
+    // ── rfq_rejected ──────────────────────────────────────────
+    if (type === 'rfq_rejected') {
+      const { projectName, name: clientName, bankRef, reasons } = body;
+      const bulletList = (reasons || ['No specific reason provided']).map(r =>
+        `<li style="margin-bottom:6px;">${r}</li>`
+      ).join('');
+      toEmailAddr = [email, 'info@atlasdt.com'];
+      subject = `Update on Your Quote — ${projectName || bankRef}`;
+      htmlContent = `
+        <div style="font-family:'Inter',sans-serif;max-width:620px;margin:0 auto;padding:32px 24px;color:#0f172a;">
+          <div style="text-align:center;margin-bottom:32px;">
+            <img src="${logoUrl}" alt="AtlasDT" style="height:36px;" />
+          </div>
+          <div style="background:linear-gradient(135deg,#dc2626,#b91c1c);border-radius:16px;padding:32px;text-align:center;margin-bottom:32px;">
+            <div style="font-size:48px;margin-bottom:12px;">📋</div>
+            <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;">Quotation Not Accepted</h1>
+            <div style="color:#fecaca;font-size:14px;margin-top:8px;">We've reviewed your request and have an update for you</div>
+          </div>
+          <p style="font-size:15px;line-height:1.7;color:#334155;margin-bottom:24px;">
+            Dear ${clientName || 'Valued Customer'},<br/><br/>
+            Thank you for reaching out to AtlasDT. After a thorough review of your quotation request for <strong>${projectName || 'your project'}</strong>,
+            we are unfortunately unable to proceed with this order at this time.
+          </p>
+          <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:16px 20px;margin-bottom:28px;">
+            <div style="font-size:13px;font-weight:700;color:#991b1b;margin-bottom:10px;">Reason(s) for non-acceptance:</div>
+            <ul style="margin:0;padding-left:18px;font-size:13px;color:#7f1d1d;line-height:1.8;">
+              ${bulletList}
+            </ul>
+          </div>
+          <p style="font-size:14px;line-height:1.7;color:#334155;margin-bottom:20px;">
+            We encourage you to revisit your requirements in light of the above and resubmit a revised quote.
+            Our team is always happy to assist in clarifying specifications before submission.
+          </p>
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:28px;font-size:13px;color:#475569;line-height:1.6;">
+            For any specific questions about this decision, please contact us at
+            <a href="mailto:info@atlasdt.com" style="color:#1d4ed8;">info@atlasdt.com</a>
+            quoting your reference number: <strong style="font-family:monospace;">${bankRef || '—'}</strong>
+          </div>
+          <div style="text-align:center;margin-bottom:28px;">
+            <a href="https://www.atlasdt.com" style="display:inline-block;background:#0f172a;color:#fff;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;font-size:14px;">Submit a New Quote</a>
+          </div>
+          <p style="font-size:14px;color:#64748b;">Thank you for considering AtlasDT. We hope to work with you on a future project.<br/>— The AtlasDT Team</p>
+          <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;"/>
+          <p style="text-align:center;font-size:11px;color:#94a3b8;">AtlasDT Manufacturing Hub &bull; <a href="https://www.atlasdt.com" style="color:#0ea5e9;">atlasdt.com</a></p>
+        </div>
+      `;
     }
 
     const resend = new Resend(RESEND_API_KEY);

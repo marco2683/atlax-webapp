@@ -2090,11 +2090,30 @@ document.addEventListener('DOMContentLoaded', async () => {
               Confirm to Client
             </button>
           </div>
-          <button id="rfq-remove-btn" style="margin-left:auto; padding:7px 14px; background:#fee2e2; color:#ef4444; border:1px solid #fecaca; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-            Remove
-          </button>
+          <!-- Reject + Delete on the right -->
+          <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+            <button id="rfq-reject-btn" style="padding:7px 14px; background:#fff7ed; color:#ea580c; border:1px solid #fed7aa; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              Reject Quote
+            </button>
+            <button id="rfq-delete-btn" style="padding:7px 14px; background:#fee2e2; color:#dc2626; border:1px solid #fecaca; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;" title="Permanently delete from DB — dev use">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Delete
+            </button>
+          </div>
         </div>
+
+        <!-- Reject reason panel (hidden by default) -->
+        <div id="rfq-reject-panel" style="display:none; padding:12px 28px; background:#fff7ed; border-bottom:2px solid #fed7aa;">
+          <div style="font-size:12px; font-weight:700; color:#9a3412; margin-bottom:6px;">Rejection Reason(s) — will be emailed to the client as bullet points</div>
+          <textarea id="rfq-reject-reason" rows="3" placeholder="e.g. Insufficient technical specification&#10;Quantity below minimum order&#10;Material not available in requested tolerance"
+            style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #fed7aa; font-size:13px; font-family:inherit; resize:vertical; background:#fff; color:#0f172a; outline:none;"></textarea>
+          <div style="display:flex; gap:8px; margin-top:8px; justify-content:flex-end;">
+            <button id="rfq-reject-cancel-btn" style="padding:7px 14px; background:#fff; border:1px solid #e2e8f0; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:#64748b;">Cancel</button>
+            <button id="rfq-reject-confirm-btn" style="padding:7px 16px; background:#ea580c; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;">Send Rejection &amp; Notify Client</button>
+          </div>
+        </div>
+
 
         <!-- ── Body (scrollable) ── -->
         <div style="flex:1; overflow-y:auto; padding:28px; display:grid; grid-template-columns:1fr 1fr; gap:24px;">
@@ -2353,6 +2372,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Refresh nav badge count
         updateNavBadges();
 
+        // Send confirmation email to client
+        const bankRef = `ADT-${rfqId.slice(0,8).toUpperCase()}`;
+        await fetch('/.netlify/functions/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'rfq_confirmed',
+            email: requesterEmail,
+            name: requesterName,
+            projectName,
+            confirmedPrice,
+            bankRef,
+          })
+        }).catch(e => console.warn('Confirmation email skipped:', e));
+
       } catch (err) {
         alert('Failed to confirm: ' + err.message);
         btn.disabled = false;
@@ -2360,61 +2394,109 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
 
-    // Remove RFQ
-    const removeBtn = modal.querySelector('#rfq-remove-btn');
-    if (removeBtn) {
-      removeBtn.addEventListener('click', async () => {
-        const reason = prompt("Enter a reason for removing this RFQ. This will be sent to the client:");
-        if (reason === null) return; // cancelled
-        if (!reason.trim()) {
-          alert("A reason is required to notify the client.");
-          return;
-        }
+    // ── Reject Quote ──────────────────────────────────────────
+    const rejectBtn    = modal.querySelector('#rfq-reject-btn');
+    const rejectPanel  = modal.querySelector('#rfq-reject-panel');
+    const rejectCancel = modal.querySelector('#rfq-reject-cancel-btn');
+    const rejectSend   = modal.querySelector('#rfq-reject-confirm-btn');
 
-        const confirmRemove = confirm("Are you sure? This will delete the RFQ and all associated files from storage.");
-        if (!confirmRemove) return;
-        
-        removeBtn.disabled = true;
-        removeBtn.textContent = 'Removing...';
-        
-        try {
-          // 1. Delete files from storage
-          const filesByBucket = {};
-          files.forEach(f => {
-             const path = f.storage_path || f.path;
-             if (!path) return;
-             const b = f.bucket || 'rfq-uploads';
-             if (!filesByBucket[b]) filesByBucket[b] = [];
-             filesByBucket[b].push(path);
-          });
-          
-          await Promise.all(Object.entries(filesByBucket).map(([bucketName, paths]) => 
-             supabase.storage.from(bucketName).remove(paths)
-          ));
+    rejectBtn?.addEventListener('click', () => {
+      rejectPanel.style.display = rejectPanel.style.display === 'none' ? 'block' : 'none';
+      modal.querySelector('#rfq-reject-reason')?.focus();
+    });
+    rejectCancel?.addEventListener('click', () => {
+      rejectPanel.style.display = 'none';
+      modal.querySelector('#rfq-reject-reason').value = '';
+    });
 
-          // 2. Delete RFQ record
-          const { error: deleteError } = await supabase.from('rfq_history').delete().eq('id', rfq.id);
-          if (deleteError) throw deleteError;
+    rejectSend?.addEventListener('click', async () => {
+      const rawReason = modal.querySelector('#rfq-reject-reason').value.trim();
+      if (!rawReason) {
+        alert('Please enter at least one reason before sending.');
+        return;
+      }
 
-          // 3. Send email to client (mocked or actual)
-          await fetch('/.netlify/functions/send-email', {
-            method: 'POST',
-            body: JSON.stringify({ type: 'rfq_removed', email: requesterEmail, reason, projectName })
-          }).catch(e => console.warn('Email send skipped locally', e));
+      rejectSend.disabled = true;
+      rejectSend.textContent = 'Sending…';
 
-          alert("RFQ removed successfully.");
-          modal.remove();
-          
-          // remove from DOM
-          const row = contentRouting.querySelector(`tr[data-rfq-id="${rfq.id}"]`);
-          if (row) row.remove();
-        } catch (err) {
-          alert("Failed to remove: " + err.message);
-          removeBtn.disabled = false;
-          removeBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Remove RFQ';
-        }
-      });
-    }
+      const bankRef = `ADT-${rfq.id.slice(0,8).toUpperCase()}`;
+      // Convert each non-empty line into a bullet
+      const reasonLines = rawReason.split('\n').map(l => l.trim()).filter(Boolean);
+
+      try {
+        // Update DB status to rejected
+        const { error } = await supabase
+          .from('rfq_history')
+          .update({ status: 'rejected', rfq_data: { ...data, rejected_reason: rawReason } })
+          .eq('id', rfq.id);
+        if (error) throw error;
+
+        // Send rejection email
+        await fetch('/.netlify/functions/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'rfq_rejected',
+            email: requesterEmail,
+            name: requesterName,
+            projectName,
+            bankRef,
+            reasons: reasonLines,
+          })
+        }).catch(e => console.warn('Rejection email skipped:', e));
+
+        rejectPanel.style.display = 'none';
+        rejectSend.textContent = '✓ Rejected & Notified';
+        rejectSend.style.background = '#64748b';
+
+        // Sync UI
+        const statusSel = modal.querySelector('#rfq-modal-status');
+        if (statusSel) { /* rejected not in dropdown, just show visually */ }
+        updateNavBadges();
+
+      } catch (err) {
+        alert('Failed to reject: ' + err.message);
+        rejectSend.disabled = false;
+        rejectSend.textContent = 'Send Rejection & Notify Client';
+      }
+    });
+
+    // ── Delete (permanent, no email) ──────────────────────────
+    modal.querySelector('#rfq-delete-btn')?.addEventListener('click', async () => {
+      if (!confirm(`⚠️ PERMANENTLY DELETE this RFQ?\n\n"${projectName}"\n\nThis removes all files and the DB record. No email will be sent. This cannot be undone.`)) return;
+
+      const deleteBtn = modal.querySelector('#rfq-delete-btn');
+      deleteBtn.disabled = true;
+      deleteBtn.textContent = 'Deleting…';
+
+      try {
+        // 1. Delete files from storage
+        const filesByBucket = {};
+        files.forEach(f => {
+          const path = f.storage_path || f.path;
+          if (!path) return;
+          const b = f.bucket || 'rfq-uploads';
+          if (!filesByBucket[b]) filesByBucket[b] = [];
+          filesByBucket[b].push(path);
+        });
+        await Promise.all(Object.entries(filesByBucket).map(([b, paths]) =>
+          supabase.storage.from(b).remove(paths)
+        ));
+
+        // 2. Delete DB record
+        const { error } = await supabase.from('rfq_history').delete().eq('id', rfq.id);
+        if (error) throw error;
+
+        modal.remove();
+        contentRouting.querySelector(`tr[data-rfq-id="${rfq.id}"]`)?.remove();
+        updateNavBadges();
+
+      } catch (err) {
+        alert('Delete failed: ' + err.message);
+        deleteBtn.disabled = false;
+        deleteBtn.textContent = 'Delete';
+      }
+    });
 
     // Download All
     const downloadAllBtn = modal.querySelector('#rfq-download-all-btn');
