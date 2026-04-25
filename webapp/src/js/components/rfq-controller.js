@@ -1280,6 +1280,25 @@ async function handleBulkSubmit() {
           storage_path: storagePath,
           bucket: 'rfq-uploads'
         });
+
+        // --- MICROSOFT SHAREPOINT SYNC ---
+        try {
+          const { data: urlData } = supabase.storage.from('rfq-uploads').getPublicUrl(storagePath);
+          if (urlData && urlData.publicUrl) {
+            fetch('/.netlify/functions/webhook-sharepoint', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                file_name: displayName,
+                file_url: urlData.publicUrl,
+                folder_path: `RFQs/${projName}`,
+                metadata: { rfqId, user: user.email }
+              })
+            }).catch(e => console.warn('SharePoint sync failed (non-blocking):', e));
+          }
+        } catch (spErr) {
+          console.warn('Could not dispatch SharePoint sync:', spErr);
+        }
       }
     }
 
