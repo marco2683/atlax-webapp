@@ -195,10 +195,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // RFQ submitted badge — lightweight count query
     try {
-      const { count } = await supabase
-        .from('rfq_history')
-        .select('id', { count: 'exact', head: true })
-        .eq('status', 'submitted');
+      let count = 0;
+      const res = await fetch('/.netlify/functions/admin-rfqs?action=count&status=submitted');
+      if (res.ok) {
+        const data = await res.json();
+        count = data.count || 0;
+      }
       const rfqTab = document.querySelector('.admin-nav-item[data-tab="rfqs"]');
       if (rfqTab) {
         // Preserve the original text (strip any previous badge)
@@ -1748,11 +1750,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Fetch all RFQs
     let rfqs = [];
     try {
-      const { data, error } = await supabase
-        .from('rfq_history')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (error) throw error;
+      const res = await fetch('/.netlify/functions/admin-rfqs');
+      if (!res.ok) {
+        const errData = await res.json().catch(()=>({}));
+        throw new Error(errData.error || 'Failed to fetch RFQs via Netlify function');
+      }
+      const data = await res.json();
       rfqs = data || [];
     } catch (e) {
       console.error('[Admin RFQ] Fetch error:', e);
@@ -1920,11 +1923,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         const rfqId = e.target.dataset.rfqId;
         const newStatus = e.target.value;
         try {
-          const { error } = await supabase
-            .from('rfq_history')
-            .update({ status: newStatus })
-            .eq('id', rfqId);
-          if (error) throw error;
+          const res = await fetch('/.netlify/functions/admin-rfqs', {
+            method: 'PATCH',
+            body: JSON.stringify({ id: rfqId, updates: { status: newStatus } })
+          });
+          if (!res.ok) {
+            const errData = await res.json().catch(()=>({}));
+            throw new Error(errData.error || 'Failed to update RFQ status');
+          }
 
           // Update visual styling
           const opt = statusOptions.find(s => s.value === newStatus);
@@ -2247,11 +2253,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         const rfqId = e.target.dataset.rfqId;
         const newStatus = e.target.value;
         try {
-          const { error } = await supabase
-            .from('rfq_history')
-            .update({ status: newStatus })
-            .eq('id', rfqId);
-          if (error) throw error;
+          const res = await fetch('/.netlify/functions/admin-rfqs', {
+            method: 'PATCH',
+            body: JSON.stringify({ id: rfqId, updates: { status: newStatus } })
+          });
+          if (!res.ok) {
+            const errData = await res.json().catch(()=>({}));
+            throw new Error(errData.error || 'Failed to update RFQ status');
+          }
           // Update the table row's select too
           const tableSelect = contentRouting.querySelector(`.admin-rfq-status-select[data-rfq-id="${rfqId}"]`);
           if (tableSelect) tableSelect.value = newStatus;
@@ -2278,11 +2287,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         const updatedData = { ...data, assigned_to_email: email, assigned_to_name: name };
 
         try {
-          const { error } = await supabase
-            .from('rfq_history')
-            .update({ rfq_data: updatedData })
-            .eq('id', rfqId);
-          if (error) throw error;
+          const res = await fetch('/.netlify/functions/admin-rfqs', {
+            method: 'PATCH',
+            body: JSON.stringify({ id: rfqId, updates: { rfq_data: updatedData } })
+          });
+          if (!res.ok) {
+            const errData = await res.json().catch(()=>({}));
+            throw new Error(errData.error || 'Failed to update RFQ data');
+          }
           
           // Visual success feedback
           e.target.style.borderColor = '#22c55e';
@@ -2304,8 +2316,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       const notes = modal.querySelector('#rfq-admin-notes')?.value || '';
       const updatedData = { ...data, admin_notes: notes };
       try {
-        const { error } = await supabase.from('rfq_history').update({ rfq_data: updatedData }).eq('id', rfqId);
-        if (error) throw error;
+        const res = await fetch('/.netlify/functions/admin-rfqs', {
+          method: 'PATCH',
+          body: JSON.stringify({ id: rfqId, updates: { rfq_data: updatedData } })
+        });
+        if (!res.ok) {
+           const errData = await res.json().catch(()=>({}));
+           throw new Error(errData.error || 'Failed to update RFQ data');
+        }
         e.target.textContent = 'Saved ✓';
         setTimeout(() => e.target.textContent = 'Save Notes', 2000);
         const rfqObj = rfqs.find(r => r.id === rfqId);
@@ -2321,8 +2339,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Overwrite total_price so user-side workspace reflects the admin price
       const updatedData = { ...data, admin_final_price: priceVal, total_price: priceVal };
       try {
-        const { error } = await supabase.from('rfq_history').update({ rfq_data: updatedData }).eq('id', rfqId);
-        if (error) throw error;
+        const res = await fetch('/.netlify/functions/admin-rfqs', {
+          method: 'PATCH',
+          body: JSON.stringify({ id: rfqId, updates: { rfq_data: updatedData } })
+        });
+        if (!res.ok) {
+           const errData = await res.json().catch(()=>({}));
+           throw new Error(errData.error || 'Failed to update RFQ data');
+        }
         // Update button
         e.target.textContent = 'Updated ✓';
         setTimeout(() => e.target.textContent = 'Update', 2000);
@@ -2357,11 +2381,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       };
 
       try {
-        const { error } = await supabase
-          .from('rfq_history')
-          .update({ status: 'confirmed', rfq_data: updatedData })
-          .eq('id', rfqId);
-        if (error) throw error;
+        const res = await fetch('/.netlify/functions/admin-rfqs', {
+          method: 'PATCH',
+          body: JSON.stringify({ id: rfqId, updates: { status: 'confirmed', rfq_data: updatedData } })
+        });
+        if (!res.ok) {
+          const errData = await res.json().catch(()=>({}));
+          throw new Error(errData.error || 'Failed to update RFQ data');
+        }
 
         // Update local cache
         const rfqObj = rfqs.find(r => r.id === rfqId);
@@ -2438,11 +2465,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       try {
         // Update DB status to rejected
-        const { error } = await supabase
-          .from('rfq_history')
-          .update({ status: 'rejected', rfq_data: { ...data, rejected_reason: rawReason } })
-          .eq('id', rfq.id);
-        if (error) throw error;
+        const res = await fetch('/.netlify/functions/admin-rfqs', {
+          method: 'PATCH',
+          body: JSON.stringify({ id: rfq.id, updates: { status: 'rejected', rfq_data: { ...data, rejected_reason: rawReason } } })
+        });
+        if (!res.ok) {
+          const errData = await res.json().catch(()=>({}));
+          throw new Error(errData.error || 'Failed to update RFQ data');
+        }
 
         // Send rejection email
         await fetch('/.netlify/functions/send-email', {
@@ -2497,8 +2527,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         ));
 
         // 2. Delete DB record
-        const { error } = await supabase.from('rfq_history').delete().eq('id', rfq.id);
-        if (error) throw error;
+        const res = await fetch(`/.netlify/functions/admin-rfqs?id=${rfq.id}`, { method: 'DELETE' });
+        if (!res.ok) {
+           const errData = await res.json().catch(()=>({}));
+           throw new Error(errData.error || 'Failed to delete RFQ');
+        }
 
         modal.remove();
         contentRouting.querySelector(`tr[data-rfq-id="${rfq.id}"]`)?.remove();
@@ -3901,8 +3934,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let rfqCount = 0;
     try {
-      const { count } = await supabase.from('rfq_history').select('*', { count: 'exact', head: true }).eq('user_id', id);
-      rfqCount = count || 0;
+      const res = await fetch(`/.netlify/functions/admin-rfqs?action=count&userId=${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        rfqCount = data.count || 0;
+      }
     } catch(e) {}
 
     const dateJoined = cust.created_at ? new Date(cust.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
