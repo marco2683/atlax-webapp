@@ -362,7 +362,12 @@ async function loadRFQs() {
     
     const statusVal = rfq.status || data.status || 'submitted';
     const fileCount = (data.files || []).length;
-    const cfg = statusConfig[statusVal] || statusConfig[rfq.status] || { label: statusVal, cssClass: '' };
+    let cfg = statusConfig[statusVal] || statusConfig[rfq.status] || { label: statusVal, cssClass: '' };
+
+    const isBankTransferPending = data.payment_method === 'bank_transfer' && !['paid', 'shipped', 'done', 'cancelled'].includes(rfq.status);
+    if (isBankTransferPending) {
+      cfg = { label: '🏦 Bank Transfer Pending', cssClass: 'ws-status--in_progress' };
+    }
 
     return `
       <tr data-rfq-id="${rfq.id}"
@@ -468,19 +473,24 @@ function openRFQPreviewModal(rfq) {
   }
   let currentPartIndex = 0;
 
-  const isBankTransferPending = data.payment_status === 'bank_transfer_pending' || (rfq.status === 'processing' && data.payment_method === 'bank_transfer');
+  const isBankTransferPending = data.payment_method === 'bank_transfer' && !['paid', 'shipped', 'done', 'cancelled'].includes(rfq.status);
 
   const statusHtml = rfq.status === 'paid' 
-    ? `<span style="font-size:11px; font-weight:600; background:#dcfce7; color:#15803d; padding:4px 8px; border-radius:4px; text-transform:uppercase;">🟢 PAID</span>
-       ${data.paid_at ? `<span style="font-size:11px; color:#15803d; font-weight:600; margin-left:8px;">Paid ${new Date(data.paid_at).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})}</span>` : ''}`
+    ? `<span style="font-size:13px; font-weight:700; background:#dcfce7; color:#15803d; padding:6px 12px; border-radius:6px; text-transform:uppercase;">🟢 PAID</span>
+       ${data.paid_at ? `<span style="font-size:12px; color:#15803d; font-weight:600; margin-left:8px;">Paid ${new Date(data.paid_at).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})}</span>` : ''}`
     : isBankTransferPending
-      ? `<span style="font-size:11px; font-weight:700; background:#fef9c3; color:#854d0e; border:1px solid #fde68a; padding:4px 8px; border-radius:4px; text-transform:uppercase;">🏦 BANK TRANSFER PENDING</span>`
-      : `<span style="font-size:11px; font-weight:600; background:#e0e7ff; color:#4338ca; padding:4px 8px; border-radius:4px; text-transform:uppercase;">Status: ${rfq.status || 'Pending'}</span>`;
+      ? `<span style="font-size:13px; font-weight:800; background:#fef9c3; color:#854d0e; border:1px solid #fde68a; padding:6px 12px; border-radius:6px; text-transform:uppercase; box-shadow: 0 2px 4px rgba(253,230,138,0.5);">🏦 BANK TRANSFER PENDING</span>`
+      : `<span style="font-size:13px; font-weight:700; background:#e0e7ff; color:#4338ca; padding:6px 12px; border-radius:6px; text-transform:uppercase;">Status: ${rfq.status || 'Pending'}</span>`;
 
   const reminderHtml = isBankTransferPending ? `
-    <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:12px 16px; margin-bottom:20px;">
-      <div style="font-size:11px; color:#92400e; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">⚠️ Action Required</div>
-      <div style="font-size:12px; color:#92400e; line-height:1.5;">Please send your bank transfer receipt to <strong>info@atlasdt.com</strong> with reference <strong style="font-family:'SF Mono','Fira Code',monospace;">ADT-${(rfq.id||'').slice(0,8).toUpperCase()}</strong> to begin production.</div>
+    <div style="background:#fffbeb; border:2px solid #f59e0b; border-radius:12px; padding:16px 20px; margin-bottom:24px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);">
+      <div style="font-size:14px; color:#92400e; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Action Required — Upload Receipt
+      </div>
+      <div style="font-size:14px; color:#92400e; line-height:1.6;">
+        You have selected Bank Transfer. Please send your payment receipt to <strong>info@atlasdt.com</strong> and use reference <strong style="font-family:'SF Mono','Fira Code',monospace; background:#fde68a; padding:2px 6px; border-radius:4px;">ADT-${(rfq.id||'').slice(0,8).toUpperCase()}</strong> to begin production.
+      </div>
     </div>
   ` : '';
 
@@ -617,7 +627,7 @@ function openRFQPreviewModal(rfq) {
     const path = p.storage_path || p.path;
     const bucket = p.bucket || 'rfq-uploads';
     if (path) {
-      dlBtn.href = `${import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co'}/storage/v1/object/public/${bucket}/${path}`;
+      dlBtn.href = `${import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co'}/storage/v1/object/public/${bucket}/${path}?download=${encodeURIComponent(fileName)}`;
       dlBtn.download = fileName;
       dlBtn.style.display = 'block';
       

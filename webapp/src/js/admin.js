@@ -2020,7 +2020,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const timeline = timelineLabels[data.target_timeline] || data.target_timeline || timelineLabels[data.timeline] || data.timeline || '—';
     const notes = data.notes || '<span style="color:#94a3b8; font-style:italic;">No notes provided</span>';
     const contactMe = data.contact_me ? '✅ Yes' : '—';
-    const files = data.files || [];
+    const files = data.type === 'instant' ? (data.parts || []) : (data.files || []);
     const date = new Date(rfq.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
     const statusOptions = [
@@ -2043,7 +2043,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const fileSize = f.size ? `${(f.size / 1024).toFixed(1)} KB` : '';
       const bucketName = f.bucket || 'rfq-uploads';
       const downloadUrl = filePath
-        ? `${import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co'}/storage/v1/object/public/${bucketName}/${filePath}`
+        ? `${import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co'}/storage/v1/object/public/${bucketName}/${filePath}?download=${encodeURIComponent(fileName)}`
         : '#';
       return `
         <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:#f8fafc; border-radius:8px; margin-bottom:6px; border:1px solid #e2e8f0;">
