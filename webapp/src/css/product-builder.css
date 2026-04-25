@@ -521,9 +521,15 @@
 
 
 .pb-stage-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px) scale(1.03);
   z-index: 50;
 }
+
+.pb-stage-card[data-color="purple"]:hover { box-shadow: 0 15px 40px rgba(167, 139, 250, 0.2), 0 0 15px rgba(167, 139, 250, 0.3) !important; border-color: rgba(167, 139, 250, 0.4) !important; }
+.pb-stage-card[data-color="blue"]:hover   { box-shadow: 0 15px 40px rgba(96, 165, 250, 0.2), 0 0 15px rgba(96, 165, 250, 0.3) !important; border-color: rgba(96, 165, 250, 0.4) !important; }
+.pb-stage-card[data-color="teal"]:hover   { box-shadow: 0 15px 40px rgba(94, 234, 212, 0.2), 0 0 15px rgba(94, 234, 212, 0.3) !important; border-color: rgba(94, 234, 212, 0.4) !important; }
+.pb-stage-card[data-color="orange"]:hover { box-shadow: 0 15px 40px rgba(251, 146, 60, 0.2), 0 0 15px rgba(251, 146, 60, 0.3) !important; border-color: rgba(251, 146, 60, 0.4) !important; }
+.pb-stage-card[data-color="green"]:hover  { box-shadow: 0 15px 40px rgba(74, 222, 128, 0.2), 0 0 15px rgba(74, 222, 128, 0.3) !important; border-color: rgba(74, 222, 128, 0.4) !important; }
 
 .pb-stage-title-row {
   display: flex;
