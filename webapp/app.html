@@ -90,10 +90,8 @@
     }
 
     /* Prevent flashing of restricted tabs if Basic Tier or unauthenticated */
-    html.is-basic-tier .navbar__menu-item[data-view="suppliers"],
     html.is-basic-tier .navbar__menu-item[data-view="tariff"],
     html.is-basic-tier .navbar__menu-item[data-view="taxonomy"],
-    html:not(.is-authenticated) .navbar__menu-item[data-view="suppliers"],
     html:not(.is-authenticated) .navbar__menu-item[data-view="taxonomy"],
     html:not(.is-authenticated) .navbar__menu-item[data-view="tariff"] {
       display: none !important;

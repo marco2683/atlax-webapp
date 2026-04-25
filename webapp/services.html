@@ -51,14 +51,15 @@
       line-height: 1.6;
     }
 
-    .service-block, .engine-block {
+    .service-block,
+    .engine-block {
       padding: 100px 5%;
       max-width: 1600px;
       margin: 0 auto;
     }
 
-    .service-block + .service-block,
-    .engine-block + .service-block {
+    .service-block+.service-block,
+    .engine-block+.service-block {
       border-top: 1px solid rgba(0, 0, 0, 0.06);
     }
 
@@ -182,7 +183,7 @@
       text-align: center;
       position: relative;
     }
-    
+
     .sales-marquee-container {
       display: flex;
       overflow: hidden;
@@ -192,39 +193,44 @@
       mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
       -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
     }
-    
+
     .sales-marquee-track {
       display: flex;
       gap: 32px;
       width: fit-content;
       animation: scroll-marquee 40s linear infinite;
     }
-    
+
     .sales-marquee-track:hover {
       animation-play-state: paused;
     }
-    
+
     .sales-marquee-img {
       width: 700px;
       height: 420px;
       object-fit: cover;
       border-radius: var(--radius-lg, 12px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
       transition: transform 0.4s ease, box-shadow 0.4s ease;
       background: #111;
       flex-shrink: 0;
     }
-    
+
     .sales-marquee-img:hover {
       transform: scale(1.05) translateY(-5px);
-      box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(60, 107, 255, 0.4);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(60, 107, 255, 0.4);
       z-index: 2;
     }
-    
+
     @keyframes scroll-marquee {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(calc(-50% - 16px)); }
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(calc(-50% - 16px));
+      }
     }
   </style>
   <script defer src="/src/js/cms-loader.js"></script>
@@ -240,7 +246,8 @@
         <a href="/" aria-label="Home"><img src="/logos/atlasdt-logo-light.png" alt="Atlas DT"
             style="height: 32px; width: auto; object-fit: contain;" /></a>
       </div>
-      <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
+      <button class="mobile-menu-toggle" aria-label="Toggle mobile menu"
+        onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
       <div class="nav-links-container" style="display: flex; align-items: center; gap: 4px; flex: 0 0 auto;">
         <a href="index.html" class="global-nav-link global-nav-link--single" data-nav="home" style="padding: 8px 24px;">
           <span class="global-nav-link__top">Home</span>
@@ -256,7 +263,7 @@
         <a href="/app.html#rfq" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">Component</span>
           <span class="global-nav-link__sub">Instant Quote</span>
-        </a>        <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
+        </a> <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">OEMs</span>
           <span class="global-nav-link__sub">Marketplace</span>
         </a>
@@ -271,11 +278,14 @@
         <div id="nav-user-menu" class="nav-user-menu">
           <div class="nav-avatar" id="nav-avatar">?</div>
           <div class="dropdown-content" style="right: 20px;">
-            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter Platform</a>
+            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter
+              Platform</a>
             <a href="/profile.html" class="dropdown-item">Profile Settings</a>
-            <a href="#" class="dropdown-item" id="nav-notifications-link" style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="#" class="dropdown-item" id="nav-notifications-link"
+              style="display: flex; justify-content: space-between; align-items: center;">
               Notifications
-              <span style="background:var(--color-electric); color:white; border-radius:10px; padding:2px 6px; font-size:10px;">3</span>
+              <span
+                style="background:var(--color-electric); color:white; border-radius:10px; padding:2px 6px; font-size:10px;">3</span>
             </a>
             <div class="dropdown-divider"></div>
             <a href="#" id="nav-logout-btn" class="dropdown-item">Log Out</a>
@@ -288,16 +298,8 @@
   <main>
     <section class="services-hero">
       <h1>Our Services</h1>
-      <p>Western product design rigour meets Asian manufacturing efficiency. From first sketch to scaled production, we deliver end-to-end solutions that bridge the gap between innovation and execution.</p>
-    </section>
-
-    <!-- MANUFACTURING ENGINE -->
-    <section class="engine-block">
-      <div style="text-align: center; max-width: 800px; margin: 0 auto 60px;">
-        <h2 style="font-size: 40px; font-weight: 700; color: #0f172a; margin-bottom: 24px; letter-spacing: -1px;">The Manufacturing Engine</h2>
-        <p style="color: #475569; font-size: 18px; line-height: 1.6;">Our integrated software directly connects you to a heavily vetted network of premium global suppliers at industry-best costs. Instantly quote, orchestrate production, and scale your supply chain with radical efficiency.</p>
-      </div>
-
+      <p>Western product design rigour meets Asian manufacturing efficiency. From first sketch to scaled production, we
+        deliver end-to-end solutions that bridge the gap between innovation and execution.</p>
     </section>
 
     <!-- 1. PRODUCT DESIGN & DEVELOPMENT -->
@@ -308,21 +310,27 @@
         </div>
         <div class="service-block__content">
           <h2>Product Design & Development</h2>
-          <p>Western-trained industrial designers and mechanical engineers take your idea from napkin sketch to production-ready 3D CAD — with Design for Manufacturing baked in from day one.</p>
+          <p>Western-trained industrial designers and mechanical engineers take your idea from napkin sketch to
+            production-ready 3D CAD — with Design for Manufacturing baked in from day one.</p>
 
           <div class="service-list">
             <h3>What We Do</h3>
             <ul>
-              <li><strong>Concept Generation:</strong> Translating market insights and user needs into viable product architectures through structured ideation and competitive benchmarking.</li>
-              <li><strong>Industrial Design:</strong> Creating compelling form factors that balance aesthetics, ergonomics, and manufacturing constraints.</li>
-              <li><strong>Mechanical Engineering:</strong> Detailed 3D CAD (SolidWorks, NX) with integrated FEA, tolerance stack-ups, and DFM analysis before any tooling commitment.</li>
-              <li><strong>Compliance Coordination:</strong> Turnkey management of CE, FCC, RoHS, UL, and market-specific regulatory certifications.</li>
+              <li><strong>Concept Generation:</strong> Translating market insights and user needs into viable product
+                architectures through structured ideation and competitive benchmarking.</li>
+              <li><strong>Industrial Design:</strong> Creating compelling form factors that balance aesthetics,
+                ergonomics, and manufacturing constraints.</li>
+              <li><strong>Mechanical Engineering:</strong> Detailed 3D CAD (SolidWorks, NX) with integrated FEA,
+                tolerance stack-ups, and DFM analysis before any tooling commitment.</li>
+              <li><strong>Compliance Coordination:</strong> Turnkey management of CE, FCC, RoHS, UL, and market-specific
+                regulatory certifications.</li>
             </ul>
           </div>
 
           <div class="service-result">
             <h4>The Result</h4>
-            <p>A production-ready design package with minimised tooling risk, certified for your target markets and optimised for Asian manufacturing processes.</p>
+            <p>A production-ready design package with minimised tooling risk, certified for your target markets and
+              optimised for Asian manufacturing processes.</p>
           </div>
         </div>
       </div>
@@ -333,21 +341,27 @@
       <div class="service-block__inner">
         <div class="service-block__content">
           <h2>Rapid Prototyping</h2>
-          <p>SLA, SLS, CNC, and soft tooling — validate form, fit, and function in days, not months. Iterate fast with our in-house and partner facilities across Asia.</p>
+          <p>SLA, SLS, CNC, and soft tooling — validate form, fit, and function in days, not months. Iterate fast with
+            our in-house and partner facilities across Asia.</p>
 
           <div class="service-list">
             <h3>What We Do</h3>
             <ul>
-              <li><strong>Additive Manufacturing:</strong> SLA resin, SLS nylon, and FDM prototypes for functional testing and stakeholder review within 48–72 hours.</li>
-              <li><strong>CNC Machining:</strong> Precision aluminium and steel parts for mechanical validation and pre-production fixtures.</li>
-              <li><strong>Soft Tooling:</strong> Low-volume silicone molds and bridge tooling for market testing runs of 50–500 units.</li>
-              <li><strong>Gateway Management:</strong> Structured EVT → DVT → PVT progression ensuring each prototype iteration closes critical unknowns.</li>
+              <li><strong>Additive Manufacturing:</strong> SLA resin, SLS nylon, and FDM prototypes for functional
+                testing and stakeholder review within 48–72 hours.</li>
+              <li><strong>CNC Machining:</strong> Precision aluminium and steel parts for mechanical validation and
+                pre-production fixtures.</li>
+              <li><strong>Soft Tooling:</strong> Low-volume silicone molds and bridge tooling for market testing runs of
+                50–500 units.</li>
+              <li><strong>Gateway Management:</strong> Structured EVT → DVT → PVT progression ensuring each prototype
+                iteration closes critical unknowns.</li>
             </ul>
           </div>
 
           <div class="service-result">
             <h4>The Result</h4>
-            <p>Faster design convergence and de-risked tooling investment through validated prototypes that prove out every critical assumption before mass production.</p>
+            <p>Faster design convergence and de-risked tooling investment through validated prototypes that prove out
+              every critical assumption before mass production.</p>
           </div>
         </div>
         <div class="service-block__image">
@@ -364,21 +378,27 @@
         </div>
         <div class="service-block__content">
           <h2>Strategic Sourcing & Supply Chain</h2>
-          <p>Leverage our vetted supplier network across the Pearl River Delta. We handle procurement, vendor qualification, logistics, and quality audits so you don't have to.</p>
+          <p>Leverage our vetted supplier network across the Pearl River Delta. We handle procurement, vendor
+            qualification, logistics, and quality audits so you don't have to.</p>
 
           <div class="service-list">
             <h3>What We Do</h3>
             <ul>
-              <li><strong>Supplier Qualification:</strong> Rigorous factory auditing for capacity, IP protection, compliance standards, and financial stability.</li>
-              <li><strong>Multi-Vendor Comparison:</strong> Competitive benchmarking across our network to guarantee authentic market-rate COGS.</li>
-              <li><strong>Origin Diversification:</strong> Mitigating tariff and geopolitical risk by sourcing across China, Vietnam, India, and beyond.</li>
-              <li><strong>Logistics Management:</strong> End-to-end freight coordination, customs clearance, and warehouse-to-door delivery.</li>
+              <li><strong>Supplier Qualification:</strong> Rigorous factory auditing for capacity, IP protection,
+                compliance standards, and financial stability.</li>
+              <li><strong>Multi-Vendor Comparison:</strong> Competitive benchmarking across our network to guarantee
+                authentic market-rate COGS.</li>
+              <li><strong>Origin Diversification:</strong> Mitigating tariff and geopolitical risk by sourcing across
+                China, Vietnam, India, and beyond.</li>
+              <li><strong>Logistics Management:</strong> End-to-end freight coordination, customs clearance, and
+                warehouse-to-door delivery.</li>
             </ul>
           </div>
 
           <div class="service-result">
             <h4>The Result</h4>
-            <p>A resilient, cost-optimised supply chain that protects your margins regardless of macroeconomic volatility.</p>
+            <p>A resilient, cost-optimised supply chain that protects your margins regardless of macroeconomic
+              volatility.</p>
           </div>
         </div>
       </div>
@@ -389,21 +409,27 @@
       <div class="service-block__inner">
         <div class="service-block__content">
           <h2>Contract Manufacturing</h2>
-          <p>Full-service production management — injection molding, die casting, CNC, finishing, assembly, and packaging. Western project methodology with Asian production efficiency and cost structure.</p>
+          <p>Full-service production management — injection molding, die casting, CNC, finishing, assembly, and
+            packaging. Western project methodology with Asian production efficiency and cost structure.</p>
 
           <div class="service-list">
             <h3>What We Do</h3>
             <ul>
-              <li><strong>Injection Molding & Tooling:</strong> Precision mold design, build, and qualification with T0–T2 sample management and PPAP documentation.</li>
-              <li><strong>Multi-Process Assembly:</strong> Coordinating plastics, metals, electronics, and soft goods into a single finished-goods stream.</li>
-              <li><strong>Quality Deployment:</strong> In-line IQC, IPQC, and OQC inspection with SKU-specific AQL plans and CAPA protocols.</li>
-              <li><strong>Production Transfer:</strong> Structured NPI handover from prototype shop to volume factory, including operator training and process validation.</li>
+              <li><strong>Injection Molding & Tooling:</strong> Precision mold design, build, and qualification with
+                T0–T2 sample management and PPAP documentation.</li>
+              <li><strong>Multi-Process Assembly:</strong> Coordinating plastics, metals, electronics, and soft goods
+                into a single finished-goods stream.</li>
+              <li><strong>Quality Deployment:</strong> In-line IQC, IPQC, and OQC inspection with SKU-specific AQL plans
+                and CAPA protocols.</li>
+              <li><strong>Production Transfer:</strong> Structured NPI handover from prototype shop to volume factory,
+                including operator training and process validation.</li>
             </ul>
           </div>
 
           <div class="service-result">
             <h4>The Result</h4>
-            <p>Defect-free production runs delivered on schedule, with Western-grade project controls applied to Asia's most competitive manufacturing base.</p>
+            <p>Defect-free production runs delivered on schedule, with Western-grade project controls applied to Asia's
+              most competitive manufacturing base.</p>
           </div>
         </div>
         <div class="service-block__image">
@@ -420,21 +446,27 @@
         </div>
         <div class="service-block__content">
           <h2>Electronics Development</h2>
-          <p>PCB layout, firmware, PCBA assembly and testing. From IoT sensor modules to complex control systems — designed to international standards, manufactured at scale.</p>
+          <p>PCB layout, firmware, PCBA assembly and testing. From IoT sensor modules to complex control systems —
+            designed to international standards, manufactured at scale.</p>
 
           <div class="service-list">
             <h3>What We Do</h3>
             <ul>
-              <li><strong>Schematic & PCB Design:</strong> Multi-layer board design with signal integrity analysis, EMC pre-compliance, and thermal management.</li>
-              <li><strong>Firmware Development:</strong> Embedded C/C++, BLE, Wi-Fi, and sensor integration from prototype to production-grade code.</li>
-              <li><strong>PCBA Manufacturing:</strong> SMT pick-and-place, reflow soldering, AOI inspection, and functional test fixture development.</li>
-              <li><strong>Certification Support:</strong> Pre-compliance testing and documentation for FCC, CE, IC, and MIC approvals.</li>
+              <li><strong>Schematic & PCB Design:</strong> Multi-layer board design with signal integrity analysis, EMC
+                pre-compliance, and thermal management.</li>
+              <li><strong>Firmware Development:</strong> Embedded C/C++, BLE, Wi-Fi, and sensor integration from
+                prototype to production-grade code.</li>
+              <li><strong>PCBA Manufacturing:</strong> SMT pick-and-place, reflow soldering, AOI inspection, and
+                functional test fixture development.</li>
+              <li><strong>Certification Support:</strong> Pre-compliance testing and documentation for FCC, CE, IC, and
+                MIC approvals.</li>
             </ul>
           </div>
 
           <div class="service-result">
             <h4>The Result</h4>
-            <p>Fully certified, production-ready electronics — from bare board to programmed, tested, and packaged PCBA modules ready for system integration.</p>
+            <p>Fully certified, production-ready electronics — from bare board to programmed, tested, and packaged PCBA
+              modules ready for system integration.</p>
           </div>
         </div>
       </div>
@@ -445,21 +477,27 @@
       <div class="service-block__inner">
         <div class="service-block__content">
           <h2>Factory Automation</h2>
-          <p>Custom jigs, fixtures, robotic cells, and production line automation. Reduce cycle times and labour costs while maintaining consistent, repeatable quality.</p>
+          <p>Custom jigs, fixtures, robotic cells, and production line automation. Reduce cycle times and labour costs
+            while maintaining consistent, repeatable quality.</p>
 
           <div class="service-list">
             <h3>What We Do</h3>
             <ul>
-              <li><strong>Custom Fixtures & Jigs:</strong> Bespoke workholding, alignment, and test fixtures that eliminate operator variability.</li>
-              <li><strong>Robotic Integration:</strong> SCARA, 6-axis, and collaborative robot cells for assembly, dispensing, and palletising operations.</li>
-              <li><strong>PLC & Vision Systems:</strong> Programmable logic control, machine vision inspection, and conveyor system design for throughput optimisation.</li>
-              <li><strong>Line Design:</strong> End-to-end production line architecture from material flow analysis to commissioning and operator training.</li>
+              <li><strong>Custom Fixtures & Jigs:</strong> Bespoke workholding, alignment, and test fixtures that
+                eliminate operator variability.</li>
+              <li><strong>Robotic Integration:</strong> SCARA, 6-axis, and collaborative robot cells for assembly,
+                dispensing, and palletising operations.</li>
+              <li><strong>PLC & Vision Systems:</strong> Programmable logic control, machine vision inspection, and
+                conveyor system design for throughput optimisation.</li>
+              <li><strong>Line Design:</strong> End-to-end production line architecture from material flow analysis to
+                commissioning and operator training.</li>
             </ul>
           </div>
 
           <div class="service-result">
             <h4>The Result</h4>
-            <p>Higher throughput, lower defect rates, and reduced dependency on manual labour — making your Asian manufacturing partner even more competitive.</p>
+            <p>Higher throughput, lower defect rates, and reduced dependency on manual labour — making your Asian
+              manufacturing partner even more competitive.</p>
           </div>
         </div>
         <div class="service-block__image">
@@ -516,13 +554,22 @@
           <div>
             <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Legal</h4>
             <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
-              <li><a href="data-protection.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Data Protection</a></li>
-              <li><a href="email-security.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Email Security</a></li>
-              <li><a href="privacy-policy.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Privacy Policy</a></li>
-              <li><a href="website-terms.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Website Terms</a></li>
-              <li><a href="conditions-of-sale.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Conditions of Sale</a></li>
-              <li><a href="cookie-policy.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Cookie Policy</a></li>
-              <li><a href="nda.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">NDA</a></li>
+              <li><a href="data-protection.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Data Protection</a>
+              </li>
+              <li><a href="email-security.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Email Security</a></li>
+              <li><a href="privacy-policy.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Privacy Policy</a></li>
+              <li><a href="website-terms.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Website Terms</a></li>
+              <li><a href="conditions-of-sale.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Conditions of Sale</a>
+              </li>
+              <li><a href="cookie-policy.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Cookie Policy</a></li>
+              <li><a href="nda.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">NDA</a></li>
             </ul>
           </div>
         </div>
@@ -539,8 +586,10 @@
           <li><strong>USA:</strong> 500 Terry Francine Street, San Francisco, CA 94158</li>
         </ul>
         <div style="margin-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
-          <p style="font-size: 11px; color: var(--color-steel-400); margin-bottom: 8px;">AtlasDT is a trademark and a brand that belongs to Paniani Products Pty Ltd</p>
-          <img src="/logos/paniani-logo.png" alt="Paniani Products" class="paniani-footer-logo" style="height: 16px; width: auto; opacity: 0.8; vertical-align: middle;">
+          <p style="font-size: 11px; color: var(--color-steel-400); margin-bottom: 8px;">AtlasDT is a trademark and a
+            brand that belongs to Paniani Products Pty Ltd</p>
+          <img src="/logos/paniani-logo.png" alt="Paniani Products" class="paniani-footer-logo"
+            style="height: 16px; width: auto; opacity: 0.8; vertical-align: middle;">
         </div>
       </div>
 
@@ -595,7 +644,8 @@
               <input type="password" id="login-password" required
                 placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
             </div>
-            <div style="text-align:right; margin-top:-10px; margin-bottom:15px;"><a id="toggle-to-reset" style="font-size:12px; color:var(--color-electric); cursor:pointer;">Forgot password?</a></div>
+            <div style="text-align:right; margin-top:-10px; margin-bottom:15px;"><a id="toggle-to-reset"
+                style="font-size:12px; color:var(--color-electric); cursor:pointer;">Forgot password?</a></div>
             <div id="login-error" class="auth-error-msg"></div>
             <button type="submit" class="auth-btn" id="login-submit-btn">Log In</button>
           </form>
@@ -603,7 +653,7 @@
             No account yet? <a id="toggle-to-signup">Sign up for access</a>
           </div>
         </div>
-        
+
         <!-- RESET PASSWORD FORM -->
         <div class="auth-form-wrapper" id="form-reset" style="display: none;">
           <div class="auth-header">
@@ -622,7 +672,7 @@
             Remembered it? <a id="toggle-reset-to-login" style="cursor:pointer">Log In instead</a>
           </div>
         </div>
-        
+
         <div class="auth-form-wrapper" id="form-signup" style="display: none;">
           <div class="auth-header">
             <h2>Request Access.</h2>
@@ -651,17 +701,26 @@
               <label for="signup-password">Password</label>
               <input type="password" id="signup-password" required
                 placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
-              <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars: 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
+              <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars:
+                1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
             </div>
-            <div class="auth-input-group" style="display: flex; gap: 10px; align-items: start; margin-top: 10px; margin-bottom: 15px;">
+            <div class="auth-input-group"
+              style="display: flex; gap: 10px; align-items: start; margin-top: 10px; margin-bottom: 15px;">
               <input type="checkbox" id="signup-terms" required style="margin-top: 4px;">
-              <label for="signup-terms" style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
-                I agree to the <a href="website-terms.html" style="color: var(--color-electric); text-decoration: underline;">Terms & Conditions</a>, <a href="privacy-policy.html" style="color: var(--color-electric); text-decoration: underline;">Privacy Policy</a>, and understand my data is protected under the <a href="nda.html" style="color: var(--color-electric); text-decoration: underline;">NDA & Data Protection Policy</a>.
+              <label for="signup-terms"
+                style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
+                I agree to the <a href="website-terms.html"
+                  style="color: var(--color-electric); text-decoration: underline;">Terms & Conditions</a>, <a
+                  href="privacy-policy.html" style="color: var(--color-electric); text-decoration: underline;">Privacy
+                  Policy</a>, and understand my data is protected under the <a href="nda.html"
+                  style="color: var(--color-electric); text-decoration: underline;">NDA & Data Protection Policy</a>.
               </label>
             </div>
-                        <div class="auth-input-group" style="display: flex; gap: 10px; align-items: start; margin-top: 10px; margin-bottom: 15px;">
+            <div class="auth-input-group"
+              style="display: flex; gap: 10px; align-items: start; margin-top: 10px; margin-bottom: 15px;">
               <input type="checkbox" id="signup-marketing" style="margin-top: 4px;">
-              <label for="signup-marketing" style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
+              <label for="signup-marketing"
+                style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
                 I would like to receive newsletters, promotions, and updates from Atlas DT.
               </label>
             </div>
@@ -680,7 +739,3 @@
 </body>
 
 </html>
-
-
-
-

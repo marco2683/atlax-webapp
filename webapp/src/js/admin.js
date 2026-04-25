@@ -2121,16 +2121,15 @@ document.addEventListener('DOMContentLoaded', async () => {
           <button id="rfq-modal-close" style="background:none; border:none; font-size:26px; cursor:pointer; color:#94a3b8; line-height:1; padding:4px 8px; border-radius:6px;">&times;</button>
         </div>
 
-        <!-- ── Action Bar ── -->
-        <div style="padding:14px 28px; background:#f8fafc; border-bottom:1px solid #e2e8f0; display:flex; align-items:center; gap:16px; flex-wrap:wrap; flex-shrink:0;">
+        <!-- ── Action Bar Row 1: Status & Assigned To ── -->
+        <div style="padding:10px 28px; background:#fff; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
           <div style="display:flex; align-items:center; gap:8px;">
             <label style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Status</label>
             <select id="rfq-modal-status" data-rfq-id="${rfq.id}"
-              style="padding:7px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; background:#fff;">
+              style="padding:7px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; background:#fff; min-width:200px;">
               ${statusSelectHTML}
             </select>
           </div>
-          <div style="width:1px; height:28px; background:#e2e8f0;"></div>
           <div style="display:flex; align-items:center; gap:8px;">
             <label style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Assigned To</label>
             <select id="rfq-modal-assignee" data-rfq-id="${rfq.id}"
@@ -2138,6 +2137,10 @@ document.addEventListener('DOMContentLoaded', async () => {
               ${assigneeOptionsHTML}
             </select>
           </div>
+        </div>
+
+        <!-- ── Action Bar Row 2: Pricing & Actions ── -->
+        <div style="padding:14px 28px; background:#f8fafc; border-bottom:1px solid #e2e8f0; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; flex-shrink:0;">
           <div style="display:flex; align-items:center; gap:8px;">
             <label style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Final Price (USD)</label>
             <input id="rfq-modal-final-price" type="number" step="0.01" min="0"
@@ -2146,10 +2149,19 @@ document.addEventListener('DOMContentLoaded', async () => {
               style="padding:7px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; font-family:inherit; width:130px; background:#fff;">
             <button id="rfq-save-price-btn" data-rfq-id="${rfq.id}"
               style="padding:7px 14px; background:#0f172a; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;">Update</button>
-            ${confirmBtnHtml}
           </div>
-          <!-- Reject + Delete on the right -->
-          <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+          
+          <!-- Actions on the right -->
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+            ${confirmBtnHtml}
+            <button id="rfq-generate-quote-btn" style="padding:7px 14px; background:#fff; color:#0f172a; border:1px solid #e2e8f0; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;" title="Generate Formal Quotation">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Generate Quotation
+            </button>
+            <button id="rfq-generate-invoice-btn" style="padding:7px 14px; background:#fff; color:#0f172a; border:1px solid #e2e8f0; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;" title="Generate Proforma/Commercial Invoice">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Generate Invoice
+            </button>
             <button id="rfq-request-info-btn" style="padding:7px 14px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;" title="Ask the client for more details via email">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
               Request Info
@@ -2497,6 +2509,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         btn.disabled = false;
         btn.textContent = 'Confirm to Client';
       }
+    });
+
+    // ── Generate Quotation ───────────────────────────────────────
+    modal.querySelector('#rfq-generate-quote-btn')?.addEventListener('click', async () => {
+      const { openDocumentGenerator } = await import('./services/doc-generator.js');
+      openDocumentGenerator({ docType: 'quotation', rfq, rfqData: data, profile: profileMap[rfq.user_id], rfqs });
+    });
+
+    // ── Generate Invoice ───────────────────────────────────────
+    modal.querySelector('#rfq-generate-invoice-btn')?.addEventListener('click', async () => {
+      const { openDocumentGenerator } = await import('./services/doc-generator.js');
+      openDocumentGenerator({ docType: 'proforma', rfq, rfqData: data, profile: profileMap[rfq.user_id], rfqs });
     });
 
     // ── Request More Info ─────────────────────────────────────

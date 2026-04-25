@@ -9,7 +9,7 @@ exports.handler = async (event, context) => {
     const body = JSON.parse(event.body);
     const { email, userId, type, cover_letter, name } = body;
 
-    const validTypes = ['designer_application', 'designer_approved', 'designer_rejected', 'project_rfq', 'rfq_removed', 'rfq_payment', 'rfq_confirmed', 'rfq_rejected', 'rfq_request_info'];
+    const validTypes = ['designer_application', 'designer_approved', 'designer_rejected', 'project_rfq', 'rfq_removed', 'rfq_payment', 'rfq_confirmed', 'rfq_rejected', 'rfq_request_info', 'rfq_document'];
     if (!validTypes.includes(type)) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Invalid application type' }) };
     }
@@ -446,6 +446,34 @@ exports.handler = async (event, context) => {
           <p style="text-align:center;font-size:11px;color:#94a3b8;">AtlasDT Manufacturing Hub &bull; <a href="https://www.atlasdt.com" style="color:#0ea5e9;">atlasdt.com</a></p>
         </div>
       `;
+    } else if (type === 'rfq_document') {
+      // ── Quotation / Proforma Invoice / Commercial Invoice with PDF attachment ──
+      const { docTitle, docRef, rfqRef, total, projectName: projName, pdfBase64, pdfFileName } = body;
+      toEmailAddr = [email];
+      subject = `${docTitle} ${docRef} — ${projName || 'Your Project'} | AtlasDT`;
+      const totalFmt = Number(total || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      htmlContent = `
+        <div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:600px;margin:0 auto;color:#1e293b;">
+          <div style="background:#0f172a;padding:28px 32px;border-radius:12px 12px 0 0;text-align:center;">
+            <img src="${logoUrl}" alt="AtlasDT" style="height:36px;margin-bottom:8px;" />
+            <h1 style="color:#fff;font-size:22px;margin:0;font-weight:700;">${docTitle}</h1>
+            <p style="color:#94a3b8;font-size:13px;margin:4px 0 0;">${docRef} · ${rfqRef}</p>
+          </div>
+          <div style="background:#ffffff;border:1px solid #e2e8f0;border-top:none;padding:28px 32px;border-radius:0 0 12px 12px;">
+            <p style="font-size:15px;line-height:1.7;color:#334155;margin-bottom:18px;">Dear ${name || 'Valued Customer'},</p>
+            <p style="font-size:15px;line-height:1.7;color:#334155;margin-bottom:18px;">Please find attached your <strong>${docTitle}</strong> for project <strong>${projName || 'N/A'}</strong>.</p>
+            <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:16px 20px;margin-bottom:20px;text-align:center;">
+              <div style="font-size:12px;color:#166534;text-transform:uppercase;font-weight:700;letter-spacing:0.5px;margin-bottom:4px;">Total Amount</div>
+              <div style="font-size:28px;font-weight:800;color:#15803d;">$${totalFmt}</div>
+              <div style="font-size:11px;color:#4ade80;margin-top:4px;">USD</div>
+            </div>
+            <p style="font-size:14px;line-height:1.7;color:#334155;margin-bottom:18px;">The document is attached to this email as a PDF. Please review and don't hesitate to reach out if you have any questions.</p>
+            <p style="font-size:14px;color:#64748b;">Kind regards,<br/><strong>The AtlasDT Team</strong></p>
+            <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;" />
+            <p style="text-align:center;font-size:11px;color:#94a3b8;">AtlasDT Manufacturing Hub &bull; <a href="https://www.atlasdt.com" style="color:#0ea5e9;">atlasdt.com</a></p>
+          </div>
+        </div>
+      `;
     }
 
     const resend = new Resend(RESEND_API_KEY);
@@ -464,6 +492,14 @@ exports.handler = async (event, context) => {
       subject: subject,
       html: htmlContent
     };
+
+    // Attach PDF for document emails
+    if (type === 'rfq_document' && body.pdfBase64 && body.pdfFileName) {
+      emailPayload.attachments = [{
+        filename: body.pdfFileName,
+        content: body.pdfBase64,
+      }];
+    }
 
     if (type === 'rfq_request_info') {
       emailPayload.cc = 'info@atlasdt.com';

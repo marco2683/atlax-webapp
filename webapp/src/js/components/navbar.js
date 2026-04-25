@@ -108,7 +108,7 @@ export async function initNavbar() {
   }
 
   // Handle Tab Visibility based on Zero-Trust Guard
-  const restrictedViews = ['suppliers', 'tariff', 'taxonomy'];
+  const restrictedViews = ['tariff', 'taxonomy'];
   const isBasic = sysTier.toLowerCase().trim() === 'basic';
   
   if (isBasic || !user) {
