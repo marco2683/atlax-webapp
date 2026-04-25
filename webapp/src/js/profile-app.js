@@ -79,8 +79,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     setSafe('comp-size', profile.company_size);
     setSafe('comp-tax-id', profile.tax_id);
     setSafe('comp-reg-num', profile.registration_number);
-    setSafe('comp-address', profile.address);
-    setSafe('comp-shipping', profile.shipping_address);
+
+    // ── Populate rich billing address ──
+    const loadAddr = (prefix, jsonStr) => {
+      try {
+        const addr = typeof jsonStr === 'string' ? JSON.parse(jsonStr) : jsonStr;
+        if (!addr) return;
+        setSafe(`${prefix}-line1`, addr.line1);
+        setSafe(`${prefix}-line2`, addr.line2);
+        setSafe(`${prefix}-city`, addr.city);
+        setSafe(`${prefix}-state`, addr.state);
+        setSafe(`${prefix}-postcode`, addr.postcode);
+        setSafe(`${prefix}-country`, addr.country);
+        setSafe(`${prefix}-phone-prefix`, addr.phone_prefix);
+        setSafe(`${prefix}-phone`, addr.phone);
+      } catch(e) {
+        // Legacy plain-text address — put it in line1
+        if (typeof jsonStr === 'string' && jsonStr) setSafe(`${prefix}-line1`, jsonStr);
+      }
+    };
+    loadAddr('bill', profile.address);
+    loadAddr('ship', profile.shipping_address);
 
 
     if (profile.designer_status === 'approved') {
@@ -123,6 +142,41 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   
+
+  // ── Rich Address Helpers ─────────────────────────────────
+  const collectAddr = (prefix) => ({
+    line1: document.getElementById(`${prefix}-line1`)?.value || '',
+    line2: document.getElementById(`${prefix}-line2`)?.value || '',
+    city: document.getElementById(`${prefix}-city`)?.value || '',
+    state: document.getElementById(`${prefix}-state`)?.value || '',
+    postcode: document.getElementById(`${prefix}-postcode`)?.value || '',
+    country: document.getElementById(`${prefix}-country`)?.value || '',
+    phone_prefix: document.getElementById(`${prefix}-phone-prefix`)?.value || '',
+    phone: document.getElementById(`${prefix}-phone`)?.value || ''
+  });
+
+  // "Same as billing" checkbox wiring
+  const sameChk = document.getElementById('ship-same-as-billing');
+  const shipFields = document.getElementById('shipping-fields');
+  if (sameChk && shipFields) {
+    sameChk.addEventListener('change', () => {
+      const inputs = shipFields.querySelectorAll('.ship-input');
+      if (sameChk.checked) {
+        const billIds = ['line1','line2','city','state','postcode','country','phone-prefix','phone'];
+        billIds.forEach(f => {
+          const src = document.getElementById(`bill-${f}`);
+          const dst = document.getElementById(`ship-${f}`);
+          if (src && dst) { dst.value = src.value; dst.disabled = true; }
+        });
+        shipFields.style.opacity = '0.45';
+        shipFields.style.pointerEvents = 'none';
+      } else {
+        inputs.forEach(el => el.disabled = false);
+        shipFields.style.opacity = '1';
+        shipFields.style.pointerEvents = 'auto';
+      }
+    });
+  }
   // ── Persistent Global Save Logic ─────────────────────────────────
   const globalSaveBtn = document.getElementById('global-save-btn');
   const globalSaveMsg = document.getElementById('global-save-msg');
@@ -151,13 +205,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         experience_years: getVal('prof-experience') ? parseInt(getVal('prof-experience')) : null,
         methodologies: getVal('prof-methodologies'),
         company: getVal('comp-name') || getVal('prof-company'),
-        address: getVal('comp-address') || getVal('prof-address'),
         tax_id: getVal('comp-tax-id'),
         company_website: getVal('comp-website'),
         company_industry: getVal('comp-industry'),
         company_size: getVal('comp-size'),
         registration_number: getVal('comp-reg-num'),
-        shipping_address: getVal('comp-shipping')
+        address: JSON.stringify(collectAddr('bill')),
+        shipping_address: document.getElementById('ship-same-as-billing')?.checked
+          ? JSON.stringify(collectAddr('bill'))
+          : JSON.stringify(collectAddr('ship'))
       };
 
       // Filter out nulls/undefineds for partial saves
@@ -361,13 +417,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
 
-    // Company
+    // Company (rich addresses already loaded above)
     const compName = document.getElementById('comp-name');
     if (compName) compName.value = profile.company || '';
     const compTax = document.getElementById('comp-tax-id');
     if (compTax) compTax.value = profile.tax_id || '';
-    const compAddress = document.getElementById('comp-address');
-    if (compAddress) compAddress.value = profile.address || '';
 
     if (profile.company_logo_url) {
       document.getElementById('company-logo-preview').style.display = 'block';
@@ -617,9 +671,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (planType === 'designer') {
         html = `
             <div style="display: flex; flex-direction: column; gap: 20px;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(139, 92, 246, 1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 8px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
               <h2 style="font-size: 28px; margin-bottom: 4px; line-height: 1.2;">Apply to the Designer Hub</h2>
-              <p style="color: rgba(255,255,255,0.7); font-size: 15px; margin-bottom: 12px; line-height: 1.5;">To join the network, please provide an application pitch below. Additionally, you can upload your <b>Resume/CV</b>, <b>Cover Letter</b> and <b>Portfolio</b> assets directly on this form.</p>
+              <p style="color: rgba(255,255,255,0.6); font-size: 15px; margin-bottom: 4px; line-height: 1.6; font-style: italic;">Great design doesn't just look good — it solves real problems, inspires emotion, and shapes the future. If you believe your craft can turn ambitious ideas into products people love, we want to hear from you. Tell us your story.</p>
+
+              <!-- Cover Letter / Pitch (moved to top) -->
+              <div class="profile-form-group" style="margin-top: 0;">
+                <label style="margin-bottom: 8px; font-weight: 600; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;">Your Pitch</label>
+                <textarea id="app-pitch-text" class="profile-input" rows="5" placeholder="Why do you design? What drives your craft? Share your background, the projects that define you, and why Atlas DT is the right platform for your next chapter..." style="width: 100%; resize: vertical; margin-bottom: 8px;"></textarea>
+              </div>
               
               <!-- Core Bio Profile -->
               <div class="profile-form-grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
@@ -766,11 +825,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
               </div>
 
-              <!-- Cover Letter / Pitch -->
-              <div class="profile-form-group" style="margin-top: 8px;">
-                <label style="margin-bottom: 8px; font-weight: 600; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;">Cover Letter & Pitch</label>
-                <textarea id="app-pitch-text" class="profile-input" rows="5" placeholder="Describe your skills, why you want to be part of Atlas DT, and what value you can provide..." style="width: 100%; resize: vertical; margin-bottom: 8px;"></textarea>
-              </div>
+
 
               <!-- Native File Uploads -->
               <div class="profile-form-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 8px;">
