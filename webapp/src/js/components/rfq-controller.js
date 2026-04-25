@@ -203,33 +203,35 @@ function createPartPanelHTML(partIdx) {
             <textarea class="rfq-custom-notes" data-part="${partIdx}" rows="3" placeholder="Surface finish details, coating specs, heat treatments, certifications, special requirements..."></textarea>
           </div>
         </div>
-      </div>
+        
+        <div class="rfq-results-col" style="display: flex; flex-direction: column; gap: 16px;">
+          <!-- Geometry Analysis Placeholder (visible BEFORE upload) -->
+          <div class="rfq-results-placeholder" data-part="${partIdx}" style="border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: var(--radius-lg); min-height: 120px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--color-steel-500); background: rgba(0,0,0,0.2);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            <span style="font-size: 11px;">Geometry analysis will appear here after upload</span>
+          </div>
 
-      <!-- Geometry Analysis Placeholder (visible BEFORE upload) -->
-      <div class="rfq-results-placeholder" data-part="${partIdx}" style="border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: var(--radius-lg); margin-top: 16px; min-height: 120px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--color-steel-500); background: rgba(0,0,0,0.2);">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-          <line x1="12" y1="22.08" x2="12" y2="12"></line>
-        </svg>
-        <span style="font-size: 11px;">Geometry analysis will appear here after upload</span>
-      </div>
-
-      <!-- Geometry Analysis Results (hidden until parsed) -->
-      <div class="rfq-results hidden" data-part="${partIdx}">
-        <div class="rfq-results__header">
-          <h3>Geometry Analysis</h3>
-          <span class="rfq-results__status" data-part="${partIdx}">Analyzing...</span>
-        </div>
-        <div class="rfq-results__row">
-          <div class="rfq-results__thumbnail" data-part="${partIdx}"></div>
-          <div class="rfq-results__grid" data-part="${partIdx}">
-            <div class="rfq-stat"><span class="rfq-stat__label">Bounding Box</span><span class="rfq-stat__value" data-stat="bbox">—</span></div>
-            <div class="rfq-stat"><span class="rfq-stat__label">Volume</span><span class="rfq-stat__value" data-stat="volume">—</span></div>
-            <div class="rfq-stat"><span class="rfq-stat__label">Surface Area</span><span class="rfq-stat__value" data-stat="surface-area">—</span></div>
-            <div class="rfq-stat"><span class="rfq-stat__label">Est. Mass</span><span class="rfq-stat__value" data-stat="mass">—</span></div>
-            <div class="rfq-stat"><span class="rfq-stat__label">Triangles</span><span class="rfq-stat__value" data-stat="triangles">—</span></div>
-            <div class="rfq-stat"><span class="rfq-stat__label">Dimensions</span><span class="rfq-stat__value" data-stat="dimensions">—</span></div>
+          <!-- Geometry Analysis Results (hidden until parsed) -->
+          <div class="rfq-results hidden" data-part="${partIdx}">
+            <div class="rfq-results__header">
+              <h3>Geometry Analysis</h3>
+              <span class="rfq-results__status" data-part="${partIdx}">Analyzing...</span>
+            </div>
+            <div class="rfq-results__row">
+              <div class="rfq-results__thumbnail" data-part="${partIdx}"></div>
+              <div class="rfq-results__grid" data-part="${partIdx}">
+                <div class="rfq-stat"><span class="rfq-stat__label">Bounding Box</span><span class="rfq-stat__value" data-stat="bbox">—</span></div>
+                <div class="rfq-stat"><span class="rfq-stat__label">Volume</span><span class="rfq-stat__value" data-stat="volume">—</span></div>
+                <div class="rfq-stat"><span class="rfq-stat__label">Surface Area</span><span class="rfq-stat__value" data-stat="surface-area">—</span></div>
+                <div class="rfq-stat"><span class="rfq-stat__label">Est. Mass</span><span class="rfq-stat__value" data-stat="mass">—</span></div>
+                <div class="rfq-stat"><span class="rfq-stat__label">Triangles</span><span class="rfq-stat__value" data-stat="triangles">—</span></div>
+                <div class="rfq-stat"><span class="rfq-stat__label">Dimensions</span><span class="rfq-stat__value" data-stat="dimensions">—</span></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

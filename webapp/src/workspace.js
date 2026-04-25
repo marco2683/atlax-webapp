@@ -394,37 +394,64 @@ function openRFQPreviewModal(rfq) {
 
   const modalHtml = `
     <div id="rfq-preview-modal" style="position:fixed;inset:0;background:rgba(15,23,42,0.8);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;">
-      <div style="background:#fff;border-radius:16px;width:900px;max-width:95vw;height:600px;max-height:90vh;display:flex;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
+      <div style="background:#fff;border-radius:16px;width:1100px;max-width:95vw;height:700px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
         
-        <!-- Viewer Column -->
-        <div style="flex:1; background:#0e1117; position:relative; display:flex; flex-direction:column;">
-          <div id="rfq-preview-3d-container" style="flex:1; width:100%;"></div>
-          
-          <div style="position:absolute; bottom:20px; left:0; right:0; display:flex; justify-content:center; gap:16px; pointer-events:none;">
-            <button id="rfq-prev-btn" style="pointer-events:auto; background:rgba(255,255,255,0.1); color:#fff; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition:0.2s;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            </button>
-            <div id="rfq-part-counter" style="color:#fff; display:flex; align-items:center; font-size:14px; font-weight:600;">1 / ${parts.length}</div>
-            <button id="rfq-next-btn" style="pointer-events:auto; background:rgba(255,255,255,0.1); color:#fff; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition:0.2s;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </button>
+        <!-- Top Summary Bar -->
+        <div style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc; flex-shrink:0;">
+          <div>
+            <div style="font-size:12px; color:#3b82f6; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">${data.project_name || 'Instant RFQ Project'}</div>
+            <div style="display:flex; align-items:center; gap: 12px;">
+              <h2 style="margin:0; font-size:20px; color:#0f172a; font-weight:700;">Quote Overview</h2>
+              <span style="font-size:11px; font-weight:600; background:#e0e7ff; color:#4338ca; padding:4px 8px; border-radius:4px; text-transform:uppercase;">Status: ${rfq.status || 'Pending'}</span>
+            </div>
+          </div>
+          <div style="display:flex; gap: 24px; align-items:center;">
+            <div style="text-align:right;">
+              <div style="font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;">Total Value</div>
+              <div style="font-size:16px; color:#0f172a; font-weight:700;">$${data.total_price || '0.00'}</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;">Total Parts</div>
+              <div style="font-size:16px; color:#0f172a; font-weight:700;">${parts.length}</div>
+            </div>
+            <div style="text-align:right; padding-left:24px; border-left:1px solid #e2e8f0;">
+              <div style="font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;">Assigned Engineer</div>
+              <div style="font-size:14px; color:#0f172a; font-weight:600;">${rfq.assigned_to_name || 'Unassigned'}</div>
+              <div style="font-size:12px; color:#64748b;">${rfq.assigned_to_email || 'Waiting for assignment'}</div>
+            </div>
+            <button id="rfq-preview-close" style="background:none; border:none; color:#94a3b8; font-size:28px; cursor:pointer; padding:0 0 0 16px; line-height:1; transition:0.2s;">&times;</button>
           </div>
         </div>
-        
-        <!-- Info Column -->
-        <div style="width:340px; background:#fff; padding:32px 24px; border-left:1px solid #e2e8f0; display:flex; flex-direction:column; overflow-y:auto;">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px;">
-            <div>
-              <div style="font-size:12px; color:#3b82f6; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">${data.project_name || 'RFQ Details'}</div>
-              <h3 id="rfq-part-name" style="margin:0; font-size:18px; color:#0f172a; font-weight:700; word-break:break-word;"></h3>
+
+        <!-- Main Content Split -->
+        <div style="display:flex; flex:1; overflow:hidden;">
+          <!-- Viewer Column -->
+          <div style="flex:1; background:#0e1117; position:relative; display:flex; flex-direction:column;">
+            <div id="rfq-preview-3d-container" style="flex:1; width:100%;"></div>
+            
+            <div style="position:absolute; bottom:20px; left:0; right:0; display:flex; justify-content:center; gap:16px; pointer-events:none;">
+              <button id="rfq-prev-btn" style="pointer-events:auto; background:rgba(255,255,255,0.1); color:#fff; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition:0.2s;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+              <div id="rfq-part-counter" style="color:#fff; display:flex; align-items:center; font-size:14px; font-weight:600;">1 / ${parts.length}</div>
+              <button id="rfq-next-btn" style="pointer-events:auto; background:rgba(255,255,255,0.1); color:#fff; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition:0.2s;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
             </div>
-            <button id="rfq-preview-close" style="background:none; border:none; color:#94a3b8; font-size:24px; cursor:pointer; padding:0; line-height:1;">&times;</button>
           </div>
           
-          <div id="rfq-part-info" style="display:flex; flex-direction:column; gap:16px;"></div>
-          
-          <div style="margin-top:auto; padding-top:24px; border-top:1px solid #e2e8f0;">
-             <a id="rfq-download-btn" href="#" target="_blank" style="display:block; width:100%; text-align:center; padding:12px; background:#f1f5f9; color:#0f172a; font-weight:600; font-size:14px; text-decoration:none; border-radius:8px; border:1px solid #e2e8f0; transition:0.2s;">Download Source File</a>
+          <!-- Info Column -->
+          <div style="width:360px; background:#fff; padding:24px; border-left:1px solid #e2e8f0; display:flex; flex-direction:column; overflow-y:auto;">
+            <div style="margin-bottom:20px;">
+              <div style="font-size:11px; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Part Details</div>
+              <h3 id="rfq-part-name" style="margin:0; font-size:16px; color:#0f172a; font-weight:700; word-break:break-word;"></h3>
+            </div>
+            
+            <div id="rfq-part-info" style="display:flex; flex-direction:column; gap:16px;"></div>
+            
+            <div style="margin-top:auto; padding-top:24px; border-top:1px solid #e2e8f0;">
+               <a id="rfq-download-btn" href="#" target="_blank" style="display:block; width:100%; text-align:center; padding:12px; background:#f1f5f9; color:#0f172a; font-weight:600; font-size:14px; text-decoration:none; border-radius:8px; border:1px solid #e2e8f0; transition:0.2s;">Download Source File</a>
+            </div>
           </div>
         </div>
         
