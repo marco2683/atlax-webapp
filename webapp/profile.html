@@ -444,7 +444,7 @@
 <body>
 
   <nav class="profile-nav">
-    <a href="/app.html">
+    <a href="/app.html" onclick="if (document.referrer && document.referrer.includes(window.location.host)) { event.preventDefault(); window.history.back(); }">
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
       Back
     </a>
