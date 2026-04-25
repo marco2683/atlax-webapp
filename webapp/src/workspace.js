@@ -679,9 +679,7 @@ function injectPaymentPanel(rfq, data, modal) {
       btn.textContent = '✔ I Confirm & Accept — Bank Transfer';
     }
   });
-
-
-
+}
 
 // ── Files Tab ───────────────────────────────────────────
 let uploadZoneBound = false;
