@@ -3,14 +3,14 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return { statusCode: 405, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Method Not Allowed' }) };
   }
 
   try {
     const { rfqId, amount, projectName, userEmail, userId } = JSON.parse(event.body);
 
     if (!rfqId || !amount) {
-      return { statusCode: 400, body: JSON.stringify({ error: 'Missing rfqId or amount' }) };
+      return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Missing rfqId or amount' }) };
     }
 
     const origin = event.headers.origin || 'https://www.atlasdt.com';
@@ -46,6 +46,7 @@ export const handler = async (event) => {
 
     return {
       statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url: session.url }),
     };
 
@@ -53,6 +54,7 @@ export const handler = async (event) => {
     console.error('[RFQ Checkout] Error:', err);
     return {
       statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: 'Failed to create checkout session', details: err.message }),
     };
   }
