@@ -105,6 +105,68 @@ function crudPlugin() {
               res.end(JSON.stringify({ error: e.message }));
             }
           });
+        } else if (req.url.startsWith('/.netlify/functions/admin-rfqs')) {
+          import('@supabase/supabase-js').then(async ({ createClient }) => {
+            const { loadEnv } = await import('vite');
+            const env = loadEnv('development', process.cwd(), '');
+            const supabaseUrl = env.VITE_SUPABASE_URL;
+            const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY;
+            
+            if (!supabaseUrl || !supabaseKey) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: "Missing Supabase env vars" }));
+              return;
+            }
+
+            const supabase = createClient(supabaseUrl, supabaseKey);
+            try {
+              if (req.method === 'GET') {
+                const urlObj = new URL(req.url, 'http://' + req.headers.host);
+                const action = urlObj.searchParams.get('action');
+                if (action === 'count') {
+                  const status = urlObj.searchParams.get('status');
+                  const userId = urlObj.searchParams.get('userId');
+                  let query = supabase.from('rfq_history').select('id', { count: 'exact', head: true });
+                  if (userId) query = query.eq('user_id', userId);
+                  if (status) query = query.eq('status', status);
+                  const { count, error } = await query;
+                  if (error) throw error;
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(JSON.stringify({ count }));
+                } else {
+                  const { data, error } = await supabase.from('rfq_history').select('*').order('created_at', { ascending: false });
+                  if (error) throw error;
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(JSON.stringify(data));
+                }
+              } else if (req.method === 'POST' || req.method === 'PATCH' || req.method === 'PUT') {
+                let body = '';
+                req.on('data', chunk => { body += chunk.toString(); });
+                req.on('end', async () => {
+                  try {
+                    const { id, updates } = JSON.parse(body);
+                    const { data, error } = await supabase.from('rfq_history').update(updates).eq('id', id).select();
+                    if (error) throw error;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify(data));
+                  } catch (e) {
+                    res.statusCode = 500;
+                    res.end(JSON.stringify({ error: e.message }));
+                  }
+                });
+              } else if (req.method === 'DELETE') {
+                const urlObj = new URL(req.url, 'http://' + req.headers.host);
+                const id = urlObj.searchParams.get('id');
+                const { error } = await supabase.from('rfq_history').delete().eq('id', id);
+                if (error) throw error;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ success: true }));
+              }
+            } catch (error) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: error.message }));
+            }
+          });
         } else if (req.url.startsWith('/.netlify/functions/admin-profiles') && req.method === 'GET') {
           // Setup Supabase with Service Role to bypass RLS for Admin
           import('@supabase/supabase-js').then(async ({ createClient }) => {
