@@ -91,35 +91,52 @@
     </div>
   </nav>
 
-  <!-- ── Hero Section (DARK, CENTRED, 100vh) ──────────────── -->
+  <!-- ── Hero Section (DARK, CENTRED, 100vh top) ──────────────── -->
   <header class="m-hero m-hero--centered"
-    style="background: radial-gradient(circle at 50% 0%, rgba(20,25,35,1) 0%, rgba(10,10,15,1) 100%); display: flex; flex-direction: column; align-items: center; justify-content: space-between; min-height: 100vh; position: relative; overflow: hidden;">
+    style="background: radial-gradient(circle at 50% 0%, rgba(20,25,35,1) 0%, rgba(10,10,15,1) 100%); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; overflow: hidden;">
     <!-- Infinity Grid Background -->
     <div class="hero-grid-bg"></div>
     <div class="hero-grid-flash hero-grid-flash--1"></div>
     <div class="hero-grid-flash hero-grid-flash--2"></div>
     <div class="hero-grid-flash hero-grid-flash--3"></div>
-    <div class="m-hero__content m-fade-up"
-      style="text-align: center; align-items: center; max-width: 900px; margin: auto; padding-top: 5vh;">
+    
+    <!-- 100vh Top Section -->
+    <div style="min-height: 100vh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding-top: 80px;">
+      <div class="m-hero__content m-fade-up"
+        style="text-align: center; align-items: center; max-width: 900px; margin: 0 auto;">
 
-      <div style="display: inline-flex; flex-direction: column; align-items: stretch; justify-content: center; margin-bottom: 8px; max-width: max-content; margin-left: auto; margin-right: auto; padding: 0 10px;">
-        <img src="/logos/atlasdt-logo-light.png" alt="AtlasDT" style="height: clamp(80px, 14vw, 140px); width: auto; margin-bottom: -12px; object-fit: contain;">
-        <div style="display: flex; justify-content: space-between; width: 100%; font-family: 'Outfit', sans-serif; font-size: clamp(14px, 2.8vw, 24px); font-weight: 300; text-transform: uppercase; color: rgba(255, 255, 255, 0.8); position: relative; z-index: 2;">
-          <span>D</span><span>E</span><span>S</span><span>I</span><span>G</span><span>N</span>
-          <span style="visibility: hidden; width: 1px;">-</span>
-          <span>&amp;</span>
-          <span style="visibility: hidden; width: 1px;">-</span>
-          <span>T</span><span>E</span><span>C</span><span>H</span><span>N</span><span>O</span><span>L</span><span>O</span><span>G</span><span>Y</span>
+        <div style="display: inline-flex; flex-direction: column; align-items: stretch; justify-content: center; margin-bottom: 8px; max-width: max-content; margin-left: auto; margin-right: auto; padding: 0 10px;">
+          <img src="/logos/atlasdt-logo-light.png" alt="AtlasDT" style="height: clamp(80px, 14vw, 140px); width: auto; margin-bottom: -12px; object-fit: contain;">
+          <div style="display: flex; justify-content: space-between; width: 100%; font-family: 'Outfit', sans-serif; font-size: clamp(14px, 2.8vw, 24px); font-weight: 300; text-transform: uppercase; color: rgba(255, 255, 255, 0.8); position: relative; z-index: 2;">
+            <span>D</span><span>E</span><span>S</span><span>I</span><span>G</span><span>N</span>
+            <span style="visibility: hidden; width: 1px;">-</span>
+            <span>&amp;</span>
+            <span style="visibility: hidden; width: 1px;">-</span>
+            <span>T</span><span>E</span><span>C</span><span>H</span><span>N</span><span>O</span><span>L</span><span>O</span><span>G</span><span>Y</span>
+          </div>
         </div>
+
+        <span class="hero-prompt__text" style="font-size: 16px; display: block;">From concept to factory
+          floor &mdash; faster, leaner, and more competitive than you thought possible.</span>
       </div>
 
-      <span class="hero-prompt__text" style="font-size: 16px; display: block;">From concept to factory
-        floor &mdash; faster, leaner, and more competitive than you thought possible.</span>
+      <!-- Discover More Arrow -->
+      <style>
+        @keyframes bounce-arrow {
+          0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+          40% { transform: translateY(-10px); }
+          60% { transform: translateY(-5px); }
+        }
+      </style>
+      <div style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 10; transition: opacity 0.3s;" onclick="document.getElementById('home-cards-section').scrollIntoView({behavior: 'smooth'})" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" style="opacity: 0.7;">
+          <span style="color: rgba(255,255,255,0.7); font-family: 'Outfit', sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; font-weight: 600;">Discover More</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: bounce-arrow 2s infinite;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
     </div>
 
     <!-- Phase Gate Cards -->
-    <div class="pb-stages-container"
-      style="max-width: 1600px; padding: 0 1.5%; margin: 80px auto 40px; width: 100%; box-sizing: border-box;">
+    <div id="home-cards-section" class="pb-stages-container"
+      style="max-width: 1600px; padding: 40px 1.5% 80px; margin: 0 auto; width: 100%; box-sizing: border-box; position: relative; z-index: 10;">
       <div class="hero-prompt">
         <span class="hero-prompt__line"></span>
         <span class="hero-prompt__text">How can we help you</span><br>
