@@ -2838,97 +2838,139 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     });
 
-    // "Add row" buttons for image URL lists
-    document.querySelectorAll('.admin-add-row-btn[data-target]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const list = document.getElementById(btn.dataset.target);
-        if (!list) return;
-        const row = document.createElement('div');
-        row.className = 'admin-img-url-row';
-        row.innerHTML = `<input type="text" name="${btn.dataset.name}" placeholder="https://example.com/image.jpg">
-          <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
-            📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="${btn.dataset.accept || 'image/*'}">
-          </label>
-          <button type="button" class="admin-remove-row-btn">✕</button>`;
-        list.appendChild(row);
-        wireRemoveButtons(list);
-        wireS3Uploaders();
-      });
-    });
-
-    // Wire all remove buttons globally
-    document.querySelectorAll('.admin-remove-row-btn').forEach(btn => {
-      btn.addEventListener('click', () => btn.parentElement.remove());
-    });
-    
-    wireS3Uploaders();
-
-    // Global Paste Listener for Image Uploads
+    // Global Paste Listener for Image Uploads & Comma-Separated URLs
+    // Must be done BEFORE wireS3Uploaders so cloneNode doesn't destroy input change listeners
     document.querySelectorAll('.admin-image-url-list').forEach(list => {
       // Prevent multiple listeners
       const _list = list.cloneNode(true);
       list.parentNode.replaceChild(_list, list);
+      
       _list.addEventListener('paste', async (e) => {
         const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        
+        let imagesToPaste = [];
+        let hasImage = false;
+        
         for (const item of items) {
           if (item.type.indexOf('image') === 0) {
-            e.preventDefault();
-            const file = item.getAsFile();
-            if (!file) continue;
-            
-            const target = e.target;
-            const row = target.closest('.admin-img-url-row');
-            if (!row) return;
-            const textInput = row.querySelector('input[type="text"], input[type="url"]');
-            if (textInput) {
-              const ext = file.type.split('/')[1] || 'png';
-              const fileName = `admin_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
-              textInput.value = 'Uploading...';
-              textInput.disabled = true;
-              try {
-                if (!window.supabase) throw new Error('Supabase client not found.');
-                const { data, error } = await supabase.storage.from('supplier-assets').upload(fileName, file);
-                if (error) throw error;
-                const { data: publicData } = supabase.storage.from('supplier-assets').getPublicUrl(fileName);
-                textInput.value = publicData.publicUrl;
-              } catch(err) {
-                console.error(err);
-                textInput.value = '';
-                alert('Pasted Image Upload failed: ' + err.message);
-              } finally {
-                textInput.disabled = false;
-              }
-            }
+             hasImage = true;
+             imagesToPaste.push(item.getAsFile());
           }
         }
+        
+        if (hasImage) {
+            e.preventDefault();
+            const target = e.target;
+            const targetRow = target.closest('.admin-img-url-row');
+            if (!targetRow) return;
+            
+            for (let i = 0; i < imagesToPaste.length; i++) {
+                const file = imagesToPaste[i];
+                let row = i === 0 ? targetRow : null;
+                if (!row) {
+                    const addBtn = document.querySelector(`.admin-add-row-btn[data-target="${_list.id}"]`);
+                    if (!addBtn) continue;
+                    row = document.createElement('div');
+                    row.className = 'admin-img-url-row';
+                    row.innerHTML = `<input type="text" name="${addBtn.dataset.name}" placeholder="https://example.com/image.jpg">
+                      <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
+                        📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="${addBtn.dataset.accept || 'image/*'}">
+                      </label>
+                      <button type="button" class="admin-remove-row-btn">✕</button>`;
+                    _list.appendChild(row);
+                    wireRemoveButtons(row);
+                    wireS3Uploaders(row);
+                }
+                const textInput = row.querySelector('input[type="text"], input[type="url"]');
+                if (textInput) {
+                  const ext = file.type.split('/')[1] || 'png';
+                  const fileName = `admin_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
+                  textInput.value = 'Uploading...';
+                  textInput.disabled = true;
+                  try {
+                    if (!supabase) throw new Error('Supabase client not found.');
+                    const { data, error } = await supabase.storage.from('supplier-assets').upload(fileName, file);
+                    if (error) throw error;
+                    const { data: publicData } = supabase.storage.from('supplier-assets').getPublicUrl(fileName);
+                    textInput.value = publicData.publicUrl;
+                  } catch(err) {
+                    console.error('Pasted Image Upload failed:', err);
+                    textInput.value = '';
+                    alert('Pasted Image Upload failed: ' + err.message);
+                  } finally {
+                    textInput.disabled = false;
+                  }
+                }
+            }
+            return;
+        }
+        
+        // Text Paste: split by comma or newline for multiple URLs
+        const pastedText = (e.clipboardData || e.originalEvent.clipboardData).getData('text');
+        if (pastedText && (pastedText.includes(',') || pastedText.includes('\n'))) {
+            const urls = pastedText.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+            if (urls.length > 1) {
+                e.preventDefault();
+                const target = e.target;
+                const targetRow = target.closest('.admin-img-url-row');
+                if (!targetRow) return;
+                
+                for (let i = 0; i < urls.length; i++) {
+                    let row = i === 0 ? targetRow : null;
+                    if (!row) {
+                        const addBtn = document.querySelector(`.admin-add-row-btn[data-target="${_list.id}"]`);
+                        if (!addBtn) continue;
+                        row = document.createElement('div');
+                        row.className = 'admin-img-url-row';
+                        row.innerHTML = `<input type="text" name="${addBtn.dataset.name}" placeholder="https://example.com/image.jpg">
+                          <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
+                            📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="${addBtn.dataset.accept || 'image/*'}">
+                          </label>
+                          <button type="button" class="admin-remove-row-btn">✕</button>`;
+                        _list.appendChild(row);
+                        wireRemoveButtons(row);
+                        wireS3Uploaders(row);
+                    }
+                    const textInput = row.querySelector('input[type="text"], input[type="url"]');
+                    if (textInput) {
+                        textInput.value = urls[i];
+                    }
+                }
+            }
+        }
       });
-      
-      // Re-wire add buttons which map to this new list
-      document.querySelectorAll('.admin-add-row-btn[data-target="' + _list.id + '"]').forEach(btn => {
-        const freshBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(freshBtn, btn);
-        freshBtn.addEventListener('click', () => {
-          const targetList = document.getElementById(freshBtn.dataset.target);
-          if (!targetList) return;
-          const row = document.createElement('div');
-          row.className = 'admin-img-url-row';
-          row.innerHTML = `<input type="text" name="${freshBtn.dataset.name}" placeholder="https://example.com/image.jpg">
-            <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
-              📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="${freshBtn.dataset.accept || 'image/*'}">
-            </label>
-            <button type="button" class="admin-remove-row-btn">✕</button>`;
-          targetList.appendChild(row);
-          wireRemoveButtons(row);
-          wireS3Uploaders();
-        });
-      });
-      
-      // Wire remove buttons exactly within the new list
-      wireRemoveButtons(_list);
     });
+
+    // "Add row" buttons for image URL lists
+    document.querySelectorAll('.admin-add-row-btn[data-target]').forEach(btn => {
+      // Prevent duplicate binding by cloning once
+      const cloneBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(cloneBtn, btn);
+      
+      cloneBtn.addEventListener('click', () => {
+        const list = document.getElementById(cloneBtn.dataset.target);
+        if (!list) return;
+        const row = document.createElement('div');
+        row.className = 'admin-img-url-row';
+        row.innerHTML = `<input type="text" name="${cloneBtn.dataset.name}" placeholder="https://example.com/image.jpg">
+          <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
+            📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="${cloneBtn.dataset.accept || 'image/*'}">
+          </label>
+          <button type="button" class="admin-remove-row-btn">✕</button>`;
+        list.appendChild(row);
+        wireRemoveButtons(row);
+        wireS3Uploaders(row);
+      });
+    });
+
+    // Wire all remove buttons globally
+    wireRemoveButtons(document);
+    
+    // Wire all S3 Uploaders globally
+    wireS3Uploaders(document);
   }
 
-  function wireRemoveButtons(container) {
+  function wireRemoveButtons(container = document) {
     container.querySelectorAll('.admin-remove-row-btn').forEach(btn => {
       // Prevent duplicate event binding
       const fresh = btn.cloneNode(true);
@@ -2937,8 +2979,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  function wireS3Uploaders() {
-    document.querySelectorAll('.admin-s3-upload').forEach(input => {
+  function wireS3Uploaders(container = document) {
+    container.querySelectorAll('.admin-s3-upload').forEach(input => {
       // Avoid duplicate bindings
       const _new = input.cloneNode(true);
       input.parentNode.replaceChild(_new, input);
@@ -2958,7 +3000,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           const ext = file.name.split('.').pop();
           const fileName = `admin_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
           
-          if (!window.supabase) {
+          if (!supabase) {
              throw new Error('Supabase client not found.');
           }
           const { data, error } = await supabase.storage.from('supplier-assets').upload(fileName, file);
@@ -2970,14 +3012,14 @@ document.addEventListener('DOMContentLoaded', async () => {
           _new.parentElement.innerHTML = '✅ Add';
           setTimeout(() => {
             _new.parentElement.innerHTML = `📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="${_new.accept}">`;
-            wireS3Uploaders();
+            wireS3Uploaders(row);
           }, 2000);
         } catch(err) {
           console.error('Upload Failed', err);
           _new.parentElement.innerHTML = '❌ Err';
           setTimeout(() => {
             _new.parentElement.innerHTML = `📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="${_new.accept}">`;
-            wireS3Uploaders();
+            wireS3Uploaders(row);
           }, 2000);
         }
       });

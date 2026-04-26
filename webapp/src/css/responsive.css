@@ -1158,30 +1158,37 @@
   }
 
   /* ══════════════════════════════════════════════════════════
-     HOMEPAGE — Hero Phase Gate Cards (Mobile)
+     HOMEPAGE — Hero Phase Gate Cards (Mobile Stacked)
      ══════════════════════════════════════════════════════════ */
 
   .pb-stages-container {
-    padding: 20px 16px 60px !important;
+    padding: 20px 16px 40px !important;
   }
 
+  /* Cards stack vertically */
   .pb-stages-grid {
     grid-template-columns: 1fr !important;
-    gap: 16px !important;
+    gap: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
-  /* "Who We Are" scroll arrow at bottom of hero cards */
+  /* Wrapper for card + USP + arrow (JS-generated on mobile) */
+  .mobile-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  /* "Who We Are" scroll arrow at bottom of hero cards — hide (JS handles it) */
   .pb-stages-container > div[style*="position: absolute"][style*="bottom"] {
-    position: relative !important;
-    bottom: auto !important;
-    left: auto !important;
-    transform: none !important;
-    margin-top: 32px !important;
+    display: none !important;
   }
 
   .pb-stage-card {
     aspect-ratio: auto !important;
-    min-height: 180px !important;
+    min-height: 200px !important;
   }
 
   .pb-stage-title {
@@ -1198,14 +1205,68 @@
     padding: 10px !important;
   }
 
-  /* USP text container — hide on mobile (hover-based, not useful) */
+  /* USP text container — hide desktop version on mobile */
   .pb-usp-container {
     display: none !important;
   }
 
   /* Hero prompt bar */
   .hero-prompt {
-    margin-bottom: 32px !important;
+    margin-bottom: 24px !important;
+  }
+
+  /* ── Mobile Card USP Text ──────────────────────────────── */
+  .mobile-card-usp {
+    display: block !important;
+    color: rgba(255, 255, 255, 0.65) !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 300 !important;
+    font-style: italic !important;
+    line-height: 1.7 !important;
+    text-align: center !important;
+    padding: 16px 16px 4px !important;
+    margin: 0 !important;
+  }
+
+  /* ── Mobile Card Bouncy Down-Arrow ────────────────────── */
+  @keyframes mobile-bounce-arrow {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-8px); }
+    60% { transform: translateY(-4px); }
+  }
+
+  .mobile-card-arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 0 28px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  .mobile-card-arrow:active {
+    opacity: 1;
+  }
+
+  .mobile-card-arrow svg {
+    animation: mobile-bounce-arrow 2.5s infinite;
+  }
+
+  /* ── Navbar Brand — hide at top on homepage mobile ────── */
+  .is-homepage .navbar .navbar__brand {
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+  }
+
+  .is-homepage .navbar.nav-scrolled .navbar__brand,
+  .is-homepage .navbar.menu-open .navbar__brand {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
   }
 
   .hero-prompt__text {
