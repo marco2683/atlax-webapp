@@ -14,13 +14,19 @@
   cursor: pointer;
   padding: 4px 10px;
   line-height: 1;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.2s;
   order: 3;
-  /* push to the right */
+  z-index: 101;
 }
 
 .mobile-menu-toggle:hover {
   background: rgba(255, 255, 255, 0.08);
+}
+
+/* When menu is open, style the toggle as a close button */
+.navbar.menu-open .mobile-menu-toggle {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -87,42 +93,164 @@
     box-sizing: border-box !important;
   }
 
-  /* Links container: hidden by default, vertical dropdown on open */
+  /* ── Override marketing-page absolute centering on mobile ── */
+  .marketing-page .nav-links-container {
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+  }
+
+  /* Links container: hidden by default, full-width vertical dropdown on open */
   .nav-links-container {
     display: none !important;
     flex-direction: column !important;
-    align-items: center !important;
+    align-items: stretch !important;
     gap: 0 !important;
-    width: 100%;
+    width: 100% !important;
     order: 4;
-    /* below the brand + hamburger row */
     background: rgba(10, 10, 15, 0.97);
     backdrop-filter: blur(20px);
     border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 16px 0;
+    padding: 12px 0 !important;
     margin-top: 12px;
+    border-radius: 0 0 12px 12px;
   }
 
+  /* Nav links inside the mobile menu — full-width tap targets */
+  .nav-links-container .global-nav-link,
   .nav-links-container .nav-link,
   .nav-links-container .btn-marketing {
-    width: 100%;
-    text-align: center;
+    width: 100% !important;
+    text-align: center !important;
     padding: 14px 20px !important;
     font-size: 15px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+    box-sizing: border-box !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+  }
+
+  .nav-links-container .global-nav-link:last-child {
     border-bottom: none !important;
   }
 
+  /* Center the sub-text on mobile */
+  .nav-links-container .global-nav-link__sub {
+    font-size: 11px !important;
+    opacity: 0.5;
+  }
+
+  .nav-links-container .global-nav-link:hover,
   .nav-links-container .nav-link:hover {
     background: rgba(255, 255, 255, 0.04);
   }
 
-  .nav-links-container .nav-user-menu {
-    margin-top: 8px;
+  /* Show links when hamburger toggled */
+  .navbar.menu-open {
+    background: rgba(8, 10, 15, 0.98) !important;
+    backdrop-filter: blur(20px) !important;
   }
 
-  /* Show links when hamburger toggled */
   .navbar.menu-open .nav-links-container {
     display: flex !important;
+  }
+
+  /* ── Actions (Contact Us + Avatar) — include in mobile menu ── */
+  .navbar__actions {
+    display: none !important;
+    width: 100% !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    order: 5;
+    background: rgba(10, 10, 15, 0.97);
+    backdrop-filter: blur(20px);
+    padding: 0 0 12px 0 !important;
+    gap: 0 !important;
+    border-radius: 0 0 12px 12px;
+  }
+
+  /* Override marketing-page absolute/relative positioning on actions */
+  .marketing-page .navbar__actions {
+    position: static !important;
+    flex: none !important;
+    justify-content: stretch !important;
+  }
+
+  /* Show actions when menu is open */
+  .navbar.menu-open .navbar__actions {
+    display: flex !important;
+  }
+
+  /* Contact Us button — full-width in mobile menu */
+  .navbar__actions .nav-contact-trigger {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 14px 20px !important;
+    font-size: 15px !important;
+    border-radius: 0 !important;
+    border: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+    background: transparent !important;
+    color: #38bdf8 !important;
+    cursor: pointer;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+  }
+
+  .navbar__actions .nav-contact-trigger:hover {
+    background: rgba(255, 255, 255, 0.04) !important;
+  }
+
+  /* Login link — full-width in mobile menu */
+  .navbar__actions #nav-login-btn {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 14px 20px !important;
+    font-size: 15px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* User dropdown — full-width in mobile menu */
+  .navbar__actions #nav-user-menu {
+    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 12px 20px !important;
+  }
+
+  .navbar__actions .nav-avatar {
+    margin-bottom: 8px;
+  }
+
+  /* User dropdown content — show inline on mobile (not absolute) */
+  .navbar__actions .dropdown-content {
+    position: static !important;
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    padding: 8px 0;
+    margin-top: 8px;
+    box-shadow: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .navbar__actions #nav-user-menu:hover .dropdown-content,
+  .navbar__actions #nav-user-menu:focus-within .dropdown-content {
+    display: flex;
+  }
+
+  .navbar__actions .dropdown-content .dropdown-item {
+    text-align: center !important;
+    padding: 10px 16px !important;
+    font-size: 14px !important;
   }
 
   /* ── App Navbar Mobile Handling ───────────────────────── */
@@ -130,31 +258,20 @@
     flex-wrap: wrap !important;
   }
 
-  .navbar__menu,
-  .navbar__actions {
+  .navbar__menu {
     display: none !important;
     width: 100%;
     flex-direction: column !important;
     align-items: center !important;
     background: rgba(10, 10, 15, 0.97);
     backdrop-filter: blur(20px);
-  }
-
-  .navbar__menu {
     order: 4;
     padding: 16px 0 0;
     margin-top: 12px;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .navbar__actions {
-    order: 5;
-    padding: 16px 0;
-    gap: 12px !important;
-  }
-
-  .navbar.menu-open .navbar__menu,
-  .navbar.menu-open .navbar__actions {
+  .navbar.menu-open .navbar__menu {
     display: flex !important;
   }
 
@@ -166,14 +283,30 @@
 
   /* ── Hero Sections ────────────────────────────────────── */
   .m-hero {
-    height: 100svh !important;
-    min-height: 100svh !important;
-    padding: 100px 20px 40px 20px !important;
+    height: auto !important;
+    min-height: auto !important;
+    padding: 80px 20px 40px 20px !important;
     display: flex !important;
     flex-direction: column !important;
     grid-template-columns: 1fr !important;
     justify-items: center;
-    overflow: hidden !important;
+    overflow: visible !important;
+  }
+
+  /* The 100vh wrapper inside homepage hero — shrink on mobile */
+  .m-hero > div[style*="min-height: 100vh"] {
+    min-height: 80vh !important;
+    padding-bottom: 10vh !important;
+  }
+
+  /* Hero subtitle / prompt text — ensure wrapping */
+  .hero-prompt__text {
+    font-size: 13px !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    max-width: 100% !important;
+    padding: 0 8px !important;
+    white-space: normal !important;
   }
 
   .m-hero__content {
@@ -184,9 +317,15 @@
     text-align: center !important;
     align-items: center !important;
     max-width: 100% !important;
-    width: 100%;
-    padding: 0 0 4vh 0 !important;
+    width: 100% !important;
+    padding: 0 16px 4vh 16px !important;
     gap: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Logo in hero — scale down on mobile */
+  .m-hero__content img[alt*="AtlasDT"] {
+    height: clamp(70px, 14vw, 100px) !important;
   }
 
   /* Kill the br spacers inside hero on mobile */
@@ -591,6 +730,429 @@
   }
 
   /* ══════════════════════════════════════════════════════════
+     HOMEPAGE — Who We Are Section (Mobile)
+     ══════════════════════════════════════════════════════════ */
+
+  .prd-who-section {
+    padding: 60px 20px 40px !important;
+  }
+
+  .prd-who-inner {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  .prd-who-eyebrow {
+    text-align: center !important;
+  }
+
+  .prd-who-title {
+    font-size: clamp(1.2rem, 5vw, 1.5rem) !important;
+  }
+
+  .prd-who-body {
+    font-size: 0.9rem !important;
+    text-align: center !important;
+  }
+
+  .prd-who-left ul {
+    align-items: center !important;
+  }
+
+  .prd-who-left ul li {
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .prd-who-right {
+    gap: 20px !important;
+  }
+
+  .prd-photo-frame {
+    border-radius: 16px !important;
+  }
+
+  .prd-photo-badge,
+  .prd-photo-badge--2 {
+    padding: 8px 16px !important;
+  }
+
+  .prd-badge-num {
+    font-size: 16px !important;
+  }
+
+  .prd-badge-label {
+    font-size: 9px !important;
+  }
+
+  .prd-pillars {
+    gap: 8px !important;
+  }
+
+  .prd-pillar {
+    padding: 10px 12px !important;
+  }
+
+  /* Message block quote */
+  .prd-message-block {
+    max-width: 100% !important;
+  }
+
+  .prd-message-block p {
+    font-size: 16px !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     HOMEPAGE — Hero Phase Gate Cards (Mobile)
+     ══════════════════════════════════════════════════════════ */
+
+  .pb-stages-container {
+    padding: 20px 16px 60px !important;
+  }
+
+  .pb-stages-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* "Who We Are" scroll arrow at bottom of hero cards */
+  .pb-stages-container > div[style*="position: absolute"][style*="bottom"] {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    margin-top: 32px !important;
+  }
+
+  .pb-stage-card {
+    aspect-ratio: auto !important;
+    min-height: 180px !important;
+  }
+
+  .pb-stage-title {
+    font-size: 1.3rem !important;
+    padding: 14px 12px !important;
+  }
+
+  .pb-stage-list li {
+    font-size: 13px !important;
+  }
+
+  .pb-stage-cta {
+    font-size: 12px !important;
+    padding: 10px !important;
+  }
+
+  /* USP text container — hide on mobile (hover-based, not useful) */
+  .pb-usp-container {
+    display: none !important;
+  }
+
+  /* Hero prompt bar */
+  .hero-prompt {
+    margin-bottom: 32px !important;
+  }
+
+  .hero-prompt__text {
+    font-size: 13px !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     HOMEPAGE — Expertise / Capabilities Grid (Mobile)
+     ══════════════════════════════════════════════════════════ */
+
+  .prd-expertise-section {
+    padding: 60px 20px !important;
+  }
+
+  .prd-expertise-header {
+    margin-bottom: 32px !important;
+  }
+
+  .prd-expertise-title {
+    font-size: 1.8rem !important;
+  }
+
+  .prd-expertise-desc {
+    font-size: 0.9rem !important;
+  }
+
+  .prd-expertise-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .prd-exp-card--large,
+  .prd-exp-card--wide,
+  .prd-exp-card--featured {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+  }
+
+  .prd-exp-img-wrap {
+    min-height: 160px !important;
+  }
+
+  .prd-exp-body {
+    padding: 16px !important;
+  }
+
+  .prd-exp-list li {
+    font-size: 0.78rem !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     HOMEPAGE — Platform / Tool Rows (Mobile)
+     ══════════════════════════════════════════════════════════ */
+
+  .prd-platform-section {
+    padding: 60px 20px !important;
+  }
+
+  .prd-platform-header {
+    margin-bottom: 40px !important;
+  }
+
+  .prd-platform-title {
+    font-size: 1.8rem !important;
+  }
+
+  .prd-platform-subtitle {
+    font-size: 0.95rem !important;
+  }
+
+  .prd-tool-row,
+  .prd-tool-row--reverse {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    margin-bottom: 48px !important;
+    direction: ltr !important;
+  }
+
+  .prd-tool-row--reverse > * {
+    direction: ltr !important;
+  }
+
+  .prd-tool-screenshot {
+    border-radius: 12px !important;
+  }
+
+  .prd-tool-name {
+    font-size: 1.4rem !important;
+  }
+
+  .prd-tool-desc {
+    font-size: 0.85rem !important;
+  }
+
+  .prd-tool-list li {
+    font-size: 0.82rem !important;
+  }
+
+  .prd-tool-cta {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 12px 20px !important;
+    font-size: 13px !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     HOMEPAGE — Convergence / Phase Network (Mobile)
+     ══════════════════════════════════════════════════════════ */
+
+  .prd-convergence-section {
+    padding: 60px 16px !important;
+  }
+
+  .prd-convergence-title {
+    font-size: 1.6rem !important;
+  }
+
+  .prd-convergence-title br {
+    display: none !important;
+  }
+
+  .prd-convergence-subtitle {
+    font-size: 0.85rem !important;
+  }
+
+  /* Hide the SVG connection lines on mobile */
+  .prd-phase-svg,
+  .prd-phase-svg--vert {
+    display: none !important;
+  }
+
+  /* Kill animated flow lines */
+  .animated-flow,
+  .animated-flow-slow {
+    display: none !important;
+  }
+
+  .prd-phase-network {
+    gap: 24px !important;
+  }
+
+  /* Phase 1 hero card */
+  .prd-phase-group--hero {
+    max-width: 100% !important;
+    padding: 24px 16px !important;
+    border-radius: 16px !important;
+  }
+
+  .prd-phase-hero-layout {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 16px !important;
+  }
+
+  .prd-phase-hero-text h4 {
+    font-size: 1.2rem !important;
+    text-align: center !important;
+  }
+
+  .prd-phase-hero-text p {
+    font-size: 0.85rem !important;
+    text-align: center !important;
+  }
+
+  /* Phase labels */
+  .prd-phase-label {
+    font-size: 9px !important;
+    padding: 6px 14px !important;
+    letter-spacing: 1px !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+    margin: 0 auto 12px !important;
+    display: block !important;
+    text-align: center !important;
+    width: fit-content !important;
+  }
+
+  /* Phase 2 cards row — stack vertically */
+  .prd-phase-cards--row {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+
+  .prd-phase-card {
+    padding: 20px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .prd-phase-card h4 {
+    font-size: 0.85rem !important;
+  }
+
+  .prd-phase-card p {
+    font-size: 0.75rem !important;
+  }
+
+  .prd-phase-card-icon {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  /* Phase 3 constellation — hide canvas, simplify */
+  .prd-phase-tier--bottom .adv-matrix-container {
+    min-height: auto !important;
+    padding-bottom: 20px !important;
+  }
+
+  #matrix-canvas {
+    display: none !important;
+  }
+
+  .matrix-tech-nodes-pool {
+    display: none !important;
+  }
+
+  .reset-map-btn {
+    display: none !important;
+  }
+
+  /* Phase 3 intent node cards — stack vertically */
+  #matrix-constellation {
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin-top: 24px !important;
+  }
+
+  #matrix-constellation .prd-phase-card {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Phase entry badge */
+  .prd-phase-entry-badge {
+    font-size: 11px !important;
+    padding: 8px 16px !important;
+  }
+
+  .prd-phase-entry-line {
+    height: 16px !important;
+  }
+
+  /* Label positioning overrides */
+  .prd-phase-tier--mid > div[style*="justify-content"] {
+    justify-content: center !important;
+    padding-right: 0 !important;
+  }
+
+  .prd-phase-label--floating {
+    position: relative !important;
+    right: auto !important;
+    margin: 0 auto 16px !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     HOMEPAGE — Locations Map (Mobile)
+     ══════════════════════════════════════════════════════════ */
+
+  .m-locations-map-section {
+    padding: 60px 0 !important;
+  }
+
+  .m-locations-map-section .m-section-title {
+    font-size: 1.6rem !important;
+  }
+
+  /* Make map nodes smaller on mobile */
+  .map-node div[style*="font-size: 13px"],
+  .map-node div[style*="font-size: 14px"] {
+    font-size: 10px !important;
+  }
+
+  .map-node span[style*="font-size: 11px"] {
+    display: none !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     HOMEPAGE — Marquee / Trusted By (Mobile)
+     ══════════════════════════════════════════════════════════ */
+
+  .m-marquee-section {
+    padding: 20px 0 !important;
+  }
+
+  .m-marquee-logo {
+    height: 24px !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     HOMEPAGE — Hero Grid Flashes (reduce on mobile)
+     ══════════════════════════════════════════════════════════ */
+
+  .hero-grid-flash,
+  .hero-grid-flash--1,
+  .hero-grid-flash--2,
+  .hero-grid-flash--3 {
+    display: none !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
      SERVICES PAGE — Mobile Overrides
      ══════════════════════════════════════════════════════════ */
 
@@ -602,7 +1164,8 @@
 
   .services-hero p,
   .portfolio-hero p {
-    display: none !important;
+    font-size: 14px !important;
+    display: block !important;
   }
 
   .services-hero,
@@ -610,44 +1173,66 @@
     padding: 130px 5% 60px 5% !important;
   }
 
-  /* Services page service blocks */
+  .services-hero button {
+    font-size: 14px !important;
+    padding: 12px 24px !important;
+  }
+
+  /* Services page service blocks — full stack */
   .service-block {
     padding: 40px 20px !important;
   }
 
+  .service-block__inner,
+  .service-block--reverse .service-block__inner {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  /* Reset reversed grid ordering on mobile */
+  .service-block--reverse .service-block__content,
+  .service-block--reverse .service-block__image {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+  }
+
   .service-block__content h2 {
-    font-size: 1.8rem !important;
+    font-size: 1.6rem !important;
     text-align: center !important;
   }
 
-  /* Hide block-level descriptions, keep just the headline */
-  .service-block__content>p {
-    display: none !important;
+  .service-block__content > p {
+    font-size: 0.9rem !important;
+    text-align: center !important;
   }
 
-  /* Service lists: show only the bold label, hide trailing description */
+  /* Service lists — show full content on mobile, readable */
   .service-list li {
-    font-size: 0 !important;
-    line-height: 0 !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
     margin-bottom: 10px !important;
-    color: transparent !important;
+    color: #475569 !important;
   }
 
   .service-list li strong {
-    font-size: 14px !important;
+    font-size: 13px !important;
     line-height: 1.5 !important;
-    color: var(--color-white) !important;
-    display: block !important;
+    color: #0f172a !important;
+    display: inline !important;
   }
 
   .service-list li::before {
-    font-size: 14px !important;
-    line-height: 1.5 !important;
+    font-size: 16px !important;
+    line-height: 1.2 !important;
   }
 
-  /* The Result boxes — keep headline, hide paragraph */
+  /* Service result boxes */
+  .service-result {
+    padding: 16px !important;
+  }
+
   .service-result p {
-    display: none !important;
+    font-size: 13px !important;
   }
 
   /* Marquee carousel on mobile */
@@ -661,7 +1246,6 @@
   .sales-marquee-track {
     gap: 16px !important;
     animation-duration: 25s !important;
-    /* Dialed down speed per user request */
   }
 
   /* Center the intro text for manufacturing engine section */
@@ -733,6 +1317,36 @@
   /* Footer brand description — hide on mobile */
   footer .navbar__brand+p {
     display: none !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     CONTACT MODAL — Mobile Full-Screen
+     ══════════════════════════════════════════════════════════ */
+
+  .contact-modal-glass,
+  .contact-modal-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+  }
+
+  .contact-modal-content form {
+    padding: 16px !important;
+  }
+
+  .contact-modal-content form div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Auth modal on mobile */
+  .auth-modal-glass {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    overflow-y: auto !important;
   }
 
   /* ── Product Modal ────────────────────────────────────── */

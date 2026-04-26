@@ -209,6 +209,22 @@ body.marketing-page.is-homepage .global-nav-link[data-nav="home"] {
   .global-nav-link {
     align-items: flex-start;
   }
+
+  /* Override marketing-page absolute centering on mobile */
+  .marketing-page .nav-links-container {
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    flex: none !important;
+    z-index: auto !important;
+  }
+
+  /* Override marketing-page actions positioning on mobile */
+  .marketing-page .navbar__actions {
+    position: static !important;
+    flex: none !important;
+    justify-content: stretch !important;
+  }
 }
 
 /* Paniani Footer Logo Styles */

@@ -36,8 +36,8 @@
             style="height: 32px; width: auto; object-fit: contain;" /></a>
 
       </div>
-      <button class="mobile-menu-toggle" aria-label="Toggle mobile menu"
-        onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
+      <button class="mobile-menu-toggle" id="mobile-menu-btn" aria-label="Toggle mobile menu"
+        onclick="const nb=document.getElementById('navbar'); nb.classList.toggle('menu-open'); this.textContent=nb.classList.contains('menu-open')?'✕':'☰'">☰</button>
       <div class="nav-links-container"
         style="display: flex; align-items: center; gap: 4px; flex: 0 0 auto; justify-content: center;">
         <a href="index.html" class="global-nav-link global-nav-link--single" data-nav="home" style="padding: 8px 24px;">

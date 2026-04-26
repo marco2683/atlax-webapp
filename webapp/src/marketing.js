@@ -3,6 +3,7 @@ import './css/marketing.css';
 import './css/convergence.css';
 import './css/team.css';
 import { initAuthModal } from './js/components/auth-modal.js';
+import './js/mobile-menu.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('[PRD] Marketing Homepage Loaded');
