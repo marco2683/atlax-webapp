@@ -58,7 +58,9 @@
   <link rel="stylesheet" href="/src/css/supplier-engine.css">
   <link rel="stylesheet" href="/src/css/product-builder.css">
   <link rel="stylesheet" href="/src/css/global-nav.css">
+  <link rel="stylesheet" href="/src/css/responsive.css">
   <script type="module" src="/src/js/contact-modal.js"></script>
+  <script type="module" src="/src/js/mobile-menu.js"></script>
   <link rel="stylesheet" href="/src/css/auth.css">
 
   <!-- Anti-Flash Script that runs before body paints -->
@@ -131,8 +133,8 @@
         </div>
       </div>
 
-      <button class="mobile-menu-toggle" aria-label="Toggle mobile menu"
-        onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
+      <button class="mobile-menu-toggle" id="mobile-menu-btn" aria-label="Toggle mobile menu"
+        onclick="const nb=document.getElementById('navbar'); nb.classList.toggle('menu-open'); this.textContent=nb.classList.contains('menu-open')?'✕':'☰'">☰</button>
 
       <ul class="navbar__menu" id="navbar-menu">
         <li class="navbar__menu-item" data-view="home"><a href="index.html"

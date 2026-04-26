@@ -281,6 +281,361 @@
     padding: 14px 20px !important;
   }
 
+  /* ── Hide homepage tagline on mobile ────────────────── */
+  .is-homepage .m-hero__content>.hero-prompt__text {
+    display: none !important;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     APP PAGE — MOBILE OVERRIDES (app.html)
+     Bare-minimum rules to make every engine view functional
+     on small screens. Refine these as needed.
+     ══════════════════════════════════════════════════════ */
+
+  /* ── App Layout Foundation ────────────────────────────── */
+  body.app-page #app {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh;
+    overflow-x: hidden !important;
+  }
+
+  body.app-page .navbar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 10px 16px !important;
+    box-sizing: border-box !important;
+    flex-wrap: wrap !important;
+  }
+
+  body.app-page .navbar__brand {
+    flex: 1 !important;
+  }
+
+  /* Engine label — hide on mobile to save space */
+  body.app-page .nav-engine-label {
+    display: none !important;
+  }
+
+  /* App navbar menu items — full-width in dropdown */
+  body.app-page .navbar__menu {
+    display: none !important;
+    width: 100% !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    order: 4;
+    background: rgba(10, 10, 15, 0.97);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 8px 0 !important;
+    margin: 12px -16px 0 !important;
+    list-style: none !important;
+  }
+
+  body.app-page .navbar.menu-open .navbar__menu {
+    display: flex !important;
+  }
+
+  body.app-page .navbar__menu-item {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 14px 20px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+  }
+
+  body.app-page .navbar__menu-item:last-child {
+    border-bottom: none;
+  }
+
+  /* App actions — show in dropdown */
+  body.app-page .navbar__actions {
+    display: none !important;
+    width: 100% !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    order: 5;
+    background: rgba(10, 10, 15, 0.97);
+    padding: 0 0 12px 0 !important;
+    gap: 0 !important;
+  }
+
+  body.app-page .navbar.menu-open .navbar__actions {
+    display: flex !important;
+  }
+
+  /* Workspace link — full-width on mobile */
+  body.app-page .navbar__workspace-link {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 14px 20px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    justify-content: center !important;
+  }
+
+  /* Theme toggle — center in mobile menu */
+  body.app-page .navbar__theme-toggle {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    padding: 10px 20px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* ── Hero / Globe ─────────────────────────────────────── */
+  body.app-page .hero {
+    height: auto !important;
+    min-height: 50vh !important;
+    padding-top: 70px !important;
+    overflow: hidden;
+  }
+
+  body.app-page .hero__globe-container {
+    height: 50vh !important;
+    min-height: 300px;
+  }
+
+  body.app-page .hero__title-container {
+    padding: 0 16px !important;
+    text-align: center;
+  }
+
+  body.app-page .hero__title-container h1 {
+    font-size: 24px !important;
+  }
+
+  /* Hide globe toggles on mobile — not useful on touch */
+  body.app-page .view-toggle-pill,
+  body.app-page .flatearth-toggle-pill {
+    display: none !important;
+  }
+
+  /* ── Search Area ──────────────────────────────────────── */
+  body.app-page .search-area__tagline {
+    font-size: 13px !important;
+    padding: 0 16px !important;
+    text-align: center;
+  }
+
+  body.app-page .search-bar {
+    width: calc(100% - 32px) !important;
+    max-width: 100% !important;
+    margin: 0 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  body.app-page .search-bar input {
+    font-size: 14px !important;
+  }
+
+  body.app-page .region-row {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    padding: 0 16px !important;
+    justify-content: center !important;
+  }
+
+  body.app-page .region-chip {
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+  }
+
+  body.app-page .selector-flow {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    padding: 0 16px !important;
+    justify-content: center !important;
+  }
+
+  /* ── Bottom Results Container ─────────────────────────── */
+  body.app-page #bottom-results-container {
+    padding: 16px !important;
+  }
+
+  /* ── Sales Funnel Page (Plan Selection) ─────────────── */
+  body.app-page .sales-funnel-page {
+    padding-top: 70px !important;
+  }
+
+  body.app-page .sales-funnel__content {
+    padding: 0 16px !important;
+  }
+
+  body.app-page .sales-hero__title {
+    font-size: 28px !important;
+  }
+
+  body.app-page .sales-hero__subtitle {
+    font-size: 15px !important;
+  }
+
+  /* Sales plan rows — stack vertically */
+  body.app-page .sales-plan-row {
+    flex-direction: column !important;
+    padding: 24px !important;
+  }
+
+  body.app-page .sales-plan-row[style*="row-reverse"] {
+    flex-direction: column !important;
+  }
+
+  body.app-page .sales-plan-images {
+    min-height: 200px !important;
+  }
+
+  /* Deep dive rows — stack */
+  body.app-page .deep-dive-row {
+    flex-direction: column !important;
+    gap: 24px !important;
+  }
+
+  body.app-page .deep-dive-row.reverse {
+    flex-direction: column !important;
+  }
+
+  body.app-page .deep-dive-text {
+    max-width: 100% !important;
+  }
+
+  body.app-page .deep-dive-text h2 {
+    font-size: 22px !important;
+  }
+
+  body.app-page .deep-dive-img {
+    max-width: 100% !important;
+  }
+
+  /* Pricing grid — single column */
+  body.app-page .sales-pricing-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.app-page .sales-pricing {
+    padding: 0 16px !important;
+  }
+
+  /* ── RFQ Engine ───────────────────────────────────────── */
+  body.app-page #rfq-engine {
+    padding: 70px 16px 20px !important;
+    flex-direction: column !important;
+  }
+
+  body.app-page #rfq-engine-right {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 16px !important;
+  }
+
+  body.app-page .rfq-dropzone {
+    min-height: 120px !important;
+  }
+
+  /* ── Project Quote Engine ─────────────────────────────── */
+  body.app-page #project-quote-engine {
+    padding: 70px 16px 20px !important;
+  }
+
+  body.app-page .pq-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Designers Engine ─────────────────────────────────── */
+  body.app-page #designers-engine {
+    padding: 70px 16px 20px !important;
+  }
+
+  body.app-page .designers-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Tariff Engine ────────────────────────────────────── */
+  body.app-page #tariff-engine {
+    padding: 70px 16px 20px !important;
+  }
+
+  /* ── Catalog / Marketplace Engine ─────────────────────── */
+  body.app-page #catalog-engine {
+    padding: 70px 0 0 !important;
+  }
+
+  body.app-page .catalog-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 0 16px !important;
+  }
+
+  /* ── Shortlist Panel ──────────────────────────────────── */
+  body.app-page #shortlist-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    right: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  /* ── Supplier Carousel / Modal ────────────────────────── */
+  body.app-page .supplier-carousel-overlay {
+    padding: 0 !important;
+  }
+
+  body.app-page .supplier-carousel-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+  }
+
+  /* ── Supplier Grid Modal ──────────────────────────────── */
+  body.app-page .supplier-grid-overlay .supplier-grid-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+    padding: 16px !important;
+  }
+
+  body.app-page .supplier-grid-panel .sg-cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Stacked Results ──────────────────────────────────── */
+  body.app-page .stacked-results-container {
+    padding: 0 16px !important;
+  }
+
+  body.app-page .sr-category-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  body.app-page .sr-card {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* ── Tabular View ─────────────────────────────────────── */
+  body.app-page #supplier-tabular-engine {
+    padding: 70px 8px 20px !important;
+    overflow-x: auto !important;
+  }
+
+  body.app-page .tabular-table {
+    font-size: 12px !important;
+    min-width: 600px !important;
+  }
+
+  /* ── App Footer ───────────────────────────────────────── */
+  body.app-page .m-footer {
+    padding: 40px 16px !important;
+  }
+
+  body.app-page .m-footer .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
   /* ── Hero Sections ────────────────────────────────────── */
   .m-hero {
     height: auto !important;
