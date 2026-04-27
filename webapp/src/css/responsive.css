@@ -325,97 +325,75 @@
     display: none !important;
   }
 
-  /* Hide hamburger menu on app-page since we use tabs */
+  /* Show hamburger menu on app-page */
   body.app-page .mobile-menu-toggle {
-    display: none !important;
+    display: block !important;
   }
 
-  /* App navbar menu items — horizontal scrollable tabs */
+  /* App navbar menu items — full-width in dropdown */
   body.app-page .navbar__menu {
-    display: flex !important;
+    display: none !important;
     width: 100% !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
     order: 4;
-    background: transparent !important;
-    backdrop-filter: none !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-    padding: 8px 0 0 0 !important;
-    margin: 12px 0 0 0 !important;
+    background: rgba(10, 10, 15, 0.97);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 8px 0 !important;
+    margin: 12px -16px 0 !important;
     list-style: none !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
   }
 
-  body.app-page .navbar__menu::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+  body.app-page .navbar.menu-open .navbar__menu {
+    display: flex !important;
   }
 
   body.app-page .navbar__menu-item {
-    width: auto !important;
-    flex-shrink: 0 !important;
+    width: 100% !important;
     text-align: center !important;
-    padding: 8px 16px !important;
-    border-bottom: none !important;
+    padding: 14px 20px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     cursor: pointer;
-    border-radius: var(--radius-md) !important;
   }
 
   body.app-page .navbar__menu-item:last-child {
     border-bottom: none;
   }
 
-  /* App actions — show inline on the top right */
+  /* App actions — show in dropdown */
   body.app-page .navbar__actions {
-    display: flex !important;
-    width: auto !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    order: 2;
-    background: transparent !important;
-    padding: 0 !important;
-    gap: 12px !important;
+    display: none !important;
+    width: 100% !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    order: 5;
+    background: rgba(10, 10, 15, 0.97);
+    padding: 0 0 12px 0 !important;
+    gap: 0 !important;
   }
 
-  /* Workspace link — compact icon on mobile */
+  body.app-page .navbar.menu-open .navbar__actions {
+    display: flex !important;
+  }
+
+  /* Workspace link — full-width on mobile */
   body.app-page .navbar__workspace-link {
-    width: auto !important;
-    padding: 6px 10px !important;
-    border-top: none !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    border-radius: 6px !important;
-    font-size: 11px !important;
+    width: 100% !important;
+    text-align: center !important;
+    padding: 14px 20px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    justify-content: center !important;
   }
 
   /* User menu dropdown wrapper */
   body.app-page .navbar__actions #nav-user-menu {
-    width: auto !important;
-    border-top: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    position: relative !important;
-  }
-
-  /* User menu dropdown content - absolute position on app page */
-  body.app-page .navbar__actions .dropdown-content {
-    position: absolute !important;
-    top: calc(100% + 8px) !important;
-    right: 0 !important;
-    width: 200px !important;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
-  }
-
-  /* Login link - compact inline on app page */
-  body.app-page .navbar__actions #nav-login-btn {
-    width: auto !important;
-    padding: 6px 12px !important;
-    font-size: 13px !important;
-    border-top: none !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    border-radius: 6px !important;
+    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 12px 20px !important;
   }
 
   /* Theme toggle — hide on mobile app to save space */
@@ -562,7 +540,7 @@
   body.app-page #designers-engine,
   body.app-page #tariff-engine,
   body.app-page #catalog-engine {
-    padding: 110px 16px 20px !important;
+    padding: 70px 16px 20px !important;
     flex-direction: column !important;
     height: auto !important;
     overflow-y: visible !important;
@@ -575,7 +553,15 @@
   body.app-page .designers-grid {
     width: 100% !important;
     max-width: 100% !important;
-    padding: 16px !important;
+    padding: 0 !important; /* Remove 16px padding because parent container already has 16px padding */
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Force all cards to respect the bounding box */
+  body.app-page .rfq-engine__card,
+  body.app-page .rfq-engine * {
+    max-width: 100% !important;
     box-sizing: border-box !important;
   }
 
@@ -653,6 +639,91 @@
     grid-template-columns: 1fr !important;
     gap: 24px !important;
     padding: 24px 16px !important;
+  }
+
+  /* ── Catalog Engine (OEM Marketplace) Mobile ── */
+  body.app-page .dk-layout {
+    flex-direction: column !important;
+    padding: 0 !important;
+  }
+
+  body.app-page .dk-sidebar {
+    display: none !important; /* Hide sidebar filters on mobile */
+  }
+
+  body.app-page .dk-main {
+    padding: 16px !important;
+  }
+
+  body.app-page .dk-table-wrapper {
+    margin: 0 !important;
+    border: none !important;
+    min-height: auto !important;
+  }
+
+  body.app-page .dk-table thead {
+    display: none !important;
+  }
+
+  body.app-page .dk-table tbody,
+  body.app-page .dk-table tr,
+  body.app-page .dk-table td {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  body.app-page .dk-table tr {
+    background: #FFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 8px !important;
+    margin-bottom: 16px !important;
+    padding: 16px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+  }
+
+  body.app-page .dk-table td {
+    border: none !important;
+    padding: 4px 0 !important;
+  }
+
+  body.app-page .dk-col-image img {
+    width: 100% !important;
+    max-width: 120px !important;
+    height: auto !important;
+    margin: 0 auto !important;
+  }
+
+  body.app-page .dk-gh-top {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+    padding: 16px !important;
+  }
+
+  body.app-page .dk-gh-actions {
+    display: none !important;
+  }
+
+  /* ── Designers Engine Mobile ── */
+  body.app-page .de-hire-layout {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  body.app-page .de-sidebar {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  body.app-page .de-main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 16px !important;
+    box-sizing: border-box !important;
   }
   
   body.app-page .supplier-card {
@@ -2050,9 +2121,9 @@
   /* Tabular scroll fixes: remove height auto to prevent native body stretch / double scroll */
   body.app-page .supplier-tabular-engine {
     position: absolute !important;
-    top: 100px !important;
+    top: 60px !important;
     left: 0 !important;
-    height: calc(100vh - 100px) !important;
+    height: calc(100vh - 60px) !important;
     width: 100% !important;
     padding: 10px 10px 40px 10px !important;
     z-index: 100 !important;
