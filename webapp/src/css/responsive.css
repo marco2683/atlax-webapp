@@ -824,7 +824,8 @@
     min-height: 100vh !important;
     min-height: 100dvh !important;
     padding-bottom: 8vh !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
+    padding-top: 22vh !important;
   }
 
   /* Hero subtitle / prompt text — ensure wrapping */
