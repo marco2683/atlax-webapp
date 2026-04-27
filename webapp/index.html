@@ -1692,6 +1692,18 @@
   </style>
 
 
+    <script>
+  // Hide nav logo at top, show on scroll past hero
+  (function(){
+    var logo = document.getElementById('nav-brand-logo');
+    if (!logo) return;
+    logo.style.opacity = '0';
+    window.addEventListener('scroll', function(){
+      logo.style.opacity = window.scrollY > window.innerHeight * 0.6 ? '1' : '0';
+    }, {passive:true});
+  })();
+  </script>
+
   <script type="module" src="/src/marketing.js"></script>
   <script type="module" src="/src/js/components/advantage-map.js"></script>
   <script type="text/javascript" src="https://res.public.onecdn.static.microsoft/customerconnect/v1/7dttl/init.js"
