@@ -325,63 +325,100 @@
     display: none !important;
   }
 
-  /* App navbar menu items — full-width in dropdown */
-  body.app-page .navbar__menu {
+  /* Hide hamburger menu on app-page since we use tabs */
+  body.app-page .mobile-menu-toggle {
     display: none !important;
-    width: 100% !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    order: 4;
-    background: rgba(10, 10, 15, 0.97);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 8px 0 !important;
-    margin: 12px -16px 0 !important;
-    list-style: none !important;
   }
 
-  body.app-page .navbar.menu-open .navbar__menu {
+  /* App navbar menu items — horizontal scrollable tabs */
+  body.app-page .navbar__menu {
     display: flex !important;
+    width: 100% !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    order: 4;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 8px 0 0 0 !important;
+    margin: 12px 0 0 0 !important;
+    list-style: none !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+  }
+
+  body.app-page .navbar__menu::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
   }
 
   body.app-page .navbar__menu-item {
-    width: 100% !important;
+    width: auto !important;
+    flex-shrink: 0 !important;
     text-align: center !important;
-    padding: 14px 20px !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    padding: 8px 16px !important;
+    border-bottom: none !important;
     cursor: pointer;
+    border-radius: var(--radius-md) !important;
   }
 
   body.app-page .navbar__menu-item:last-child {
     border-bottom: none;
   }
 
-  /* App actions — show in dropdown */
+  /* App actions — show inline on the top right */
   body.app-page .navbar__actions {
-    display: none !important;
-    width: 100% !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    order: 5;
-    background: rgba(10, 10, 15, 0.97);
-    padding: 0 0 12px 0 !important;
-    gap: 0 !important;
-  }
-
-  body.app-page .navbar.menu-open .navbar__actions {
     display: flex !important;
+    width: auto !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    order: 2;
+    background: transparent !important;
+    padding: 0 !important;
+    gap: 12px !important;
   }
 
-  /* Workspace link — full-width on mobile */
+  /* Workspace link — compact icon on mobile */
   body.app-page .navbar__workspace-link {
-    width: 100% !important;
-    text-align: center !important;
-    padding: 14px 20px !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    justify-content: center !important;
+    width: auto !important;
+    padding: 6px 10px !important;
+    border-top: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 6px !important;
+    font-size: 11px !important;
   }
 
-  /* Theme toggle — hide on mobile app to save space (put in hamburger if needed) */
+  /* User menu dropdown wrapper */
+  body.app-page .navbar__actions #nav-user-menu {
+    width: auto !important;
+    border-top: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    position: relative !important;
+  }
+
+  /* User menu dropdown content - absolute position on app page */
+  body.app-page .navbar__actions .dropdown-content {
+    position: absolute !important;
+    top: calc(100% + 8px) !important;
+    right: 0 !important;
+    width: 200px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Login link - compact inline on app page */
+  body.app-page .navbar__actions #nav-login-btn {
+    width: auto !important;
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+    border-top: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 6px !important;
+  }
+
+  /* Theme toggle — hide on mobile app to save space */
   body.app-page .navbar__theme-toggle {
     display: none !important;
   }
@@ -525,7 +562,7 @@
   body.app-page #designers-engine,
   body.app-page #tariff-engine,
   body.app-page #catalog-engine {
-    padding: 70px 16px 20px !important;
+    padding: 110px 16px 20px !important;
     flex-direction: column !important;
     height: auto !important;
     overflow-y: visible !important;
@@ -2013,9 +2050,9 @@
   /* Tabular scroll fixes: remove height auto to prevent native body stretch / double scroll */
   body.app-page .supplier-tabular-engine {
     position: absolute !important;
-    top: 60px !important;
+    top: 100px !important;
     left: 0 !important;
-    height: calc(100vh - 60px) !important;
+    height: calc(100vh - 100px) !important;
     width: 100% !important;
     padding: 10px 10px 40px 10px !important;
     z-index: 100 !important;
