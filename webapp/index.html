@@ -114,14 +114,35 @@
       <div class="m-hero__content m-fade-up"
         style="text-align: center; align-items: center; max-width: 900px; width: 100%; margin: 0 auto; box-sizing: border-box;">
 
+        <style>
+          @keyframes hero-logo-reveal {
+            0% {
+              opacity: 0;
+              transform: scale(0.05);
+              filter: blur(8px);
+            }
+            60% {
+              opacity: 1;
+              filter: blur(0);
+            }
+            80% {
+              transform: scale(1.03);
+            }
+            100% {
+              opacity: 1;
+              transform: scale(1);
+              filter: blur(0);
+            }
+          }
+        </style>
         <div
-          style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 12px; margin-left: auto; margin-right: auto; padding: 0 10px; width: 100%; box-sizing: border-box;">
+          style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 12px; margin-left: auto; margin-right: auto; padding: 0 10px; width: 100%; box-sizing: border-box; animation: hero-logo-reveal 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;">
           <img src="/logos/atlasdt-logo-light.png" alt="AtlasDT — Design & Technology"
             style="width: 100%; max-width: 600px; max-height: 170px; object-fit: contain; padding: 0 15px; box-sizing: border-box;">
         </div>
 
-        <span class="hero-prompt__text" style="font-size: 16px; display: block; padding: 0 20px;">From concept to factory
-          floor &mdash; faster, leaner, and more competitive than you thought possible.</span>
+        <!--<span class="hero-prompt__text" style="font-size: 16px; display: block; padding: 0 20px;">From concept to factory
+          floor &mdash; faster, leaner, and more competitive than you thought possible.</span>-->
       </div>
 
       <!-- Discover More Arrow -->
@@ -486,10 +507,10 @@
       onclick="document.getElementById('expertise').scrollIntoView({ behavior: 'smooth' })"
       onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='0.5'">
       <span
-        style="color: #0e7a6c; font-family: 'Outfit', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; font-weight: 700;">Our Expertise</span>
-      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
-        stroke="#0e7a6c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-        style="animation: bounce-arrow 2s infinite;">
+        style="color: #0e7a6c; font-family: 'Outfit', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; font-weight: 700;">Our
+        Expertise</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: bounce-arrow 2s infinite;">
         <polyline points="6 9 12 15 18 9"></polyline>
       </svg>
     </div>
