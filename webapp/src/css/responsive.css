@@ -291,15 +291,9 @@
     display: none !important;
   }
 
-  /* ── Homepage Hero Logo — position at 45vh ──────────── */
+  /* ── Homepage Hero Logo — position at ~45vh on mobile ── */
   .hero-top-section {
-    justify-content: flex-start !important;
-    padding-top: 45vh !important;
-    padding-bottom: 0 !important;
-  }
-
-  .hero-top-section .m-hero__content {
-    transform: translateY(-50%);
+    padding-top: 35vh !important;
   }
 
   /* ══════════════════════════════════════════════════════
