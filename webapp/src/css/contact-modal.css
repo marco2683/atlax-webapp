@@ -495,24 +495,22 @@ a.nav-link.nav-contact-trigger:hover {
     padding: 14px 20px !important;
   }
 
-  /* Make the app page contact button a tiny round icon next to avatar */
+  /* Make the app page contact button look like a standard dropdown item in the hamburger menu */
   body.app-page #atlasdt-contact-nav-trigger-app {
-    width: 26px !important;
-    height: 26px !important;
-    padding: 0 !important;
-    border-radius: 50% !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 14px 20px !important;
+    border-radius: 0 !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 0 !important;
-    margin-right: 12px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 14px !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    background: transparent !important;
   }
-
+  
   body.app-page #atlasdt-contact-nav-trigger-app svg {
-    margin: 0 !important;
-    width: 12px !important;
-    height: 12px !important;
   }
 }
