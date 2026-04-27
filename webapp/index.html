@@ -111,8 +111,25 @@
     <!-- Technical Wireframe Overlay — JS-driven random placement -->
     <style>
       .hero-wireframes { position:absolute; inset:0; z-index:3; pointer-events:none; overflow:hidden; }
-      .hero-wireframes .wf-ghost { position:absolute; opacity:0; transition: opacity 2s ease, transform 2s ease; will-change:opacity,transform; }
-      .hero-wireframes .wf-ghost.wf-visible { opacity:0.35; }
+      .hero-wireframes .wf-ghost {
+        position:absolute; opacity:0;
+        transition: opacity 1.5s ease;
+        will-change: opacity, transform;
+        filter: drop-shadow(0 0 3px rgba(14,180,160,0.6));
+      }
+      .hero-wireframes .wf-ghost.wf-visible { opacity:0.30; }
+      .hero-wireframes .wf-ghost svg * {
+        stroke-dasharray: 2000;
+        stroke-dashoffset: 2000;
+        transition: stroke-dashoffset 4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .hero-wireframes .wf-ghost.wf-visible svg * {
+        stroke-dashoffset: 0;
+      }
+      .hero-wireframes .wf-ghost.wf-fading svg * {
+        stroke-dashoffset: -2000;
+        transition: stroke-dashoffset 2.5s ease-in;
+      }
       #wf-templates { display:none; }
     </style>
     <div class="hero-wireframes" id="hero-wireframes"></div>
@@ -127,7 +144,7 @@
     (function(){
       var c=document.getElementById('hero-wireframes'), ts=document.querySelectorAll('#wf-templates svg');
       if(!c||!ts.length)return;
-      var SIZES=[220,260,300,340], active=0, MAX=2;
+      var SIZES=[380,440,500,550], active=0, MAX=2;
       function rPos(){
         var vw=innerWidth, vh=innerHeight, zones=[
           {x:[40,vw*.3],y:[40,vh*.35]},{x:[vw*.7,vw-40],y:[40,vh*.35]},
@@ -153,10 +170,11 @@
           w.style.transform='translate(-50%,-50%) scale(1) rotate('+rot+'deg)';
         })});
         setTimeout(function(){
+          w.classList.add('wf-fading');
           w.classList.remove('wf-visible');
-          w.style.transform='translate(-50%,-50%) scale(1.08) rotate('+(rot+3)+'deg)';
-        },6700);
-        setTimeout(function(){w.remove();active--},9100);
+          w.style.transform='translate(-50%,-50%) scale(1.05) rotate('+(rot+2)+'deg)';
+        },7000);
+        setTimeout(function(){w.remove();active--},10000);
       }
       setTimeout(function(){spawn();setInterval(spawn,3500)},2000);
     })();
