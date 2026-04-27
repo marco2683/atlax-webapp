@@ -32,8 +32,8 @@
     <div
       style="display: flex; justify-content: space-between; align-items: center; max-width: 95%; margin: 0 auto; width: 100%;">
       <div class="navbar__brand" style="display: flex; align-items: center; gap: 12px; flex: 1;">
-        <a href="/" aria-label="Home"><img id="nav-hero-logo" src="/logos/atlasdt-logo-light.png" alt="Atlas DT"
-            style="height: 32px; width: auto; object-fit: contain; transition: opacity 0.4s ease;" /></a>
+        <a href="/" aria-label="Home"><img src="/logos/atlasdt-logo-light.png" alt="Atlas DT"
+            style="height: 32px; width: auto; object-fit: contain; " /></a>
 
       </div>
       <button class="mobile-menu-toggle" id="mobile-menu-btn" aria-label="Toggle mobile menu"
@@ -150,7 +150,7 @@
         var t=ts[idx % ts.length]; idx++;
         var w=document.createElement("div");
         w.className="wf-ghost";
-        w.style.cssText="width:85vw;max-width:1100px;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.9)";
+        w.style.cssText="width:95vw;max-width:1400px;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.9)";
         w.innerHTML=t.outerHTML;
         w.querySelector("svg").style.cssText="width:100%;height:auto;display:block";
         c.appendChild(w);
@@ -1691,18 +1691,6 @@
     }
   </style>
 
-
-  <script>
-  // Hide nav logo when hero is visible, show on scroll
-  (function(){
-    var logo = document.getElementById('nav-hero-logo');
-    if (!logo) return;
-    logo.style.opacity = '0';
-    window.addEventListener('scroll', function(){
-      logo.style.opacity = window.scrollY > window.innerHeight * 0.6 ? '1' : '0';
-    }, {passive:true});
-  })();
-  </script>
 
   <script type="module" src="/src/marketing.js"></script>
   <script type="module" src="/src/js/components/advantage-map.js"></script>
