@@ -3045,13 +3045,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         const file = e.target.files[0];
         if (!file) return;
         
-        // Find adjacent text input
-        const row = _new.closest('.admin-img-url-row');
-        const textInput = row.querySelector('input[type="text"], input[type="url"]');
-        if (!textInput) return;
+        // Find adjacent text input — try .admin-img-url-row first, then .admin-field, then closest div
+        const row = _new.closest('.admin-img-url-row') || _new.closest('.admin-field') || _new.closest('div');
+        const textInput = row ? row.querySelector('input[type="text"], input[type="url"]') : null;
+        if (!textInput) { console.error('No text input found for upload target'); return; }
         
-        const ogLabel = _new.parentElement.innerHTML;
-        _new.parentElement.innerHTML = '⏳...';
+        const parentLabel = _new.parentElement;
+        const acceptAttr = _new.accept || '';
+        const ogLabel = parentLabel.innerHTML;
+        parentLabel.innerHTML = '⏳ Uploading...';
         
         try {
           const ext = file.name.split('.').pop();
@@ -3066,16 +3068,16 @@ document.addEventListener('DOMContentLoaded', async () => {
           const { data: publicData } = supabase.storage.from('supplier-assets').getPublicUrl(fileName);
           textInput.value = publicData.publicUrl;
           
-          _new.parentElement.innerHTML = '✅ Add';
+          parentLabel.innerHTML = '✅ Done';
           setTimeout(() => {
-            _new.parentElement.innerHTML = `📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="${_new.accept}">`;
+            parentLabel.innerHTML = ogLabel;
             wireS3Uploaders(row);
           }, 2000);
         } catch(err) {
           console.error('Upload Failed', err);
-          _new.parentElement.innerHTML = '❌ Err';
+          parentLabel.innerHTML = '❌ Error';
           setTimeout(() => {
-            _new.parentElement.innerHTML = `📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="${_new.accept}">`;
+            parentLabel.innerHTML = ogLabel;
             wireS3Uploaders(row);
           }, 2000);
         }
