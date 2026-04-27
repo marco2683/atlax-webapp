@@ -1803,6 +1803,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         banner: fd.get('banner'),
         internalNotes: fd.get('internalNotes'),
         videoWalkthrough: fd.get('videoWalkthrough'),
+        docRFI: fd.get('docRFI') || '',
+        docPresentation: fd.get('docPresentation') || '',
+        docCertifications: fd.get('docCertifications') || '',
         documents: fd.getAll('doc_url').filter(Boolean),
         images: {
           product: fd.getAll('img_product').filter(Boolean),
