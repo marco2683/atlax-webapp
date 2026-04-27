@@ -381,13 +381,9 @@
     justify-content: center !important;
   }
 
-  /* Theme toggle — center in mobile menu */
+  /* Theme toggle — hide on mobile app to save space (put in hamburger if needed) */
   body.app-page .navbar__theme-toggle {
-    width: 100% !important;
-    display: flex !important;
-    justify-content: center !important;
-    padding: 10px 20px !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: none !important;
   }
 
   /* ── Hero / Globe ─────────────────────────────────────── */
@@ -522,38 +518,48 @@
     padding: 0 16px !important;
   }
 
-  /* ── RFQ Engine ───────────────────────────────────────── */
-  body.app-page #rfq-engine {
+  /* ── Engines Generic Base ─────────────────────────────── */
+  body.app-page .rfq-engine,
+  body.app-page #rfq-engine,
+  body.app-page #project-quote-engine,
+  body.app-page #designers-engine,
+  body.app-page #tariff-engine,
+  body.app-page #catalog-engine {
     padding: 70px 16px 20px !important;
     flex-direction: column !important;
+    height: auto !important;
+    overflow-y: visible !important;
   }
 
-  body.app-page #rfq-engine-right {
+  body.app-page .rfq-engine__left,
+  body.app-page .rfq-engine__right,
+  body.app-page #rfq-engine-right,
+  body.app-page .pq-grid,
+  body.app-page .designers-grid {
     width: 100% !important;
     max-width: 100% !important;
     padding: 16px !important;
-  }
-
-  body.app-page .rfq-dropzone {
-    min-height: 120px !important;
-  }
-
-  /* ── Project Quote Engine ─────────────────────────────── */
-  body.app-page #project-quote-engine {
-    padding: 70px 16px 20px !important;
+    box-sizing: border-box !important;
   }
 
   body.app-page .pq-grid {
     grid-template-columns: 1fr !important;
   }
 
-  /* ── Designers Engine ─────────────────────────────────── */
-  body.app-page #designers-engine {
-    padding: 70px 16px 20px !important;
+  body.app-page .rfq-top-row,
+  body.app-page .rfq-fields-grid--3x3,
+  body.app-page .rfq-bottom-row {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
   }
 
-  body.app-page .designers-grid {
+  body.app-page .designers-grid,
+  body.app-page .de-grid-carousel {
     grid-template-columns: 1fr !important;
+  }
+
+  body.app-page .rfq-dropzone {
+    min-height: 120px !important;
   }
 
   /* ── Tariff Engine ────────────────────────────────────── */
@@ -606,14 +612,35 @@
     gap: 12px !important;
   }
 
+  body.app-page .supplier-selection__container {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    padding: 24px 16px !important;
+  }
+  
+  body.app-page .supplier-card {
+    padding: 32px 20px !important;
+  }
+
+  body.app-page .supplier-card h3 {
+    font-size: 24px !important;
+  }
+
+  body.app-page .supplier-card p {
+    font-size: 15px !important;
+  }
+
   /* ── Supplier cards — compact on mobile ───────────────── */
   body.app-page .sr-card,
   body.app-page .stacked-group {
     border-radius: 12px !important;
+    flex-direction: column !important;
   }
 
   body.app-page .sr-card__header {
     padding: 12px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
   }
 
   body.app-page .sr-card__body {
@@ -1998,8 +2025,8 @@
   body.app-page .tabular-body,
   body.app-page .tabular-table-container,
   body.app-page .tabular-table {
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
     height: 100% !important;
     overflow-x: hidden !important;
   }
@@ -2008,20 +2035,20 @@
     overflow-y: auto !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
-    flex: 1;
+    flex: 1 !important;
   }
 
   /* Stack tabular rows into cards for mobile */
   body.app-page .tabular-table thead {
-    display: none;
+    display: none !important;
     /* Hide standard table headers */
   }
 
   body.app-page .tabular-table tbody,
   body.app-page .tabular-table tr,
   body.app-page .tabular-table td {
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
     width: 100% !important;
   }
 
