@@ -117,7 +117,7 @@
         will-change: opacity, transform;
         filter: drop-shadow(0 0 6px rgba(255,255,255,0.15)) drop-shadow(0 0 12px rgba(255,255,255,0.05));
       }
-      .hero-wireframes .wf-ghost.wf-visible { opacity:0.15; }
+      .hero-wireframes .wf-ghost.wf-visible { opacity:0.06; }
       .hero-wireframes .wf-ghost svg * {
         stroke-dasharray: 2000;
         stroke-dashoffset: 2000;
@@ -149,7 +149,7 @@
         var t=ts[idx % ts.length]; idx++;
         var w=document.createElement("div");
         w.className="wf-ghost";
-        w.style.cssText="width:110vw;max-width:1800px;left:50%;top:40%;transform:translate(-50%,-50%) scale(0.9)";
+        w.style.cssText="width:180vw;max-width:none;left:50%;top:45%;transform:translate(-50%,-50%) scale(0.9)";
         w.innerHTML=t.outerHTML;
         w.querySelector("svg").style.cssText="width:100%;height:auto;display:block";
         c.appendChild(w);
