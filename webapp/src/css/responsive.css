@@ -291,6 +291,17 @@
     display: none !important;
   }
 
+  /* ── Homepage Hero Logo — position at 45vh ──────────── */
+  .hero-top-section {
+    justify-content: flex-start !important;
+    padding-top: 45vh !important;
+    padding-bottom: 0 !important;
+  }
+
+  .hero-top-section .m-hero__content {
+    transform: translateY(-50%);
+  }
+
   /* ══════════════════════════════════════════════════════
      APP PAGE — MOBILE OVERRIDES (app.html)
      Bare-minimum rules to make every engine view functional
@@ -2023,78 +2034,7 @@
      APP (MANUFACTURING ENGINE) — Mobile Overrides
      ══════════════════════════════════════════════════════════ */
 
-  /* ── App Navbar: clean mobile tab strip ──────────────── */
-  body.app-page .navbar {
-    padding: 6px 10px !important;
-    height: auto !important;
-    flex-wrap: wrap !important;
-    gap: 0 !important;
-  }
-
-  /* Custom layout for app-page actions (avatar) to appear next to brand */
-  body.app-page .navbar__actions {
-    display: flex !important;
-    width: auto !important; /* NOT 100% */
-    flex-direction: row !important;
-    align-items: center !important;
-    background: transparent !important;
-    padding: 0 !important;
-    order: 2 !important; /* Put it before the menu (which is 3) */
-    margin-left: auto !important; /* Push it to the far right */
-    justify-content: flex-end;
-  }
-  
-  body.app-page .navbar__actions #btn-workspace {
-    display: none !important; /* Hide 'workspace' text button on mobile app */
-  }
-
-  body.app-page .nav-avatar {
-    width: 26px !important;
-    height: 26px !important;
-    font-size: 11px !important;
-  }
-
-  body.app-page .mobile-menu-toggle {
-    display: none !important; /* We don't need hamburger if avatar is visible */
-  }
-  body.app-page .navbar__menu {
-    order: 3 !important;
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none !important;
-    white-space: nowrap !important;
-    gap: 8px !important;
-    padding: 6px 0 4px !important;
-    margin: 0 !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    flex-basis: 100% !important;
-  }
-
-  body.app-page .navbar__menu::-webkit-scrollbar {
-    display: none !important;
-  }
-
-  body.app-page .navbar__menu-item {
-    display: inline-block;
-    font-size: 11px !important;
-    padding: 6px 12px !important;
-    flex-shrink: 0 !important;
-    white-space: nowrap !important;
-    width: auto !important;
-    text-align: center !important;
-  }
-
-  body.app-page .navbar__brand {
-    gap: 6px !important;
-  }
-
-  body.app-page .navbar__brand img {
-    height: 18px !important;
-  }
+  /* (Legacy horizontal tab strip removed — hamburger menu is defined earlier in this file) */
 
   /* ── Sales Funnel restored on mobile ────────────────── */
   body.app-page #sales-funnel {

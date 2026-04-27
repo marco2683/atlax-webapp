@@ -1799,24 +1799,24 @@ body {
 /* Mobile (< 768px) */
 @media (max-width: 768px) {
 
-  /* Navbar: keep it one row, shrink everything */
-  .navbar {
+  /* Navbar: keep it one row, shrink everything — MARKETING PAGES ONLY */
+  body:not(.app-page) .navbar {
     height: auto !important;
     padding: 8px 10px !important;
     flex-wrap: wrap !important;
     gap: 6px;
   }
 
-  .navbar__brand {
+  body:not(.app-page) .navbar__brand {
     gap: 6px !important;
   }
 
-  .navbar__brand img {
+  body:not(.app-page) .navbar__brand img {
     height: 18px !important;
   }
 
-  /* Menu: scrollable horizontal strip below brand */
-  .navbar__menu {
+  /* Menu: scrollable horizontal strip below brand — MARKETING PAGES ONLY */
+  body:not(.app-page) .navbar__menu {
     order: 3;
     width: 100%;
     display: flex !important;
@@ -1832,38 +1832,38 @@ body {
     flex-basis: 100%;
   }
 
-  .navbar__menu::-webkit-scrollbar {
+  body:not(.app-page) .navbar__menu::-webkit-scrollbar {
     display: none;
   }
 
-  .navbar__menu-item {
+  body:not(.app-page) .navbar__menu-item {
     font-size: 11px !important;
     padding: 6px 12px !important;
     flex-shrink: 0;
     white-space: nowrap;
   }
 
-  /* Actions: keep compact */
-  .navbar__actions {
+  /* Actions: keep compact — MARKETING PAGES ONLY */
+  body:not(.app-page) .navbar__actions {
     gap: 4px !important;
   }
 
-  .navbar__workspace-link {
+  body:not(.app-page) .navbar__workspace-link {
     display: none !important;
     /* hide text label on mobile */
   }
 
-  .navbar__icon-btn {
+  body:not(.app-page) .navbar__icon-btn {
     width: 28px !important;
     height: 28px !important;
   }
 
-  .navbar__icon-btn svg {
+  body:not(.app-page) .navbar__icon-btn svg {
     width: 13px !important;
     height: 13px !important;
   }
 
-  .navbar__avatar {
+  body:not(.app-page) .navbar__avatar {
     width: 26px !important;
     height: 26px !important;
   }
