@@ -218,163 +218,109 @@ function renderCurrentCard() {
   const getStar = (type) => pAdv === type ? `<div style="position: absolute; top: -12px; right: -12px; background: ${advColors[type].icon}; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.15); z-index: 2;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>` : '';
 
   body.innerHTML = `
-<div class="sup-dossier-simple" style="padding: 24px; background: #fff; height:100%; overflow-y: auto;">
-  <!-- Header -->
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
-    <div style="display: flex; align-items: center; gap: 16px;">
-      <div style="width: 56px; height: 56px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: #475569;">
+<div class="sup-dossier-simple" style="padding: 32px; background: #fff; height:100%; overflow-y: auto;">
+  
+  <!-- Header: Name & Contact -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e2e8f0;">
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <div style="width: 64px; height: 64px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: #475569;">
         ${s.name.substring(0, 2).toUpperCase()}
       </div>
       <div>
-        <h2 style="margin: 0 0 4px 0; font-size: 24px; color: #0f172a; font-weight: 800;">${s.name}</h2>
-        <div style="color: #64748b; font-size: 14px; display: flex; align-items: center; gap: 8px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <h2 style="margin: 0 0 8px 0; font-size: 28px; color: #0f172a; font-weight: 800;">${s.name}</h2>
+        <div style="color: #64748b; font-size: 15px; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           ${s.address || (s.city + ', ' + s.country)}
         </div>
       </div>
     </div>
-    <div style="text-align: right;">
-      <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Factory Score</div>
-      <div style="font-size: 28px; font-weight: 800; color: #10b981; line-height: 1;">${s.factoryScore || '92'}<span style="font-size: 14px; color: #94a3b8;">/100</span></div>
-    </div>
-  </div>
-
-  <div style="display: grid; grid-template-columns: 1fr 300px; gap: 32px;">
     
-    <!-- Left Column -->
-    <div>
-      <!-- Overview Row -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px;">
-        
-        <!-- Company Description -->
-        <div>
-          <h3 style="font-size: 14px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; letter-spacing: 0.05em;">Company Overview</h3>
-          <p style="font-size: 14px; color: #475569; line-height: 1.7; margin: 0;">
-            ${s.description || 'This supplier is a leading manufacturer in the Pearl River Delta region, specializing in high-quality production and engineering services. They have a proven track record of delivering consistent results for international clients, adhering strictly to global quality standards and providing exceptional customer support.'}
-          </p>
-        </div>
+    <!-- Primary Contact -->
+    <div style="display: flex; gap: 16px; align-items: center;">
+      <a href="mailto:${email}" style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1px solid #cbd5e1; color: #0f172a; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; transition: background 0.2s;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        ${email}
+      </a>
+      ${websiteUrl ? `<a href="${websiteUrl.startsWith('http') ? websiteUrl : 'https://' + websiteUrl}" target="_blank" style="display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #cbd5e1; color: #2563eb; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; transition: background 0.2s;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Website
+      </a>` : ''}
+    </div>
+  </div>
 
-        <!-- Specialties & Best For -->
-        <div style="display: flex; flex-direction: column; gap: 24px;">
-          
-          <!-- Specialties Tags -->
-          <div>
-            <h3 style="font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">Specialties</h3>
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-              ${(s.technologies || []).concat(s.tags || []).slice(0, 8).map(t => 
-                `<span style="background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">${t}</span>`
-              ).join('')}
-            </div>
-          </div>
-
-          <!-- What They Are Best For -->
-          <div style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1px solid #7dd3fc; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.05);">
-            <h3 style="font-size: 14px; font-weight: 800; color: #0369a1; text-transform: uppercase; margin-bottom: 16px; border-bottom: 1px solid rgba(2, 132, 199, 0.2); padding-bottom: 10px; display: flex; align-items: center; gap: 8px; letter-spacing: 0.05em;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              What They Are Best For
-            </h3>
-            <ul style="margin: 0; padding-left: 24px; color: #0c4a6e; font-size: 14px; line-height: 1.8; font-weight: 600;">
-              ${(s.technologies || []).concat(s.tags || []).slice(0, 5).map(t => 
-                `<li style="margin-bottom: 6px;">${t}</li>`
-              ).join('')}
-            </ul>
-          </div>
-          
-        </div>
-      </div>
-
-      <!-- Scores & Stats Row -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px;">
-        
-        <!-- Capability Scores -->
-        <div>
-          <h3 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Capability Scores</h3>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
-                <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Technical Capacity</div>
-                <div style="font-size: 16px; font-weight: 700; color: #4f46e5;">${(!s.scoreTc || s.scoreTc == 0) ? 'Limited' : (s.scoreTc == 1 ? 'Moderate' : 'Advanced')}</div>
-             </div>
-             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
-                <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Cost Index</div>
-                <div style="font-size: 16px; font-weight: 700; color: #0ea5e9;">${s.scoreCost ? s.scoreCost + '/10' : '8/10'}</div>
-             </div>
-             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
-                <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Quality Assurance</div>
-                <div style="font-size: 16px; font-weight: 700; color: #059669;">${(!s.scoreQs || s.scoreQs == 0) ? 'Basic' : (s.scoreQs == 1 ? 'Capable' : 'Exceptional')}</div>
-             </div>
-             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
-                <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Ownership Ethos</div>
-                <div style="font-size: 16px; font-weight: 700; color: #d97706;">${(!s.scoreOe || s.scoreOe == 0) ? 'Passive' : (s.scoreOe == 1 ? 'Moderate' : 'Proactive')}</div>
-             </div>
-          </div>
-        </div>
-
-        <!-- Operational Stats -->
-        <div>
-          <h3 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Operational Details</h3>
-          <div style="display: flex; flex-direction: column; gap: 12px;">
-            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
-              <span style="font-size: 13px; color: #64748b; font-weight: 500;">Business Type</span>
-              <span style="font-size: 13px; color: #0f172a; font-weight: 700;">${s.businessType || 'Manufacturer'}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
-              <span style="font-size: 13px; color: #64748b; font-weight: 500;">Total Employees</span>
-              <span style="font-size: 13px; color: #0f172a; font-weight: 700;">${s.employees || '50 - 200'}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
-              <span style="font-size: 13px; color: #64748b; font-weight: 500;">Annual Revenue</span>
-              <span style="font-size: 13px; color: #0f172a; font-weight: 700;">${s.revenue || '$5M - $10M USD'}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; padding-bottom: 8px;">
-              <span style="font-size: 13px; color: #64748b; font-weight: 500;">Export Markets</span>
-              <span style="font-size: 13px; color: #0f172a; font-weight: 700;">${s.exportMarkets ? s.exportMarkets.join(', ') : 'North America, Europe'}</span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Photo Gallery -->
-      ${[...productImgs, ...facilityImgs].length > 0 ? `
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px; margin-bottom: 40px;">
+    
+    <!-- Left Column: Description & Best For -->
+    <div style="display: flex; flex-direction: column; gap: 32px;">
+      <!-- Description -->
       <div>
-        <h3 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Facility & Work</h3>
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
-          ${[...productImgs, ...facilityImgs].slice(0, 8).map(img => `
-            <div style="background: url('${img}') center/cover; aspect-ratio: 1; border-radius: 8px; border: 1px solid #e2e8f0;"></div>
-          `).join('')}
+        <h3 style="font-size: 13px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">Company Overview</h3>
+        <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0; font-weight: 400;">
+          ${s.description || 'This supplier is a leading manufacturer in the Pearl River Delta region, specializing in high-quality production and engineering services. They have a proven track record of delivering consistent results for international clients, adhering strictly to global quality standards.'}
+        </p>
+      </div>
+
+      <!-- Specifics / What they do -->
+      <div>
+        <h3 style="font-size: 13px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">Capabilities</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          ${(s.technologies || []).concat(s.tags || []).slice(0, 12).map(t => 
+            `<span style="background: #f1f5f9; color: #334155; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;">${t}</span>`
+          ).join('')}
         </div>
       </div>
-      ` : ''}
-
     </div>
 
-    <!-- Right Sidebar (Contact) -->
-    <div>
-      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
-        <h3 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 16px;">Contact Details</h3>
-        
-        <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
-          <div>
-             <div style="font-size: 11px; font-weight: 600; color: #94a3b8; margin-bottom: 2px;">Email</div>
-             <a href="mailto:${email}" style="font-size: 14px; color: #2563eb; font-weight: 500; text-decoration: none;">${email}</a>
-          </div>
-          <div>
-             <div style="font-size: 11px; font-weight: 600; color: #94a3b8; margin-bottom: 2px;">Phone</div>
-             <div style="font-size: 14px; color: #0f172a; font-weight: 500;">${phone || '--'}</div>
-          </div>
-          <div>
-             <div style="font-size: 11px; font-weight: 600; color: #94a3b8; margin-bottom: 2px;">Website</div>
-             ${websiteUrl ? `<a href="${websiteUrl.startsWith('http') ? websiteUrl : 'https://' + websiteUrl}" target="_blank" style="font-size: 14px; color: #2563eb; font-weight: 500; text-decoration: none;">Visit Website ↗</a>` : '<div style="font-size: 14px; color: #0f172a; font-weight: 500;">--</div>'}
-          </div>
-        </div>
+    <!-- Right Column: Best For & Details -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <!-- Best For -->
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+        <h3 style="font-size: 13px; font-weight: 800; color: #0f172a; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; letter-spacing: 0.05em;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Best For
+        </h3>
+        <ul style="margin: 0; padding-left: 20px; color: #475569; font-size: 14px; line-height: 1.8; font-weight: 500;">
+          ${(s.technologies || []).concat(s.tags || []).slice(0, 4).map(t => 
+            `<li style="margin-bottom: 6px;">${t}</li>`
+          ).join('') || '<li>Standard manufacturing processes</li><li>Cost-effective production runs</li>'}
+        </ul>
+      </div>
 
-        <div style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #e2e8f0; padding-top: 24px;">
-          ${shortlistBtnHTML.replace('sup-banner__add-shortlist-btn', 'CTA-BTN' + (isShortlisted ? ' CTA-BTN--added' : '')).replace('CTA-BTN', 'style="width: 100%; padding: 12px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; display:flex; align-items:center; justify-content:center; gap:8px; ' + (isShortlisted ? 'background:#ecfdf5; color:#10b981; border:1px solid #a7f3d0;"' : 'background:#2563eb; color:white;"'))}
-          <button id="modal-send-rfq" style="width: 100%; padding: 12px; background: #fff; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;">Direct Message</button>
+      <!-- Contact Info -->
+      <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+           <span style="font-size: 13px; color: #64748b; font-weight: 500;">Phone</span>
+           <span style="font-size: 14px; color: #0f172a; font-weight: 600;">${phone || '--'}</span>
         </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+           <span style="font-size: 13px; color: #64748b; font-weight: 500;">Est.</span>
+           <span style="font-size: 14px; color: #0f172a; font-weight: 600;">${s.yearEstablished || '--'}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+           <span style="font-size: 13px; color: #64748b; font-weight: 500;">Employees</span>
+           <span style="font-size: 14px; color: #0f172a; font-weight: 600;">${s.employees || '--'}</span>
+        </div>
+      </div>
+      
+      <!-- Actions -->
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        ${shortlistBtnHTML.replace('sup-banner__add-shortlist-btn', 'CTA-BTN' + (isShortlisted ? ' CTA-BTN--added' : '')).replace('CTA-BTN', 'style="width: 100%; padding: 14px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; display:flex; align-items:center; justify-content:center; gap:8px; ' + (isShortlisted ? 'background:#ecfdf5; color:#10b981; border:1px solid #a7f3d0;"' : 'background:#0f172a; color:white;"'))}
       </div>
     </div>
   </div>
+
+  <!-- Image Gallery (Scrollable) -->
+  ${[...productImgs, ...facilityImgs].length > 0 ? `
+  <div style="margin-top: 24px;">
+    <h3 style="font-size: 13px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.05em;">Facility & Product Images</h3>
+    <div style="display: flex; gap: 16px; overflow-x: auto; padding-bottom: 16px; -webkit-overflow-scrolling: touch;">
+      ${[...productImgs, ...facilityImgs].map(img => `
+        <div style="flex: 0 0 auto; width: 240px; height: 180px; background: url('${img}') center/cover no-repeat; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);"></div>
+      `).join('')}
+    </div>
+  </div>
+  ` : ''}
+
 </div>
   `;
 

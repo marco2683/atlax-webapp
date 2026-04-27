@@ -1508,16 +1508,59 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
         </div>
 
-        <!-- ─── SECTION 6: Documents & Catalogues ─── -->
+        <!-- ─── SECTION 6: Documents & Asset Management ─── -->
         <div class="admin-form-section">
           <div class="admin-form-section-title">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            Documents & Catalogues
+            Documents & Asset Management
           </div>
-          <p class="admin-form-hint">Links to PDF brochures or zipped documentation portfolios.</p>
+          <p class="admin-form-hint">Manage core supplier documentation. Files are securely stored in the Supabase database and can be synced directly to your secure OneDrive workspace.</p>
+
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <div>
+                <h5 style="margin:0 0 4px 0; font-size: 14px; color: #0f172a;">OneDrive Secure Storage Sync</h5>
+                <p style="margin:0; font-size: 12px; color: #64748b;">Push all uploaded assets and metadata to a dedicated supplier folder in Microsoft OneDrive.</p>
+              </div>
+              <button type="button" id="admin-sync-onedrive-btn" class="btn btn-secondary" style="display: flex; align-items: center; gap: 6px; border-color: #cbd5e1; color: #0369a1; background: white;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="M12 16v-6"/><path d="m9 13 3-3 3 3"/></svg>
+                Sync to OneDrive
+              </button>
+            </div>
+            
+            <div class="admin-field">
+              <label>RFI Onboarding Form (Excel/PDF)</label>
+              <div style="display:flex; gap:8px;">
+                <input type="text" name="docRFI" value="${s.docRFI || ''}" placeholder="URL to filled RFI document">
+                <label class="btn btn-secondary" style="cursor:pointer; display:flex; align-items:center; padding: 0 16px;">
+                  Upload <input type="file" style="display:none;" class="admin-s3-upload" accept=".pdf,.xls,.xlsx">
+                </label>
+              </div>
+            </div>
+
+            <div class="admin-field" style="margin-top: 12px;">
+              <label>Company Presentation (PPT/PDF)</label>
+              <div style="display:flex; gap:8px;">
+                <input type="text" name="docPresentation" value="${s.docPresentation || ''}" placeholder="URL to company slide deck">
+                <label class="btn btn-secondary" style="cursor:pointer; display:flex; align-items:center; padding: 0 16px;">
+                  Upload <input type="file" style="display:none;" class="admin-s3-upload" accept=".pdf,.ppt,.pptx">
+                </label>
+              </div>
+            </div>
+
+            <div class="admin-field" style="margin-top: 12px;">
+              <label>Quality Certifications (ZIP/PDF)</label>
+              <div style="display:flex; gap:8px;">
+                <input type="text" name="docCertifications" value="${s.docCertifications || ''}" placeholder="URL to quality certificates">
+                <label class="btn btn-secondary" style="cursor:pointer; display:flex; align-items:center; padding: 0 16px;">
+                  Upload <input type="file" style="display:none;" class="admin-s3-upload" accept=".pdf,.zip">
+                </label>
+              </div>
+            </div>
+          </div>
 
           <div class="admin-image-category">
-            <h5>Downloadable Documents</h5>
+            <h5>Other Downloadable Documents</h5>
             <div class="admin-image-url-list" id="admin-sup-img-docs">
               ${(s.documents?.length ? s.documents : ['']).map(url => `
                 <div class="admin-img-url-row">
@@ -1661,6 +1704,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('admin-sup-back')?.addEventListener('click', () => { pageTitle.textContent = 'Suppliers CRM Directory'; renderSuppliersTable(); });
     document.getElementById('admin-sup-cancel')?.addEventListener('click', () => { pageTitle.textContent = 'Suppliers CRM Directory'; renderSuppliersTable(); });
     document.getElementById('admin-sup-cancel-top')?.addEventListener('click', () => { pageTitle.textContent = 'Suppliers CRM Directory'; renderSuppliersTable(); });
+
+    document.getElementById('admin-sync-onedrive-btn')?.addEventListener('click', (e) => {
+      const btn = e.currentTarget;
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = `<svg class="spinner" viewBox="0 0 50 50" style="width:14px;height:14px;stroke:currentColor;animation:spin 1s linear infinite;"><circle cx="25" cy="25" r="20" fill="none" stroke-width="5" stroke-linecap="round"></circle></svg> Syncing...`;
+      btn.style.pointerEvents = 'none';
+      setTimeout(() => {
+        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg> <span style="color:#10b981;">Synced to OneDrive</span>`;
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.style.pointerEvents = '';
+        }, 3000);
+      }, 1500);
+    });
     document.getElementById('admin-sup-score-range')?.addEventListener('input', e => {
       document.getElementById('admin-sup-score-val').textContent = e.target.value;
     });

@@ -302,12 +302,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     const docNames = { ppt: 'Supplier Presentation.pptx', form: 'Onboarding Form.pdf', cert: 'Quality Certificates.zip' };
     console.log(`[PRD] Downloading ${docNames[action]} for ${supplierId}...`);
     
-    // Simulate a download
+    const supplierObj = appState.shortlist.find(item => (item.supplier.id || item.supplier.name) === supplierId)?.supplier;
+    let targetUrl = '';
+    
+    if (supplierObj) {
+      if (action === 'form') targetUrl = supplierObj.docRFI;
+      if (action === 'ppt') targetUrl = supplierObj.docPresentation;
+      if (action === 'cert') targetUrl = supplierObj.docCertifications;
+    }
+
     const btn = document.querySelector(`.shortlist-item[data-id="${supplierId}"] .shortlist-item__action-btn[data-action="${action}"]`);
-    if (btn) {
-      const originalHTML = btn.innerHTML;
-      btn.innerHTML = '✅';
-      setTimeout(() => btn.innerHTML = originalHTML, 2000);
+    
+    if (targetUrl) {
+      // Actually open the uploaded document URL
+      window.open(targetUrl, '_blank');
+      if (btn) {
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '✅';
+        setTimeout(() => btn.innerHTML = originalHTML, 2000);
+      }
+    } else {
+      // Simulate download or show unavailable
+      if (btn) {
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<span style="font-size:10px;">Missing</span>';
+        setTimeout(() => btn.innerHTML = originalHTML, 2000);
+      }
+      console.warn(`[PRD] No URL found for ${action} on supplier ${supplierId}`);
     }
   });
 

@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Mobile Cards: USP Sentences + Bouncy Scroll Arrows ───
   // On mobile, after each phase gate card, show the inspiring sentence
-  // + a bouncy down-arrow. Last card arrow scrolls to "WHO WE ARE".
+  // + a bouncy down-arrow. Each card takes ~100vh.
   function initMobileCardFlow() {
-    if (window.innerWidth > 968) return;
+    if (window.innerWidth > 768) return;
 
     const grid = document.querySelector('.pb-stages-grid');
     if (!grid) return;
@@ -55,11 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
       wrapper.className = 'mobile-card-wrapper';
       wrapper.appendChild(card);
 
-      // USP text — inline styles guarantee rendering
+      // USP text — let CSS handle styling
       const usp = document.createElement('p');
       usp.className = 'mobile-card-usp';
       usp.textContent = usps[i] || '';
-      usp.style.cssText = 'color:rgba(255,255,255,0.65);font-family:Outfit,sans-serif;font-size:13px;font-weight:300;font-style:italic;line-height:1.7;text-align:center;padding:16px 16px 4px;margin:0;';
       wrapper.appendChild(usp);
 
       // Bouncy down-arrow
@@ -80,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Hide the now-empty grid
     grid.style.display = 'none';
-    console.log('[PRD] Mobile card flow: inserted', wrappers.length, 'card wrappers');
+    console.log('[PRD] Mobile card flow: inserted', wrappers.length, 'full-screen card wrappers');
 
     // Wire up click handlers (elements now in DOM)
     wrappers.forEach(({ wrapper, usp, arrow, card }, i) => {
@@ -114,6 +113,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   initMobileCardFlow();
+
+  // ── Show Workspace link on mobile for logged-in users ──
+  const wsLink = document.getElementById('nav-workspace-mobile');
+  if (wsLink) {
+    const hasAuth = Object.keys(localStorage).some(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if (hasAuth && window.innerWidth <= 768) {
+      wsLink.style.display = '';  // Let CSS handle the display
+    }
+  }
 
   // Smooth scroll
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
