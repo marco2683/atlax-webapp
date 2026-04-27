@@ -108,9 +108,245 @@
     <div class="hero-grid-flash hero-grid-flash--2"></div>
     <div class="hero-grid-flash hero-grid-flash--3"></div>
 
+    <!-- Technical Wireframe Overlay — subtle rotating line art -->
+    <style>
+      .hero-wireframes {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .hero-wireframes svg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 70vw;
+        max-width: 900px;
+        height: auto;
+        opacity: 0;
+        animation: wireframe-cycle 32s ease-in-out infinite;
+      }
+      .hero-wireframes svg:nth-child(1) { animation-delay: 0s; }
+      .hero-wireframes svg:nth-child(2) { animation-delay: 8s; }
+      .hero-wireframes svg:nth-child(3) { animation-delay: 16s; }
+      .hero-wireframes svg:nth-child(4) { animation-delay: 24s; }
+
+      @keyframes wireframe-cycle {
+        0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
+        3%   { opacity: 0.06; transform: translate(-50%, -50%) scale(0.96); }
+        18%  { opacity: 0.06; transform: translate(-50%, -50%) scale(1.02); }
+        22%  { opacity: 0; transform: translate(-50%, -50%) scale(1.04); }
+        100% { opacity: 0; }
+      }
+    </style>
+    <div class="hero-wireframes">
+      <!-- 1. Turbine Engine Cross-Section -->
+      <svg viewBox="0 0 800 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="rgba(14,122,108,0.5)" stroke-width="0.6">
+          <!-- Outer nacelle -->
+          <ellipse cx="400" cy="250" rx="320" ry="180" />
+          <ellipse cx="400" cy="250" rx="280" ry="155" stroke-dasharray="8 4" />
+          <!-- Compressor blades -->
+          <circle cx="180" cy="250" r="85" />
+          <circle cx="180" cy="250" r="55" />
+          <circle cx="180" cy="250" r="25" />
+          <line x1="180" y1="165" x2="180" y2="335" />
+          <line x1="95" y1="250" x2="265" y2="250" />
+          <line x1="120" y1="185" x2="240" y2="315" />
+          <line x1="120" y1="315" x2="240" y2="185" />
+          <!-- Combustion chamber -->
+          <rect x="280" y="190" width="160" height="120" rx="8" stroke-dasharray="4 3" />
+          <line x1="300" y1="190" x2="300" y2="310" />
+          <line x1="340" y1="190" x2="340" y2="310" />
+          <line x1="380" y1="190" x2="380" y2="310" />
+          <line x1="420" y1="190" x2="420" y2="310" />
+          <!-- Turbine section -->
+          <circle cx="560" cy="250" r="75" />
+          <circle cx="560" cy="250" r="45" />
+          <circle cx="560" cy="250" r="15" />
+          <line x1="560" y1="175" x2="560" y2="325" />
+          <line x1="485" y1="250" x2="635" y2="250" />
+          <line x1="507" y1="197" x2="613" y2="303" />
+          <line x1="507" y1="303" x2="613" y2="197" />
+          <!-- Exhaust nozzle -->
+          <path d="M640 195 L720 210 L720 290 L640 305" />
+          <path d="M660 205 L710 215 L710 285 L660 295" stroke-dasharray="3 3" />
+          <!-- Shaft -->
+          <line x1="180" y1="250" x2="560" y2="250" stroke-dasharray="12 4" stroke-width="0.4" />
+          <!-- Dimension lines -->
+          <line x1="80" y1="70" x2="720" y2="70" stroke-width="0.3" stroke-dasharray="2 6" />
+          <line x1="80" y1="430" x2="720" y2="430" stroke-width="0.3" stroke-dasharray="2 6" />
+          <line x1="80" y1="70" x2="80" y2="80" stroke-width="0.3" />
+          <line x1="720" y1="70" x2="720" y2="80" stroke-width="0.3" />
+        </g>
+      </svg>
+
+      <!-- 2. Aircraft Cockpit Dashboard -->
+      <svg viewBox="0 0 800 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="rgba(14,122,108,0.5)" stroke-width="0.6">
+          <!-- Windshield frame -->
+          <path d="M150 60 L400 30 L650 60 L700 160 L100 160 Z" />
+          <path d="M180 75 L400 50 L620 75 L660 150 L140 150 Z" stroke-dasharray="6 3" />
+          <!-- Main instrument panel -->
+          <rect x="120" y="180" width="560" height="250" rx="12" />
+          <!-- Primary flight display -->
+          <circle cx="280" cy="305" r="80" />
+          <circle cx="280" cy="305" r="60" stroke-dasharray="4 3" />
+          <line x1="220" y1="305" x2="340" y2="305" stroke-width="0.4" />
+          <line x1="280" y1="245" x2="280" y2="365" stroke-width="0.4" />
+          <!-- Artificial horizon lines -->
+          <line x1="240" y1="285" x2="320" y2="285" stroke-width="0.3" />
+          <line x1="250" y1="295" x2="310" y2="295" stroke-width="0.3" />
+          <line x1="250" y1="315" x2="310" y2="315" stroke-width="0.3" />
+          <line x1="240" y1="325" x2="320" y2="325" stroke-width="0.3" />
+          <!-- Navigation display -->
+          <circle cx="520" cy="305" r="80" />
+          <circle cx="520" cy="305" r="60" stroke-dasharray="4 3" />
+          <path d="M520 255 L535 295 L520 290 L505 295 Z" stroke-width="0.5" />
+          <!-- compass rose -->
+          <line x1="520" y1="225" x2="520" y2="385" stroke-width="0.3" stroke-dasharray="3 5" />
+          <line x1="440" y1="305" x2="600" y2="305" stroke-width="0.3" stroke-dasharray="3 5" />
+          <!-- Engine gauges row -->
+          <circle cx="180" cy="220" r="22" />
+          <circle cx="230" cy="220" r="22" />
+          <circle cx="570" cy="220" r="22" />
+          <circle cx="620" cy="220" r="22" />
+          <!-- Center console -->
+          <rect x="370" y="260" width="60" height="100" rx="4" stroke-dasharray="3 3" />
+          <line x1="370" y1="285" x2="430" y2="285" stroke-width="0.3" />
+          <line x1="370" y1="310" x2="430" y2="310" stroke-width="0.3" />
+          <line x1="370" y1="335" x2="430" y2="335" stroke-width="0.3" />
+          <!-- Yoke columns -->
+          <path d="M300 440 L300 400 Q300 380 320 380 L360 380" stroke-width="0.4" />
+          <path d="M500 440 L500 400 Q500 380 480 380 L440 380" stroke-width="0.4" />
+        </g>
+      </svg>
+
+      <!-- 3. Car Chassis / Rolling Frame -->
+      <svg viewBox="0 0 800 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="rgba(14,122,108,0.5)" stroke-width="0.6">
+          <!-- Main rail (left) -->
+          <path d="M120 280 L180 260 L620 260 L680 280" />
+          <path d="M120 300 L180 280 L620 280 L680 300" />
+          <!-- Main rail (right) -->
+          <path d="M120 280 L120 300" />
+          <path d="M680 280 L680 300" />
+          <!-- Cross members -->
+          <line x1="220" y1="260" x2="220" y2="280" />
+          <line x1="300" y1="260" x2="300" y2="280" />
+          <line x1="400" y1="260" x2="400" y2="280" />
+          <line x1="500" y1="260" x2="500" y2="280" />
+          <line x1="580" y1="260" x2="580" y2="280" />
+          <!-- Front subframe -->
+          <rect x="130" y="240" width="120" height="60" rx="6" stroke-dasharray="4 3" />
+          <!-- Engine block outline -->
+          <rect x="150" y="200" width="80" height="55" rx="4" />
+          <line x1="170" y1="200" x2="170" y2="255" stroke-width="0.3" />
+          <line x1="190" y1="200" x2="190" y2="255" stroke-width="0.3" />
+          <line x1="210" y1="200" x2="210" y2="255" stroke-width="0.3" />
+          <!-- Rear subframe -->
+          <rect x="550" y="240" width="120" height="60" rx="6" stroke-dasharray="4 3" />
+          <!-- Differential -->
+          <circle cx="610" cy="270" r="18" />
+          <circle cx="610" cy="270" r="8" />
+          <!-- Front wheels -->
+          <circle cx="190" cy="340" r="50" />
+          <circle cx="190" cy="340" r="38" />
+          <circle cx="190" cy="340" r="12" />
+          <!-- Front suspension -->
+          <path d="M190 290 L160 320 L190 340" stroke-dasharray="3 2" />
+          <path d="M190 290 L220 320 L190 340" stroke-dasharray="3 2" />
+          <!-- Rear wheels -->
+          <circle cx="610" cy="340" r="50" />
+          <circle cx="610" cy="340" r="38" />
+          <circle cx="610" cy="340" r="12" />
+          <!-- Rear suspension -->
+          <path d="M610 300 L580 320 L610 340" stroke-dasharray="3 2" />
+          <path d="M610 300 L640 320 L610 340" stroke-dasharray="3 2" />
+          <!-- Drive shaft -->
+          <line x1="230" y1="270" x2="590" y2="270" stroke-dasharray="8 4" stroke-width="0.5" />
+          <!-- Body profile ghost -->
+          <path d="M140 240 L140 180 Q140 140 180 130 L300 110 Q360 100 400 100 Q440 100 500 110 L620 130 Q660 140 660 180 L660 240" stroke-width="0.3" stroke-dasharray="6 4" />
+          <!-- A-pillar, B-pillar, C-pillar -->
+          <line x1="260" y1="110" x2="240" y2="240" stroke-width="0.3" stroke-dasharray="3 4" />
+          <line x1="420" y1="105" x2="420" y2="240" stroke-width="0.3" stroke-dasharray="3 4" />
+          <line x1="560" y1="120" x2="580" y2="240" stroke-width="0.3" stroke-dasharray="3 4" />
+          <!-- Dimension lines -->
+          <line x1="120" y1="420" x2="680" y2="420" stroke-width="0.3" stroke-dasharray="2 6" />
+        </g>
+      </svg>
+
+      <!-- 4. PCB / Circuit Board Layout -->
+      <svg viewBox="0 0 800 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="rgba(14,122,108,0.5)" stroke-width="0.6">
+          <!-- Board outline -->
+          <rect x="100" y="80" width="600" height="340" rx="8" />
+          <rect x="110" y="90" width="580" height="320" rx="4" stroke-dasharray="4 4" stroke-width="0.3" />
+          <!-- Mounting holes -->
+          <circle cx="130" cy="110" r="8" />
+          <circle cx="130" cy="110" r="4" />
+          <circle cx="670" cy="110" r="8" />
+          <circle cx="670" cy="110" r="4" />
+          <circle cx="130" cy="390" r="8" />
+          <circle cx="130" cy="390" r="4" />
+          <circle cx="670" cy="390" r="8" />
+          <circle cx="670" cy="390" r="4" />
+          <!-- Main processor / BGA -->
+          <rect x="320" y="200" width="120" height="100" rx="2" />
+          <rect x="330" y="210" width="100" height="80" rx="1" stroke-dasharray="2 2" />
+          <!-- Processor pin grid -->
+          <g stroke-width="0.3">
+            <line x1="340" y1="210" x2="340" y2="290" />
+            <line x1="360" y1="210" x2="360" y2="290" />
+            <line x1="380" y1="210" x2="380" y2="290" />
+            <line x1="400" y1="210" x2="400" y2="290" />
+            <line x1="420" y1="210" x2="420" y2="290" />
+            <line x1="330" y1="230" x2="430" y2="230" />
+            <line x1="330" y1="250" x2="430" y2="250" />
+            <line x1="330" y1="270" x2="430" y2="270" />
+          </g>
+          <!-- Traces from processor -->
+          <path d="M320 230 L260 230 L260 160 L200 160" stroke-width="0.5" />
+          <path d="M320 250 L280 250 L280 310 L200 310" stroke-width="0.5" />
+          <path d="M320 270 L290 270 L290 360 L220 360" stroke-width="0.5" />
+          <path d="M440 230 L500 230 L500 150 L580 150" stroke-width="0.5" />
+          <path d="M440 250 L520 250 L520 320 L600 320" stroke-width="0.5" />
+          <path d="M440 270 L480 270 L480 370 L560 370" stroke-width="0.5" />
+          <!-- Capacitors / resistors -->
+          <rect x="180" y="150" width="30" height="18" rx="2" />
+          <rect x="180" y="302" width="30" height="18" rx="2" />
+          <rect x="200" y="352" width="30" height="18" rx="2" />
+          <rect x="570" y="142" width="30" height="18" rx="2" />
+          <rect x="585" y="312" width="30" height="18" rx="2" />
+          <rect x="545" y="362" width="30" height="18" rx="2" />
+          <!-- Memory chips -->
+          <rect x="200" y="190" width="60" height="30" rx="2" />
+          <rect x="200" y="260" width="60" height="30" rx="2" />
+          <rect x="500" y="170" width="60" height="30" rx="2" />
+          <rect x="500" y="280" width="60" height="30" rx="2" />
+          <!-- Connector headers -->
+          <rect x="130" y="140" width="15" height="60" rx="1" />
+          <rect x="130" y="290" width="15" height="60" rx="1" />
+          <rect x="650" y="180" width="15" height="50" rx="1" />
+          <!-- Power section -->
+          <circle cx="600" cy="120" r="16" />
+          <circle cx="640" cy="120" r="16" />
+          <!-- Via holes scatter -->
+          <circle cx="300" cy="180" r="3" />
+          <circle cx="460" cy="190" r="3" />
+          <circle cx="310" cy="330" r="3" />
+          <circle cx="470" cy="340" r="3" />
+          <circle cx="380" cy="160" r="3" />
+          <circle cx="380" cy="340" r="3" />
+        </g>
+      </svg>
+    </div>
+
     <!-- 100vh Top Section -->
     <div class="hero-top-section"
-      style="min-height: 100vh; min-height: 100dvh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; padding-top: 28vh; box-sizing: border-box;">
+      style="min-height: 100vh; min-height: 100dvh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; z-index: 2; padding-top: 28vh; box-sizing: border-box;">
       <div class="m-hero__content m-fade-up"
         style="text-align: center; align-items: center; max-width: 900px; width: 100%; margin: 0 auto; box-sizing: border-box;">
 
