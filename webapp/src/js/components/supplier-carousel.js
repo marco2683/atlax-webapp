@@ -6,6 +6,21 @@
 
 const DEFAULT_BANNER = 'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1200&q=80';
 
+/**
+ * Proxy insecure (http://) image URLs through images.weserv.nl
+ * so they load on our HTTPS site without mixed-content blocking.
+ */
+function safeImgUrl(url) {
+  if (!url) return '';
+  // Already secure or relative — pass through
+  if (url.startsWith('https://') || url.startsWith('/') || url.startsWith('data:')) return url;
+  // HTTP URL — proxy through weserv
+  if (url.startsWith('http://')) {
+    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}`;
+  }
+  return url;
+}
+
 let currentIndex = 0;
 let currentSuppliers = [];
 let currentTechName = '';
@@ -155,7 +170,7 @@ function renderCurrentCard() {
 
   const score = s.factoryScore || 70;
 
-  const bannerUrl = s.banner || s.bannerImage || DEFAULT_BANNER;
+  const bannerUrl = safeImgUrl(s.banner || s.bannerImage || DEFAULT_BANNER);
   const email = s.email || 'sales@' + s.name.toLowerCase().replace(/[^a-z]/g, '') + '.com';
   const phone = s.phone || '';
   const wechat = s.wechat || '';
@@ -192,7 +207,7 @@ function renderCurrentCard() {
   const renderImageGrid = (imgs) => {
     const gridItems = Array.from({length: 6}, (_, i) => {
       if (i < imgs.length) {
-        return `<div style="background: url('${imgs[i]}') center/cover; aspect-ratio: 1; border-radius: 8px; width: 100%;"></div>`;
+        return `<div style="background: url('${safeImgUrl(imgs[i])}') center/cover; aspect-ratio: 1; border-radius: 8px; width: 100%;"></div>`;
       } else {
         return `<div style="aspect-ratio: 1; border: 1px dashed rgba(255,255,255,0.15); border-radius: 8px; width: 100%;"></div>`;
       }
@@ -315,7 +330,7 @@ function renderCurrentCard() {
     <h3 style="font-size: 13px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.05em;">Facility & Product Images</h3>
     <div style="display: flex; gap: 16px; overflow-x: auto; padding-bottom: 16px; -webkit-overflow-scrolling: touch;">
       ${[...productImgs, ...facilityImgs].map(img => `
-        <div style="flex: 0 0 auto; width: 240px; height: 180px; background: url('${img}') center/cover no-repeat; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);"></div>
+        <div style="flex: 0 0 auto; width: 240px; height: 180px; background: url('${safeImgUrl(img)}') center/cover no-repeat; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);"></div>
       `).join('')}
     </div>
   </div>
