@@ -110,6 +110,11 @@ export function renderPricingConfigurator(container) {
           <div id="mc-sliders"></div>
         `, true)}
 
+        <!-- ═══ 4. LOGISTICS & SHIPPING ═══ -->
+        ${section('shipping-costs', 'Logistics & Shipping', '🚢', '#3b82f6', `
+          <div id="sc-sliders"></div>
+        `, false)}
+
         <button id="sim-publish-btn" class="btn btn-primary" style="margin-top:12px; width:100%; background: var(--dk-accent); border-color: var(--dk-accent);">
           🚀 Publish to Production
         </button>
@@ -576,6 +581,86 @@ export function renderPricingConfigurator(container) {
     }
   }
 
+
+  // ═══════════════════════════════════════════════════════
+  // SECTION 4 — LOGISTICS & SHIPPING
+  // ═══════════════════════════════════════════════════════
+  function renderShippingCosts() {
+    const sc = document.getElementById('sc-sliders');
+    if (!sc) return;
+    sc.innerHTML = '';
+    
+    if (!PRICING_CONFIG.globalSettings.shipping || !PRICING_CONFIG.globalSettings.shipping.regions) {
+      PRICING_CONFIG.globalSettings.shipping = {
+        regions: {
+          north_america: { label: "North America", seaFreight: { base: 20, perKg: 3, days: "30-40" }, economyAir: { base: 30, perKg: 8, days: "8-12" }, expressAir: { base: 40, perKg: 15, days: "3-5" } },
+          europe: { label: "Europe", seaFreight: { base: 25, perKg: 3.5, days: "35-45" }, economyAir: { base: 35, perKg: 9, days: "10-14" }, expressAir: { base: 45, perKg: 16, days: "4-6" } },
+          oceania: { label: "Oceania", seaFreight: { base: 20, perKg: 3.5, days: "25-35" }, economyAir: { base: 35, perKg: 8.5, days: "8-12" }, expressAir: { base: 45, perKg: 15, days: "4-6" } },
+          asia: { label: "Asia", seaFreight: { base: 15, perKg: 2, days: "10-15" }, economyAir: { base: 20, perKg: 5, days: "3-5" }, expressAir: { base: 30, perKg: 10, days: "1-3" } },
+          rest_of_world: { label: "Rest of World", seaFreight: { base: 30, perKg: 4, days: "40-50" }, economyAir: { base: 40, perKg: 12, days: "12-16" }, expressAir: { base: 50, perKg: 20, days: "5-8" } }
+        }
+      };
+    }
+    
+    const regions = PRICING_CONFIG.globalSettings.shipping.regions;
+
+    const sSty = { color: '#93c5fd', bg: 'rgba(59,130,246,0.04)', border: 'rgba(59,130,246,0.15)' };
+
+    // Create a region selector to avoid cluttering the UI
+    const selDiv = document.createElement('div');
+    selDiv.style.marginBottom = '12px';
+    selDiv.innerHTML = `
+      <label style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px;">Select Region to Edit</label>
+      <select id="sc-region-select" class="form-select">
+        ${Object.entries(regions).map(([k, v]) => `<option value="${k}">${v.label}</option>`).join('')}
+      </select>
+    `;
+    sc.appendChild(selDiv);
+
+    const ratesContainer = document.createElement('div');
+    sc.appendChild(ratesContainer);
+
+    function renderRegionRates(regionKey) {
+      ratesContainer.innerHTML = '';
+      const r = regions[regionKey];
+      
+      ['seaFreight', 'economyAir', 'expressAir'].forEach(mode => {
+        let title = mode === 'seaFreight' ? 'Sea Freight' : (mode === 'economyAir' ? 'Economy Air' : 'Express Air');
+        ratesContainer.insertAdjacentHTML('beforeend', subHeader(title, '#60a5fa'));
+        
+        const grid = document.createElement('div');
+        grid.style.cssText = 'display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:8px;';
+        
+        makeSlider(grid, 'Base Fee ($)', r[mode], 'base', 0, 500, 5, { ...sSty, unit: '' });
+        makeSlider(grid, 'Cost per Kg ($)', r[mode], 'perKg', 0.5, 50, 0.5, { ...sSty, unit: '' });
+        
+        ratesContainer.appendChild(grid);
+        
+        // Days input (text)
+        const daysDiv = document.createElement('div');
+        daysDiv.style.cssText = `background:${sSty.bg}; padding:6px 10px; border-radius:6px; border:1px solid ${sSty.border}; margin-bottom: 12px;`;
+        daysDiv.innerHTML = `
+          <label style="font-size:9px; color:${sSty.color}; font-family:monospace;">Transit Days (e.g. 8-12)</label>
+          <input type="text" class="sc-days-input" value="${r[mode].days}" 
+                 style="width:100%; margin-top:4px; padding:4px 6px; font-size:11px; background:rgba(0,0,0,0.25); border:1px solid ${sSty.border}; color:${sSty.color}; border-radius:4px;">
+        `;
+        ratesContainer.appendChild(daysDiv);
+        
+        daysDiv.querySelector('input').addEventListener('change', (e) => {
+          r[mode].days = e.target.value;
+        });
+      });
+    }
+
+    const regSelect = document.getElementById('sc-region-select');
+    regSelect.addEventListener('change', (e) => {
+      renderRegionRates(e.target.value);
+    });
+    
+    // Initial render
+    renderRegionRates(regSelect.value);
+  }
+
   // ═══════════════════════════════════════════════════════
   // CHART INIT
   // ═══════════════════════════════════════════════════════
@@ -709,5 +794,6 @@ export function renderPricingConfigurator(container) {
   loadMaterials();
   renderPricingRules();
   renderMfgCosts();
+  renderShippingCosts();
   updateChart();
 }

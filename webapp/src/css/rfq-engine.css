@@ -48,7 +48,12 @@
   width: 420px;
   flex-shrink: 0;
   z-index: 101;
-  height: calc(100vh - 72px); /* Matches left pane: card (100vh-160px) + gap (16px) + CTA (72px) */
+  height: calc(100vh - 72px);
+  overflow-y: auto;
+  scrollbar-width: none; /* Hide scrollbar for cleaner look if desired, or 'thin' */
+}
+.rfq-engine__right::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome/Safari/Edge */
 }
 
 /* ══ PRIMARY CARD ═══════════════════════════════════════ */
@@ -63,11 +68,7 @@
   pointer-events: auto;
   height: calc(100vh - 160px) !important;
   max-height: none !important;
-  /* Lock to consistent height for both panels to resolve tab-switching shifts */
-  /* Taller card */
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
   display: flex;
   flex-direction: column;
 }
@@ -825,7 +826,6 @@
   padding: var(--space-3);
   display: flex;
   flex-direction: column;
-  max-height: 75vh;
   transition: all 0.35s ease;
 }
 

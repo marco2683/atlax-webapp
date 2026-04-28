@@ -64,59 +64,72 @@ function populateFinishDropdown(partIdx, techKey) {
 // ── Panel HTML Template ─────────────────────────────────
 function createPartPanelHTML(partIdx) {
   return `
-    <div class="rfq-part-card needs-tech-selection" data-part="${partIdx}" style="display: flex; flex-direction: column; background: rgba(0,0,0,0.15); border: 1px solid var(--color-steel-600); border-radius: var(--radius-lg); padding: 20px; position: relative; transition: all 0.3s ease;">
-      <!-- Remove Button -->
-      <button class="rfq-part-remove" data-part="${partIdx}" style="position: absolute; top: 12px; right: 12px; background: none; border: none; color: var(--color-steel-400); cursor: pointer; font-size: 18px; padding: 4px; line-height: 1;">&times;</button>
-      
-      <!-- Top Section: File Info, Name & 2D Upload -->
-      <div class="rfq-part-header" style="display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start;">
-        <!-- Placeholder for Geometry Analysis / Thumbnail -->
-        <div class="rfq-part-thumb-wrapper" style="width: 120px; height: 120px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;">
-          <div class="rfq-results-placeholder" data-part="${partIdx}" style="text-align: center; color: var(--color-steel-500); display: flex; flex-direction: column; align-items: center; gap: 4px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-          </div>
-          <div class="rfq-results hidden" data-part="${partIdx}" style="width:100%; height:100%;">
-            <div class="rfq-results__thumbnail" data-part="${partIdx}" style="width:100%; height:100%;"></div>
-          </div>
-        </div>
-
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
-          <div style="display: flex; gap: 16px; align-items: flex-start;">
-            <div class="rfq-field" style="flex: 1; margin-bottom: 0;">
-              <label style="font-size:11px; margin-bottom:4px; display:block;">Part Name</label>
-              <input type="text" class="rfq-part-name" data-part="${partIdx}" placeholder="e.g. Housing Top..." style="font-size: 16px; font-weight: 600; padding: 8px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.2);" />
+    <details class="rfq-part-card-container rfq-part-card needs-tech-selection" data-part="${partIdx}" open>
+      <summary>
+        <div style="display: flex; gap: 16px; align-items: center; width: 100%;">
+          <!-- Small Thumbnail -->
+          <div class="rfq-part-thumb-box rfq-part-thumb-wrapper" style="flex-shrink: 0; position: relative;">
+            <div class="rfq-results-placeholder" data-part="${partIdx}" style="text-align: center; color: var(--color-steel-400, #94a3b8); width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
             </div>
-            
-            <!-- 2D / Supporting Docs Dropzone Moved Here -->
-            <div class="rfq-engine__upload-zone" id="rfq-upload-zone-2d-${partIdx}" style="flex: 1; margin-top: 0; min-height: unset; padding: 8px 12px; background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px;">
-              <input type="file" class="rfq-file-input-2d" data-part="${partIdx}" multiple accept=".pdf,.dwg,.dxf,.png,.jpg,.jpeg,.doc,.docx" hidden />
-              <div class="upload-icon" style="color: var(--color-steel-400); margin-bottom: 0;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-              </div>
-              <div class="upload-text" style="text-align: left;">
-                <h3 style="font-size: 11px; color: var(--color-steel-300); margin: 0;">Upload 2D Drawing</h3>
-                <p style="font-size: 9px; margin-top: 2px;">Drag & Drop or <span class="upload-link">Choose Files</span></p>
-              </div>
-              <div class="upload-file-list hidden" id="upload-file-list-2d-${partIdx}" style="width: 100%;"></div>
+            <div class="rfq-results hidden" data-part="${partIdx}" style="position:absolute; top:0; left:0; width:100%; height:100%; display: flex; align-items: center; justify-content: center;">
+              <div class="rfq-results__thumbnail" data-part="${partIdx}" style="width:100%; height:100%; display: flex; align-items: center; justify-content: center;"></div>
             </div>
           </div>
           
-          <div class="rfq-results hidden" data-part="${partIdx}">
-            <div class="rfq-results__grid rfq-results__grid--compact" data-part="${partIdx}" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 11px;">
-              <div class="rfq-stat" style="display:none;"><span class="rfq-stat__label">BBox</span><span class="rfq-stat__value" data-stat="bbox">—</span></div>
-              <div class="rfq-stat"><span class="rfq-stat__label">Vol</span><span class="rfq-stat__value" data-stat="volume">—</span></div>
-              <div class="rfq-stat"><span class="rfq-stat__label">Area</span><span class="rfq-stat__value" data-stat="surface-area">—</span></div>
-              <div class="rfq-stat" style="display:none;"><span class="rfq-stat__label">Mass</span><span class="rfq-stat__value" data-stat="mass">—</span></div>
-              <div class="rfq-stat" style="display:none;"><span class="rfq-stat__label">Triangles</span><span class="rfq-stat__value" data-stat="triangles">—</span></div>
-              <div class="rfq-stat"><span class="rfq-stat__label">Dims</span><span class="rfq-stat__value" data-stat="dimensions">—</span></div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+            <input type="text" class="rfq-part-name rfq-part-name-input" data-part="${partIdx}" placeholder="Part Name (e.g. Housing Top...)" value="Part ${partIdx + 1}" onclick="event.stopPropagation();" onkeydown="event.stopPropagation();" style="font-size: 14px; font-weight: 700; padding: 6px 10px; border-radius:6px; width: 100%; max-width: 400px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: inherit; transition: all 0.2s;" />
+            <div style="font-size: 11px; color: var(--color-steel-400, #94a3b8); display: flex; gap: 12px; align-items: center; padding-left: 2px;">
+              <span>Tech: <span class="summary-tech" data-part="${partIdx}" style="color: #f59e0b; font-weight: 600;">Required</span></span>
+              <span>Mat: <span class="summary-mat" data-part="${partIdx}" style="color: #f59e0b; font-weight: 600;">Required</span></span>
+              <span>Qty: <span class="summary-qty" data-part="${partIdx}" style="font-weight: 600;">1</span></span>
+              
+              <!-- Warning Message if incomplete -->
+              <span class="rfq-part-status-msg" data-part="${partIdx}" style="color: #f59e0b; margin-left: auto; display: flex; align-items: center; gap: 4px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                Missing minimum info
+              </span>
             </div>
           </div>
-          <!-- Real-time Status -->
-          <div class="rfq-results__status" data-part="${partIdx}" style="font-size: 12px; color: var(--color-teal-400); margin-top: 0px;">Waiting for file...</div>
-        </div>
-      </div>
 
-      <!-- Middle Section: Configurations -->
+          <div style="display: flex; align-items: center; gap: 12px; margin-left: 12px;">
+            <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <button class="rfq-part-remove" data-part="${partIdx}" title="Remove part" style="background: none; border: none; color: var(--color-steel-400, #94a3b8); cursor: pointer; padding: 4px; display: flex; align-items: center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+      </summary>
+      
+      <div class="rfq-part-card-body">
+        <div style="display: flex; gap: 16px; align-items: stretch; margin-bottom: 24px;">
+          <!-- Left side: Geometry -->
+          <div style="flex: 1; display: flex; flex-direction: column; justify-content: stretch;">
+            <div class="rfq-results hidden" data-part="${partIdx}" style="height: 100%; display: flex; flex-direction: column;">
+              <div class="rfq-results__grid rfq-results__grid--inline" data-part="${partIdx}" style="flex: 1; position: relative; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 12px; color: var(--color-steel-400, #94a3b8); background: rgba(0,0,0,0.1); padding: 12px 12px 28px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                <div class="rfq-stat" style="display: flex; flex-direction: column; gap: 2px;"><span class="rfq-stat__label" style="font-weight:700; font-size: 10px; text-transform: uppercase;">Dimensions</span><span class="rfq-stat__value" data-stat="dimensions" style="font-weight: 500; color: var(--color-text, inherit);">—</span></div>
+                <div class="rfq-stat" style="display: flex; flex-direction: column; gap: 2px;"><span class="rfq-stat__label" style="font-weight:700; font-size: 10px; text-transform: uppercase;">Volume</span><span class="rfq-stat__value" data-stat="volume" style="font-weight: 500; color: var(--color-text, inherit);">—</span></div>
+                <div class="rfq-stat" style="display: flex; flex-direction: column; gap: 2px;"><span class="rfq-stat__label" style="font-weight:700; font-size: 10px; text-transform: uppercase;">Estimated Weight</span><span class="rfq-stat__value rfq-stat-weight" data-part="${partIdx}" style="font-weight: 500; color: var(--color-text, inherit);">—</span></div>
+                <div class="rfq-stat" style="display: flex; flex-direction: column; gap: 2px;"><span class="rfq-stat__label" style="font-weight:700; font-size: 10px; text-transform: uppercase;">Est. Process Time</span><span class="rfq-stat__value rfq-stat-time" data-part="${partIdx}" style="font-weight: 600; color: var(--color-electric, #3b82f6);">—</span></div>
+                <!-- Real-time Status inside grid -->
+                <div class="rfq-results__status" data-part="${partIdx}" style="position: absolute; bottom: 8px; left: 12px; font-size: 11px; font-weight: 600; color: #10b981;">Waiting for file...</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Right side: 2D Upload Square -->
+          <div class="rfq-engine__upload-zone rfq-upload-zone-square" id="rfq-upload-zone-2d-${partIdx}" style="flex: 0 0 140px; margin: 0; min-height: 0; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <input type="file" class="rfq-file-input-2d" data-part="${partIdx}" multiple accept=".pdf,.dwg,.dxf,.png,.jpg,.jpeg,.doc,.docx" hidden />
+            <div class="upload-icon" style="color: var(--color-steel-400, #94a3b8); margin-bottom: 6px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+            <h3 style="font-size: 10px; font-weight: 700; color: var(--color-text, inherit); margin: 0; text-transform: uppercase;">Upload 2D</h3>
+            <p style="font-size: 9px; color: var(--color-steel-400, #94a3b8); margin-top: 2px;">Drawings or Docs</p>
+            <div class="upload-file-list hidden" id="upload-file-list-2d-${partIdx}" style="width: 100%; margin-top: 6px;"></div>
+          </div>
+        </div>
+
+        <!-- Middle Section: Configurations -->
       <div class="rfq-fields-col" style="display: flex; flex-direction: column; gap: 12px;">
         <!-- Row 1: Technology, Quantity & Lead Time -->
         <div class="rfq-fields-grid" style="grid-template-columns: 2fr 1fr 1fr; margin-bottom: 0; padding: 12px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-lg);">
@@ -215,7 +228,8 @@ function createPartPanelHTML(partIdx) {
       <!-- Missing file input block (used programmatically by handleFiles but doesn't need to be clickable by user in card) -->
       <div class="upload-file-list hidden" data-part="${partIdx}" style="display:none;"></div>
       <input type="file" class="rfq-file-input" data-part="${partIdx}" hidden />
-    </div>`;
+      </div> <!-- Closes rfq-part-card-body -->
+    </details>`;
 }
 
 /**
@@ -325,7 +339,17 @@ export function initRFQController() {
       if (company) summaryHtml += (attention ? ' <span style="color:var(--color-steel-400);">•</span> ' : '') + `<strong style="color:var(--color-white);">${company}</strong>`;
       if (summaryHtml) summaryHtml += '<br>';
       summaryHtml += `<span style="color:var(--color-steel-300);">${address1}${address2 ? ', ' + address2 : ''}</span><br>`;
-      summaryHtml += `<span style="color:var(--color-steel-300);">${city}, ${prov} ${zip} <span style="color:var(--color-steel-500);">•</span> ${country}</span>`;
+      
+      const regionMap = {
+        'north_america': 'North America',
+        'europe': 'Europe',
+        'oceania': 'Oceania / Australia',
+        'asia': 'Asia',
+        'rest_of_world': 'Rest of World'
+      };
+      const displayCountry = regionMap[country] || country;
+      
+      summaryHtml += `<span style="color:var(--color-steel-300);">${city}, ${prov} ${zip} <span style="color:var(--color-steel-500);">•</span> ${displayCountry}</span>`;
 
       if (shippingSummaryText) {
         shippingSummaryText.innerHTML = summaryHtml;
@@ -352,14 +376,14 @@ export function initRFQController() {
         card.style.background = 'rgba(0, 0, 0, 0.15)'; // reset bg
       }
     }
-    if (hasQuotedOnce && e.target.matches('.rfq-process, .rfq-material, .rfq-finish, .rfq-lead-time, .rfq-tooling-type, .rfq-tooling-cavities, .rfq-quantity, .rfq-other-tech, .rfq-other-material, .rfq-color, .rfq-threads, .rfq-tolerance')) {
-      calculateAndDisplayQuote();
+    if (e.target.matches('.rfq-part-name, .rfq-process, .rfq-material, .rfq-finish, .rfq-lead-time, .rfq-tooling-type, .rfq-tooling-cavities, .rfq-quantity, .rfq-other-tech, .rfq-other-material, .rfq-color, .rfq-threads, .rfq-tolerance')) {
+      calculateAndDisplayQuote(false);
     }
   });
 
   panels.addEventListener('input', (e) => {
-    if (hasQuotedOnce && e.target.matches('.rfq-quantity, .rfq-other-tech, .rfq-other-material, .rfq-color, .rfq-threads, .rfq-tolerance')) {
-      calculateAndDisplayQuote();
+    if (e.target.matches('.rfq-part-name, .rfq-quantity, .rfq-other-tech, .rfq-other-material, .rfq-color, .rfq-threads, .rfq-tolerance')) {
+      calculateAndDisplayQuote(false);
     }
   });
 
@@ -490,8 +514,8 @@ export function initRFQController() {
         })
       }).catch(e => console.warn('Planner notify error:', e));
 
-      // showRFQSuccessModal('quote'); (if implemented)
-      alert("Quote submitted successfully!");
+      showRFQSuccessModal('quote'); // Prompt user to go to workspace
+      // alert("Quote submitted successfully!");
       document.getElementById('rfq-clear-all-parts')?.click();
     } catch (e) {
       console.error('[RFQ] Instant quote error:', e);
@@ -503,7 +527,7 @@ export function initRFQController() {
   });
 
   // Wire "Submit" button
-  submitBtn?.addEventListener('click', () => calculateAndDisplayQuote());
+  submitBtn?.addEventListener('click', () => calculateAndDisplayQuote(true));
 
   // Initialize result panel
   renderQuoteResult();
@@ -525,22 +549,30 @@ function updateSubmitButtonState() {
 
   let hasAnyAnalysis = false;
   let allToolingValid = true;
+  let allPartsComplete = true;
 
   partState.forEach((ps, idx) => {
-    if (ps.analysis) {
+    const panel = document.querySelector(`.rfq-part-card[data-part="${idx}"]`);
+    if (ps.analysis && panel) {
       hasAnyAnalysis = true;
-      const panel = document.querySelector(`.rfq-part-card[data-part="${idx}"]`);
-      if (panel) {
-        const process = panel.querySelector('.rfq-process')?.value;
-        if (process && techHasTooling(process)) {
-          const toolingTier = panel.querySelector('.rfq-tooling-type')?.value;
-          if (!toolingTier) allToolingValid = false;
-        }
+      const process = panel.querySelector('.rfq-process')?.value;
+      const material = panel.querySelector('.rfq-material')?.value;
+      const quantity = parseInt(panel.querySelector('.rfq-quantity')?.value) || 0;
+      
+      if (!process || !material || quantity <= 0) {
+        allPartsComplete = false;
       }
+      
+      if (process && techHasTooling(process)) {
+        const toolingTier = panel.querySelector('.rfq-tooling-type')?.value;
+        if (!toolingTier) allToolingValid = false;
+      }
+    } else {
+      allPartsComplete = false; // Missing analysis means incomplete part
     }
   });
 
-  submitBtn.disabled = !(hasAnyAnalysis && allToolingValid);
+  submitBtn.disabled = !(hasAnyAnalysis && allToolingValid && allPartsComplete);
 }
 
 function wirePartPanel(partIdx) {
@@ -730,7 +762,7 @@ function wirePartPanel(partIdx) {
       const list = panel.querySelector('.upload-file-list');
       if (list && list.children.length === 0) {
         list.classList.add('hidden');
-        panel.querySelector('.rfq-results')?.classList.add('hidden');
+        panel.querySelectorAll('.rfq-results').forEach(el => el.classList.add('hidden'));
         // Re-show placeholder when geometry is cleared
         panel.querySelector('.rfq-results-placeholder')?.classList.remove('hidden');
         getPartState(partIdx).analysis = null;
@@ -847,7 +879,7 @@ async function handleFiles(fileList, partIdx) {
 
   // Auto-fill Part Name
   const partNameInput = panel.querySelector('.rfq-part-name');
-  if (partNameInput && !partNameInput.value && files[0]) {
+  if (partNameInput && files[0] && (!partNameInput.value || partNameInput.value.trim() === 'Part ' + (partIdx + 1))) {
     partNameInput.value = files[0].name.replace(/\.[^.]+$/, '');
   }
 
@@ -873,9 +905,9 @@ async function handleFiles(fileList, partIdx) {
   );
 
   if (parseable) {
-    // Hide the placeholder, show the analysis results
+    // Hide the placeholder, show all analysis results sections (thumbnail and grid)
     panel.querySelector('.rfq-results-placeholder')?.classList.add('hidden');
-    resultsEl?.classList.remove('hidden');
+    panel.querySelectorAll(`.rfq-results[data-part="${partIdx}"]`).forEach(el => el.classList.remove('hidden'));
     if (statusEl) { statusEl.textContent = 'Preparing file...'; statusEl.classList.remove('done'); }
     panel.querySelectorAll('[data-stat]').forEach(el => el.textContent = '...');
 
@@ -955,19 +987,22 @@ async function handleFiles(fileList, partIdx) {
   }
 }
 
-function calculateAndDisplayQuote() {
-  hasQuotedOnce = true;
+function calculateAndDisplayQuote(isSubmitClick = false) {
+  if (isSubmitClick) hasQuotedOnce = true;
   const panels = document.querySelectorAll('.rfq-part-card');
   if (panels.length === 0) return;
 
   let hasAnalyzedPart = false;
+  let hasIncompleteParts = false;
+  quotedParts.clear();
 
   panels.forEach(panel => {
     const partIdx = parseInt(panel.dataset.part);
     const state = getPartState(partIdx);
 
     if (!state.analysis) {
-      return; // Skip parts without analysis
+      hasIncompleteParts = true; // No file uploaded counts as incomplete
+      return; 
     }
     
     hasAnalyzedPart = true;
@@ -997,8 +1032,78 @@ function calculateAndDisplayQuote() {
     const quote = calculateQuote(state.analysis, config);
     const partName = getField(panel, '.rfq-part-name') || `Part ${partIdx + 1}`;
 
+    // Update summary info
+    const summaryNameEl = panel.querySelector('.rfq-part-name-display');
+    if (summaryNameEl) summaryNameEl.textContent = partName;
+    
+    const summaryTechEl = panel.querySelector('.summary-tech');
+    if (summaryTechEl) {
+       summaryTechEl.textContent = config.process ? panel.querySelector('.rfq-process option:checked')?.textContent || config.process.toUpperCase() : 'Required';
+       summaryTechEl.style.color = config.process ? 'var(--color-text, inherit)' : '#f59e0b';
+    }
+    const summaryMatEl = panel.querySelector('.summary-mat');
+    if (summaryMatEl) {
+       summaryMatEl.textContent = config.material ? panel.querySelector('.rfq-material option:checked')?.textContent || config.material.toUpperCase() : 'Required';
+       summaryMatEl.style.color = config.material ? 'var(--color-text, inherit)' : '#f59e0b';
+    }
+    const summaryQtyEl = panel.querySelector('.summary-qty');
+    if (summaryQtyEl) summaryQtyEl.textContent = config.quantity;
+    
+    const statusMsgEl = panel.querySelector('.rfq-part-status-msg');
+    const isComplete = config.process && config.material && config.quantity > 0;
+    if (!isComplete) hasIncompleteParts = true;
+
+    if (statusMsgEl) {
+      if (isComplete) {
+         statusMsgEl.style.display = 'none';
+         panel.classList.remove('needs-tech-selection');
+      } else {
+         statusMsgEl.style.display = 'flex';
+         panel.classList.add('needs-tech-selection');
+      }
+    }
+
+    // Update geometry inline stats
+    const dimsEl = panel.querySelector('[data-stat="dimensions"]');
+    if (dimsEl && state.analysis.boundingBox) {
+      dimsEl.textContent = `${Math.round(state.analysis.boundingBox.x)}x${Math.round(state.analysis.boundingBox.y)}x${Math.round(state.analysis.boundingBox.z)} mm`;
+    }
+    const volEl = panel.querySelector('[data-stat="volume"]');
+    if (volEl && state.analysis.volume) {
+      volEl.textContent = `${Math.round(state.analysis.volume)} cm³`;
+    }
+    const weightEl = panel.querySelector(`.rfq-stat-weight[data-part="${partIdx}"]`);
+    if (weightEl) {
+      weightEl.textContent = quote.formatted.estimatedWeight;
+    }
+
+    // Calculate Process Time Estimate
+    const processTimeEl = panel.querySelector(`.rfq-stat-time[data-part="${partIdx}"]`);
+    if (processTimeEl && state.analysis.boundingBox && state.analysis.volume) {
+       // bbox volume in mm3
+       const bboxVol = state.analysis.boundingBox.x * state.analysis.boundingBox.y * state.analysis.boundingBox.z;
+       const targetVolMm3 = state.analysis.volume * 1000;
+       const removedVol = bboxVol - targetVolMm3;
+       
+       if (config.process === 'cnc' && removedVol > 0) {
+          // rough estimate: 1 min per 10000 mm3 removed + 5 mins setup
+          const timeMins = Math.max(5, Math.round((removedVol / 10000) + 5));
+          processTimeEl.textContent = `~${timeMins} mins`;
+       } else if (config.process === 'injection' || config.process === 'compression') {
+          processTimeEl.textContent = `~15-30s / cycle`;
+       } else if (config.process === 'sheet') {
+          processTimeEl.textContent = `~2-5 mins / part`;
+       } else if (config.process === 'vac_casting') {
+          processTimeEl.textContent = `~24-48h / batch`;
+       } else {
+          processTimeEl.textContent = `--`;
+       }
+    }
+
     // Store/update in accumulated quotes
-    quotedParts.set(partIdx, { partName, quote, config, file: state.file, analysis: state.analysis });
+    if (isComplete) {
+      quotedParts.set(partIdx, { partName, quote, config, file: state.file, analysis: state.analysis });
+    }
   });
 
   if (!hasAnalyzedPart && panels.length === 1) {
@@ -1006,8 +1111,24 @@ function calculateAndDisplayQuote() {
     return;
   }
 
-  // Re-render the result panel
-  renderQuoteResult();
+  // If any part is incomplete, do not show a partial quote.
+  if (hasIncompleteParts) {
+    quotedParts.clear();
+    const hintText = document.querySelector('#rfq-quote-empty-hint h3');
+    const hintSub = document.querySelector('#rfq-quote-empty-hint p');
+    if (hintText) hintText.textContent = "Missing Information";
+    if (hintSub) hintSub.textContent = "Please ensure all parts have a Technology and Material selected to calculate your quote.";
+  } else {
+    const hintText = document.querySelector('#rfq-quote-empty-hint h3');
+    const hintSub = document.querySelector('#rfq-quote-empty-hint p');
+    if (hintText) hintText.textContent = "Ready to Quote";
+    if (hintSub) hintSub.textContent = "Upload a 3D file or select your parameters to see instant pricing.";
+  }
+
+  // Re-render the result panel if user has clicked calculate
+  if (hasQuotedOnce) {
+    renderQuoteResult();
+  }
 }
 
 /**
@@ -1042,27 +1163,38 @@ function renderQuoteResult() {
 
   let grandTotal = 0;
   let grandToolingTotal = 0;
+  let totalVolumeCm3 = 0;
+  let totalWeightGrams = 0;
   let html = '';
 
   quotedParts.forEach((entry, partIdx) => {
     const { partName, quote } = entry;
     grandTotal += quote.totalPrice;
     grandToolingTotal += quote.toolingCost;
+    
+    // Accumulate volume and weight for shipping
+    totalVolumeCm3 += parseFloat(quote.volume || 0) * quote.quantity;
+    totalWeightGrams += parseFloat(quote.estimatedWeight || 0) * quote.quantity;
 
     // Safety net: unit price + tooling > $3000
     const unitPlusTooling = quote.unitPriceWithSetup + quote.toolingCost;
     const isHighValue = unitPlusTooling > 3000;
     const warningClass = isHighValue ? ' rfq-quote-part-card--warning' : '';
 
+    const toolingClass = quote.hasTooling ? ' rfq-quote-part-card--tooling' : '';
+
     html += `
-      <div class="rfq-quote-part-card${warningClass}" data-quoted-part="${partIdx}">
-        <div class="rfq-quote-part-card__header">
-          <span class="rfq-quote-part-card__name" title="${partName}">${partName}</span>
-          <button class="rfq-quote-part-card__remove" data-remove-part="${partIdx}" title="Remove part">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <details class="rfq-quote-part-card${warningClass}${toolingClass}" data-quoted-part="${partIdx}" open>
+        <summary class="rfq-quote-part-card__header" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; outline: none; list-style: none;">
+          <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
+            <svg class="rfq-quote-part-expand-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-steel-400); flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <span class="rfq-quote-part-card__name" title="${partName}" style="font-weight: 600; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${partName}</span>
+          </div>
+          <button class="rfq-quote-part-card__remove" data-remove-part="${partIdx}" title="Remove part" style="background: none; border: none; color: #94a3b8; cursor: pointer; display: flex; align-items: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
-        </div>
-        <div class="rfq-quote-part-card__details">
+        </summary>
+        <div class="rfq-quote-part-card__details" style="padding: 0 12px 12px 12px; border-top: 1px solid var(--color-steel-100); margin-top: 4px; padding-top: 12px;">
           <div class="rfq-quote-detail-row">
             <span class="rfq-quote-detail-label">Technology</span>
             <span class="rfq-quote-detail-value">${quote.techLabel}</span>
@@ -1097,29 +1229,91 @@ function renderQuoteResult() {
             <span class="rfq-quote-detail-label">Volume Discount</span>
             <span class="rfq-quote-detail-value rfq-quote-detail-value--discount">-${quote.qtyDiscount}%</span>
           </div>` : ''}
-        </div>
-        <div class="rfq-quote-part-card__total">
-          <span>Subtotal (${quote.quantity} unit${quote.quantity > 1 ? 's' : ''})</span>
-          <span class="rfq-quote-part-card__price">${quote.formatted.totalPrice}</span>
+          
+          <div class="rfq-quote-part-card__total" style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--color-steel-200);">
+            <span>Subtotal (${quote.quantity} unit${quote.quantity > 1 ? 's' : ''})</span>
+            <span class="rfq-quote-part-card__price">${quote.formatted.totalPrice}</span>
+          </div>
         </div>
         ${isHighValue ? `
-        <div class="rfq-quote-part-card__warning-note">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <span>This estimate will need to be validated by one of our engineers</span>
+        <div class="rfq-quote-part-card__warning-note" style="padding: 8px 12px; border-top: 1px solid var(--color-steel-100); background: #fffbeb;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span style="color: #b45309;">Engineer validation required</span>
         </div>` : ''}
-      </div>
+      </details>
     `;
   });
+  
+      // Shipping calculation
+    let shippingCost = 0;
+    let shippingHtml = '';
+    if (document.getElementById('calc-shipping-cb')?.checked) {
+      const dimWeightKg = totalVolumeCm3 / 5000;
+      const actualWeightKg = totalWeightGrams / 1000;
+      const chargeableWeight = Math.max(dimWeightKg, actualWeightKg);
+      
+      // Get the configured shipping region (default to rest_of_world if not found)
+      const selRegion = shippingData.country || 'rest_of_world';
+      const shippingRegions = PRICING_CONFIG.globalSettings?.shipping?.regions || {};
+      const reg = shippingRegions[selRegion] || shippingRegions['rest_of_world'];
+      
+      // Calculate costs using pricing engine formulas if available, fallback to defaults
+      const seaFreight = Math.max((reg?.seaFreight?.base || 20), chargeableWeight * (reg?.seaFreight?.perKg || 3));
+      const economyAir = Math.max((reg?.economyAir?.base || 30), chargeableWeight * (reg?.economyAir?.perKg || 8));
+      const expressAir = Math.max((reg?.expressAir?.base || 40), chargeableWeight * (reg?.expressAir?.perKg || 15));
+      
+      const seaDays = reg?.seaFreight?.days || '30-40';
+      const ecoDays = reg?.economyAir?.days || '8-12';
+      const expDays = reg?.expressAir?.days || '3-5';
+      
+      shippingCost = economyAir;
+      grandTotal += shippingCost;
+      
+      shippingHtml = `
+        <div class="rfq-quote-shipping-options" style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--color-steel-300);">
+          <h4 style="font-size: 12px; font-weight: 600; color: var(--color-steel-400); margin-bottom: 12px; text-transform: uppercase;">Shipping Options</h4>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; cursor: pointer;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <input type="radio" name="rfq_shipping" value="${seaFreight}" style="accent-color: var(--color-emerald-500);">
+                <span>Sea Freight <span style="color: var(--color-steel-400); font-size: 11px;">(${seaDays} days)</span></span>
+              </div>
+              <span style="font-weight: 600;">$${seaFreight.toFixed(2)}</span>
+            </label>
+            <label style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; cursor: pointer;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <input type="radio" name="rfq_shipping" value="${economyAir}" checked style="accent-color: var(--color-emerald-500);">
+                <span>Economy Air <span style="color: var(--color-steel-400); font-size: 11px;">(${ecoDays} days)</span></span>
+              </div>
+              <span style="font-weight: 600;">$${economyAir.toFixed(2)}</span>
+            </label>
+            <label style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; cursor: pointer;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <input type="radio" name="rfq_shipping" value="${expressAir}" style="accent-color: var(--color-emerald-500);">
+                <span>Express Air <span style="color: var(--color-steel-400); font-size: 11px;">(${expDays} days)</span></span>
+              </div>
+              <span style="font-weight: 600;">$${expressAir.toFixed(2)}</span>
+            </label>
+          </div>
+        </div>
+      `;
+    }
 
   // Grand total
   html += `
-    <div class="rfq-quote-grand-total">
-      <div class="rfq-quote-grand-total__row">
+    ${shippingHtml}
+    <div class="rfq-quote-grand-total" style="margin-top: 16px;">
+      ${shippingCost > 0 ? `
+      <div class="rfq-quote-grand-total__row" style="font-size: 12px; color: var(--color-steel-500); margin-bottom: 4px; display: flex; justify-content: space-between;">
+        <span>Est. Shipping</span>
+        <span class="rfq-quote-grand-total__shipping-val">$${shippingCost.toFixed(2)}</span>
+      </div>` : ''}
+      <div class="rfq-quote-grand-total__row" style="border-top: 1px solid var(--color-steel-200); padding-top: 12px; display: flex; justify-content: space-between;">
         <span>Grand Total</span>
-        <span class="rfq-quote-grand-total__price">$${grandTotal.toFixed(2)}</span>
+        <span class="rfq-quote-grand-total__price" style="font-weight: 700; color: var(--color-emerald-500);">$${grandTotal.toFixed(2)}</span>
       </div>
       ${grandToolingTotal > 0 ? `
-      <div class="rfq-quote-grand-total__note">
+      <div class="rfq-quote-grand-total__note" style="margin-top: 4px; font-size: 11px; color: var(--color-amber-500); text-align: right;">
         Includes $${grandToolingTotal.toFixed(2)} one-off tooling cost
       </div>` : ''}
     </div>
@@ -1128,6 +1322,19 @@ function renderQuoteResult() {
   breakdownEl.innerHTML = html;
   actionsEl?.classList.remove('hidden');
 
+  // Wire up shipping radios
+  const baseTotal = grandTotal - shippingCost;
+  breakdownEl.querySelectorAll('input[name="rfq_shipping"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+       const newShipping = parseFloat(e.target.value);
+       const updatedTotal = baseTotal + newShipping;
+       const grandTotalEl = breakdownEl.querySelector('.rfq-quote-grand-total__price');
+       const estShippingEl = breakdownEl.querySelector('.rfq-quote-grand-total__shipping-val');
+       if (grandTotalEl) grandTotalEl.textContent = `$${updatedTotal.toFixed(2)}`;
+       if (estShippingEl) estShippingEl.textContent = `$${newShipping.toFixed(2)}`;
+    });
+  });
+
   // Wire up remove buttons for each part
   breakdownEl.querySelectorAll('.rfq-quote-part-card__remove').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -1135,6 +1342,7 @@ function renderQuoteResult() {
       const idx = parseInt(btn.dataset.removePart);
       quotedParts.delete(idx);
       renderQuoteResult();
+      updateSubmitButtonState();
     });
   });
 }
