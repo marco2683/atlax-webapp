@@ -38,7 +38,7 @@ function getPartState(idx) {
 
 // ── Dynamic Dropdown Population ─────────────────────────
 function populateMaterialDropdown(partIdx, techKey) {
-  const panel = document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`);
+  const panel = document.querySelector(`.rfq-part-card[data-part="${partIdx}"]`);
   if (!panel) return;
   const select = panel.querySelector('.rfq-material');
   if (!select) return;
@@ -50,7 +50,7 @@ function populateMaterialDropdown(partIdx, techKey) {
 }
 
 function populateFinishDropdown(partIdx, techKey) {
-  const panel = document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`);
+  const panel = document.querySelector(`.rfq-part-card[data-part="${partIdx}"]`);
   if (!panel) return;
   const select = panel.querySelector('.rfq-finish');
   if (!select) return;
@@ -64,178 +64,157 @@ function populateFinishDropdown(partIdx, techKey) {
 // ── Panel HTML Template ─────────────────────────────────
 function createPartPanelHTML(partIdx) {
   return `
-    <div class="rfq-part-panel" data-part="${partIdx}">
-      <div class="rfq-top-row">
-        <div class="rfq-upload-col" style="display: flex; flex-direction: column; height: 100%;">
-          <div class="rfq-field" style="margin-bottom: 16px;">
-            <label>Part Name</label>
-            <input type="text" class="rfq-part-name" data-part="${partIdx}" placeholder="e.g. Housing Top..." style="font-size: 14px;" />
+    <div class="rfq-part-card needs-tech-selection" data-part="${partIdx}" style="display: flex; flex-direction: column; background: rgba(0,0,0,0.15); border: 1px solid var(--color-steel-600); border-radius: var(--radius-lg); padding: 20px; position: relative; transition: all 0.3s ease;">
+      <!-- Remove Button -->
+      <button class="rfq-part-remove" data-part="${partIdx}" style="position: absolute; top: 12px; right: 12px; background: none; border: none; color: var(--color-steel-400); cursor: pointer; font-size: 18px; padding: 4px; line-height: 1;">&times;</button>
+      
+      <!-- Top Section: File Info, Name & 2D Upload -->
+      <div class="rfq-part-header" style="display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start;">
+        <!-- Placeholder for Geometry Analysis / Thumbnail -->
+        <div class="rfq-part-thumb-wrapper" style="width: 120px; height: 120px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;">
+          <div class="rfq-results-placeholder" data-part="${partIdx}" style="text-align: center; color: var(--color-steel-500); display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
           </div>
-          <div class="rfq-engine__upload-zone" id="rfq-upload-zone-${partIdx}" style="flex: 1; min-height: 220px; display: flex; flex-direction: column; justify-content: center;">
-            <input type="file" class="rfq-file-input" data-part="${partIdx}" multiple accept=".step,.stp,.stl,.obj,.3mf,.iges,.igs,.dxf,.sldprt,.ipt,.x_t,.x_b,.3dxml,.catpart,.prt,.sat,.jt" hidden />
-            <div class="upload-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            </div>
-            <div class="upload-text">
-              <h3>Drag & Drop 3D CAD Files</h3>
-              <p style="margin-top: 4px;">Upload at least 1 3D CAD file to get started.</p>
-            </div>
-            <button class="upload-btn rfq-select-files-btn" data-part="${partIdx}">Select 3D Files</button>
-            <div class="upload-file-list hidden" data-part="${partIdx}"></div>
-            <div class="upload-formats">
-              <p style="font-size: 9.5px;">STEP · STP · SLDPRT · STL · DXF · IGES · IGS · IPT · X_T · X_B · 3DXML · CATPART · PRT · SAT · 3MF · JT</p>
-            </div>
+          <div class="rfq-results hidden" data-part="${partIdx}" style="width:100%; height:100%;">
+            <div class="rfq-results__thumbnail" data-part="${partIdx}" style="width:100%; height:100%;"></div>
           </div>
+        </div>
 
-          <!-- 2D / Supporting Docs Dropzone -->
-          <div class="rfq-engine__upload-zone" id="rfq-upload-zone-2d-${partIdx}" style="min-height: 140px; margin-top: 12px; background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.08);">
-            <input type="file" class="rfq-file-input-2d" data-part="${partIdx}" multiple accept=".pdf,.dwg,.dxf,.png,.jpg,.jpeg,.doc,.docx" hidden />
-            <div class="upload-icon" style="color: var(--color-steel-400); margin-bottom: -6px;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; gap: 16px; align-items: flex-start;">
+            <div class="rfq-field" style="flex: 1; margin-bottom: 0;">
+              <label style="font-size:11px; margin-bottom:4px; display:block;">Part Name</label>
+              <input type="text" class="rfq-part-name" data-part="${partIdx}" placeholder="e.g. Housing Top..." style="font-size: 16px; font-weight: 600; padding: 8px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.2);" />
             </div>
-            <div class="upload-text">
-              <h3 style="font-size: 12px; color: var(--color-steel-300);">2D Drawings & Supporting Docs</h3>
-              <p style="font-size: 10px; margin-top: 2px;">Drag & Drop or <span class="upload-link">Choose Files</span></p>
-            </div>
-            <div class="upload-file-list hidden" id="upload-file-list-2d-${partIdx}"></div>
-            <div class="upload-formats" style="margin-top: 4px;">
-              <p>PDF · DWG · DXF · PNG · JPG</p>
-            </div>
-          </div>
-        </div> <!-- Closes rfq-upload-col -->
-
-        <div class="rfq-fields-col" style="display: flex; flex-direction: column; gap: 12px; height: 100%;">
-          <!-- Row 1: Technology & Quantity -->
-          <div class="rfq-fields-grid" style="grid-template-columns: 2fr 1fr; margin-bottom: 0; padding: 12px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-lg);">
-            <div class="rfq-field rfq-field--accent">
-              <label style="color: var(--color-electric); font-size: 11px;">Primary Technology</label>
-              <select class="rfq-process" data-part="${partIdx}" style="font-size: 15px; font-weight: 600; padding: 12px 14px; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.05);">
-                <option value="cnc">CNC Machining</option>
-                <option value="vac_casting">Silicone Vacuum Casting</option>
-                <option value="injection">Injection moulding</option>
-                <option value="compression">Compression Moulding</option>
-                <option value="sheet">Sheet metal</option>
-                <option value="casting">Die-Casting</option>
-                <option value="other">Other</option>
-              </select>
-              <input type="text" class="rfq-other-tech hidden" data-part="${partIdx}" placeholder="Please specify technology..." style="font-size: 13px; font-weight: 500; padding: 10px 14px; margin-top: 8px;" />
-            </div>
-            <div class="rfq-field">
-              <label>Quantity</label>
-              <input type="number" class="rfq-quantity" data-part="${partIdx}" value="1" min="1" style="font-size: 15px; font-weight: 600; padding: 12px 14px;" />
-            </div>
-          </div>
-
-          <!-- Row 2: Material, Color, Surface Finish -->
-          <div class="rfq-fields-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 0;">
-            <div class="rfq-field">
-              <label>Material</label>
-              <select class="rfq-material" data-part="${partIdx}"></select>
-              <input type="text" class="rfq-other-material hidden" data-part="${partIdx}" placeholder="Please specify material..." style="font-size: 13px; font-weight: 500; padding: 10px 14px; margin-top: 8px;" />
-            </div>
-            <div class="rfq-field">
-              <label>Color</label>
-              <input type="text" class="rfq-color" data-part="${partIdx}" placeholder="White, RAL 7016..." />
-            </div>
-            <div class="rfq-field">
-              <label>Surface Finish</label>
-              <select class="rfq-finish" data-part="${partIdx}">
-                <option value="as-machined">As Machined</option>
-                <option value="bead-blast">Bead Blasted</option>
-                <option value="anodized">Anodized</option>
-                <option value="powder-coat">Powder Coated</option>
-                <option value="polished">Polished</option>
-                <option value="sandblast">Sandblasted</option>
-                <option value="custom">Custom</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Row 3: Lead Time -->
-          <div class="rfq-fields-grid" style="grid-template-columns: 1fr; margin-bottom: 0;">
-            <div class="rfq-field">
-              <label>Lead Time</label>
-              <select class="rfq-lead-time" data-part="${partIdx}">
-                <option value="economy">Economy (30+ days)</option>
-                <option value="standard" selected>Standard (15–20 days)</option>
-                <option value="express">Express (7–10 days)</option>
-                <option value="rush">Rush (3–5 days)</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Tooling Details (Dynamically shown based on Process) -->
-          <div class="rfq-tooling-details hidden" data-part="${partIdx}" style="margin-top: 16px; padding: 12px; background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.4); border-radius: var(--radius-md); transition: all 0.3s ease;">
-            <div class="rfq-tooling-status-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: #ef4444; transition: color 0.3s ease;">
-              <svg class="rfq-tooling-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <h4 class="rfq-tooling-title" style="margin: 0; font-size: 13px; font-weight: 600;">Tooling Details Required</h4>
-            </div>
-            <div class="rfq-fields-grid rfq-fields-grid--1x2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-              <div class="rfq-field" style="margin-bottom: 0;">
-                <label style="color: var(--color-steel-200);">Tooling Tier</label>
-                <select class="rfq-tooling-type" data-part="${partIdx}">
-                  <option value="" disabled selected>Select Tier...</option>
-                  <option value="prototype">Prototype (Soft Tooling, < 1k parts)</option>
-                  <option value="low_volume">Low Volume (P20 Steel, < 10k parts)</option>
-                  <option value="high_volume">High Volume (Hardened H13, 100k+ parts)</option>
-                </select>
+            
+            <!-- 2D / Supporting Docs Dropzone Moved Here -->
+            <div class="rfq-engine__upload-zone" id="rfq-upload-zone-2d-${partIdx}" style="flex: 1; margin-top: 0; min-height: unset; padding: 8px 12px; background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px;">
+              <input type="file" class="rfq-file-input-2d" data-part="${partIdx}" multiple accept=".pdf,.dwg,.dxf,.png,.jpg,.jpeg,.doc,.docx" hidden />
+              <div class="upload-icon" style="color: var(--color-steel-400); margin-bottom: 0;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
               </div>
-              <div class="rfq-field" style="margin-bottom: 0;">
-                <label style="color: var(--color-steel-200);">Cavitation</label>
-                <select class="rfq-tooling-cavities" data-part="${partIdx}">
-                  <option value="auto" selected>Auto-calculate</option>
-                  <option value="1">1-Cavity</option>
-                  <option value="2">2-Cavity</option>
-                  <option value="4">4-Cavity</option>
-                  <option value="8">8-Cavity</option>
-                </select>
-                <div class="rfq-throughput-estimate" style="font-size: 10px; color: var(--color-steel-400); margin-top: 6px; display: none;">Est. Throughput: --</div>
+              <div class="upload-text" style="text-align: left;">
+                <h3 style="font-size: 11px; color: var(--color-steel-300); margin: 0;">Upload 2D Drawing</h3>
+                <p style="font-size: 9px; margin-top: 2px;">Drag & Drop or <span class="upload-link">Choose Files</span></p>
               </div>
+              <div class="upload-file-list hidden" id="upload-file-list-2d-${partIdx}" style="width: 100%;"></div>
             </div>
           </div>
-
-          <!-- 2D Drawing Note -->
-          <div class="rfq-drawing-note">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span>Have a 2D drawing? Upload it alongside the 3D file for a more thorough review of your tolerances, GD&T, and special requirements.</span>
-          </div>
-
-          <!-- Custom Details / Post-Processing Notes -->
-          <div class="rfq-custom-details"><label>Additional Notes & Requirements</label>
-            <textarea class="rfq-custom-notes" data-part="${partIdx}" rows="3" placeholder="Surface finish details, coating specs, heat treatments, certifications, special requirements..."></textarea>
-          </div>
-        </div> <!-- Closes rfq-fields-col -->
-      </div> <!-- Closes rfq-top-row -->
-
-      <!-- Geometry Analysis Placeholder (visible BEFORE upload) -->
-      <div class="rfq-results-placeholder" data-part="${partIdx}" style="border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: var(--radius-lg); margin-top: 16px; min-height: 120px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--color-steel-500); background: rgba(0,0,0,0.2);">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-              <line x1="12" y1="22.08" x2="12" y2="12"></line>
-            </svg>
-            <span style="font-size: 11px;">Geometry analysis will appear here after upload</span>
-          </div>
-
-          <!-- Geometry Analysis Results (hidden until parsed) -->
+          
           <div class="rfq-results hidden" data-part="${partIdx}">
-            <div class="rfq-results__header">
-              <h3>Geometry Analysis</h3>
-              <span class="rfq-results__status" data-part="${partIdx}">Analyzing...</span>
-            </div>
-            <div class="rfq-results__row">
-              <div class="rfq-results__thumbnail" data-part="${partIdx}"></div>
-              <div class="rfq-results__grid" data-part="${partIdx}">
-                <div class="rfq-stat"><span class="rfq-stat__label">Bounding Box</span><span class="rfq-stat__value" data-stat="bbox">—</span></div>
-                <div class="rfq-stat"><span class="rfq-stat__label">Volume</span><span class="rfq-stat__value" data-stat="volume">—</span></div>
-                <div class="rfq-stat"><span class="rfq-stat__label">Surface Area</span><span class="rfq-stat__value" data-stat="surface-area">—</span></div>
-                <div class="rfq-stat"><span class="rfq-stat__label">Est. Mass</span><span class="rfq-stat__value" data-stat="mass">—</span></div>
-                <div class="rfq-stat"><span class="rfq-stat__label">Triangles</span><span class="rfq-stat__value" data-stat="triangles">—</span></div>
-                <div class="rfq-stat"><span class="rfq-stat__label">Dimensions</span><span class="rfq-stat__value" data-stat="dimensions">—</span></div>
-              </div>
-            </div>
+            <div class="rfq-results__grid rfq-results__grid--compact" data-part="${partIdx}" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 11px;">
+              <div class="rfq-stat" style="display:none;"><span class="rfq-stat__label">BBox</span><span class="rfq-stat__value" data-stat="bbox">—</span></div>
+              <div class="rfq-stat"><span class="rfq-stat__label">Vol</span><span class="rfq-stat__value" data-stat="volume">—</span></div>
+              <div class="rfq-stat"><span class="rfq-stat__label">Area</span><span class="rfq-stat__value" data-stat="surface-area">—</span></div>
+              <div class="rfq-stat" style="display:none;"><span class="rfq-stat__label">Mass</span><span class="rfq-stat__value" data-stat="mass">—</span></div>
+              <div class="rfq-stat" style="display:none;"><span class="rfq-stat__label">Triangles</span><span class="rfq-stat__value" data-stat="triangles">—</span></div>
+              <div class="rfq-stat"><span class="rfq-stat__label">Dims</span><span class="rfq-stat__value" data-stat="dimensions">—</span></div>
             </div>
           </div>
+          <!-- Real-time Status -->
+          <div class="rfq-results__status" data-part="${partIdx}" style="font-size: 12px; color: var(--color-teal-400); margin-top: 0px;">Waiting for file...</div>
+        </div>
+      </div>
+
+      <!-- Middle Section: Configurations -->
+      <div class="rfq-fields-col" style="display: flex; flex-direction: column; gap: 12px;">
+        <!-- Row 1: Technology, Quantity & Lead Time -->
+        <div class="rfq-fields-grid" style="grid-template-columns: 2fr 1fr 1fr; margin-bottom: 0; padding: 12px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-lg);">
+          <div class="rfq-field rfq-field--accent">
+            <label style="color: var(--color-electric); font-size: 11px;">Primary Technology</label>
+            <select class="rfq-process" data-part="${partIdx}" style="font-size: 14px; font-weight: 600; padding: 10px 12px; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.05);">
+              <option value="" disabled selected>Select Technology...</option>
+              <option value="cnc">CNC Machining</option>
+              <option value="vac_casting">Silicone Vacuum Casting</option>
+              <option value="injection">Injection moulding</option>
+              <option value="compression">Compression Moulding</option>
+              <option value="sheet">Sheet metal</option>
+              <option value="casting">Die-Casting</option>
+              <option value="other">Other</option>
+            </select>
+            <input type="text" class="rfq-other-tech hidden" data-part="${partIdx}" placeholder="Please specify technology..." style="font-size: 13px; font-weight: 500; padding: 10px 14px; margin-top: 8px;" />
+          </div>
+          <div class="rfq-field">
+            <label>Quantity</label>
+            <input type="number" class="rfq-quantity" data-part="${partIdx}" value="1" min="1" style="font-size: 14px; font-weight: 600; padding: 10px 12px;" />
+          </div>
+          <div class="rfq-field">
+            <label>Lead Time</label>
+            <select class="rfq-lead-time" data-part="${partIdx}" style="padding: 10px 12px; font-size: 14px;">
+              <option value="economy">Economy</option>
+              <option value="standard" selected>Standard</option>
+              <option value="express">Express</option>
+              <option value="rush">Rush</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: Material, Color, Surface Finish -->
+        <div class="rfq-fields-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 0;">
+          <div class="rfq-field">
+            <label>Material</label>
+            <select class="rfq-material" data-part="${partIdx}">
+              <option value="" disabled selected>Select Technology First</option>
+            </select>
+            <input type="text" class="rfq-other-material hidden" data-part="${partIdx}" placeholder="Please specify material..." style="font-size: 13px; font-weight: 500; padding: 10px 14px; margin-top: 8px;" />
+          </div>
+          <div class="rfq-field">
+            <label>Color</label>
+            <input type="text" class="rfq-color" data-part="${partIdx}" placeholder="White, RAL 7016..." />
+          </div>
+          <div class="rfq-field">
+            <label>Surface Finish</label>
+            <select class="rfq-finish" data-part="${partIdx}">
+              <option value="as-machined">As Machined</option>
+              <option value="bead-blast">Bead Blasted</option>
+              <option value="anodized">Anodized</option>
+              <option value="powder-coat">Powder Coated</option>
+              <option value="polished">Polished</option>
+              <option value="sandblast">Sandblasted</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tooling Details (Dynamically shown based on Process) -->
+        <div class="rfq-tooling-details hidden" data-part="${partIdx}" style="margin-top: 0px; padding: 12px; background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.4); border-radius: var(--radius-md); transition: all 0.3s ease;">
+          <div class="rfq-tooling-status-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: #ef4444; transition: color 0.3s ease;">
+            <svg class="rfq-tooling-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <h4 class="rfq-tooling-title" style="margin: 0; font-size: 13px; font-weight: 600;">Tooling Details Required</h4>
+          </div>
+          <div class="rfq-fields-grid rfq-fields-grid--1x2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="rfq-field" style="margin-bottom: 0;">
+              <label style="color: var(--color-steel-200);">Tooling Tier</label>
+              <select class="rfq-tooling-type" data-part="${partIdx}">
+                <option value="" disabled selected>Select Tier...</option>
+                <option value="prototype">Prototype (Soft Tooling, < 1k parts)</option>
+                <option value="low_volume">Low Volume (P20 Steel, < 10k parts)</option>
+                <option value="high_volume">High Volume (Hardened H13, 100k+ parts)</option>
+              </select>
+            </div>
+            <div class="rfq-field" style="margin-bottom: 0;">
+              <label style="color: var(--color-steel-200);">Cavitation</label>
+              <select class="rfq-tooling-cavities" data-part="${partIdx}">
+                <option value="auto" selected>Auto-calculate</option>
+                <option value="1">1-Cavity</option>
+                <option value="2">2-Cavity</option>
+                <option value="4">4-Cavity</option>
+                <option value="8">8-Cavity</option>
+              </select>
+              <div class="rfq-throughput-estimate" style="font-size: 10px; color: var(--color-steel-400); margin-top: 6px; display: none;">Est. Throughput: --</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Details / Post-Processing Notes -->
+        <div class="rfq-custom-details"><label>Additional Notes & Requirements</label>
+          <textarea class="rfq-custom-notes" data-part="${partIdx}" rows="2" placeholder="Surface finish details, coating specs, heat treatments, certifications, special requirements..."></textarea>
+        </div>
+      </div> <!-- Closes rfq-fields-col -->
+      
+      <!-- Missing file input block (used programmatically by handleFiles but doesn't need to be clickable by user in card) -->
+      <div class="upload-file-list hidden" data-part="${partIdx}" style="display:none;"></div>
+      <input type="file" class="rfq-file-input" data-part="${partIdx}" hidden />
     </div>`;
 }
 
@@ -243,44 +222,136 @@ function createPartPanelHTML(partIdx) {
  * Initialize the RFQ controller.
  */
 export function initRFQController() {
-  console.log('--- [DEBUG TRACE] ENTERING initRFQController ---');
-  const tabList      = document.getElementById('rfq-tab-list');
-  const addBtn       = document.getElementById('rfq-add-part');
-  const panels       = document.getElementById('rfq-part-panels');
+  console.log('--- [DEBUG TRACE] ENTERING initRFQController (v6) ---');
+  const panels       = document.getElementById('rfq-dynamic-parts-container');
   const submitBtn    = document.getElementById('rfq-submit-btn');
-  const modeSelector = document.getElementById('rfq-mode-selector');
 
-  // Bulk upload elements
-  const bulkPanel    = document.getElementById('rfq-bulk-panel');
-  const detailedPanel = document.getElementById('rfq-detailed-panel');
-  const bulkSelectBtn= document.getElementById('rfq-bulk-select-btn');
-  const bulkFileInput= document.getElementById('rfq-bulk-file-input');
-  const bulkFileList = document.getElementById('rfq-bulk-file-list');
-  const bulkUploadZone = document.getElementById('rfq-bulk-upload-zone');
-  const bulkSubmitBtn= document.getElementById('rfq-bulk-submit-btn');
-
-  // CTA cards
-  const ctaDetailed  = document.getElementById('rfq-cta-detailed');
-  const ctaBulk      = document.getElementById('rfq-cta-bulk');
-
-  if (!tabList || !panels) {
+  if (!panels) {
     console.warn('[RFQ] Controller elements not found.');
     return;
   }
 
-  // Set initial visibility — detailed mode by default (bulk is in Project Quote view)
-  detailedPanel?.classList.remove('hidden');
-  bulkPanel?.classList.add('hidden');
-  ctaDetailed?.classList.remove('hidden');
-  ctaBulk?.classList.add('hidden');
+  // Handle Main Drag & Drop Zone
+  const mainDropZone = document.getElementById('rfq-main-upload-zone');
+  const mainFileInput = document.getElementById('rfq-main-file-input');
+  const mainSelectBtn = document.getElementById('rfq-main-select-btn');
+  
+  if (mainDropZone && mainFileInput) {
+    mainSelectBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mainFileInput.click();
+    });
+    mainDropZone.addEventListener('click', (e) => {
+      if (e.target.closest('.upload-icon') || e.target.closest('.upload-text')) {
+        mainFileInput.click();
+      }
+    });
+    mainDropZone.addEventListener('dragover', (e) => { e.preventDefault(); mainDropZone.classList.add('drag-over'); });
+    mainDropZone.addEventListener('dragleave', () => mainDropZone.classList.remove('drag-over'));
+    mainDropZone.addEventListener('drop', (e) => {
+      e.preventDefault(); mainDropZone.classList.remove('drag-over');
+      if (e.dataTransfer.files.length > 0) processMainUpload(e.dataTransfer.files);
+    });
+    mainFileInput.addEventListener('change', () => {
+      if (mainFileInput.files.length > 0) processMainUpload(mainFileInput.files);
+      mainFileInput.value = ''; // allow re-upload
+    });
+  }
 
-  // Wire up initial part (part 0) + populate dynamic dropdowns
-  wirePartPanel(0);
-  populateMaterialDropdown(0, 'cnc');
-  populateFinishDropdown(0, 'cnc');
+  // Handle Shipping calculation toggle
+  const calcShippingCb = document.getElementById('calc-shipping-cb');
+  const shippingSection = document.getElementById('shipping-details-section');
+  const shippingModal = document.getElementById('shipping-address-modal');
+  const editShippingBtn = document.getElementById('edit-shipping-btn');
+  const closeShippingModal = document.getElementById('close-shipping-modal');
+  const cancelShippingModal = document.getElementById('cancel-shipping-modal');
+  const saveShippingModal = document.getElementById('save-shipping-modal');
+  const shippingSummaryText = document.getElementById('shipping-summary-text');
+
+  let shippingData = {};
+
+  if (calcShippingCb && shippingSection) {
+    calcShippingCb.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        shippingSection.classList.remove('hidden');
+        if (Object.keys(shippingData).length === 0) {
+          if (shippingModal) shippingModal.classList.remove('hidden');
+        }
+      } else {
+        shippingSection.classList.add('hidden');
+      }
+      calculateAndDisplayQuote();
+    });
+  }
+
+  if (editShippingBtn && shippingModal) {
+    editShippingBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      shippingModal.classList.remove('hidden');
+    });
+  }
+
+  const closeModal = (e) => {
+    if (e) e.preventDefault();
+    if (shippingModal) shippingModal.classList.add('hidden');
+  };
+
+  if (closeShippingModal) closeShippingModal.addEventListener('click', closeModal);
+  if (cancelShippingModal) cancelShippingModal.addEventListener('click', closeModal);
+
+  if (saveShippingModal) {
+    saveShippingModal.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      const company = document.getElementById('ship-modal-company')?.value.trim() || '';
+      const attention = document.getElementById('ship-modal-attention')?.value.trim() || '';
+      const phone = document.getElementById('ship-modal-phone')?.value.trim() || '';
+      const address1 = document.getElementById('ship-modal-address1')?.value.trim() || '';
+      const address2 = document.getElementById('ship-modal-address2')?.value.trim() || '';
+      const city = document.getElementById('ship-modal-city')?.value.trim() || '';
+      const prov = document.getElementById('ship-modal-province')?.value.trim() || '';
+      const zip = document.getElementById('ship-modal-postcode')?.value.trim() || '';
+      const country = document.getElementById('ship-modal-country')?.value.trim() || '';
+
+      if (!address1 || !city || !country) {
+        alert('Please fill out at least Address Line 1, City, and Country.');
+        return;
+      }
+
+      shippingData = { company, attention, phone, address1, address2, city, prov, zip, country };
+      
+      let summaryHtml = '';
+      if (attention) summaryHtml += `<strong style="color:var(--color-white);">${attention}</strong>`;
+      if (company) summaryHtml += (attention ? ' <span style="color:var(--color-steel-400);">•</span> ' : '') + `<strong style="color:var(--color-white);">${company}</strong>`;
+      if (summaryHtml) summaryHtml += '<br>';
+      summaryHtml += `<span style="color:var(--color-steel-300);">${address1}${address2 ? ', ' + address2 : ''}</span><br>`;
+      summaryHtml += `<span style="color:var(--color-steel-300);">${city}, ${prov} ${zip} <span style="color:var(--color-steel-500);">•</span> ${country}</span>`;
+
+      if (shippingSummaryText) {
+        shippingSummaryText.innerHTML = summaryHtml;
+      }
+      
+      if (editShippingBtn) {
+        editShippingBtn.textContent = 'Edit Address';
+      }
+
+      closeModal();
+      calculateAndDisplayQuote();
+    });
+  }
 
   // Real-time recalculation after first quote
   panels.addEventListener('change', (e) => {
+    // If technology changed, check if we need to remove the yellow accent
+    if (e.target.matches('.rfq-process')) {
+      const partIdx = e.target.dataset.part;
+      const card = document.querySelector(`.rfq-part-card[data-part="${partIdx}"]`);
+      if (card && e.target.value) {
+        card.classList.remove('needs-tech-selection');
+        card.style.borderColor = 'rgba(16, 185, 129, 0.4)'; // green border
+        card.style.background = 'rgba(0, 0, 0, 0.15)'; // reset bg
+      }
+    }
     if (hasQuotedOnce && e.target.matches('.rfq-process, .rfq-material, .rfq-finish, .rfq-lead-time, .rfq-tooling-type, .rfq-tooling-cavities, .rfq-quantity, .rfq-other-tech, .rfq-other-material, .rfq-color, .rfq-threads, .rfq-tolerance')) {
       calculateAndDisplayQuote();
     }
@@ -292,16 +363,31 @@ export function initRFQController() {
     }
   });
 
+  // Handle Remove Part button
+  panels.addEventListener('click', (e) => {
+    const removeBtn = e.target.closest('.rfq-part-remove');
+    if (removeBtn) {
+      e.stopPropagation();
+      const partIdx = parseInt(removeBtn.dataset.part);
+      removePartCard(partIdx);
+    }
+  });
+
   // Wire the "clear all" button in the quote result panel
   document.getElementById('rfq-clear-all-parts')?.addEventListener('click', () => {
+    document.getElementById('rfq-dynamic-parts-container').innerHTML = '';
     quotedParts.clear();
+    partState.clear();
+    partCount = 1;
     renderQuoteResult();
+    updateSubmitButtonState();
   });
 
   // Wire checkout and request quote buttons
   document.getElementById('rfq-submit-verification-btn')?.addEventListener('click', async () => {
     if (quotedParts.size === 0) return;
     
+    const { getCurrentUser } = await import('../services/auth.js');
     const user = await getCurrentUser();
     if (!user) { alert('Please log in to submit a quote request.'); return; }
     
@@ -312,14 +398,11 @@ export function initRFQController() {
 
     const rfqId = window.crypto?.randomUUID?.() || Date.now().toString();
     const partsArray = Array.from(quotedParts.values());
-    const totalVolume = partsArray.reduce((acc, p) => acc + (p.volume || 0), 0);
     const projNameInput = document.getElementById('instant-rfq-project-name')?.value?.trim();
     const projName = projNameInput || partsArray[0]?.file?.name?.split('.')[0] || 'Instant RFQ Project';
     
     let grandTotal = 0;
-    partsArray.forEach(p => {
-        grandTotal += (p.quote?.totalPrice || 0);
-    });
+    partsArray.forEach(p => { grandTotal += (p.quote?.totalPrice || 0); });
 
     const uploadedParts = [];
     for (const p of partsArray) {
@@ -328,6 +411,7 @@ export function initRFQController() {
       if (p.file) {
         const fileExt = p.file.name.split('.').pop();
         storagePath = `${user.id}/${rfqId}/${Date.now()}_${Math.random().toString(36).substring(2,9)}.${fileExt}`;
+        const { supabase } = await import('../utils/supabaseClient.js');
         const { error } = await supabase.storage.from('rfq-uploads').upload(storagePath, p.file, {
           cacheControl: '3600', upsert: false
         });
@@ -364,7 +448,7 @@ export function initRFQController() {
     };
 
     try {
-      // 1. Save to DB
+      const { supabase } = await import('../utils/supabaseClient.js');
       const { error: rfqError } = await supabase.from('rfq_history').insert({
         id: rfqId,
         user_id: user.id,
@@ -373,7 +457,6 @@ export function initRFQController() {
       });
       if (rfqError) throw rfqError;
 
-      // 2. Dispatch Email
       const { data: profileData } = await supabase.from('profiles').select('first_name, last_name, company').eq('id', user.id).single();
       const userName = profileData ? `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim() : user.email;
       
@@ -395,7 +478,6 @@ export function initRFQController() {
         })
       }).catch(e => console.warn('Email notify error:', e));
 
-      // 3. Send to Microsoft Planner
       await fetch('/.netlify/functions/submit-rfq-planner', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -408,9 +490,9 @@ export function initRFQController() {
         })
       }).catch(e => console.warn('Planner notify error:', e));
 
-      showRFQSuccessModal('quote');
-      quotedParts.clear();
-      renderQuoteResult();
+      // showRFQSuccessModal('quote'); (if implemented)
+      alert("Quote submitted successfully!");
+      document.getElementById('rfq-clear-all-parts')?.click();
     } catch (e) {
       console.error('[RFQ] Instant quote error:', e);
       alert('Failed to submit quote: ' + e.message);
@@ -420,164 +502,18 @@ export function initRFQController() {
     }
   });
 
-  // ── Rich Text Editor Handlers ────────────────────────
-  const editorTools = document.querySelectorAll('.rfq-editor__tool');
-  editorTools.forEach(tool => {
-    tool.addEventListener('click', (e) => {
-      if (tool.classList.contains('rfq-editor__tool--color')) return;
-      e.preventDefault();
-      const command = tool.dataset.command;
-      document.execCommand(command, false, null);
-      document.getElementById('rfq-bulk-notes')?.focus();
-    });
-
-    const colorInput = tool.querySelector('.rfq-color-picker');
-    if (colorInput) {
-      colorInput.addEventListener('input', (e) => {
-        const command = tool.dataset.command;
-        const color = e.target.value;
-        document.execCommand(command, false, color);
-        const preview = tool.querySelector('.color-preview');
-        if (preview) preview.style.background = color;
-      });
-    }
-  });
-
-  const editorContent = document.getElementById('rfq-bulk-notes');
-  editorContent?.addEventListener('input', () => {});
-
-  // ── Mode Selector ─────────────────────────────────────
-  modeSelector?.addEventListener('click', (e) => {
-    const btn = e.target.closest('.rfq-mode-btn');
-    if (!btn) return;
-    const mode = btn.dataset.mode;
-    if (mode === currentMode) return;
-
-    currentMode = mode;
-    modeSelector.querySelectorAll('.rfq-mode-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    if (mode === 'bulk') {
-      detailedPanel?.classList.add('hidden');
-      bulkPanel?.classList.remove('hidden');
-      ctaDetailed?.classList.add('hidden');
-      ctaBulk?.classList.remove('hidden');
-    } else {
-      detailedPanel?.classList.remove('hidden');
-      bulkPanel?.classList.add('hidden');
-      ctaDetailed?.classList.remove('hidden');
-      ctaBulk?.classList.add('hidden');
-    }
-
-    console.log('[RFQ] Mode switched to:', mode);
-  });
-
-  // ── Bulk Upload Handlers ──────────────────────────────
-  // Wire "Select Files" button to the normal file input (no webkitdirectory)
-  bulkSelectBtn?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    bulkFileInput?.click();
-  });
-
-  // Wire "Select Folder" button to the folder-specific input
-  const bulkFolderBtn = document.getElementById('rfq-bulk-folder-btn');
-  const bulkFolderInput = document.getElementById('rfq-bulk-folder-input');
-  bulkFolderBtn?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    bulkFolderInput?.click();
-  });
-
-  bulkUploadZone?.addEventListener('click', (e) => {
-    if (e.target === bulkUploadZone || e.target.closest('.upload-icon') || e.target.closest('.upload-text')) {
-      bulkFileInput?.click();
-    }
-  });
-
-  bulkUploadZone?.addEventListener('dragover', (e) => { e.preventDefault(); bulkUploadZone.classList.add('drag-over'); });
-  bulkUploadZone?.addEventListener('dragleave', () => bulkUploadZone.classList.remove('drag-over'));
-  bulkUploadZone?.addEventListener('drop', (e) => {
-    e.preventDefault(); bulkUploadZone.classList.remove('drag-over');
-    if (e.dataTransfer.files.length > 0) appendBulkFiles(e.dataTransfer.files);
-  });
-
-  bulkFileInput?.addEventListener('change', () => {
-    if (bulkFileInput.files.length > 0) appendBulkFiles(bulkFileInput.files);
-  });
-
-  bulkFolderInput?.addEventListener('change', () => {
-    if (bulkFolderInput.files.length > 0) appendBulkFiles(bulkFolderInput.files);
-  });
-
-  bulkFileList?.addEventListener('click', (e) => {
-    const removeBtn = e.target.closest('.upload-file-item__remove');
-    if (removeBtn) {
-      const fileName = removeBtn.closest('.upload-file-item')?.querySelector('.upload-file-item__name')?.textContent?.replace('📄 ', '').trim();
-      removeBtn.closest('.upload-file-item').remove();
-      // Remove from tracked file array
-      bulkFiles = bulkFiles.filter(f => (f.webkitRelativePath || f.name) !== fileName);
-      if (bulkFileList.children.length === 0) bulkFileList.classList.add('hidden');
-    }
-  });
-
-  bulkSubmitBtn?.addEventListener('click', () => handleBulkSubmit());
-
-  // ── Add Part ──────────────────────────────────────────
-  addBtn?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const idx = partCount++;
-
-    const tab = document.createElement('button');
-    tab.className = 'rfq-tab';
-    tab.dataset.part = idx;
-    tab.innerHTML = `Part ${idx + 1}<span class="rfq-tab__close" data-part="${idx}" title="Remove">✕</span>`;
-    tabList.insertBefore(tab, addBtn);
-
-    panels.insertAdjacentHTML('beforeend', createPartPanelHTML(idx));
-    wirePartPanel(idx);
-    populateMaterialDropdown(idx, 'cnc');
-    populateFinishDropdown(idx, 'cnc');
-    switchTab(idx);
-  });
-
-  // ── Tab Switching ─────────────────────────────────────
-  tabList.addEventListener('click', (e) => {
-    const closeBtn = e.target.closest('.rfq-tab__close');
-    if (closeBtn) { e.stopPropagation(); removeTab(parseInt(closeBtn.dataset.part)); return; }
-    const tab = e.target.closest('.rfq-tab');
-    if (tab) switchTab(parseInt(tab.dataset.part));
-  });
-
   // Wire "Submit" button
   submitBtn?.addEventListener('click', () => calculateAndDisplayQuote());
 
   // Initialize result panel
   renderQuoteResult();
 
-  console.log('[RFQ] Controller initialized (v5 — JSON config + multi-part quotes).');
+  console.log('[RFQ] Controller initialized (v6).');
 }
 
-function appendBulkFiles(fileList) {
-  const bulkFileListEl = document.getElementById('rfq-bulk-file-list');
-  if (!bulkFileListEl) return;
+  
 
-  const files = Array.from(fileList);
-  bulkFileListEl.classList.remove('hidden');
 
-  files.forEach(file => {
-    // Track the actual File object for upload
-    bulkFiles.push(file);
-
-    const item = document.createElement('div');
-    item.className = 'upload-file-item';
-    const displayName = file.webkitRelativePath || file.name;
-    item.innerHTML = `
-      <span class="upload-file-item__name">📄 ${displayName}</span>
-      <span class="upload-file-item__size">${formatFileSize(file.size)}</span>
-      <button class="upload-file-item__remove" title="Remove">&times;</button>
-    `;
-    bulkFileListEl.appendChild(item);
-  });
-}
 
 /**
  * Enable/disable the Calculate Instant Quote button
@@ -593,7 +529,7 @@ function updateSubmitButtonState() {
   partState.forEach((ps, idx) => {
     if (ps.analysis) {
       hasAnyAnalysis = true;
-      const panel = document.querySelector(`.rfq-part-panel[data-part="${idx}"]`);
+      const panel = document.querySelector(`.rfq-part-card[data-part="${idx}"]`);
       if (panel) {
         const process = panel.querySelector('.rfq-process')?.value;
         if (process && techHasTooling(process)) {
@@ -609,7 +545,7 @@ function updateSubmitButtonState() {
 
 function wirePartPanel(partIdx) {
   console.log('--- [DEBUG TRACE] ENTERING wirePartPanel ---', partIdx);
-  const panel = document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`);
+  const panel = document.querySelector(`.rfq-part-card[data-part="${partIdx}"]`);
   
   if (!panel) {
     console.warn('--- [DEBUG TRACE] wirePartPanel ABORTED: panel not found for part', partIdx);
@@ -804,27 +740,59 @@ function wirePartPanel(partIdx) {
   });
 }
 
-function switchTab(partIdx) {
-  document.querySelectorAll('.rfq-tab').forEach(t => t.classList.remove('active'));
-  document.querySelector(`.rfq-tab[data-part="${partIdx}"]`)?.classList.add('active');
-  document.querySelectorAll('.rfq-part-panel').forEach(p => p.classList.remove('active'));
-  document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`)?.classList.add('active');
+
+
+
+function processMainUpload(fileList) {
+  const files = Array.from(fileList);
+  const panelsContainer = document.getElementById('rfq-dynamic-parts-container');
+  
+  files.forEach(file => {
+    const ext = file.name.split('.').pop().toLowerCase();
+    const validExts = ['step', 'stp', 'stl', 'obj', 'iges', 'igs', 'dxf', 'sldprt', 'ipt', 'x_t', 'x_b', '3dxml', 'catpart', 'prt', 'sat', '3mf', 'jt'];
+    
+    const idx = partCount++;
+    panelsContainer.insertAdjacentHTML('beforeend', createPartPanelHTML(idx));
+    wirePartPanel(idx);
+    
+    const card = document.querySelector(`.rfq-part-card[data-part="${idx}"]`);
+    
+    if (!validExts.includes(ext)) {
+      // Invalid file
+      if (card) {
+        card.style.borderColor = 'rgba(239, 68, 68, 0.6)'; // red
+        card.style.background = 'rgba(239, 68, 68, 0.05)';
+        const statusEl = card.querySelector('.rfq-results__status');
+        if (statusEl) {
+          statusEl.textContent = 'Invalid format. Engine cannot read this file.';
+          statusEl.style.color = 'var(--color-red-500)';
+        }
+        const nameEl = card.querySelector('.rfq-part-name');
+        if (nameEl) nameEl.value = file.name;
+      }
+    } else {
+      // Accent card yellow to prompt action
+      if (card) {
+        card.style.borderColor = 'rgba(234, 179, 8, 0.6)'; // yellow
+        card.style.background = 'rgba(234, 179, 8, 0.05)';
+      }
+      // Pass file as an array to handleFiles
+      handleFiles([file], idx);
+    }
+  });
 }
 
-function removeTab(partIdx) {
-  const tabs = document.querySelectorAll('.rfq-tab');
-  if (tabs.length <= 1) return;
+function removePartCard(partIdx) {
   const ps = partState.get(partIdx);
   if (ps?.thumbnailCleanup) ps.thumbnailCleanup();
   partState.delete(partIdx);
-  // Also remove from quoted parts
   quotedParts.delete(partIdx);
   renderQuoteResult();
-  document.querySelector(`.rfq-tab[data-part="${partIdx}"]`)?.remove();
-  document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`)?.remove();
-  const remaining = document.querySelector('.rfq-tab');
-  if (remaining) switchTab(parseInt(remaining.dataset.part));
+  const card = document.querySelector(`.rfq-part-card[data-part="${partIdx}"]`);
+  if (card) card.remove();
+  updateSubmitButtonState();
 }
+
 /**
  * Handle 2D / supporting document uploads.
  * Shows file badges in the 2D upload zone file list.
@@ -860,7 +828,7 @@ function handle2DFiles(fileList, partIdx) {
 
 async function handleFiles(fileList, partIdx) {
   const files = Array.from(fileList);
-  const panel = document.querySelector(`.rfq-part-panel[data-part="${partIdx}"]`);
+  const panel = document.querySelector(`.rfq-part-card[data-part="${partIdx}"]`);
   if (!panel) return;
 
   const fileListEl = panel.querySelector(`.upload-file-list[data-part="${partIdx}"]`);
@@ -989,44 +957,54 @@ async function handleFiles(fileList, partIdx) {
 
 function calculateAndDisplayQuote() {
   hasQuotedOnce = true;
-  const activePanel = document.querySelector('.rfq-part-panel.active');
-  if (!activePanel) return;
+  const panels = document.querySelectorAll('.rfq-part-card');
+  if (panels.length === 0) return;
 
-  const partIdx = parseInt(activePanel.dataset.part);
-  const state = getPartState(partIdx);
+  let hasAnalyzedPart = false;
 
-  if (!state.analysis) {
+  panels.forEach(panel => {
+    const partIdx = parseInt(panel.dataset.part);
+    const state = getPartState(partIdx);
+
+    if (!state.analysis) {
+      return; // Skip parts without analysis
+    }
+    
+    hasAnalyzedPart = true;
+
+    const rawProcess = getField(panel, '.rfq-process');
+    const customProcess = panel.querySelector('.rfq-other-tech')?.value || '';
+    
+    const rawMaterial = getField(panel, '.rfq-material');
+    const customMaterial = panel.querySelector('.rfq-other-material')?.value || '';
+    
+    const config = {
+      process:   rawProcess === 'other' && customProcess ? customProcess : rawProcess,
+      material:  rawProcess === 'other' && customMaterial ? customMaterial : rawMaterial,
+      finish:    getField(panel, '.rfq-finish'),
+      tolerance: getField(panel, '.rfq-tolerance'),
+      leadTime:  getField(panel, '.rfq-lead-time'),
+      quantity:  parseInt(getField(panel, '.rfq-quantity')) || 1,
+      dfm:       panel.querySelector('.rfq-dfm-check')?.checked || false,
+      color:     getField(panel, '.rfq-color'),
+      threads:   getField(panel, '.rfq-threads'),
+      customDetails: getField(panel, '.rfq-custom-notes'),
+      contactMe: document.getElementById('rfq-contact-me')?.checked || false,
+      toolingType: getField(panel, '.rfq-tooling-type'),
+      toolingCavities: getField(panel, '.rfq-tooling-cavities'),
+    };
+
+    const quote = calculateQuote(state.analysis, config);
+    const partName = getField(panel, '.rfq-part-name') || `Part ${partIdx + 1}`;
+
+    // Store/update in accumulated quotes
+    quotedParts.set(partIdx, { partName, quote, config, file: state.file, analysis: state.analysis });
+  });
+
+  if (!hasAnalyzedPart && panels.length === 1) {
     alert('Please upload a parseable 3D file (STEP, STL, OBJ) first.');
     return;
   }
-
-  const rawProcess = getField(activePanel, '.rfq-process');
-  const customProcess = activePanel.querySelector('.rfq-other-tech')?.value || '';
-  
-  const rawMaterial = getField(activePanel, '.rfq-material');
-  const customMaterial = activePanel.querySelector('.rfq-other-material')?.value || '';
-  
-  const config = {
-    process:   rawProcess === 'other' && customProcess ? customProcess : rawProcess,
-    material:  rawProcess === 'other' && customMaterial ? customMaterial : rawMaterial,
-    finish:    getField(activePanel, '.rfq-finish'),
-    tolerance: getField(activePanel, '.rfq-tolerance'),
-    leadTime:  getField(activePanel, '.rfq-lead-time'),
-    quantity:  parseInt(getField(activePanel, '.rfq-quantity')) || 1,
-    dfm:       activePanel.querySelector('.rfq-dfm-check')?.checked || false,
-    color:     getField(activePanel, '.rfq-color'),
-    threads:   getField(activePanel, '.rfq-threads'),
-    customDetails: getField(activePanel, '.rfq-custom-notes'),
-    contactMe: document.getElementById('rfq-contact-me')?.checked || false,
-    toolingType: getField(activePanel, '.rfq-tooling-type'),
-    toolingCavities: getField(activePanel, '.rfq-tooling-cavities'),
-  };
-
-  const quote = calculateQuote(state.analysis, config);
-  const partName = getField(activePanel, '.rfq-part-name') || `Part ${partIdx + 1}`;
-
-  // Store/update in accumulated quotes
-  quotedParts.set(partIdx, { partName, quote, config, file: state.file, analysis: state.analysis });
 
   // Re-render the result panel
   renderQuoteResult();

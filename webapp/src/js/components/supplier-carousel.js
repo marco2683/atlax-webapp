@@ -118,22 +118,10 @@ function renderCurrentCard() {
     title.style.gap = '24px';
     
     // Process tech and tag pills precisely from capabilities and tags
-    const techPills = (s.technologies || []).slice(0, 6).map(t => `<span style="background: rgba(99, 102, 241, 0.08); color: #4f46e5; border: 1px solid rgba(99, 102, 241, 0.25); padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase;">${t}</span>`).join('');
-    const tagPills = (s.tags || []).slice(0, 4).map(t => `<span style="background: rgba(245, 158, 11, 0.08); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.25); padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase;">${t}</span>`).join('');
+    // Removed techPills and tagPills entirely to clean up the top left corner
     
     title.innerHTML = `
-      <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0;">
-        <span style="font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Specializations</span>
-        <div style="display: flex; flex-direction: column; gap: 4px;">
-          <div style="display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">
-            ${(s.techGroups || [s.techGroup || currentTechName]).filter(Boolean).map(tg => `<span style="background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; text-transform: uppercase;">${tg}</span>`).join('')}
-          </div>
-          ${techPills ? `<div style="display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">${techPills}</div>` : ''}
-          ${tagPills ? `<div style="display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">${tagPills}</div>` : ''}
-        </div>
-      </div>
-      
-      <div style="display: flex; gap: 48px; border-left: 1px solid #e2e8f0; padding-left: 32px; flex: 1.5; justify-content: center; align-items: center;">
+      <div style="display: flex; gap: 48px; border-left: 1px solid #e2e8f0; padding-left: 32px; flex: 1.5; justify-content: flex-start; align-items: center;">
         <!-- Quality Score -->
         <div style="display: flex; flex-direction: column; gap: 6px;">
           <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Quality Score</span>
@@ -275,29 +263,32 @@ function renderCurrentCard() {
         </p>
       </div>
 
-      <!-- Specifics / What they do -->
-      <div>
-        <h3 style="font-size: 13px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">Capabilities</h3>
-        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-          ${(s.technologies || []).concat(s.tags || []).slice(0, 12).map(t => 
-            `<span style="background: #f1f5f9; color: #334155; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;">${t}</span>`
-          ).join('')}
-        </div>
+      <!-- Best For (Moved from right, enhanced colors) -->
+      <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 12px; padding: 24px; box-shadow: inset 0 2px 4px rgba(255,255,255,0.5);">
+        <h3 style="font-size: 14px; font-weight: 800; color: #1e3a8a; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; letter-spacing: 0.05em;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Best For
+        </h3>
+        <ul style="margin: 0; padding-left: 24px; color: #1e40af; font-size: 15px; line-height: 1.8; font-weight: 600;">
+          ${(s.technologies || []).concat(s.tags || []).slice(0, 4).map(t => 
+            `<li style="margin-bottom: 8px;">${t}</li>`
+          ).join('') || '<li style="margin-bottom: 8px;">Standard manufacturing processes</li><li style="margin-bottom: 8px;">Cost-effective production runs</li>'}
+        </ul>
       </div>
     </div>
 
-    <!-- Right Column: Best For & Details -->
+    <!-- Right Column: Capabilities & Details -->
     <div style="display: flex; flex-direction: column; gap: 24px;">
-      <!-- Best For -->
+      
+      <!-- Internal Capabilities (Moved from left, 2-column dot points) -->
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
-        <h3 style="font-size: 13px; font-weight: 800; color: #0f172a; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; letter-spacing: 0.05em;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          Best For
+        <h3 style="font-size: 13px; font-weight: 800; color: #0f172a; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.05em;">
+          Internal Capabilities
         </h3>
-        <ul style="margin: 0; padding-left: 20px; color: #475569; font-size: 14px; line-height: 1.8; font-weight: 500;">
-          ${(s.technologies || []).concat(s.tags || []).slice(0, 4).map(t => 
+        <ul style="margin: 0; padding-left: 18px; color: #475569; font-size: 13px; line-height: 1.8; font-weight: 500; columns: 2; column-gap: 16px;">
+          ${(s.technologies || []).concat(s.tags || []).slice(0, 12).map(t => 
             `<li style="margin-bottom: 6px;">${t}</li>`
-          ).join('') || '<li>Standard manufacturing processes</li><li>Cost-effective production runs</li>'}
+          ).join('')}
         </ul>
       </div>
 

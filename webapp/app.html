@@ -143,13 +143,9 @@
           <span class="global-nav-link__top">Supply Chain</span>
           <span class="global-nav-link__sub">Discovery</span>
         </li>
-        <li class="navbar__menu-item" data-view="project-quote">
-          <span class="global-nav-link__top">Quote</span>
-          <span class="global-nav-link__sub">My Project</span>
-        </li>
         <li class="navbar__menu-item" data-view="rfq">
-          <span class="global-nav-link__top">Component</span>
-          <span class="global-nav-link__sub">Instant Quote</span>
+          <span class="global-nav-link__top">Quote</span>
+          <span class="global-nav-link__sub">Instantly</span>
         </li>
         <li class="navbar__menu-item" data-view="catalog">
           <span class="global-nav-link__top">OEMs</span>
@@ -1125,479 +1121,100 @@
       <!-- Pricing FAB removed per user request -->
 
       <!-- ═══════════════════════════════════════════════════
-           INSTANT RFQ ENGINE (v3 — Two-Column Layout)
+           INSTANT RFQ ENGINE
            ═══════════════════════════════════════════════════ -->
       <div class="rfq-engine hidden" id="rfq-engine">
 
-        <!-- LEFT COLUMN: Form card + CTA -->
+        <!-- LEFT COLUMN: Form card -->
         <div class="rfq-engine__left">
 
           <!-- ══ PRIMARY CARD ══════════════════════════════ -->
           <div class="rfq-engine__card">
 
-            <!-- ── Header Row: Mode Selector + Title ───────── -->
+            <!-- ── Header ───────── -->
             <div class="rfq-engine__header">
-              <h2>Instant Quote Engine</h2>
+              <h2>Quote Instantly</h2>
               <p
                 style="margin: 4px 0 0; font-size: 13px; color: rgba(255,255,255,0.45); font-weight: 400; letter-spacing: 0.01em;">
-                Get instant pricing for individual parts and components — upload your CAD file, configure specs, and
-                receive a quote in seconds</p>
+                Get instant pricing for individual parts and components — upload your CAD file, configure specs, and receive a quote in seconds.
+              </p>
             </div>
-            <div class="rfq-engine__header-row" style="display: none;">
-              <div class="rfq-mode-selector" id="rfq-mode-selector">
-                <button class="rfq-mode-btn active" data-mode="bulk">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2.5">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="17 8 12 3 7 8" />
-                    <line x1="12" y1="3" x2="12" y2="15" />
-                  </svg>
-                  Bulk Upload
-                </button>
-                <button class="rfq-mode-btn" data-mode="detailed">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2.5">
-                    <rect x="3" y="3" width="7" height="7" />
-                    <rect x="14" y="3" width="7" height="7" />
-                    <rect x="3" y="14" width="7" height="7" />
-                    <rect x="14" y="14" width="7" height="7" />
-                  </svg>
-                  Detailed Part-by-Part
-                </button>
-              </div>
-              <div class="rfq-header-spacer"></div>
-            </div>
-
-            <!-- ══ DETAILED PART-BY-PART PANEL ══ -->
-            <div class="rfq-detailed-panel" id="rfq-detailed-panel">
-              <div style="margin-bottom: 24px;">
-                <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Instant RFQ Name</label>
-                <input type="text" id="instant-rfq-project-name" placeholder="e.g. Drone Chassis Prototype V2" style="width:100%; max-width:440px; padding:12px 16px; border-radius:10px; border:1px solid #cbd5e1; font-size:15px; font-weight:600; color:#0f172a; outline:none; box-shadow:inset 0 2px 4px rgba(0,0,0,0.02); transition:all 0.2s;">
-              </div>
-              <div class="rfq-tabs" id="rfq-tabs">
-                <div class="rfq-tabs__list" id="rfq-tab-list">
-                  <button class="rfq-tab active" data-part="0">Part 1</button>
-                  <button class="rfq-tabs__add" id="rfq-add-part" title="Add another part">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2.5">
-                      <line x1="12" y1="5" x2="12" y2="19" />
-                      <line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                  </button>
+            
+            <div class="rfq-detailed-panel" id="rfq-detailed-panel" style="margin-top: 16px;">
+              <!-- Top Project Info & Shipping Fields -->
+              <div class="rfq-project-info" style="margin-bottom: 24px; display: grid; gap: 16px;">
+                <div class="rfq-field">
+                  <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Project Name</label>
+                  <input type="text" id="instant-rfq-project-name" placeholder="e.g. Drone Chassis Prototype V2" style="width:100%; padding:12px 16px; border-radius:10px; border:1px solid #cbd5e1; font-size:15px; font-weight:600; color:#0f172a; outline:none; box-shadow:inset 0 2px 4px rgba(0,0,0,0.02); transition:all 0.2s;">
+                </div>
+                
+                <div class="rfq-field">
+                  <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--color-steel-200); cursor:pointer;">
+                    <input type="checkbox" id="calc-shipping-cb" style="width:16px; height:16px; cursor:pointer;">
+                    Include Shipping Calculation
+                  </label>
+                </div>
+                
+                <div id="shipping-details-section" class="hidden" style="padding:16px; background:var(--color-bg); border-radius:10px; border:1px solid rgba(255,255,255,0.1); margin-top:8px; display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <h4 style="margin:0 0 4px 0; font-size:12px; color:var(--color-steel-400); text-transform: uppercase; letter-spacing: 0.5px;">Shipping Destination</h4>
+                    <div id="shipping-summary-text" style="font-size: 14px; color: var(--color-white); font-weight: 500; line-height: 1.4;">
+                      No address provided.
+                    </div>
+                  </div>
+                  <button id="edit-shipping-btn" style="padding: 6px 12px; background: transparent; border: 1px solid var(--color-electric); color: var(--color-electric); border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;">Add Address</button>
                 </div>
               </div>
 
-              <div class="rfq-part-panels" id="rfq-part-panels">
-                <div class="rfq-part-panel active" data-part="0">
-                  <!-- (Detailed fields... same as before) -->
-
-                  <!-- ── Top Row: Upload (left) + 9 Fields (right) ── -->
-                                    <div class="rfq-top-row">
-                    <!-- LEFT: Part Name & Upload Zone -->
-                    <div class="rfq-upload-col" style="display: flex; flex-direction: column; height: 100%;">
-                      <div class="rfq-field" style="margin-bottom: 16px;">
-                        <label>Part Name</label>
-                        <input type="text" class="rfq-part-name" data-part="0" placeholder="e.g. Housing Top..." style="font-size: 14px;" />
-                      </div>
-                      
-                      <!-- 3D Files Dropzone -->
-                      <div class="rfq-engine__upload-zone" id="rfq-upload-zone-0" style="flex: 1; min-height: 220px; display: flex; flex-direction: column; justify-content: center;">
-                        <input type="file" class="rfq-file-input" data-part="0" multiple
-                          accept=".step,.stp,.stl,.obj,.3mf,.iges,.igs,.dxf,.sldprt,.ipt,.x_t,.x_b,.3dxml,.catpart,.prt,.sat,.jt"
-                          hidden />
-                        <div class="upload-icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="1.5">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="17 8 12 3 7 8" />
-                            <line x1="12" y1="3" x2="12" y2="15" />
-                          </svg>
-                        </div>
-                        <div class="upload-text">
-                          <h3>Drag & Drop 3D CAD Files</h3>
-                          <p style="margin-top: 4px;">Upload at least 1 3D CAD file to get started.</p>
-                        </div>
-                        <button class="upload-btn rfq-select-files-btn" data-part="0">Select 3D Files</button>
-                        <div class="upload-file-list hidden" data-part="0"></div>
-                        <div class="upload-formats">
-                          <p style="font-size: 9.5px;">STEP · STP · SLDPRT · STL · DXF · IGES · IGS · IPT · X_T · X_B ·
-                            3DXML · CATPART · PRT · SAT · 3MF · JT</p>
-                        </div>
-                      </div>
-
-                      <!-- 2D / Supporting Docs Dropzone -->
-                      <div class="rfq-engine__upload-zone" id="rfq-upload-zone-2d-0"
-                        style="min-height: 140px; margin-top: 12px; background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.08);">
-                        <input type="file" class="rfq-file-input-2d" data-part="0" multiple
-                          accept=".pdf,.dwg,.dxf,.png,.jpg,.jpeg,.doc,.docx" hidden />
-                        <div class="upload-icon" style="color: var(--color-steel-400); margin-bottom: -6px;">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="1.5">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                            <polyline points="10 9 9 9 8 9"></polyline>
-                          </svg>
-                        </div>
-                        <div class="upload-text">
-                          <h3 style="font-size: 12px; color: var(--color-steel-300);">2D Drawings & Supporting Docs</h3>
-                          <p style="font-size: 10px; margin-top: 2px;">Drag & Drop or <span class="upload-link">Choose
-                              Files</span></p>
-                        </div>
-                        <div class="upload-file-list hidden" id="upload-file-list-2d-0"></div>
-                        <div class="upload-formats" style="margin-top: 4px;">
-                          <p>PDF · DWG · DXF · PNG · JPG</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- RIGHT: Filter Fields -->
-                    <div class="rfq-fields-col" style="display: flex; flex-direction: column; gap: 12px; height: 100%;">
-                      <!-- Row 1: Technology & Quantity -->
-                      <div class="rfq-fields-grid" style="grid-template-columns: 2fr 1fr; margin-bottom: 0; padding: 12px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-lg);">
-                        <div class="rfq-field rfq-field--accent">
-                          <label style="color: var(--color-electric); font-size: 11px;">Primary Technology</label>
-                          <select class="rfq-process" data-part="0" style="font-size: 15px; font-weight: 600; padding: 12px 14px; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.05);">
-                            <option value="cnc">CNC Machining</option>
-                            <option value="vac_casting">Silicone Vacuum Casting</option>
-                            <option value="injection">Injection moulding</option>
-                            <option value="compression">Compression Moulding</option>
-                            <option value="sheet">Sheet metal</option>
-                            <option value="casting">Die-Casting</option>
-                            <option value="other">Other</option>
-                          </select>
-                          <input type="text" class="rfq-other-tech hidden" data-part="0" placeholder="Please specify technology..." style="font-size: 13px; font-weight: 500; padding: 10px 14px; margin-top: 8px;" />
-                        </div>
-                        <div class="rfq-field">
-                          <label>Quantity</label>
-                          <input type="number" class="rfq-quantity" data-part="0" value="1" min="1" style="font-size: 15px; font-weight: 600; padding: 12px 14px;" />
-                        </div>
-                      </div>
-
-                      <!-- Row 2: Material, Color, Surface Finish -->
-                      <div class="rfq-fields-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 0;">
-                        <div class="rfq-field">
-                          <label>Material</label>
-                          <select class="rfq-material" data-part="0"></select>
-                          <input type="text" class="rfq-other-material hidden" data-part="0" placeholder="Please specify material..." style="font-size: 13px; font-weight: 500; padding: 10px 14px; margin-top: 8px;" />
-                        </div>
-                        <div class="rfq-field">
-                          <label>Color</label>
-                          <input type="text" class="rfq-color" data-part="0" placeholder="White, RAL 7016..." />
-                        </div>
-                        <div class="rfq-field">
-                          <label>Surface Finish</label>
-                          <select class="rfq-finish" data-part="0">
-                            <option value="as-machined">As Machined</option>
-                            <option value="bead-blast">Bead Blasted</option>
-                            <option value="anodized">Anodized</option>
-                            <option value="powder-coat">Powder Coated</option>
-                            <option value="polished">Polished</option>
-                            <option value="sandblast">Sandblasted</option>
-                            <option value="custom">Custom</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <!-- Row 3: Lead Time -->
-                      <div class="rfq-fields-grid" style="grid-template-columns: 1fr; margin-bottom: 0;">
-                        <div class="rfq-field">
-                          <label>Lead Time</label>
-                          <select class="rfq-lead-time" data-part="0">
-                            <option value="economy">Economy (30+ days)</option>
-                            <option value="standard" selected>Standard (15–20 days)</option>
-                            <option value="express">Express (7–10 days)</option>
-                            <option value="rush">Rush (3–5 days)</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <!-- Tooling Details (Dynamically shown based on Process) -->
-
-                      <div class="rfq-tooling-details hidden" data-part="0"
-                        style="margin-top: 16px; padding: 12px; background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.4); border-radius: var(--radius-md); transition: all 0.3s ease;">
-                        <div class="rfq-tooling-status-header"
-                          style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: #ef4444; transition: color 0.3s ease;">
-                          <svg class="rfq-tooling-icon" viewBox="0 0 24 24" width="18" height="18" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10" />
-                            <line x1="12" y1="8" x2="12" y2="12" />
-                            <line x1="12" y1="16" x2="12.01" y2="16" />
-                          </svg>
-                          <h4 class="rfq-tooling-title" style="margin: 0; font-size: 13px; font-weight: 600;">Tooling
-                            Details Required</h4>
-                        </div>
-                        <div class="rfq-fields-grid rfq-fields-grid--1x2"
-                          style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                          <div class="rfq-field" style="margin-bottom: 0;">
-                            <label style="color: var(--color-steel-200);">Tooling Tier</label>
-                            <select class="rfq-tooling-type" data-part="0">
-                              <option value="" disabled selected>Select Tier...</option>
-                              <option value="prototype">Prototype (Soft Tooling, &lt; 1k parts)</option>
-                              <option value="low_volume">Low Volume (P20 Steel, &lt; 10k parts)</option>
-                              <option value="high_volume">High Volume (Hardened H13, 100k+ parts)</option>
-                            </select>
-                          </div>
-                          <div class="rfq-field" style="margin-bottom: 0;">
-                            <label style="color: var(--color-steel-200);">Cavitation</label>
-                            <select class="rfq-tooling-cavities" data-part="0">
-                              <option value="auto" selected>Auto-calculate</option>
-                              <option value="1">1-Cavity</option>
-                              <option value="2">2-Cavity</option>
-                              <option value="4">4-Cavity</option>
-                              <option value="8">8-Cavity</option>
-                            </select>
-                            <div class="rfq-throughput-estimate"
-                              style="font-size: 10px; color: var(--color-steel-400); margin-top: 6px; display: none;">
-                              Est. Throughput: --</div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- 2D Drawing Note -->
-                      <div class="rfq-drawing-note">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" stroke-width="1.5">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                          <polyline points="14 2 14 8 20 8" />
-                        </svg>
-                        <span>Have a 2D drawing? Upload it alongside the 3D file for a more thorough review of your
-                          tolerances, GD&T, and special requirements.</span>
-                      </div>
-
-                      <!-- Custom Details / Post-Processing Notes -->
-                      <div class="rfq-custom-details">
-                        <label>Additional Notes & Requirements</label>
-                        <textarea class="rfq-custom-notes" data-part="0" rows="3"
-                          placeholder="Surface finish details, coating specs, heat treatments, certifications, special requirements..."></textarea>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- ── Geometry Analysis Placeholder (visible BEFORE upload) ── -->
-                  <div class="rfq-results-placeholder" data-part="0"
-                    style="border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: var(--radius-lg); margin-top: 16px; min-height: 120px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--color-steel-500); background: rgba(0,0,0,0.2);">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="1.5">
-                      <path
-                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                      </path>
-                      <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                      <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                    </svg>
-                    <span style="font-size: 11px;">Geometry analysis will appear here after upload</span>
-                  </div>
-
-                  <!-- ── Geometry Analysis Results (hidden until parsed) ── -->
-                  <div class="rfq-results hidden" data-part="0">
-                    <div class="rfq-results__header">
-                      <h3>Geometry Analysis</h3>
-                      <span class="rfq-results__status" data-part="0">Analyzing...</span>
-                    </div>
-                    <div class="rfq-results__row">
-                      <div class="rfq-results__thumbnail" data-part="0">
-                        <!-- ISO thumbnail rendered here -->
-                      </div>
-                      <div class="rfq-results__grid" data-part="0">
-                        <div class="rfq-stat"><span class="rfq-stat__label">Bounding Box</span><span
-                            class="rfq-stat__value" data-stat="bbox">—</span></div>
-                        <div class="rfq-stat"><span class="rfq-stat__label">Volume</span><span class="rfq-stat__value"
-                            data-stat="volume">—</span></div>
-                        <div class="rfq-stat"><span class="rfq-stat__label">Surface Area</span><span
-                            class="rfq-stat__value" data-stat="surface-area">—</span></div>
-                        <div class="rfq-stat"><span class="rfq-stat__label">Est. Mass</span><span
-                            class="rfq-stat__value" data-stat="mass">—</span></div>
-                        <div class="rfq-stat"><span class="rfq-stat__label">Triangles</span><span
-                            class="rfq-stat__value" data-stat="triangles">—</span></div>
-                        <div class="rfq-stat"><span class="rfq-stat__label">Dimensions</span><span
-                            class="rfq-stat__value" data-stat="dimensions">—</span></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- No bottom row needed anymore, moved to the columns -->
-
-                </div>
-              </div>
-            </div><!-- /rfq-detailed-panel -->
-
-            <!-- ══ BULK UPLOAD PANEL (hidden by default) ══ -->
-            <div class="rfq-bulk-panel hidden" id="rfq-bulk-panel">
-              <div class="rfq-bulk-upload-zone" id="rfq-bulk-upload-zone">
-                <input type="file" id="rfq-bulk-file-input" multiple
-                  accept=".step,.stp,.stl,.obj,.3mf,.iges,.dxf,.pdf,.sldprt,.ipt,.x_t,.x_b,.3dxml,.catpart,.prt,.sat,.jt,.xlsx,.xls,.csv,.doc,.docx,.jpg,.png,.bmp"
+              <!-- Main Drop Zone -->
+              <div class="rfq-engine__upload-zone" id="rfq-main-upload-zone" style="margin-bottom: 32px; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <input type="file" id="rfq-main-file-input" multiple
+                  accept=".step,.stp,.stl,.obj,.3mf,.iges,.igs,.dxf,.sldprt,.ipt,.x_t,.x_b,.3dxml,.catpart,.prt,.sat,.jt"
                   hidden />
-                <input type="file" id="rfq-bulk-folder-input" multiple webkitdirectory hidden />
                 <div class="upload-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1.2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                     <polyline points="17 8 12 3 7 8" />
                     <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
                 </div>
-                <div class="upload-text">
-                  <h3 style="font-size: 1.6rem; letter-spacing: 0.05em; margin-bottom: 8px;">Upload your project files
-                  </h3>
-                  <br>
-                  <p style="font-size: 13px; max-width: 520px; line-height: 1.5; color: var(--color-steel-300);">
-                    Upload all project files at once — CAD models, drawings, BOMs, and specifications. Our team will
-                    review everything to generate a comprehensive quote.
-                  </p>
+                <div class="upload-text" style="text-align: center;">
+                  <h3>Drag & Drop 3D CAD Files</h3>
+                  <p style="margin-top: 4px;">Upload multiple files. We'll generate a part card for each.</p>
                 </div>
-                <div class="rfq-bulk-btn-row">
-                  <button class="upload-btn" id="rfq-bulk-select-btn"
-                    style="padding: 10px 24px; font-size: 13px;">Select Files</button>
-                  <button class="upload-btn" id="rfq-bulk-folder-btn"
-                    style="padding: 10px 24px; font-size: 13px;">Select Folder</button>
-                </div>
-                <div class="upload-file-list hidden" id="rfq-bulk-file-list"></div>
-              </div>
-
-              <!-- Project Details Fields -->
-              <div class="rfq-bulk-fields">
-                <div class="rfq-bulk-fields__grid">
-                  <div class="rfq-field">
-                    <label>Project Name</label>
-                    <input type="text" id="rfq-bulk-project-name" placeholder="e.g. Drone Housing Assembly..." />
-                  </div>
-                  <div class="rfq-field">
-                    <label>Service Required</label>
-                    <select id="rfq-bulk-service">
-                      <option value="mfg-only">Manufacturing Only</option>
-                      <option value="design-mfg">Design + Manufacturing</option>
-                      <option value="prototype">Prototyping</option>
-                      <option value="full-turnkey">Full Turnkey (Design → Assembly)</option>
-                      <option value="consult">Consultation / DFM Review</option>
-                    </select>
-                  </div>
-                  <div class="rfq-field">
-                    <label>Estimated Quantity</label>
-                    <input type="text" id="rfq-bulk-qty" placeholder="e.g. 500 units / year" />
-                  </div>
-                  <div class="rfq-field">
-                    <label>Target Timeline</label>
-                    <select id="rfq-bulk-timeline">
-                      <option value="flexible">Flexible</option>
-                      <option value="4-weeks">4 Weeks</option>
-                      <option value="8-weeks">8 Weeks</option>
-                      <option value="12-weeks">12 Weeks</option>
-                      <option value="custom">Custom (specify below)</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="rfq-field rfq-field--full">
-                  <label>Project Notes & Requirements</label>
-                  <div class="rfq-editor">
-                    <div class="rfq-editor__toolbar">
-                      <button type="button" class="rfq-editor__tool" data-command="bold"
-                        title="Bold"><strong>B</strong></button>
-                      <button type="button" class="rfq-editor__tool" data-command="italic"
-                        title="Italic"><em>I</em></button>
-                      <button type="button" class="rfq-editor__tool" data-command="underline"
-                        title="Underline"><u>U</u></button>
-                      <div class="rfq-editor__divider"></div>
-                      <button type="button" class="rfq-editor__tool rfq-editor__tool--color" title="Text Color"
-                        data-command="foreColor">
-                        <span class="color-preview" style="background: white;"></span>A
-                        <input type="color" class="rfq-color-picker" value="#ffffff" />
-                      </button>
-                      <button type="button" class="rfq-editor__tool rfq-editor__tool--color" title="Background Color"
-                        data-command="hiliteColor">
-                        <span class="color-preview"
-                          style="background: transparent; border: 1px solid rgba(255,255,255,0.3);"></span>BG
-                        <input type="color" class="rfq-color-picker" value="transparent" />
-                      </button>
-                      <div class="rfq-editor__divider"></div>
-                      <button type="button" class="rfq-editor__tool" data-command="insertUnorderedList"
-                        title="Bullet List">• List</button>
-                      <button type="button" class="rfq-editor__tool" data-command="insertOrderedList"
-                        title="Numbered List">1. List</button>
-                      <div class="rfq-editor__divider"></div>
-                      <button type="button" class="rfq-editor__tool" data-command="outdent" title="Outdent">←</button>
-                      <button type="button" class="rfq-editor__tool" data-command="indent" title="Indent">→</button>
-                      <div class="rfq-editor__divider"></div>
-                      <button type="button" class="rfq-editor__tool" data-command="justifyLeft"
-                        title="Align Left">L</button>
-                      <button type="button" class="rfq-editor__tool" data-command="justifyCenter"
-                        title="Align Center">C</button>
-                      <button type="button" class="rfq-editor__tool" data-command="justifyRight"
-                        title="Align Right">R</button>
-                    </div>
-                    <div id="rfq-bulk-notes" class="rfq-editor__content" contenteditable="true"
-                      data-placeholder="Describe your project scope, critical requirements, certifications needed (CE, UL, ISO)...">
-                    </div>
-                  </div>
+                <button class="upload-btn" id="rfq-main-select-btn" style="margin: 16px auto 0;">Select 3D Files</button>
+                <div class="upload-formats" style="margin-top: 16px; text-align: center;">
+                  <p style="font-size: 10.5px; color: var(--color-steel-400);">Supported: STEP, STP, SLDPRT, STL, IGES, X_T. <br>Other formats will be flagged and may not be readable by the 3D engine.</p>
                 </div>
               </div>
-            </div><!-- /bulk-panel -->
+              
+              <!-- Container for dynamically generated vertical cards -->
+              <div id="rfq-dynamic-parts-container" style="display:flex; flex-direction:column; gap:24px;">
+                <!-- JS will inject part cards here -->
+              </div>
 
-            <!-- ── Quote Result moved to right column — see below ── -->
+            </div><!-- /rfq-detailed-panel -->
 
           </div><!-- /primary card -->
 
-          <!-- ══ CTA CARD — Detailed (separate below) ═══════ -->
-          <div class="rfq-cta-card" id="rfq-cta-detailed">
-            <div class="rfq-cta-card__left">
-              <button class="rfq-engine__submit-btn rfq-engine__submit-btn--secondary" id="rfq-request-quote-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                  <line x1="16" y1="13" x2="8" y2="13" />
-                  <line x1="16" y1="17" x2="8" y2="17" />
-                </svg>
-                <span>Request Formal Quote</span>
-              </button>
-            </div>
-            <div class="rfq-cta-card__right">
-              <button class="rfq-engine__submit-btn rfq-engine__submit-btn--green" id="rfq-submit-btn" disabled>
-                <span>Calculate Instant Quote</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2">
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- ══ CTA CARD — Bulk (hidden by default) ═══════ -->
-          <div class="rfq-cta-card hidden" id="rfq-cta-bulk">
-            <div class="rfq-cta-card__left">
-              <button class="rfq-engine__submit-btn" id="rfq-bulk-submit-btn">
-                <span>Request Project Quote</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2">
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </button>
-            </div>
-            <div class="rfq-cta-card__right">
-              <a href="https://cal.com/atlasdt/30min" target="_blank" class="rfq-book-call-btn">
-                <div class="rfq-book-call-btn__icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                </div>
-                <div class="rfq-book-call-btn__text">
-                  <strong>Book a Call With Us</strong>
-                  <small>Schedule an engineering review</small>
-                </div>
-              </a>
-            </div>
-          </div><!-- /rfq-cta-bulk -->
-
         </div><!-- /rfq-engine__left -->
 
-        <!-- Quote Estimate Side Panel (anchored parallel to left col) -->
+        <!-- Quote Estimate Side Panel -->
         <div class="rfq-engine__right hidden" id="rfq-engine-right">
+          
+          <!-- CALCULATE BUTTON MOVED TO TOP -->
+          <div style="margin-bottom: 24px; width: 100%;">
+            <button class="rfq-engine__submit-btn rfq-engine__submit-btn--green" id="rfq-submit-btn" disabled style="width: 100%; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+              <span>Calculate Instant Quote</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+          </div>
+
           <div class="rfq-quote-result rfq-quote-result--empty" id="rfq-quote-result">
             <div class="rfq-quote-result__header hidden" id="rfq-quote-header">
               <div class="rfq-quote-result__header-left">
@@ -1616,6 +1233,7 @@
                 <span>Clear All</span>
               </button>
             </div>
+            
             <div class="rfq-quote-result__empty-hint" id="rfq-quote-empty-hint">
               <span class="rfq-quote-result__empty-hint-title">Instant Quote Estimate</span>
               <span class="rfq-quote-result__empty-hint-sub">Your quoted parts will appear here</span>
@@ -1634,174 +1252,9 @@
                 Submit for Verification
               </button>
             </div>
-          </div><!-- /rfq-engine__right -->
+          </div><!-- /rfq-quote-result -->
+        </div><!-- /rfq-engine__right -->
       </div><!-- /rfq-engine -->
-
-    </section>
-
-
-    <!-- ═══════════════════════════════════════════════════
-         PROJECT QUOTE ENGINE (Bulk Upload Only)
-         ═══════════════════════════════════════════════════ -->
-    <div class="rfq-engine hidden" id="project-quote-engine">
-      <div class="rfq-engine__left">
-        <div class="rfq-engine__card">
-          <div class="rfq-engine__header">
-            <h2>Project Quote</h2>
-            <p
-              style="margin: 4px 0 0; font-size: 13px; color: rgba(255,255,255,0.45); font-weight: 400; letter-spacing: 0.01em;">
-              For complex assemblies, box builds, and multi-part projects — upload your full project package and our
-              engineering team will prepare a detailed quote</p>
-          </div>
-
-          <!-- Bulk Upload Panel — always visible here -->
-          <!-- ══ BULK UPLOAD PANEL (hidden by default) ══ -->
-          <div class="rfq-bulk-panel " id="pq-bulk-panel">
-            <div class="rfq-bulk-upload-zone" id="pq-bulk-upload-zone">
-              <input type="file" id="pq-bulk-file-input" multiple
-                accept=".step,.stp,.stl,.obj,.3mf,.iges,.dxf,.pdf,.sldprt,.ipt,.x_t,.x_b,.3dxml,.catpart,.prt,.sat,.jt,.xlsx,.xls,.csv,.doc,.docx,.jpg,.png,.bmp"
-                hidden />
-              <input type="file" id="pq-bulk-folder-input" multiple webkitdirectory hidden />
-              <div class="upload-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="1.2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="17 8 12 3 7 8" />
-                  <line x1="12" y1="3" x2="12" y2="15" />
-                </svg>
-              </div>
-              <div class="upload-text">
-                <h3 style="font-size: 1.6rem; letter-spacing: 0.05em; margin-bottom: 8px;">Upload your project files
-                </h3>
-                <br>
-                <p style="font-size: 13px; max-width: 520px; line-height: 1.5; color: var(--color-steel-300);">
-                  Upload all project files at once — CAD models, drawings, BOMs, and specifications. Our team will
-                  review everything to generate a comprehensive quote.
-                </p>
-              </div>
-              <div class="rfq-bulk-btn-row">
-                <button class="upload-btn" id="pq-bulk-select-btn" style="padding: 10px 24px; font-size: 13px;">Select
-                  Files</button>
-                <button class="upload-btn" id="pq-bulk-folder-btn" style="padding: 10px 24px; font-size: 13px;">Select
-                  Folder</button>
-              </div>
-              <div class="upload-file-list hidden" id="pq-bulk-file-list"></div>
-            </div>
-
-            <!-- Project Details Fields -->
-            <div class="rfq-bulk-fields">
-              <div class="rfq-bulk-fields__grid">
-                <div class="rfq-field">
-                  <label>Project Name</label>
-                  <input type="text" id="pq-bulk-project-name" placeholder="e.g. Drone Housing Assembly..." />
-                </div>
-                <div class="rfq-field">
-                  <label>Service Required</label>
-                  <select id="pq-bulk-service">
-                    <option value="mfg-only">Manufacturing Only</option>
-                    <option value="design-mfg">Design + Manufacturing</option>
-                    <option value="prototype">Prototyping</option>
-                    <option value="full-turnkey">Full Turnkey (Design → Assembly)</option>
-                    <option value="consult">Consultation / DFM Review</option>
-                  </select>
-                </div>
-                <div class="rfq-field">
-                  <label>Estimated Quantity</label>
-                  <input type="text" id="pq-bulk-qty" placeholder="e.g. 500 units / year" />
-                </div>
-                <div class="rfq-field">
-                  <label>Target Timeline</label>
-                  <select id="pq-bulk-timeline">
-                    <option value="flexible">Flexible</option>
-                    <option value="4-weeks">4 Weeks</option>
-                    <option value="8-weeks">8 Weeks</option>
-                    <option value="12-weeks">12 Weeks</option>
-                    <option value="custom">Custom (specify below)</option>
-                  </select>
-                </div>
-              </div>
-              <div class="rfq-field rfq-field--full">
-                <label>Project Notes & Requirements</label>
-                <div class="rfq-editor">
-                  <div class="rfq-editor__toolbar">
-                    <button type="button" class="rfq-editor__tool" data-command="bold"
-                      title="Bold"><strong>B</strong></button>
-                    <button type="button" class="rfq-editor__tool" data-command="italic"
-                      title="Italic"><em>I</em></button>
-                    <button type="button" class="rfq-editor__tool" data-command="underline"
-                      title="Underline"><u>U</u></button>
-                    <div class="rfq-editor__divider"></div>
-                    <button type="button" class="rfq-editor__tool rfq-editor__tool--color" title="Text Color"
-                      data-command="foreColor">
-                      <span class="color-preview" style="background: white;"></span>A
-                      <input type="color" class="rfq-color-picker" value="#ffffff" />
-                    </button>
-                    <button type="button" class="rfq-editor__tool rfq-editor__tool--color" title="Background Color"
-                      data-command="hiliteColor">
-                      <span class="color-preview"
-                        style="background: transparent; border: 1px solid rgba(255,255,255,0.3);"></span>BG
-                      <input type="color" class="rfq-color-picker" value="transparent" />
-                    </button>
-                    <div class="rfq-editor__divider"></div>
-                    <button type="button" class="rfq-editor__tool" data-command="insertUnorderedList"
-                      title="Bullet List">• List</button>
-                    <button type="button" class="rfq-editor__tool" data-command="insertOrderedList"
-                      title="Numbered List">1. List</button>
-                    <div class="rfq-editor__divider"></div>
-                    <button type="button" class="rfq-editor__tool" data-command="outdent" title="Outdent">←</button>
-                    <button type="button" class="rfq-editor__tool" data-command="indent" title="Indent">→</button>
-                    <div class="rfq-editor__divider"></div>
-                    <button type="button" class="rfq-editor__tool" data-command="justifyLeft"
-                      title="Align Left">L</button>
-                    <button type="button" class="rfq-editor__tool" data-command="justifyCenter"
-                      title="Align Center">C</button>
-                    <button type="button" class="rfq-editor__tool" data-command="justifyRight"
-                      title="Align Right">R</button>
-                  </div>
-                  <div id="pq-bulk-notes" class="rfq-editor__content" contenteditable="true"
-                    data-placeholder="Describe your project scope, critical requirements, certifications needed (CE, UL, ISO)...">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div><!-- /bulk-panel -->
-
-        </div><!-- /rfq-engine__card -->
-
-        <!-- CTA Card -->
-        <!-- ══ CTA CARD — Bulk (hidden by default) ═══════ -->
-        <div class="rfq-cta-card " id="pq-cta-bulk">
-          <div class="rfq-cta-card__left">
-            <button class="rfq-engine__submit-btn" id="pq-bulk-submit-btn">
-              <span>Request Project Quote</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
-              </svg>
-            </button>
-          </div>
-          <div class="rfq-cta-card__right">
-            <a href="https://cal.com/atlasdt/30min" target="_blank" class="rfq-book-call-btn">
-              <div class="rfq-book-call-btn__icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-              </div>
-              <div class="rfq-book-call-btn__text">
-                <strong>Book a Call With Us</strong>
-                <small>Schedule an engineering review</small>
-              </div>
-            </a>
-          </div>
-        </div><!-- /rfq-cta-bulk -->
-
-      </div><!-- /rfq-engine__left -->
-    </div><!-- /project-quote-engine -->
 
     <!-- ═══════════════════════════════════════════════════
          FIND DESIGNERS ENGINE (v4 — Light Theme UI)
@@ -4020,6 +3473,67 @@
 
 
     <script type="text/javascript" src="https://res.public.onecdn.static.microsoft/customerconnect/v1/7dttl/init.js" id="chatbot" environmentId="016ca71b-616b-e187-b02d-3fcb9c6568c2" crossorigin="anonymous"></script>
-</body>
+  <!-- Shipping Address Modal -->
+  <div id="shipping-address-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 10000; opacity: 1; pointer-events: auto;">
+    <div class="modal-content" style="background: var(--color-bg); width: 90%; max-width: 500px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+      <div style="padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; font-size: 18px; font-weight: 600; color: var(--color-white);">Shipping Address</h3>
+        <button id="close-shipping-modal" style="background: transparent; border: none; color: var(--color-steel-400); cursor: pointer; font-size: 24px; line-height: 1;">&times;</button>
+      </div>
+      <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; max-height: 70vh;">
+        <!-- Fields -->
+        <div class="rfq-field" style="margin-bottom:0;">
+          <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Company Name (Optional)</label>
+          <input type="text" id="ship-modal-company" placeholder="e.g. Acme Corp" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+        </div>
+        <div class="rfq-field" style="margin-bottom:0;">
+          <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Attention To</label>
+          <input type="text" id="ship-modal-attention" placeholder="Contact Name" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+        </div>
+        <div class="rfq-field" style="margin-bottom:0;">
+          <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Phone Number</label>
+          <input type="text" id="ship-modal-phone" placeholder="+1 (555) 000-0000" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+        </div>
+        <div class="rfq-field" style="margin-bottom:0;">
+          <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Address Line 1</label>
+          <input type="text" id="ship-modal-address1" placeholder="Street address, P.O. box, etc." style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+        </div>
+        <div class="rfq-field" style="margin-bottom:0;">
+          <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Address Line 2 (Optional)</label>
+          <input type="text" id="ship-modal-address2" placeholder="Apartment, suite, unit, building, floor, etc." style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="rfq-field" style="margin-bottom:0;">
+            <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">City</label>
+            <input type="text" id="ship-modal-city" placeholder="City" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+          </div>
+          <div class="rfq-field" style="margin-bottom:0;">
+            <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">State / Province</label>
+            <input type="text" id="ship-modal-province" placeholder="State/Province" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="rfq-field" style="margin-bottom:0;">
+            <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Postcode / ZIP</label>
+            <input type="text" id="ship-modal-postcode" placeholder="ZIP Code" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+          </div>
+          <div class="rfq-field" style="margin-bottom:0;">
+            <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Country</label>
+            <input type="text" id="ship-modal-country" placeholder="Country" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+          </div>
+        </div>
+      </div>
+      <div style="padding: 16px 24px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: flex-end; gap: 12px; background: rgba(0,0,0,0.2);">
+        <button id="cancel-shipping-modal" style="padding: 8px 16px; background: transparent; border: 1px solid var(--color-steel-600); color: var(--color-steel-200); border-radius: 8px; cursor: pointer; font-weight: 600;">Cancel</button>
+        <button id="save-shipping-modal" style="padding: 8px 16px; background: var(--color-electric); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Save Address</button>
+      </div>
+    </div>
+  </div>
 
+  <style>
+    #shipping-address-modal.hidden {
+      display: none !important;
+    }
+  </style>
+</body>
 </html>

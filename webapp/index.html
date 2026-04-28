@@ -47,13 +47,9 @@
           <span class="global-nav-link__top">Supply Chain</span>
           <span class="global-nav-link__sub">Discovery</span>
         </a>
-        <a href="/app.html#project-quote" class="global-nav-link" style="padding: 8px 24px;">
-          <span class="global-nav-link__top">Quote</span>
-          <span class="global-nav-link__sub">My Project</span>
-        </a>
         <a href="/app.html#rfq" class="global-nav-link" style="padding: 8px 24px;">
-          <span class="global-nav-link__top">Component</span>
-          <span class="global-nav-link__sub">Instant Quote</span>
+          <span class="global-nav-link__top">Quote</span>
+          <span class="global-nav-link__sub">Instantly</span>
         </a> <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">OEMs</span>
           <span class="global-nav-link__sub">Marketplace</span>
@@ -274,7 +270,7 @@
       <div class="pb-stages-grid" style="grid-template-columns: repeat(4, 1fr); padding-bottom: 20px;">
 
         <!-- CARD 1: I HAVE AN IDEA -->
-        <div class="pb-stage-card" data-color="purple" onmouseenter="showUSP(0)" onmouseleave="hideUSP()">
+        <div class="pb-stage-card" data-color="purple">
           <div class="pb-stage-bg" style="background-image: url('/assets/images/phases/idea.png');"></div>
           <div class="pb-stage-avatar-overlay"></div>
           <div class="pb-stage-content">
@@ -301,7 +297,7 @@
         </div>
 
         <!-- CARD 2: I HAVE A DESIGN -->
-        <div class="pb-stage-card" data-color="blue" onmouseenter="showUSP(1)" onmouseleave="hideUSP()">
+        <div class="pb-stage-card" data-color="blue">
           <div class="pb-stage-bg" style="background-image: url('/assets/images/phases/concept.png');"></div>
           <div class="pb-stage-avatar-overlay"></div>
           <div class="pb-stage-content">
@@ -328,7 +324,7 @@
         </div>
 
         <!-- CARD 3: I WANT TO MANUFACTURE IN ASIA -->
-        <div class="pb-stage-card" data-color="teal" onmouseenter="showUSP(2)" onmouseleave="hideUSP()">
+        <div class="pb-stage-card" data-color="teal">
           <div class="pb-stage-bg" style="background-image: url('/assets/images/phases/manufacture.png');"></div>
           <div class="pb-stage-avatar-overlay"></div>
           <div class="pb-stage-content">
@@ -355,7 +351,7 @@
         </div>
 
         <!-- CARD 4: MY PRODUCT COSTS TOO MUCH -->
-        <div class="pb-stage-card" data-color="orange" onmouseenter="showUSP(3)" onmouseleave="hideUSP()">
+        <div class="pb-stage-card" data-color="orange">
           <div class="pb-stage-bg" style="background-image: url('/assets/images/phases/market.png');"></div>
           <div class="pb-stage-avatar-overlay"></div>
           <div class="pb-stage-content">
@@ -388,12 +384,21 @@
 
       <!-- USP Display Area -->
       <div class="pb-usp-container"
-        style="position: absolute; bottom: 28vh; left: 0; right: 0; display: flex; justify-content: center; align-items: center; perspective: 1200px; padding: 0 20px; pointer-events: none;">
+        style="position: absolute; bottom: 35vh; left: 0; right: 0; display: flex; justify-content: center; align-items: center; perspective: 1200px; padding: 0 20px; pointer-events: none;">
         <p id="usp-text" class="pb-usp-text"
-          style="color: rgba(255, 255, 255, 0.85); font-family: 'Outfit', sans-serif; font-size: clamp(18px, 1.5vw, 24px); font-weight: 200; letter-spacing: 0.5px; text-align: center; max-width: 1000px; line-height: 1.5; opacity: 0; transform: scale(0.85); transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; margin: 0;">
+          style="color: rgba(255, 255, 255, 0.85); font-family: 'Outfit', sans-serif; font-size: clamp(18px, 1.5vw, 24px); font-weight: 200; letter-spacing: 0.5px; text-align: center; max-width: 1000px; line-height: 1.5; opacity: 0; transform: scale(0.85); pointer-events: none; margin: 0;">
         </p>
       </div>
 
+      
+      <style>
+        @keyframes usp-cycle {
+          0% { opacity: 0; transform: scale(0.95); filter: blur(4px); }
+          20% { opacity: 1; transform: scale(1); filter: blur(0); }
+          50% { opacity: 1; transform: scale(1.02); filter: blur(0); }
+          100% { opacity: 0; transform: scale(1.05); filter: blur(4px); }
+        }
+      </style>
       <script>
         const usps = [
           "We’re here to help you turn that spark into something real. We've done it countless times. We’ll sit down with you, look at the big picture, and figure out the smartest, most practical path to bring your idea to life.",
@@ -402,24 +407,28 @@
           "We know margins matter. Instead of just tweaking numbers, we’ll roll up our sleeves and look for creative engineering and sourcing solutions to thoughtfully lower your costs without cutting corners."
         ];
 
-        function showUSP(index) {
-          const uspEl = document.getElementById('usp-text');
-          uspEl.textContent = usps[index];
-          uspEl.style.transition = 'opacity 1.2s ease, transform 1.5s cubic-bezier(0.16, 1, 0.3, 1)';
-          uspEl.style.opacity = '1';
-          uspEl.style.transform = 'scale(1)';
+        let currentUsp = 0;
+        const uspEl = document.getElementById('usp-text');
+
+        function cycleUSP() {
+          uspEl.textContent = usps[currentUsp];
+          uspEl.style.animation = 'none';
+          void uspEl.offsetWidth; // trigger reflow
+          uspEl.style.animation = 'usp-cycle 12s ease-in-out forwards';
+          currentUsp = (currentUsp + 1) % usps.length;
         }
-        function hideUSP() {
-          const uspEl = document.getElementById('usp-text');
-          uspEl.style.transition = 'opacity 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
-          uspEl.style.opacity = '0';
-          uspEl.style.transform = 'scale(0.85)';
-        }
+
+        // Start cycle
+        setTimeout(() => {
+          cycleUSP();
+          setInterval(cycleUSP, 12000);
+        }, 1000); // slight initial delay
       </script>
+
 
       <!-- Scroll to Who We Are Arrow -->
       <div
-        style="position: absolute; bottom: 13vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 10; transition: opacity 0.3s; opacity: 0.7;"
+        style="position: absolute; bottom: 20vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 10; transition: opacity 0.3s; opacity: 0.7;"
         onclick="document.getElementById('who-we-are').scrollIntoView({ behavior: 'smooth' })"
         onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
         <span
@@ -434,70 +443,41 @@
     </div>
   </header>
   <!-- WHO WE ARE SECTION -->
-  <section id="who-we-are" class="prd-who-section">
-    <div class="prd-who-inner">
-
-      <!-- LEFT: Messaging + Radar Chart -->
-      <div class="prd-who-left">
-        <!-- LEFT ALIGNED EYEBROW KEY TO GRID: must be inside column -->
-        <p class="prd-who-eyebrow">Who We Are</p>
+  <section id="who-we-are" class="prd-who-section" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding-top: 80px;">
+        <div class="prd-who-inner" style="flex-shrink: 0; align-items: flex-start;">
+      <!-- LEFT: Messaging + Pillars -->
+      <div class="prd-who-left" style="display: flex; flex-direction: column; gap: 64px;">
+        <div>
+          <p class="prd-who-eyebrow" style="margin-bottom: 0;">Who We Are</p>
 
         <ul
-          style="list-style: none; padding: 0; margin: 16px 0 32px 0; display: flex; flex-direction: column; gap: 12px;">
+          style="list-style: none; padding: 0; margin: 12px 0 20px 0; display: flex; flex-direction: column; gap: 8px;">
           <li class="prd-who-title"
-            style="font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
+            style="font-size: clamp(1.2rem, 2.5vw, 1.5rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
             <span style="color: #0e7a6c; margin-top: -2px;">&bull;</span> Hands-on designers &amp; engineers.
           </li>
           <li class="prd-who-title"
-            style="font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
+            style="font-size: clamp(1.2rem, 2.5vw, 1.5rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
             <span style="color: #0e7a6c; margin-top: -2px;">&bull;</span> On-the-ground procurement &amp; quality.
           </li>
           <li class="prd-who-title"
-            style="font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
+            style="font-size: clamp(1.2rem, 2.5vw, 1.5rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
             <span style="color: #0e7a6c; margin-top: -2px;">&bull;</span> Not just a corporate agency.
           </li>
         </ul>
-        <p class="prd-who-body">
+        <p class="prd-who-body" style="margin-bottom: 8px; font-size: 0.95rem; line-height: 1.5;">
           We're a lean team of engineers and designers headquartered in Melbourne, with boots on the ground in China
           and
           deep roots in the Pearl River Delta supplier network. We've stripped out every layer of corporate overhead
           so
           our clients never pay for a corner office — they pay for results.
         </p>
-        <p class="prd-who-body">
+        <p class="prd-who-body" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.5;">
           Whether your idea is groundbreaking or incremental, we plug you into the most competitive manufacturing
           ecosystem in the world. You start from an advantage that most companies spend years trying to reach.
         </p>
-
-      </div>
-
-      <!-- RIGHT: Photo stacked above Spider Chart -->
-      <div class="prd-who-right">
-
-        <!-- Team Photo -->
-        <div class="prd-who-photo">
-          <div class="prd-photo-frame">
-            <img src="/assets/images/team/engineers_tech_lab.png" alt="Atlas Engineers"
-              style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            <div class="prd-photo-badge">
-              <span class="prd-badge-num">500+</span>
-              <span class="prd-badge-label">Qualified Suppliers</span>
-            </div>
-            <div class="prd-photo-badge prd-photo-badge--2">
-              <span class="prd-badge-num">12+</span>
-              <span class="prd-badge-label">Years in PRD</span>
-            </div>
-          </div>
         </div>
-
-      </div>
-    </div>
-
-    <!-- Second Row: Pillars and Quote (Vertically Centered) -->
-    <div class="prd-who-inner" style="align-items: center; margin-top: 32px;">
-
-      <div class="prd-who-left">
-        <div class="prd-pillars" style="margin-top: 0;">
+        <div class="prd-pillars" style="margin-top: 16px; gap: 16px;">
           <div class="prd-pillar">
             <span class="prd-pillar-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
@@ -557,12 +537,27 @@
         </div>
       </div>
 
-      <div class="prd-who-right">
+      <!-- RIGHT: Photo + Quote -->
+      <div class="prd-who-right" style="display: flex; flex-direction: column; gap: 64px; align-items: center; justify-content: flex-start;">
+        <!-- Team Photo -->
+        <div class="prd-who-photo">
+          <div class="prd-photo-frame">
+            <img src="/assets/images/team/engineers_tech_lab.png" alt="Atlas Engineers"
+              style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            <div class="prd-photo-badge">
+              <span class="prd-badge-num">500+</span>
+              <span class="prd-badge-label">Qualified Suppliers</span>
+            </div>
+            <div class="prd-photo-badge prd-photo-badge--2">
+              <span class="prd-badge-num">12+</span>
+              <span class="prd-badge-label">Years in PRD</span>
+            </div>
+        
         <!-- Typographic Message -->
         <div class="prd-message-block m-fade-up"
-          style="text-align: center; max-width: 90%; margin-left: auto; margin-right: auto; padding-bottom: 8px;">
+          style="text-align: center; max-width: 90%; margin-left: auto; margin-right: auto; padding-bottom: 0;">
           <p
-            style="font-family: var(--font-body), 'Inter', sans-serif; font-style: italic; font-size: 22px; font-weight: 400; line-height: 1.6; color: #64748b; margin: 0;">
+            style="font-family: var(--font-body), 'Inter', sans-serif; font-style: italic; font-size: 18px; font-weight: 400; line-height: 1.5; color: #64748b; margin: 0;">
             "We eliminate the <span style="text-decoration: line-through; opacity: 0.7;">overhead</span> and <span
               style="text-decoration: line-through; opacity: 0.7;">processes for the sake of process</span>. Every ounce
             of our engineering effort is concentrated purely on advancing your product."
@@ -570,16 +565,14 @@
         </div>
       </div>
     </div>
-    </div>
 
     <!-- Scroll to Our Expertise Arrow -->
     <div
-      style="display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 24px 0 8px; transition: opacity 0.3s; opacity: 0.5;"
-      onclick="document.getElementById('expertise').scrollIntoView({ behavior: 'smooth' })"
+      style="display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 0px 0 0px; margin-top: 40px; transition: opacity 0.3s; opacity: 0.5; position: sticky; bottom: 6vh; z-index: 10; width: 100%;"
+      onclick="document.getElementById('design-engineering').scrollIntoView({ behavior: 'smooth' })"
       onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='0.5'">
       <span
-        style="color: #0e7a6c; font-family: 'Outfit', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; font-weight: 700;">Our
-        Expertise</span>
+        style="color: #0e7a6c; font-family: 'Outfit', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; font-weight: 700;">Design &amp; Engineering</span>
       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c"
         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: bounce-arrow 2s infinite;">
         <polyline points="6 9 12 15 18 9"></polyline>
@@ -589,34 +582,111 @@
   </section>
 
   <!-- OUR EXPERTISE SECTION -->
-  <section id="expertise" class="prd-expertise-section">
-    <div class="prd-expertise-inner">
-      <div class="prd-expertise-header m-fade-up">
-        <p class="prd-who-eyebrow">Manufacturing Capabilities</p>
-        <h2 class="prd-expertise-title">Our Expertise.</h2>
-        <p class="prd-expertise-desc">From first prototype to mass production — every technology you need, under one
-          roof of relationships.</p>
+  
+  <!-- DESIGN & ENGINEERING SECTION -->
+  <section id="design-engineering" class="prd-who-section" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-start; position: relative; padding-bottom: 80px;">
+    <div class="prd-who-inner" style="display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 1400px; margin: 0 auto; gap: 24px; padding-top: 16px; flex-shrink: 0;">
+      
+      <div class="prd-expertise-header m-fade-up" style="margin-bottom: 0; text-align: center; width: 100%;">
+        <h2 class="prd-who-title" style="margin-top: 0; margin-bottom: 16px;">Design &amp; Engineering.</h2>
+        <p class="prd-who-body" style="max-width: 700px; margin: 0 auto;">From sketching the first concept to engineering the mechanics that make it work.</p>
       </div>
 
-      <div class="prd-expertise-grid m-fade-up">
+      <div class="pb-stages-container m-fade-up" style="width: 100%; padding: 0;">
+        <div class="pb-stages-grid" style="grid-template-columns: repeat(3, 1fr); padding-bottom: 20px;">
+                    <!-- CARD 1 -->
+          <div style="background: transparent; border: none; box-shadow: none; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px;">
+            <div style="position: relative; width: 100%; height: 320px; border-radius: 16px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); background: #f8fafc;">
+              <img src="/assets/images/phases/concept.png" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+              <div style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(15, 23, 42, 0.85) 100%); pointer-events: none;"></div>
+              <div style="position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; pointer-events: none;">
+                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; color: #ffffff; margin: 0; font-weight: 700; letter-spacing: 0.5px;">Industrial Design</h3>
+              </div>
+            </div>
+            <ul style="list-style: none; padding: 0; margin: 0 0 24px 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.95rem; color: #475569;">
+              <li>User Journey Mapping (UJM)</li>
+              <li>Renders and Animation</li>
+              <li>Graphic Design</li>
+            </ul>
+            <button onclick="document.querySelector('.nav-contact-trigger')?.click();" style="padding: 12px 32px; background: #0e7a6c; color: #fff; border: none; border-radius: 99px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(14, 122, 108, 0.3);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">Talk to Us</button>
+          </div>
+
+          <!-- CARD 2 -->
+          <div style="background: transparent; border: none; box-shadow: none; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px;">
+            <div style="position: relative; width: 100%; height: 320px; border-radius: 16px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); background: #f8fafc;">
+              <img src="/assets/images/phases/prototype.png" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+              <div style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(15, 23, 42, 0.85) 100%); pointer-events: none;"></div>
+              <div style="position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; pointer-events: none;">
+                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; color: #ffffff; margin: 0; font-weight: 700; letter-spacing: 0.5px;">Mechanical Design</h3>
+              </div>
+            </div>
+            <ul style="list-style: none; padding: 0; margin: 0 0 24px 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.95rem; color: #475569;">
+              <li>DFM embedded from sketch</li>
+              <li>Prototyping &amp; CAD</li>
+              <li>Engineering Feasibility</li>
+            </ul>
+            <button onclick="window.location.href='/app.html#project-quote'" style="padding: 12px 32px; background: #0e7a6c; color: #fff; border: none; border-radius: 99px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(14, 122, 108, 0.3);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">Get a Prototype Quote</button>
+          </div>
+
+          <!-- CARD 3 -->
+          <div style="background: transparent; border: none; box-shadow: none; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px;">
+            <div style="position: relative; width: 100%; height: 320px; border-radius: 16px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); background: #f8fafc;">
+              <img src="/assets/images/expertise/factory-automation.png" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+              <div style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(15, 23, 42, 0.85) 100%); pointer-events: none;"></div>
+              <div style="position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; pointer-events: none;">
+                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; color: #ffffff; margin: 0; font-weight: 700; letter-spacing: 0.5px;">Factory Automation</h3>
+              </div>
+            </div>
+            <ul style="list-style: none; padding: 0; margin: 0 0 24px 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.95rem; color: #475569;">
+              <li>PLC &amp; Robotics integration</li>
+              <li>Custom assembly lines</li>
+              <li>Automated quality inspection</li>
+            </ul>
+            <button onclick="window.location.href='/app.html#suppliers'" style="padding: 12px 32px; background: #0e7a6c; color: #fff; border: none; border-radius: 99px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(14, 122, 108, 0.3);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">Start Manufacturing</button>
+          </div>
+
+        </div>
+    </div>
+    
+    <!-- Scroll to Manufacturing Capabilities Arrow -->
+    <div
+      style="position: absolute; bottom: 4vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 10; transition: opacity 0.3s; opacity: 0.5;"
+      onclick="document.getElementById('expertise').scrollIntoView({ behavior: 'smooth' })"
+      onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='0.5'">
+      <span
+        style="color: #0e7a6c; font-family: 'Outfit', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; font-weight: 700;">Manufacturing</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: bounce-arrow 2s infinite;">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+  </section>
+
+<section id="expertise" class="prd-expertise-section">
+    <div class="prd-expertise-inner">
+      <div class="prd-expertise-header m-fade-up">
+        <h2 class="prd-expertise-title">Manufacturing Capabilities.</h2>
+        <p class="prd-expertise-desc">From first prototype to mass production — every technology you need, under one roof of relationships.</p>
+      </div>
+
+      <div class="prd-expertise-grid m-fade-up" style="gap: 16px;">
 
         <!-- Rapid Prototyping — Featured -->
         <div class="prd-exp-card prd-exp-card--large">
-          <div class="prd-exp-img-wrap">
+          <div class="prd-exp-img-wrap" style="height: 100px;">
             <img src="/assets/images/expertise/rapid-prototyping.png" alt="Rapid Prototyping">
             <div class="prd-exp-img-overlay">
               <div class="prd-exp-tag">Most Requested</div>
               <h3 class="prd-exp-img-title">Rapid Prototyping</h3>
-              <p class="prd-exp-img-desc">From CAD to physical part in 48–72 hours. SLA, SLS, FDM, CNC soft tooling —
-                iterate at full speed.</p>
+              <p class="prd-exp-img-desc">From CAD to physical part in 48–72 hours.</p>
             </div>
           </div>
-          <div class="prd-exp-body">
+          <div class="prd-exp-body" style="padding: 12px 16px;">
             <ul class="prd-exp-list">
               <li>SLA &amp; SLS resin — tolerances to ±0.1mm</li>
               <li>FDM in ABS, PLA, Nylon, Carbon-fibre composites</li>
               <li>CNC soft tooling for bridge production runs</li>
-              <li>Vacuum casting — up to 20 copies from one master</li>
+              <li>Vacuum casting — up to 20 copies</li>
               <li>First Article Inspection (FAI) report included</li>
             </ul>
           </div>
@@ -624,14 +694,14 @@
 
         <!-- Injection Moulding -->
         <div class="prd-exp-card prd-exp-card--wide">
-          <div class="prd-exp-img-wrap">
+          <div class="prd-exp-img-wrap" style="height: 100px;">
             <img src="/assets/images/expertise/injection-moulding.png" alt="Injection Moulding">
             <div class="prd-exp-img-overlay">
               <h3 class="prd-exp-img-title">Tooling &amp; Injection Moulding</h3>
-              <p class="prd-exp-img-desc">P20, H13 &amp; soft aluminium tooling. DFM embedded from sketch to steel.</p>
+              <p class="prd-exp-img-desc">P20, H13 &amp; soft aluminium tooling.</p>
             </div>
           </div>
-          <div class="prd-exp-body">
+          <div class="prd-exp-body" style="padding: 12px 16px;">
             <ul class="prd-exp-list">
               <li>P20 (100k+ shots), H13 (500k+ shots), 1.2316</li>
               <li>Mould-flow simulation before any steel is cut</li>
@@ -643,15 +713,14 @@
 
         <!-- CNC Machining -->
         <div class="prd-exp-card">
-          <div class="prd-exp-img-wrap">
+          <div class="prd-exp-img-wrap" style="height: 100px;">
             <img src="/assets/images/expertise/cnc-machining.png" alt="CNC Machining">
             <div class="prd-exp-img-overlay">
               <h3 class="prd-exp-img-title">CNC Machining</h3>
-              <p class="prd-exp-img-desc">3, 4 &amp; 5-axis precision for metals and plastics. Tolerances to ±0.01mm.
-              </p>
+              <p class="prd-exp-img-desc">3, 4 &amp; 5-axis precision.</p>
             </div>
           </div>
-          <div class="prd-exp-body">
+          <div class="prd-exp-body" style="padding: 12px 16px;">
             <ul class="prd-exp-list">
               <li>Al 6061/7075, SS 316L, Ti6Al4V, PEEK, Delrin</li>
               <li>Anodising, bead-blast, hard chrome, black oxide</li>
@@ -662,14 +731,14 @@
 
         <!-- Metal Fabrication -->
         <div class="prd-exp-card">
-          <div class="prd-exp-img-wrap">
+          <div class="prd-exp-img-wrap" style="height: 100px;">
             <img src="/assets/images/expertise/metal-fabrication.png" alt="Metal Fabrication">
             <div class="prd-exp-img-overlay">
               <h3 class="prd-exp-img-title">Metal Fabrication</h3>
-              <p class="prd-exp-img-desc">Enclosures, frames, brackets — cut, formed, finished at any volume.</p>
+              <p class="prd-exp-img-desc">Enclosures, frames, brackets.</p>
             </div>
           </div>
-          <div class="prd-exp-body">
+          <div class="prd-exp-body" style="padding: 12px 16px;">
             <ul class="prd-exp-list">
               <li>Laser cutting up to 25mm mild steel, 12mm SS</li>
               <li>CNC press brake, JIS / DIN compliance</li>
@@ -680,15 +749,14 @@
 
         <!-- Electronics PCBA -->
         <div class="prd-exp-card prd-exp-card--wide">
-          <div class="prd-exp-img-wrap">
+          <div class="prd-exp-img-wrap" style="height: 100px;">
             <img src="/assets/images/expertise/electronics-pcba.png" alt="Electronics & PCBA">
             <div class="prd-exp-img-overlay">
               <h3 class="prd-exp-img-title">Electronics &amp; PCBA</h3>
-              <p class="prd-exp-img-desc">Schematic to tested board. IPC Class 2 &amp; 3 with in-line AOI and burn-in.
-              </p>
+              <p class="prd-exp-img-desc">Schematic to tested board. IPC Class 2 &amp; 3.</p>
             </div>
           </div>
-          <div class="prd-exp-body">
+          <div class="prd-exp-body" style="padding: 12px 16px;">
             <ul class="prd-exp-list">
               <li>4-layer to 16-layer HDI PCB design &amp; layout</li>
               <li>SMT 0201 / BGA / QFN &amp; through-hole assembly</li>
@@ -698,35 +766,16 @@
           </div>
         </div>
 
-        <!-- Factory Automation -->
-        <div class="prd-exp-card">
-          <div class="prd-exp-img-wrap">
-            <img src="/assets/images/expertise/factory-automation.png" alt="Factory Automation">
-            <div class="prd-exp-img-overlay">
-              <h3 class="prd-exp-img-title">Factory Automation</h3>
-              <p class="prd-exp-img-desc">Custom robotics, PLCs & assembly lines.</p>
-            </div>
-          </div>
-          <div class="prd-exp-body">
-            <ul class="prd-exp-list">
-              <li>PLC &amp; Robotics integration</li>
-              <li>Custom assembly lines</li>
-              <li>End-of-arm tooling</li>
-              <li>Automated quality inspection</li>
-            </ul>
-          </div>
-        </div>
-
         <!-- Soft Goods -->
         <div class="prd-exp-card">
-          <div class="prd-exp-img-wrap">
+          <div class="prd-exp-img-wrap" style="height: 100px;">
             <img src="/assets/images/expertise/soft-goods.png" alt="Soft Goods">
             <div class="prd-exp-img-overlay">
               <h3 class="prd-exp-img-title">Soft Goods</h3>
               <p class="prd-exp-img-desc">Technical fabrics & wearable integration.</p>
             </div>
           </div>
-          <div class="prd-exp-body">
+          <div class="prd-exp-body" style="padding: 12px 16px;">
             <ul class="prd-exp-list">
               <li>Cut and sew manufacturing</li>
               <li>Technical fabrics &amp; textiles</li>
