@@ -3052,44 +3052,76 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // ── Delete (permanent, no email) ──────────────────────────
-    modal.querySelector('#rfq-delete-btn')?.addEventListener('click', async () => {
-      if (!confirm(`⚠️ PERMANENTLY DELETE this RFQ?\n\n"${projectName}"\n\nThis removes all files and the DB record. No email will be sent. This cannot be undone.`)) return;
-
-      const deleteBtn = modal.querySelector('#rfq-delete-btn');
-      deleteBtn.disabled = true;
-      deleteBtn.textContent = 'Deleting…';
-
-      try {
-        // 1. Delete files from storage
-        const filesByBucket = {};
-        files.forEach(f => {
-          const path = f.storage_path || f.path;
-          if (!path) return;
-          const b = f.bucket || 'rfq-uploads';
-          if (!filesByBucket[b]) filesByBucket[b] = [];
-          filesByBucket[b].push(path);
-        });
-        await Promise.all(Object.entries(filesByBucket).map(([b, paths]) =>
-          supabase.storage.from(b).remove(paths)
-        ));
-
-        // 2. Delete DB record
-        const res = await fetch(`/.netlify/functions/admin-rfqs?id=${rfq.id}`, { method: 'DELETE' });
-        if (!res.ok) {
-           const errData = await res.json().catch(()=>({}));
-           throw new Error(errData.error || 'Failed to delete RFQ');
+    const deleteBtnEl = modal.querySelector('#rfq-delete-btn');
+    if (deleteBtnEl) {
+      let deleteConfirmShown = false;
+      deleteBtnEl.addEventListener('click', async () => {
+        // First click: show inline confirmation
+        if (!deleteConfirmShown) {
+          deleteConfirmShown = true;
+          deleteBtnEl.innerHTML = `
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Confirm Delete?`;
+          deleteBtnEl.style.background = '#dc2626';
+          deleteBtnEl.style.color = '#fff';
+          deleteBtnEl.style.borderColor = '#dc2626';
+          // Auto-reset after 4 seconds if not confirmed
+          setTimeout(() => {
+            if (deleteConfirmShown && !deleteBtnEl.disabled) {
+              deleteConfirmShown = false;
+              deleteBtnEl.innerHTML = `
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                Delete`;
+              deleteBtnEl.style.background = '#fee2e2';
+              deleteBtnEl.style.color = '#dc2626';
+              deleteBtnEl.style.borderColor = '#fecaca';
+            }
+          }, 4000);
+          return;
         }
 
-        modal.remove();
-        contentRouting.querySelector(`tr[data-rfq-id="${rfq.id}"]`)?.remove();
-        updateNavBadges();
+        // Second click: actually delete
+        deleteBtnEl.disabled = true;
+        deleteBtnEl.textContent = 'Deleting…';
 
-      } catch (err) {
-        alert('Delete failed: ' + err.message);
-        deleteBtn.disabled = false;
-        deleteBtn.textContent = 'Delete';
-      }
-    });
+        try {
+          // 1. Delete files from storage
+          const filesByBucket = {};
+          files.forEach(f => {
+            const path = f.storage_path || f.path;
+            if (!path) return;
+            const b = f.bucket || 'rfq-uploads';
+            if (!filesByBucket[b]) filesByBucket[b] = [];
+            filesByBucket[b].push(path);
+          });
+          await Promise.all(Object.entries(filesByBucket).map(([b, paths]) =>
+            supabase.storage.from(b).remove(paths)
+          ));
+
+          // 2. Delete DB record
+          const res = await fetch(`/.netlify/functions/admin-rfqs?id=${rfq.id}`, { method: 'DELETE' });
+          if (!res.ok) {
+             const errData = await res.json().catch(()=>({}));
+             throw new Error(errData.error || 'Failed to delete RFQ');
+          }
+
+          modal.remove();
+          contentRouting.querySelector(`tr[data-rfq-id="${rfq.id}"]`)?.remove();
+          updateNavBadges();
+
+        } catch (err) {
+          alert('Delete failed: ' + err.message);
+          deleteConfirmShown = false;
+          deleteBtnEl.disabled = false;
+          deleteBtnEl.innerHTML = `
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Delete`;
+          deleteBtnEl.style.background = '#fee2e2';
+          deleteBtnEl.style.color = '#dc2626';
+          deleteBtnEl.style.borderColor = '#fecaca';
+        }
+      });
+    }
 
     // Download All
     const downloadAllBtn = modal.querySelector('#rfq-download-all-btn');
