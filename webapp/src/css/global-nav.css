@@ -76,10 +76,9 @@
 }
 
 .nav-engine-top {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Nunito', 'Poppins', sans-serif;
   font-size: 13px;
-  font-weight: 300;
-  font-style: italic;
+  font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 2.5px;
   line-height: 1.15;
@@ -87,10 +86,9 @@
 }
 
 .nav-engine-bottom {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Nunito', 'Poppins', sans-serif;
   font-size: 11px;
-  font-weight: 200;
-  font-style: italic;
+  font-weight: 300;
   text-transform: uppercase;
   letter-spacing: 2.5px;
   line-height: 1.15;

@@ -261,6 +261,45 @@ function crudPlugin() {
               res.end(JSON.stringify({ error: e.message }));
             }
           });
+        } else if (req.url.startsWith('/.netlify/functions/webhook-sharepoint') && req.method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk.toString(); });
+          req.on('end', async () => {
+            try {
+              const payload = JSON.parse(body);
+              const { loadEnv } = await import('vite');
+              const env = loadEnv('development', process.cwd(), '');
+              const MICROSOFT_SHAREPOINT_WEBHOOK_URL = env.MICROSOFT_SHAREPOINT_WEBHOOK_URL;
+              
+              if (!MICROSOFT_SHAREPOINT_WEBHOOK_URL) {
+                console.warn('MICROSOFT_SHAREPOINT_WEBHOOK_URL is not set. Skipping SharePoint sync locally.');
+                res.setHeader('Content-Type', 'application/json');
+                return res.end(JSON.stringify({ success: true, message: 'SharePoint sync skipped (No Webhook URL configured)' }));
+              }
+              
+              const sharepointPayload = {
+                file_name: payload.file_name,
+                file_url: payload.file_url,
+                folder_path: payload.folder_path || 'General',
+                metadata: payload.metadata || {}
+              };
+              
+              const spRes = await fetch(MICROSOFT_SHAREPOINT_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(sharepointPayload)
+              });
+              
+              if (!spRes.ok) throw new Error(`SharePoint Webhook responded with status: ${spRes.status}`);
+              
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ success: true, message: 'File synced to SharePoint successfully' }));
+            } catch (e) {
+              console.error('Error syncing to SharePoint locally:', e);
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: e.message }));
+            }
+          });
         } else {
           next();
         }

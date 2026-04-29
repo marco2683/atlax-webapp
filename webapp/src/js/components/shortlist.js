@@ -1,6 +1,8 @@
 /**
  * PRD — Shortlist Component
  * Manages the UI for the supplier shortlist.
+ * Updated: 2026-04-29 – Removed tier-gating, connected doc download buttons
+ * to actual supplier files, added technologies, improved dark theme visibility.
  */
 import { saveShortlist } from '../services/profile.js';
 
@@ -18,9 +20,6 @@ export function renderShortlist(shortlist, tier = 'free') {
 
   panel.classList.remove('hidden');
   countBadge.textContent = shortlist.length;
-
-  // Tier gating logic
-  const isLocked = tier === 'free' || tier === 'contacts';
 
   // Add Email + Save buttons to header if they don't exist
   const header = panel.querySelector('.shortlist-panel__header');
@@ -69,6 +68,31 @@ export function renderShortlist(shortlist, tier = 'free') {
 
   itemsContainer.innerHTML = shortlist.map((item, idx) => {
     const s = item.supplier;
+
+    // Document availability
+    const hasRFI = !!(s.docRFI);
+    const hasPPT = !!(s.docPresentation);
+    const hasCerts = !!(s.docCertifications);
+
+    // Primary technologies
+    const techs = (s.technologies || []).concat(s.tags || []).slice(0, 3);
+    const techsLine = techs.length > 0
+      ? `<div class="shortlist-item__techs">${techs.map(t => `<span class="shortlist-item__tech-pill">${t}</span>`).join('')}</div>`
+      : '';
+
+    // Doc button builder — enabled links to actual file, disabled shows "Not available"
+    const docBtn = (available, url, label, iconSvg) => {
+      if (available && url) {
+        return `<a href="${url}" target="_blank" download class="shortlist-item__action-btn shortlist-item__action-btn--active" title="Download ${label}">${iconSvg}</a>`;
+      }
+      return `<div class="shortlist-item__action-btn shortlist-item__action-btn--disabled" title="${label} — Not available">${iconSvg}</div>`;
+    };
+
+    // Icons
+    const rfiIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`;
+    const pptIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`;
+    const certsIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
+
     return `
       <div class="shortlist-item" data-id="${s.id || s.name}" data-idx="${idx}">
         <button class="shortlist-item__remove" title="Remove from Shortlist">
@@ -78,33 +102,15 @@ export function renderShortlist(shortlist, tier = 'free') {
         <div class="shortlist-item__content">
           <span class="shortlist-item__name shortlist-item__name--link" data-supplier-idx="${idx}" title="Open supplier card">${s.name}</span>
           <div class="shortlist-item__meta">
-            <span class="shortlist-item__region">📍 ${s.country}</span>
-            <span class="shortlist-item__tech">${item.techName}</span>
+            <span class="shortlist-item__region">📍 ${s.city || s.country || 'China'}</span>
           </div>
+          ${techsLine}
         </div>
         
         <div class="shortlist-item__actions">
-          <button class="shortlist-item__action-btn ${isLocked ? 'shortlist-item__action-btn--locked' : ''}" 
-                  data-action="ppt" 
-                  title="${isLocked ? 'Upgrade to Intelligence to download PPT' : 'Download PPT Presentation'}"
-                  ${isLocked ? 'disabled' : ''}>
-            ${isLocked ? '<svg class="lock-icon" xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' : ''}
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 13v-3h6v3"/><path d="M12 10v6"/></svg>
-          </button>
-          <button class="shortlist-item__action-btn ${isLocked ? 'shortlist-item__action-btn--locked' : ''}" 
-                  data-action="form" 
-                  title="${isLocked ? 'Upgrade to Intelligence to view onboarding form' : 'View Onboarding Form'}"
-                  ${isLocked ? 'disabled' : ''}>
-            ${isLocked ? '<svg class="lock-icon" xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' : ''}
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-          </button>
-          <button class="shortlist-item__action-btn ${isLocked ? 'shortlist-item__action-btn--locked' : ''}" 
-                  data-action="cert" 
-                  title="${isLocked ? 'Upgrade to Intelligence to download certificates' : 'Download Quality Certificates'}"
-                  ${isLocked ? 'disabled' : ''}>
-            ${isLocked ? '<svg class="lock-icon" xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' : ''}
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
-          </button>
+          ${docBtn(hasRFI, s.docRFI, 'RFI Form', rfiIcon)}
+          ${docBtn(hasPPT, s.docPresentation, 'Presentation', pptIcon)}
+          ${docBtn(hasCerts, s.docCertifications, 'Certificates', certsIcon)}
         </div>
       </div>
     `;
@@ -129,18 +135,6 @@ export function renderShortlist(shortlist, tier = 'free') {
           detail: { techName: item.techName, supplier: item.supplier }
         }));
       }
-    });
-  });
-
-  // Add action handlers
-  itemsContainer.querySelectorAll('.shortlist-item__action-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const action = btn.getAttribute('data-action');
-      const supplierId = btn.closest('.shortlist-item').getAttribute('data-id');
-      window.dispatchEvent(new CustomEvent('prd-download-doc', {
-        detail: { action, supplierId }
-      }));
     });
   });
 }

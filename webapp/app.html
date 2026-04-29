@@ -10,7 +10,7 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
     rel="stylesheet">
   <style>
     /* Force scrollability for the manufacturing engine */
@@ -127,6 +127,7 @@
       <div class="navbar__brand" style="display: flex; align-items: center; gap: 12px;">
         <a href="/" aria-label="Home"><img src="/logos/atlasdt-logo-light.png" alt="Atlas DT"
             style="height: 32px; width: auto; object-fit: contain;" /></a>
+        <div class="nav-engine-separator"></div>
         <div class="nav-engine-label">
           <span class="nav-engine-top">Manufacturing</span>
           <span class="nav-engine-bottom">Engine</span>
@@ -1133,45 +1134,59 @@
 
             <!-- ── Header ───────── -->
             <div class="rfq-engine__header">
-              <h2>Quote Instantly</h2>
+              <h2>Part Instant Quote</h2>
               <p
                 style="margin: 4px 0 0; font-size: 13px; color: rgba(255,255,255,0.45); font-weight: 400; letter-spacing: 0.01em;">
-                Get instant pricing for individual parts and components — upload your CAD file, configure specs, and receive a quote in seconds.
+                Upload Your CAD >>> Select The Technology >>> Configure The Specs >>> and Receive a Quote Estimate in
+                Seconds.
               </p>
             </div>
-            
+
             <div class="rfq-detailed-panel" id="rfq-detailed-panel" style="margin-top: 16px;">
               <!-- Top Project Info & Shipping Fields -->
-              <div class="rfq-project-info" style="margin-bottom: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: flex-start;">
+              <div class="rfq-project-info"
+                style="margin-bottom: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: flex-start;">
                 <!-- Left Column -->
                 <div class="rfq-field" style="margin-bottom: 0;">
-                  <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Project Name</label>
-                  <input type="text" class="rfq-part-name-input" id="instant-rfq-project-name" placeholder="e.g. Drone Chassis Prototype V2" style="width:100%; padding:12px 16px; border-radius:10px; font-size:15px; font-weight:600; outline:none; box-shadow:inset 0 2px 4px rgba(0,0,0,0.02); transition:all 0.2s;">
+                  <label
+                    style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Project
+                    Name</label>
+                  <input type="text" class="rfq-part-name-input" id="instant-rfq-project-name"
+                    placeholder="e.g. Drone Chassis Prototype V2"
+                    style="width:100%; padding:12px 16px; border-radius:10px; font-size:15px; font-weight:600; outline:none; box-shadow:inset 0 2px 4px rgba(0,0,0,0.02); transition:all 0.2s;">
                 </div>
-                
+
                 <!-- Right Column -->
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                   <div class="rfq-field" style="margin-bottom: 0;">
-                    <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--color-steel-200); cursor:pointer;">
+                    <label
+                      style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--color-steel-200); cursor:pointer;">
                       <input type="checkbox" id="calc-shipping-cb" style="width:16px; height:16px; cursor:pointer;">
                       Include Shipping Calculation
                     </label>
                   </div>
-                  
-                  <div id="shipping-details-section" class="hidden" style="padding:12px 16px; background:var(--color-bg); border-radius:10px; border:1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+
+                  <div id="shipping-details-section" class="hidden"
+                    style="padding:12px 16px; background:var(--color-bg); border-radius:10px; border:1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                      <h4 style="margin:0 0 4px 0; font-size:11px; color:var(--color-steel-400); text-transform: uppercase; letter-spacing: 0.5px;">Shipping Destination</h4>
-                      <div id="shipping-summary-text" style="font-size: 13px; color: var(--color-white); font-weight: 500; line-height: 1.4;">
+                      <h4
+                        style="margin:0 0 4px 0; font-size:11px; color:var(--color-steel-400); text-transform: uppercase; letter-spacing: 0.5px;">
+                        Shipping Destination</h4>
+                      <div id="shipping-summary-text"
+                        style="font-size: 13px; color: var(--color-white); font-weight: 500; line-height: 1.4;">
                         No address provided.
                       </div>
                     </div>
-                    <button id="edit-shipping-btn" style="padding: 6px 12px; background: transparent; border: 1px solid var(--color-electric); color: var(--color-electric); border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; flex-shrink: 0;">Add Address</button>
+                    <button id="edit-shipping-btn"
+                      style="padding: 6px 12px; background: transparent; border: 1px solid var(--color-electric); color: var(--color-electric); border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; flex-shrink: 0;">Add
+                      Address</button>
                   </div>
                 </div>
               </div>
 
               <!-- Main Drop Zone -->
-              <div class="rfq-engine__upload-zone" id="rfq-main-upload-zone" style="margin-bottom: 32px; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+              <div class="rfq-engine__upload-zone" id="rfq-main-upload-zone"
+                style="margin-bottom: 32px; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                 <input type="file" id="rfq-main-file-input" multiple
                   accept=".step,.stp,.stl,.obj,.3mf,.iges,.igs,.dxf,.sldprt,.ipt,.x_t,.x_b,.3dxml,.catpart,.prt,.sat,.jt"
                   hidden />
@@ -1187,12 +1202,14 @@
                   <h3>Drag & Drop 3D CAD Files</h3>
                   <p style="margin-top: 4px;">Upload multiple files. We'll generate a part card for each.</p>
                 </div>
-                <button class="upload-btn" id="rfq-main-select-btn" style="margin: 16px auto 0;">Select 3D Files</button>
+                <button class="upload-btn" id="rfq-main-select-btn" style="margin: 16px auto 0;">Select 3D
+                  Files</button>
                 <div class="upload-formats" style="margin-top: 16px; text-align: center;">
-                  <p style="font-size: 10.5px; color: var(--color-steel-400);">Supported: STEP, STP, SLDPRT, STL, IGES, X_T. <br>Other formats will be flagged and may not be readable by the 3D engine.</p>
+                  <p style="font-size: 10.5px; color: var(--color-steel-400);">Supported: STEP, STP, SLDPRT, STL, IGES,
+                    X_T. <br>Other formats will be flagged and may not be readable by the 3D engine.</p>
                 </div>
               </div>
-              
+
               <!-- Container for dynamically generated vertical cards -->
               <div id="rfq-dynamic-parts-container" style="display:flex; flex-direction:column; gap:4px;">
                 <!-- JS will inject part cards here -->
@@ -1206,10 +1223,11 @@
 
         <!-- Quote Estimate Side Panel -->
         <div class="rfq-engine__right hidden" id="rfq-engine-right">
-          
+
           <!-- CALCULATE BUTTON MOVED TO TOP -->
           <div style="margin-bottom: 24px; width: 100%;">
-            <button class="rfq-engine__submit-btn rfq-engine__submit-btn--green" id="rfq-submit-btn" disabled style="width: 100%; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+            <button class="rfq-engine__submit-btn rfq-engine__submit-btn--green" id="rfq-submit-btn" disabled
+              style="width: 100%; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
               <span>Calculate Instant Quote</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2">
@@ -1237,7 +1255,7 @@
                 <span>Clear All</span>
               </button>
             </div>
-            
+
             <div class="rfq-quote-result__empty-hint" id="rfq-quote-empty-hint">
               <span class="rfq-quote-result__empty-hint-title">Instant Quote Estimate</span>
               <span class="rfq-quote-result__empty-hint-sub">Your quoted parts will appear here</span>
@@ -1245,7 +1263,8 @@
             <div class="rfq-quote-result__breakdown hidden" id="rfq-quote-breakdown">
             </div>
             <div class="rfq-quote-result__actions hidden" id="rfq-quote-actions">
-              <button class="rfq-action-btn rfq-action-btn--primary" id="rfq-submit-verification-btn" style="width: 100%;">
+              <button class="rfq-action-btn rfq-action-btn--primary" id="rfq-submit-verification-btn"
+                style="width: 100%;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -1253,131 +1272,211 @@
                   <line x1="16" y1="13" x2="8" y2="13" />
                   <line x1="16" y1="17" x2="8" y2="17" />
                 </svg>
-                Submit for Verification
+                Submit to AtlasDT for Review
               </button>
             </div>
           </div><!-- /rfq-quote-result -->
         </div><!-- /rfq-engine__right -->
       </div><!-- /rfq-engine -->
 
-    <!-- ═══════════════════════════════════════════════════
+      <!-- ═══════════════════════════════════════════════════
          FIND DESIGNERS ENGINE (v4 — Light Theme UI)
          ═══════════════════════════════════════════════════ -->
-    <!-- ═══════════════════════════════════════════════════
+      <!-- ═══════════════════════════════════════════════════
          FIND DESIGNERS ENGINE (v4 — Minimalist UI)
          ═══════════════════════════════════════════════════ -->
-    <div class="designers-engine hidden" id="designers-engine" style="padding: 60px 40px; text-align: left; max-width: 100%; margin: 0 auto; width: 100%;">
-      <div style="margin-bottom: 40px;">
-        <h2 style="font-size: 2.5rem; color: var(--color-white); margin-bottom: 8px; font-weight: 700;">Network of Experts</h2>
-        <p style="color: var(--color-steel-300); font-size: 1.1rem;">Top-tier industrial designers and hardware engineers available for your project.</p>
+      <div class="designers-engine hidden" id="designers-engine"
+        style="padding: 60px 40px; text-align: left; max-width: 100%; margin: 0 auto; width: 100%;">
+        <div style="margin-bottom: 40px;">
+          <h2 style="font-size: 2.5rem; color: var(--color-white); margin-bottom: 8px; font-weight: 700;">Network of
+            Experts</h2>
+          <p style="color: var(--color-steel-300); font-size: 1.1rem;">Top-tier industrial designers and hardware
+            engineers available for your project.</p>
+        </div>
+
+        <div class="designers-grid"
+          style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
+
+          <div class="designer-card"
+            style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s, border-color 0.2s;"
+            onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'; this.style.transform='translateY(-4px)'"
+            onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
+            <img src="" alt="Avatar"
+              style="width: 86px; height: 86px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid rgba(255,255,255,0.05);"
+              onerror="this.src='https://ui-avatars.com/api/?name=J+D&background=0D8ABC&color=fff'">
+            <h3 style="color: #fff; font-size: 1.25rem; font-weight: 600; margin: 0 0 4px 0;">Jonathan Davis</h3>
+            <p style="color: #c4b5fd; font-size: 0.9rem; font-weight: 500; margin: 0 0 16px 0;">Senior Industrial
+              Designer</p>
+
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px;">
+              <span
+                style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">SolidWorks</span>
+              <span
+                style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Consumer
+                Tech</span>
+              <span
+                style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">DFM</span>
+            </div>
+
+            <div
+              style="margin-top: auto; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div style="text-align: left;">
+                <span style="display: block; font-size: 0.75rem; color: #888;">Hourly Rate</span>
+                <span style="color: #fff; font-weight: 600;">$95/hr</span>
+              </div>
+              <button
+                style="background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"
+                onmouseover="this.style.background='rgba(139,92,246,0.25)'"
+                onmouseout="this.style.background='rgba(139,92,246,0.15)'">Contact</button>
+            </div>
+          </div>
+
+          <div class="designer-card"
+            style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s, border-color 0.2s;"
+            onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'; this.style.transform='translateY(-4px)'"
+            onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
+            <img src="" alt="Avatar"
+              style="width: 86px; height: 86px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid rgba(255,255,255,0.05);"
+              onerror="this.src='https://ui-avatars.com/api/?name=S+K&background=10B981&color=fff'">
+            <h3 style="color: #fff; font-size: 1.25rem; font-weight: 600; margin: 0 0 4px 0;">Sarah Knowles</h3>
+            <p style="color: #c4b5fd; font-size: 0.9rem; font-weight: 500; margin: 0 0 16px 0;">Mechanical Engineer</p>
+
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px;">
+              <span
+                style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Fusion
+                360</span>
+              <span
+                style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Robotics</span>
+              <span
+                style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Tolerance
+                Analysis</span>
+            </div>
+
+            <div
+              style="margin-top: auto; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div style="text-align: left;">
+                <span style="display: block; font-size: 0.75rem; color: #888;">Hourly Rate</span>
+                <span style="color: #fff; font-weight: 600;">$110/hr</span>
+              </div>
+              <button
+                style="background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"
+                onmouseover="this.style.background='rgba(139,92,246,0.25)'"
+                onmouseout="this.style.background='rgba(139,92,246,0.15)'">Contact</button>
+            </div>
+          </div>
+
+          <div class="designer-card"
+            style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s, border-color 0.2s;"
+            onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'; this.style.transform='translateY(-4px)'"
+            onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
+            <img src="" alt="Avatar"
+              style="width: 86px; height: 86px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid rgba(255,255,255,0.05);"
+              onerror="this.src='https://ui-avatars.com/api/?name=L+C&background=F59E0B&color=fff'">
+            <h3 style="color: #fff; font-size: 1.25rem; font-weight: 600; margin: 0 0 4px 0;">Lucas Chen</h3>
+            <p style="color: #c4b5fd; font-size: 0.9rem; font-weight: 500; margin: 0 0 16px 0;">Product Design Head</p>
+
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px;">
+              <span
+                style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Rhino
+                3D</span>
+              <span
+                style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Wearables</span>
+              <span
+                style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">CMF</span>
+            </div>
+
+            <div
+              style="margin-top: auto; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div style="text-align: left;">
+                <span style="display: block; font-size: 0.75rem; color: #888;">Hourly Rate</span>
+                <span style="color: #fff; font-weight: 600;">$140/hr</span>
+              </div>
+              <button
+                style="background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"
+                onmouseover="this.style.background='rgba(139,92,246,0.25)'"
+                onmouseout="this.style.background='rgba(139,92,246,0.15)'">Contact</button>
+            </div>
+          </div>
+
+          <div class="designer-card"
+            style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s, border-color 0.2s;"
+            onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'; this.style.transform='translateY(-4px)'"
+            onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
+            <img src="" alt="Avatar"
+              style="width: 86px; height: 86px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid rgba(255,255,255,0.05);"
+              onerror="this.src='https://ui-avatars.com/api/?name=M+V&background=8B5CF6&color=fff'">
+            <h3 style="color: #fff; font-size: 1.25rem; font-weight: 600; margin: 0 0 4px 0;">Marcus Voss</h3>
+            <p style="color: #c4b5fd; font-size: 0.9rem; font-weight: 500; margin: 0 0 16px 0;">Mold Design Specialist
+            </p>
+
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px;">
+              <span
+                style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">NX
+                Unigraphics</span>
+              <span
+                style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Injection
+                Molding</span>
+              <span
+                style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Moldflow</span>
+            </div>
+
+            <div
+              style="margin-top: auto; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div style="text-align: left;">
+                <span style="display: block; font-size: 0.75rem; color: #888;">Hourly Rate</span>
+                <span style="color: #fff; font-weight: 600;">$75/hr</span>
+              </div>
+              <button
+                style="background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"
+                onmouseover="this.style.background='rgba(139,92,246,0.25)'"
+                onmouseout="this.style.background='rgba(139,92,246,0.15)'">Contact</button>
+            </div>
+          </div>
+
+        </div>
       </div>
 
-      <div class="designers-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
-        
-        <div class="designer-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'; this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
-          <img src="" alt="Avatar" style="width: 86px; height: 86px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid rgba(255,255,255,0.05);" onerror="this.src='https://ui-avatars.com/api/?name=J+D&background=0D8ABC&color=fff'">
-          <h3 style="color: #fff; font-size: 1.25rem; font-weight: 600; margin: 0 0 4px 0;">Jonathan Davis</h3>
-          <p style="color: #c4b5fd; font-size: 0.9rem; font-weight: 500; margin: 0 0 16px 0;">Senior Industrial Designer</p>
-          
-          <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px;">
-            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">SolidWorks</span>
-            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Consumer Tech</span>
-            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">DFM</span>
-          </div>
-          
-          <div style="margin-top: auto; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="text-align: left;">
-              <span style="display: block; font-size: 0.75rem; color: #888;">Hourly Rate</span>
-              <span style="color: #fff; font-weight: 600;">$95/hr</span>
-            </div>
-            <button style="background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(139,92,246,0.25)'" onmouseout="this.style.background='rgba(139,92,246,0.15)'">Contact</button>
-          </div>
-        </div>
 
-        <div class="designer-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'; this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
-          <img src="" alt="Avatar" style="width: 86px; height: 86px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid rgba(255,255,255,0.05);" onerror="this.src='https://ui-avatars.com/api/?name=S+K&background=10B981&color=fff'">
-          <h3 style="color: #fff; font-size: 1.25rem; font-weight: 600; margin: 0 0 4px 0;">Sarah Knowles</h3>
-          <p style="color: #c4b5fd; font-size: 0.9rem; font-weight: 500; margin: 0 0 16px 0;">Mechanical Engineer</p>
-          
-          <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px;">
-            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Fusion 360</span>
-            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Robotics</span>
-            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Tolerance Analysis</span>
-          </div>
-          
-          <div style="margin-top: auto; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="text-align: left;">
-              <span style="display: block; font-size: 0.75rem; color: #888;">Hourly Rate</span>
-              <span style="color: #fff; font-weight: 600;">$110/hr</span>
-            </div>
-            <button style="background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(139,92,246,0.25)'" onmouseout="this.style.background='rgba(139,92,246,0.15)'">Contact</button>
-          </div>
-        </div>
-
-        <div class="designer-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'; this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
-          <img src="" alt="Avatar" style="width: 86px; height: 86px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid rgba(255,255,255,0.05);" onerror="this.src='https://ui-avatars.com/api/?name=L+C&background=F59E0B&color=fff'">
-          <h3 style="color: #fff; font-size: 1.25rem; font-weight: 600; margin: 0 0 4px 0;">Lucas Chen</h3>
-          <p style="color: #c4b5fd; font-size: 0.9rem; font-weight: 500; margin: 0 0 16px 0;">Product Design Head</p>
-          
-          <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px;">
-            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Rhino 3D</span>
-            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Wearables</span>
-            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">CMF</span>
-          </div>
-          
-          <div style="margin-top: auto; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="text-align: left;">
-              <span style="display: block; font-size: 0.75rem; color: #888;">Hourly Rate</span>
-              <span style="color: #fff; font-weight: 600;">$140/hr</span>
-            </div>
-            <button style="background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(139,92,246,0.25)'" onmouseout="this.style.background='rgba(139,92,246,0.15)'">Contact</button>
-          </div>
-        </div>
-        
-        <div class="designer-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'; this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
-          <img src="" alt="Avatar" style="width: 86px; height: 86px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid rgba(255,255,255,0.05);" onerror="this.src='https://ui-avatars.com/api/?name=M+V&background=8B5CF6&color=fff'">
-          <h3 style="color: #fff; font-size: 1.25rem; font-weight: 600; margin: 0 0 4px 0;">Marcus Voss</h3>
-          <p style="color: #c4b5fd; font-size: 0.9rem; font-weight: 500; margin: 0 0 16px 0;">Mold Design Specialist</p>
-          
-          <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px;">
-            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">NX Unigraphics</span>
-            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Injection Molding</span>
-            <span style="background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px;">Moldflow</span>
-          </div>
-          
-          <div style="margin-top: auto; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="text-align: left;">
-              <span style="display: block; font-size: 0.75rem; color: #888;">Hourly Rate</span>
-              <span style="color: #fff; font-weight: 600;">$75/hr</span>
-            </div>
-            <button style="background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(139,92,246,0.25)'" onmouseout="this.style.background='rgba(139,92,246,0.15)'">Contact</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-
-    <!-- ═══════════════════════════════════════════════════
+      <!-- ═══════════════════════════════════════════════════
          SUPPLIER DETAIL MODAL (large, tiered)
          ═══════════════════════════════════════════════════ -->
-    <div class="modal-backdrop hidden" id="supplier-backdrop" style="z-index: 1060;"></div>
-    <div class="supplier-modal hidden" id="supplier-modal" style="z-index: 1061;">
-      <div class="supplier-modal__top-bar">
-        <div class="supplier-modal__nav-row">
-          <h2 id="supplier-modal-title">Suppliers</h2>
-          <div class="supplier-modal__nav">
-            <button class="nav-arrow" id="carousel-prev"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="15 18 9 12 15 6" />
-              </svg></button>
-            <span class="nav-counter" id="carousel-counter">1 / 3</span>
-            <button class="nav-arrow" id="carousel-next"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="9 18 15 12 9 6" />
-              </svg></button>
+      <div class="modal-backdrop hidden" id="supplier-backdrop" style="z-index: 1060;"></div>
+      <div class="supplier-modal hidden" id="supplier-modal" style="z-index: 1061;">
+        <div class="supplier-modal__top-bar">
+          <div class="supplier-modal__nav-row">
+            <h2 id="supplier-modal-title">Suppliers</h2>
+            <div class="supplier-modal__nav">
+              <button class="nav-arrow" id="carousel-prev"><svg xmlns="http://www.w3.org/2000/svg" width="18"
+                  height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg></button>
+              <span class="nav-counter" id="carousel-counter">1 / 3</span>
+              <button class="nav-arrow" id="carousel-next"><svg xmlns="http://www.w3.org/2000/svg" width="18"
+                  height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg></button>
+            </div>
+            <button class="modal-close" id="supplier-close">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
           </div>
-          <button class="modal-close" id="supplier-close">
+        </div>
+        <!-- Banner + card content rendered by JS -->
+        <div class="supplier-modal__body" id="supplier-modal-body"></div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════
+         SUPPLIER GRID (MODAL)
+         ═══════════════════════════════════════════════════ -->
+      <div class="modal-backdrop hidden" id="supplier-grid-backdrop" style="z-index: 1050;"></div>
+      <div class="supplier-grid-modal hidden" id="supplier-grid-modal" style="z-index: 1051;">
+        <div class="supplier-grid__header">
+          <h2 id="supplier-grid-title">Sub-Category Suppliers</h2>
+          <button class="modal-close" id="supplier-grid-close">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -1385,32 +1484,12 @@
             </svg>
           </button>
         </div>
+        <div class="supplier-grid__body" id="supplier-grid-body">
+          <!-- Grid cards rendered by JS -->
+        </div>
       </div>
-      <!-- Banner + card content rendered by JS -->
-      <div class="supplier-modal__body" id="supplier-modal-body"></div>
-    </div>
 
-    <!-- ═══════════════════════════════════════════════════
-         SUPPLIER GRID (MODAL)
-         ═══════════════════════════════════════════════════ -->
-    <div class="modal-backdrop hidden" id="supplier-grid-backdrop" style="z-index: 1050;"></div>
-    <div class="supplier-grid-modal hidden" id="supplier-grid-modal" style="z-index: 1051;">
-      <div class="supplier-grid__header">
-        <h2 id="supplier-grid-title">Sub-Category Suppliers</h2>
-        <button class="modal-close" id="supplier-grid-close">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-      </div>
-      <div class="supplier-grid__body" id="supplier-grid-body">
-        <!-- Grid cards rendered by JS -->
-      </div>
-    </div>
-
-    <!-- Footer removed to avoid blocking application functionality -->
+      <!-- Footer removed to avoid blocking application functionality -->
   </div>
 
   </div>
@@ -1513,10 +1592,14 @@
             </button>
           </div>
           <div class="dk-gh-links">
-            <a href="javascript:void(0)" id="mkt-nav-products" class="mkt-nav-active" onclick="window.mktShowPage('catalog-layout');return false;">Products ▼</a>
-            <a href="javascript:void(0)" id="mkt-nav-manufacturers" onclick="window.mktShowPage('mkt-manufacturers-layout');return false;">Manufacturers ▼</a>
-            <a href="javascript:void(0)" id="mkt-nav-resources" onclick="window.mktShowPage('mkt-resources-layout');return false;">Resources ▼</a>
-            <a href="javascript:void(0)" id="mkt-nav-rfq" onclick="window.mktShowPage('mkt-rfq-layout');return false;">Request a Quote</a>
+            <a href="javascript:void(0)" id="mkt-nav-products" class="mkt-nav-active"
+              onclick="window.mktShowPage('catalog-layout');return false;">Products ▼</a>
+            <a href="javascript:void(0)" id="mkt-nav-manufacturers"
+              onclick="window.mktShowPage('mkt-manufacturers-layout');return false;">Manufacturers ▼</a>
+            <a href="javascript:void(0)" id="mkt-nav-resources"
+              onclick="window.mktShowPage('mkt-resources-layout');return false;">Resources ▼</a>
+            <a href="javascript:void(0)" id="mkt-nav-rfq"
+              onclick="window.mktShowPage('mkt-rfq-layout');return false;">Request a Quote</a>
           </div>
         </div>
         <div class="dk-gh-actions">
@@ -2260,7 +2343,8 @@
               <div style="padding:24px; display:block;" id="chk-delivery-section">
                 <!-- Address Search -->
                 <div style="margin-bottom:20px;">
-                  <div style="font-size:13px; font-weight:600; color:#333; margin-bottom:8px;">Search for your address</div>
+                  <div style="font-size:13px; font-weight:600; color:#333; margin-bottom:8px;">Search for your address
+                  </div>
                   <input type="text" id="chk-address-search" placeholder="Start typing your address…"
                     style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
                 </div>
@@ -2270,40 +2354,51 @@
                   <div>
                     <div style="font-size:14px; font-weight:700; color:#111; margin-bottom:14px;">Shipping address</div>
                     <div style="margin-bottom:10px;">
-                      <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Full name / Company</label>
+                      <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Full
+                        name / Company</label>
                       <input type="text" id="chk-name" placeholder="e.g. Procurement Dept."
                         style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
                     </div>
                     <div style="margin-bottom:10px;">
-                      <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Address line 1</label>
+                      <label
+                        style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Address
+                        line 1</label>
                       <input type="text" id="chk-address1" placeholder="Street address"
                         style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
                     </div>
                     <div style="margin-bottom:10px;">
-                      <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Address line 2 <span style="font-weight:400; color:#999;">(optional)</span></label>
+                      <label
+                        style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Address
+                        line 2 <span style="font-weight:400; color:#999;">(optional)</span></label>
                       <input type="text" id="chk-address2" placeholder="Apartment, suite, unit, etc."
                         style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
                     </div>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
                       <div>
-                        <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">City</label>
+                        <label
+                          style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">City</label>
                         <input type="text" id="chk-city" placeholder="City"
                           style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
                       </div>
                       <div>
-                        <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">State / Province</label>
+                        <label
+                          style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">State /
+                          Province</label>
                         <input type="text" id="chk-state" placeholder="State"
                           style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
                       </div>
                     </div>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                       <div>
-                        <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Postcode / ZIP</label>
+                        <label
+                          style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Postcode
+                          / ZIP</label>
                         <input type="text" id="chk-zip" placeholder="Postcode"
                           style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
                       </div>
                       <div>
-                        <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Country</label>
+                        <label
+                          style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Country</label>
                         <select id="chk-country"
                           style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit; background:#fff;">
                           <option value="AU">Australia</option>
@@ -2353,38 +2448,47 @@
                 <!-- Billing Address -->
                 <div style="margin-bottom:24px;">
                   <div style="font-size:14px; font-weight:700; color:#111; margin-bottom:12px;">Billing address</div>
-                  <label style="display:flex; align-items:center; gap:10px; font-size:14px; color:#333; cursor:pointer; margin-bottom:12px;">
+                  <label
+                    style="display:flex; align-items:center; gap:10px; font-size:14px; color:#333; cursor:pointer; margin-bottom:12px;">
                     <input type="checkbox" id="chk-billing-same" checked
                       style="width:16px; height:16px; accent-color:#007185; flex-shrink:0;"
                       onchange="document.getElementById('chk-billing-fields').style.display=this.checked?'none':'block'">
                     <span>Same as shipping address</span>
                   </label>
-                  <div id="chk-billing-fields" style="display:none; padding:16px; border:1px solid #e2e8f0; border-radius:4px; background:#fafbfc;">
+                  <div id="chk-billing-fields"
+                    style="display:none; padding:16px; border:1px solid #e2e8f0; border-radius:4px; background:#fafbfc;">
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
                       <div>
-                        <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Full name / Company</label>
+                        <label
+                          style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Full
+                          name / Company</label>
                         <input type="text" id="chk-bill-name" placeholder="Billing name"
                           style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
                       </div>
                       <div>
-                        <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Address line 1</label>
+                        <label
+                          style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Address
+                          line 1</label>
                         <input type="text" id="chk-bill-address1" placeholder="Street address"
                           style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
                       </div>
                     </div>
                     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
                       <div>
-                        <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">City</label>
+                        <label
+                          style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">City</label>
                         <input type="text" id="chk-bill-city" placeholder="City"
                           style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
                       </div>
                       <div>
-                        <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">State</label>
+                        <label
+                          style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">State</label>
                         <input type="text" id="chk-bill-state" placeholder="State"
                           style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
                       </div>
                       <div>
-                        <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Postcode</label>
+                        <label
+                          style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Postcode</label>
                         <input type="text" id="chk-bill-zip" placeholder="Postcode"
                           style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
                       </div>
@@ -2397,32 +2501,45 @@
                   <div style="font-size:14px; font-weight:700; color:#111; margin-bottom:12px;">Payment method</div>
                   <div style="display:flex; flex-direction:column; gap:8px;">
                     <!-- Credit/Debit Card -->
-                    <label style="display:flex; align-items:center; gap:14px; padding:14px 16px; border:2px solid #007185; border-radius:4px; cursor:pointer; background:#f8fdfd;">
+                    <label
+                      style="display:flex; align-items:center; gap:14px; padding:14px 16px; border:2px solid #007185; border-radius:4px; cursor:pointer; background:#f8fdfd;">
                       <input type="radio" name="chk-payment-method" value="card" checked
                         style="width:16px; height:16px; accent-color:#007185; flex-shrink:0;">
                       <div style="flex:1;">
                         <div style="font-size:14px; font-weight:600; color:#111;">Credit / Debit Card</div>
-                        <div style="font-size:12px; color:#666; margin-top:2px;">Visa, Mastercard, American Express</div>
+                        <div style="font-size:12px; color:#666; margin-top:2px;">Visa, Mastercard, American Express
+                        </div>
                       </div>
                       <div style="display:flex; gap:6px; align-items:center; flex-shrink:0;">
-                        <div style="border:1px solid #e2e8f0; border-radius:4px; padding:4px 8px; font-size:10px; font-weight:800; color:#1a1f71;">VISA</div>
-                        <div style="border:1px solid #e2e8f0; border-radius:4px; padding:4px 8px; font-size:8px; font-weight:700; color:#eb5757; line-height:1.1; text-align:center;">MASTER<br>CARD</div>
-                        <div style="border:1px solid #e2e8f0; border-radius:4px; padding:4px 8px; font-size:10px; font-weight:800; color:#2e77bc;">AMEX</div>
+                        <div
+                          style="border:1px solid #e2e8f0; border-radius:4px; padding:4px 8px; font-size:10px; font-weight:800; color:#1a1f71;">
+                          VISA</div>
+                        <div
+                          style="border:1px solid #e2e8f0; border-radius:4px; padding:4px 8px; font-size:8px; font-weight:700; color:#eb5757; line-height:1.1; text-align:center;">
+                          MASTER<br>CARD</div>
+                        <div
+                          style="border:1px solid #e2e8f0; border-radius:4px; padding:4px 8px; font-size:10px; font-weight:800; color:#2e77bc;">
+                          AMEX</div>
                       </div>
                     </label>
                     <!-- PayPal -->
-                    <label style="display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid #e2e8f0; border-radius:4px; cursor:pointer;"
+                    <label
+                      style="display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid #e2e8f0; border-radius:4px; cursor:pointer;"
                       onclick="this.parentElement.querySelectorAll('label').forEach(l=>l.style.borderColor='#e2e8f0');this.parentElement.querySelectorAll('label').forEach(l=>l.style.background='#fff');this.style.borderColor='#007185';this.style.background='#f8fdfd';">
                       <input type="radio" name="chk-payment-method" value="paypal"
                         style="width:16px; height:16px; accent-color:#007185; flex-shrink:0;">
                       <div style="flex:1;">
                         <div style="font-size:14px; font-weight:600; color:#111;">PayPal</div>
-                        <div style="font-size:12px; color:#666; margin-top:2px;">Pay securely with your PayPal account</div>
+                        <div style="font-size:12px; color:#666; margin-top:2px;">Pay securely with your PayPal account
+                        </div>
                       </div>
-                      <div style="border:1px solid #e2e8f0; border-radius:4px; padding:4px 10px; font-size:12px; font-weight:800; color:#003087; letter-spacing:-0.5px;">Pay<span style="color:#009cde;">Pal</span></div>
+                      <div
+                        style="border:1px solid #e2e8f0; border-radius:4px; padding:4px 10px; font-size:12px; font-weight:800; color:#003087; letter-spacing:-0.5px;">
+                        Pay<span style="color:#009cde;">Pal</span></div>
                     </label>
                     <!-- Apple Pay -->
-                    <label style="display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid #e2e8f0; border-radius:4px; cursor:pointer;"
+                    <label
+                      style="display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid #e2e8f0; border-radius:4px; cursor:pointer;"
                       onclick="this.parentElement.querySelectorAll('label').forEach(l=>l.style.borderColor='#e2e8f0');this.parentElement.querySelectorAll('label').forEach(l=>l.style.background='#fff');this.style.borderColor='#007185';this.style.background='#f8fdfd';">
                       <input type="radio" name="chk-payment-method" value="applepay"
                         style="width:16px; height:16px; accent-color:#007185; flex-shrink:0;">
@@ -2433,7 +2550,8 @@
                       <div style="font-size:16px; font-weight:600; color:#333;"> Pay</div>
                     </label>
                     <!-- Google Pay -->
-                    <label style="display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid #e2e8f0; border-radius:4px; cursor:pointer;"
+                    <label
+                      style="display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid #e2e8f0; border-radius:4px; cursor:pointer;"
                       onclick="this.parentElement.querySelectorAll('label').forEach(l=>l.style.borderColor='#e2e8f0');this.parentElement.querySelectorAll('label').forEach(l=>l.style.background='#fff');this.style.borderColor='#007185';this.style.background='#f8fdfd';">
                       <input type="radio" name="chk-payment-method" value="googlepay"
                         style="width:16px; height:16px; accent-color:#007185; flex-shrink:0;">
@@ -2441,18 +2559,25 @@
                         <div style="font-size:14px; font-weight:600; color:#111;">Google Pay</div>
                         <div style="font-size:12px; color:#666; margin-top:2px;">Fast payment with Google Pay</div>
                       </div>
-                      <div style="font-size:12px; font-weight:700; color:#4285f4; letter-spacing:-0.3px;"><span style="color:#4285f4;">G</span><span style="color:#ea4335;">o</span><span style="color:#fbbc05;">o</span><span style="color:#4285f4;">g</span><span style="color:#34a853;">l</span><span style="color:#ea4335;">e</span> Pay</div>
+                      <div style="font-size:12px; font-weight:700; color:#4285f4; letter-spacing:-0.3px;"><span
+                          style="color:#4285f4;">G</span><span style="color:#ea4335;">o</span><span
+                          style="color:#fbbc05;">o</span><span style="color:#4285f4;">g</span><span
+                          style="color:#34a853;">l</span><span style="color:#ea4335;">e</span> Pay</div>
                     </label>
                     <!-- NET30 Corporate -->
-                    <label style="display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid #e2e8f0; border-radius:4px; cursor:pointer;"
+                    <label
+                      style="display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid #e2e8f0; border-radius:4px; cursor:pointer;"
                       onclick="this.parentElement.querySelectorAll('label').forEach(l=>l.style.borderColor='#e2e8f0');this.parentElement.querySelectorAll('label').forEach(l=>l.style.background='#fff');this.style.borderColor='#007185';this.style.background='#f8fdfd';">
                       <input type="radio" name="chk-payment-method" value="net30"
                         style="width:16px; height:16px; accent-color:#007185; flex-shrink:0;">
                       <div style="flex:1;">
                         <div style="font-size:14px; font-weight:600; color:#111;">Corporate Account · Net 30</div>
-                        <div style="font-size:12px; color:#666; margin-top:2px;">Invoiced post-supplier approval per procurement policy</div>
+                        <div style="font-size:12px; color:#666; margin-top:2px;">Invoiced post-supplier approval per
+                          procurement policy</div>
                       </div>
-                      <div style="background:#eaf9fb; border:1px solid #007185; padding:4px 10px; border-radius:4px; font-size:11px; font-weight:700; color:#007185;">NET30</div>
+                      <div
+                        style="background:#eaf9fb; border:1px solid #007185; padding:4px 10px; border-radius:4px; font-size:11px; font-weight:700; color:#007185;">
+                        NET30</div>
                     </label>
                   </div>
                 </div>
@@ -2592,7 +2717,7 @@
                     Pay<span style="color:#009cde;">Pal</span></div>
                   <div
                     style="border:1px solid #e2e8f0; border-radius:4px; padding:6px 10px; font-size:10px; font-weight:600; color:#333;">
-                     Pay</div>
+                    Pay</div>
                   <div
                     style="border:1px solid #e2e8f0; border-radius:4px; padding:6px 10px; font-size:10px; font-weight:700; color:#007185;">
                     NET30</div>
@@ -2911,284 +3036,315 @@
 
 
 
-      <!-- ═══════════════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════════
            MANUFACTURERS PAGE
            ═══════════════════════════════════════════════════════════ -->
-      <div id="mkt-manufacturers-layout" class="hidden" style="display:flex; flex-direction:column; flex:1; min-height:0; overflow-y:auto; background:#f4f6f8;">
-        <div style="max-width:1280px; margin:0 auto; padding:32px 24px;">
-          <div style="margin-bottom:32px;">
-            <h1 style="font-size:28px; font-weight:700; color:#111; margin:0 0 8px 0;">Manufacturers</h1>
-            <p style="font-size:14px; color:#666; margin:0;">Browse our verified manufacturing partners and OEM component suppliers.</p>
-          </div>
-          <!-- Search bar for manufacturers -->
-          <div style="margin-bottom:24px; display:flex; gap:12px; align-items:center;">
-            <input type="text" id="mkt-mfg-search" placeholder="Search manufacturers…"
-              style="flex:1; max-width:400px; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; font-family:inherit; box-sizing:border-box;">
-            <div style="font-size:13px; color:#666;" id="mkt-mfg-count"></div>
-          </div>
-          <!-- Manufacturer Cards Grid -->
-          <div id="mkt-mfg-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
-          </div>
+    <div id="mkt-manufacturers-layout" class="hidden"
+      style="display:flex; flex-direction:column; flex:1; min-height:0; overflow-y:auto; background:#f4f6f8;">
+      <div style="max-width:1280px; margin:0 auto; padding:32px 24px;">
+        <div style="margin-bottom:32px;">
+          <h1 style="font-size:28px; font-weight:700; color:#111; margin:0 0 8px 0;">Manufacturers</h1>
+          <p style="font-size:14px; color:#666; margin:0;">Browse our verified manufacturing partners and OEM component
+            suppliers.</p>
+        </div>
+        <!-- Search bar for manufacturers -->
+        <div style="margin-bottom:24px; display:flex; gap:12px; align-items:center;">
+          <input type="text" id="mkt-mfg-search" placeholder="Search manufacturers…"
+            style="flex:1; max-width:400px; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; font-family:inherit; box-sizing:border-box;">
+          <div style="font-size:13px; color:#666;" id="mkt-mfg-count"></div>
+        </div>
+        <!-- Manufacturer Cards Grid -->
+        <div id="mkt-mfg-grid"
+          style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
         </div>
       </div>
+    </div>
 
-      <!-- ═══════════════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════════
            RESOURCES PAGE
            ═══════════════════════════════════════════════════════════ -->
-      <div id="mkt-resources-layout" class="hidden" style="display:flex; flex-direction:column; flex:1; min-height:0; overflow-y:auto; background:#f4f6f8;">
-        <div style="max-width:1280px; margin:0 auto; padding:32px 24px;">
-          <div style="margin-bottom:32px;">
-            <h1 style="font-size:28px; font-weight:700; color:#111; margin:0 0 8px 0;">Engineering Resources</h1>
-            <p style="font-size:14px; color:#666; margin:0;">Technical tools, reference data, and design resources for hardware engineers and product designers.</p>
-          </div>
+    <div id="mkt-resources-layout" class="hidden"
+      style="display:flex; flex-direction:column; flex:1; min-height:0; overflow-y:auto; background:#f4f6f8;">
+      <div style="max-width:1280px; margin:0 auto; padding:32px 24px;">
+        <div style="margin-bottom:32px;">
+          <h1 style="font-size:28px; font-weight:700; color:#111; margin:0 0 8px 0;">Engineering Resources</h1>
+          <p style="font-size:14px; color:#666; margin:0;">Technical tools, reference data, and design resources for
+            hardware engineers and product designers.</p>
+        </div>
 
-          <!-- Design Tools -->
-          <div style="margin-bottom:36px;">
-            <h2 style="font-size:16px; font-weight:700; color:#0e7490; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:0.5px;">Design Tools</h2>
-            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;">
-              <div class="mkt-resource-card">
-                <div class="mkt-resource-icon" style="background:#e0f2fe; color:#0284c7;">⚡</div>
-                <div class="mkt-resource-body">
-                  <h3>Unit Converter</h3>
-                  <p>Convert between metric and imperial units for length, weight, temperature, pressure, and more.</p>
-                </div>
+        <!-- Design Tools -->
+        <div style="margin-bottom:36px;">
+          <h2
+            style="font-size:16px; font-weight:700; color:#0e7490; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:0.5px;">
+            Design Tools</h2>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;">
+            <div class="mkt-resource-card">
+              <div class="mkt-resource-icon" style="background:#e0f2fe; color:#0284c7;">⚡</div>
+              <div class="mkt-resource-body">
+                <h3>Unit Converter</h3>
+                <p>Convert between metric and imperial units for length, weight, temperature, pressure, and more.</p>
               </div>
-              <div class="mkt-resource-card">
-                <div class="mkt-resource-icon" style="background:#fef3c7; color:#d97706;">🎨</div>
-                <div class="mkt-resource-body">
-                  <h3>Resistor Colour Code Calculator</h3>
-                  <p>Decode 4, 5, or 6-band resistor colour codes to find resistance values and tolerances.</p>
-                </div>
+            </div>
+            <div class="mkt-resource-card">
+              <div class="mkt-resource-icon" style="background:#fef3c7; color:#d97706;">🎨</div>
+              <div class="mkt-resource-body">
+                <h3>Resistor Colour Code Calculator</h3>
+                <p>Decode 4, 5, or 6-band resistor colour codes to find resistance values and tolerances.</p>
               </div>
-              <div class="mkt-resource-card">
-                <div class="mkt-resource-icon" style="background:#dcfce7; color:#16a34a;">📐</div>
-                <div class="mkt-resource-body">
-                  <h3>PCB Trace Width Calculator</h3>
-                  <p>Calculate optimal trace widths based on current, copper weight, and temperature rise (IPC-2221).</p>
-                </div>
+            </div>
+            <div class="mkt-resource-card">
+              <div class="mkt-resource-icon" style="background:#dcfce7; color:#16a34a;">📐</div>
+              <div class="mkt-resource-body">
+                <h3>PCB Trace Width Calculator</h3>
+                <p>Calculate optimal trace widths based on current, copper weight, and temperature rise (IPC-2221).</p>
               </div>
-              <div class="mkt-resource-card">
-                <div class="mkt-resource-icon" style="background:#f3e8ff; color:#9333ea;">🔧</div>
-                <div class="mkt-resource-body">
-                  <h3>Tolerance Stack-Up Analyser</h3>
-                  <p>Statistical and worst-case tolerance analysis for mechanical assemblies and fits.</p>
-                </div>
+            </div>
+            <div class="mkt-resource-card">
+              <div class="mkt-resource-icon" style="background:#f3e8ff; color:#9333ea;">🔧</div>
+              <div class="mkt-resource-body">
+                <h3>Tolerance Stack-Up Analyser</h3>
+                <p>Statistical and worst-case tolerance analysis for mechanical assemblies and fits.</p>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Reference Data -->
-          <div style="margin-bottom:36px;">
-            <h2 style="font-size:16px; font-weight:700; color:#0e7490; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:0.5px;">Reference Data</h2>
-            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;">
-              <div class="mkt-resource-card">
-                <div class="mkt-resource-icon" style="background:#e0f2fe; color:#0369a1;">🧪</div>
-                <div class="mkt-resource-body">
-                  <h3>Material Selector</h3>
-                  <p>Compare mechanical properties, costs, and machinability of metals, polymers, and composites.</p>
-                </div>
+        <!-- Reference Data -->
+        <div style="margin-bottom:36px;">
+          <h2
+            style="font-size:16px; font-weight:700; color:#0e7490; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:0.5px;">
+            Reference Data</h2>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;">
+            <div class="mkt-resource-card">
+              <div class="mkt-resource-icon" style="background:#e0f2fe; color:#0369a1;">🧪</div>
+              <div class="mkt-resource-body">
+                <h3>Material Selector</h3>
+                <p>Compare mechanical properties, costs, and machinability of metals, polymers, and composites.</p>
               </div>
-              <div class="mkt-resource-card">
-                <div class="mkt-resource-icon" style="background:#fef3c7; color:#b45309;">✨</div>
-                <div class="mkt-resource-body">
-                  <h3>Surface Finish Guide</h3>
-                  <p>Ra/Rz surface roughness standards, finish symbols, and common manufacturing process capabilities.</p>
-                </div>
+            </div>
+            <div class="mkt-resource-card">
+              <div class="mkt-resource-icon" style="background:#fef3c7; color:#b45309;">✨</div>
+              <div class="mkt-resource-body">
+                <h3>Surface Finish Guide</h3>
+                <p>Ra/Rz surface roughness standards, finish symbols, and common manufacturing process capabilities.</p>
               </div>
-              <div class="mkt-resource-card">
-                <div class="mkt-resource-icon" style="background:#dcfce7; color:#15803d;">🔩</div>
-                <div class="mkt-resource-body">
-                  <h3>Thread Size Reference</h3>
-                  <p>Metric, UNC, UNF thread dimensions, tap drill sizes, and common fastener specifications.</p>
-                </div>
+            </div>
+            <div class="mkt-resource-card">
+              <div class="mkt-resource-icon" style="background:#dcfce7; color:#15803d;">🔩</div>
+              <div class="mkt-resource-body">
+                <h3>Thread Size Reference</h3>
+                <p>Metric, UNC, UNF thread dimensions, tap drill sizes, and common fastener specifications.</p>
               </div>
-              <div class="mkt-resource-card">
-                <div class="mkt-resource-icon" style="background:#fee2e2; color:#dc2626;">📏</div>
-                <div class="mkt-resource-body">
-                  <h3>Standard Fits &amp; Tolerances (ISO 286)</h3>
-                  <p>Hole and shaft basis fits, IT grades, and dimensional tolerance lookup tables.</p>
-                </div>
+            </div>
+            <div class="mkt-resource-card">
+              <div class="mkt-resource-icon" style="background:#fee2e2; color:#dc2626;">📏</div>
+              <div class="mkt-resource-body">
+                <h3>Standard Fits &amp; Tolerances (ISO 286)</h3>
+                <p>Hole and shaft basis fits, IT grades, and dimensional tolerance lookup tables.</p>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Templates & Downloads -->
-          <div style="margin-bottom:36px;">
-            <h2 style="font-size:16px; font-weight:700; color:#0e7490; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:0.5px;">Templates &amp; Downloads</h2>
-            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;">
-              <div class="mkt-resource-card">
-                <div class="mkt-resource-icon" style="background:#e0e7ff; color:#4338ca;">📄</div>
-                <div class="mkt-resource-body">
-                  <h3>RFQ Template</h3>
-                  <p>Standardised request-for-quotation template for custom manufacturing projects.</p>
-                </div>
+        <!-- Templates & Downloads -->
+        <div style="margin-bottom:36px;">
+          <h2
+            style="font-size:16px; font-weight:700; color:#0e7490; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:0.5px;">
+            Templates &amp; Downloads</h2>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;">
+            <div class="mkt-resource-card">
+              <div class="mkt-resource-icon" style="background:#e0e7ff; color:#4338ca;">📄</div>
+              <div class="mkt-resource-body">
+                <h3>RFQ Template</h3>
+                <p>Standardised request-for-quotation template for custom manufacturing projects.</p>
               </div>
-              <div class="mkt-resource-card">
-                <div class="mkt-resource-icon" style="background:#fef3c7; color:#d97706;">📋</div>
-                <div class="mkt-resource-body">
-                  <h3>Bill of Materials (BOM) Template</h3>
-                  <p>Excel/CSV BOM template with columns for MPN, quantity, supplier, and cost roll-up.</p>
-                </div>
+            </div>
+            <div class="mkt-resource-card">
+              <div class="mkt-resource-icon" style="background:#fef3c7; color:#d97706;">📋</div>
+              <div class="mkt-resource-body">
+                <h3>Bill of Materials (BOM) Template</h3>
+                <p>Excel/CSV BOM template with columns for MPN, quantity, supplier, and cost roll-up.</p>
               </div>
-              <div class="mkt-resource-card">
-                <div class="mkt-resource-icon" style="background:#dcfce7; color:#16a34a;">✅</div>
-                <div class="mkt-resource-body">
-                  <h3>Quality Inspection Checklist</h3>
-                  <p>Pre-shipment and incoming quality inspection checklists for manufactured components.</p>
-                </div>
+            </div>
+            <div class="mkt-resource-card">
+              <div class="mkt-resource-icon" style="background:#dcfce7; color:#16a34a;">✅</div>
+              <div class="mkt-resource-body">
+                <h3>Quality Inspection Checklist</h3>
+                <p>Pre-shipment and incoming quality inspection checklists for manufactured components.</p>
               </div>
-              <div class="mkt-resource-card">
-                <div class="mkt-resource-icon" style="background:#f3e8ff; color:#7c3aed;">📐</div>
-                <div class="mkt-resource-body">
-                  <h3>DFM Guidelines</h3>
-                  <p>Design-for-manufacturing best practices for injection molding, CNC, sheet metal, and die casting.</p>
-                </div>
+            </div>
+            <div class="mkt-resource-card">
+              <div class="mkt-resource-icon" style="background:#f3e8ff; color:#7c3aed;">📐</div>
+              <div class="mkt-resource-body">
+                <h3>DFM Guidelines</h3>
+                <p>Design-for-manufacturing best practices for injection molding, CNC, sheet metal, and die casting.</p>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- ═══════════════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════════
            REQUEST A QUOTE PAGE
            ═══════════════════════════════════════════════════════════ -->
-      <div id="mkt-rfq-layout" class="hidden" style="display:flex; flex-direction:column; flex:1; min-height:0; overflow-y:auto; background:#f4f6f8;">
-        <div style="max-width:900px; margin:0 auto; padding:32px 24px;">
-          <div style="margin-bottom:32px;">
-            <h1 style="font-size:28px; font-weight:700; color:#111; margin:0 0 8px 0;">Request a Quote</h1>
-            <p style="font-size:14px; color:#666; margin:0;">Need specialised pricing beyond our standard catalogue? Submit a formal RFQ for long-term contracts, high-volume orders, custom modifications, or blanket purchase agreements.</p>
+    <div id="mkt-rfq-layout" class="hidden"
+      style="display:flex; flex-direction:column; flex:1; min-height:0; overflow-y:auto; background:#f4f6f8;">
+      <div style="max-width:900px; margin:0 auto; padding:32px 24px;">
+        <div style="margin-bottom:32px;">
+          <h1 style="font-size:28px; font-weight:700; color:#111; margin:0 0 8px 0;">Request a Quote</h1>
+          <p style="font-size:14px; color:#666; margin:0;">Need specialised pricing beyond our standard catalogue?
+            Submit a formal RFQ for long-term contracts, high-volume orders, custom modifications, or blanket purchase
+            agreements.</p>
+        </div>
+
+        <form id="mkt-rfq-form" style="display:flex; flex-direction:column; gap:0;">
+          <!-- Quote Type -->
+          <div style="background:#fff; border-radius:4px; padding:24px; margin-bottom:2px;">
+            <h2 style="font-size:16px; font-weight:700; color:#111; margin:0 0 16px 0;">Quote Type</h2>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <label class="mkt-rfq-type-option" style="border-color:#007185; background:#f8fdfd;">
+                <input type="radio" name="rfq-type" value="high-volume" checked style="accent-color:#007185;">
+                <div>
+                  <div style="font-weight:600; color:#111;">High-Volume Order</div>
+                  <div style="font-size:12px; color:#666;">10,000+ units with volume discount pricing</div>
+                </div>
+              </label>
+              <label class="mkt-rfq-type-option">
+                <input type="radio" name="rfq-type" value="long-term" style="accent-color:#007185;">
+                <div>
+                  <div style="font-weight:600; color:#111;">Long-Term Contract</div>
+                  <div style="font-size:12px; color:#666;">12–36 month supply agreement with locked pricing</div>
+                </div>
+              </label>
+              <label class="mkt-rfq-type-option">
+                <input type="radio" name="rfq-type" value="custom-part" style="accent-color:#007185;">
+                <div>
+                  <div style="font-weight:600; color:#111;">Custom / Modified Part</div>
+                  <div style="font-size:12px; color:#666;">Modified specs, custom branding, or bespoke tooling</div>
+                </div>
+              </label>
+              <label class="mkt-rfq-type-option">
+                <input type="radio" name="rfq-type" value="blanket-po" style="accent-color:#007185;">
+                <div>
+                  <div style="font-weight:600; color:#111;">Blanket Purchase Order</div>
+                  <div style="font-size:12px; color:#666;">Scheduled releases against a pre-agreed PO commitment</div>
+                </div>
+              </label>
+            </div>
           </div>
 
-          <form id="mkt-rfq-form" style="display:flex; flex-direction:column; gap:0;">
-            <!-- Quote Type -->
-            <div style="background:#fff; border-radius:4px; padding:24px; margin-bottom:2px;">
-              <h2 style="font-size:16px; font-weight:700; color:#111; margin:0 0 16px 0;">Quote Type</h2>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <label class="mkt-rfq-type-option" style="border-color:#007185; background:#f8fdfd;">
-                  <input type="radio" name="rfq-type" value="high-volume" checked style="accent-color:#007185;">
-                  <div>
-                    <div style="font-weight:600; color:#111;">High-Volume Order</div>
-                    <div style="font-size:12px; color:#666;">10,000+ units with volume discount pricing</div>
-                  </div>
-                </label>
-                <label class="mkt-rfq-type-option">
-                  <input type="radio" name="rfq-type" value="long-term" style="accent-color:#007185;">
-                  <div>
-                    <div style="font-weight:600; color:#111;">Long-Term Contract</div>
-                    <div style="font-size:12px; color:#666;">12–36 month supply agreement with locked pricing</div>
-                  </div>
-                </label>
-                <label class="mkt-rfq-type-option">
-                  <input type="radio" name="rfq-type" value="custom-part" style="accent-color:#007185;">
-                  <div>
-                    <div style="font-weight:600; color:#111;">Custom / Modified Part</div>
-                    <div style="font-size:12px; color:#666;">Modified specs, custom branding, or bespoke tooling</div>
-                  </div>
-                </label>
-                <label class="mkt-rfq-type-option">
-                  <input type="radio" name="rfq-type" value="blanket-po" style="accent-color:#007185;">
-                  <div>
-                    <div style="font-weight:600; color:#111;">Blanket Purchase Order</div>
-                    <div style="font-size:12px; color:#666;">Scheduled releases against a pre-agreed PO commitment</div>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <!-- Product Details -->
-            <div style="background:#fff; border-radius:4px; padding:24px; margin-bottom:2px;">
-              <h2 style="font-size:16px; font-weight:700; color:#111; margin:0 0 16px 0;">Product Details</h2>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-                <div>
-                  <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Part Number / MPN</label>
-                  <input type="text" id="rfq-mpn" placeholder="e.g. ATMEGA328P-AU"
-                    style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
-                </div>
-                <div>
-                  <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Product Description</label>
-                  <input type="text" id="rfq-desc" placeholder="Brief description of the component"
-                    style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
-                </div>
-                <div>
-                  <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Target Quantity</label>
-                  <input type="number" id="rfq-qty" placeholder="e.g. 50000"
-                    style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
-                </div>
-                <div>
-                  <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Target Unit Price (USD)</label>
-                  <input type="text" id="rfq-target-price" placeholder="e.g. $0.85"
-                    style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
-                </div>
-                <div>
-                  <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Required Delivery Date</label>
-                  <input type="date" id="rfq-delivery-date"
-                    style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
-                </div>
-                <div>
-                  <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Preferred Manufacturer</label>
-                  <input type="text" id="rfq-mfg" placeholder="Any or specific"
-                    style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
-                </div>
-              </div>
-            </div>
-
-            <!-- Attachments -->
-            <div style="background:#fff; border-radius:4px; padding:24px; margin-bottom:2px;">
-              <h2 style="font-size:16px; font-weight:700; color:#111; margin:0 0 16px 0;">Attachments</h2>
-              <div style="border:2px dashed #d1d5db; border-radius:8px; padding:32px; text-align:center; cursor:pointer; transition:border-color 0.2s;"
-                onmouseover="this.style.borderColor='#007185'" onmouseout="this.style.borderColor='#d1d5db'"
-                onclick="document.getElementById('rfq-file-input').click()">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5" style="margin-bottom:8px;">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
-                <div style="font-size:14px; color:#333; font-weight:600;">Drag & drop files here, or click to browse</div>
-                <div style="font-size:12px; color:#888; margin-top:4px;">Accepts PDF, STEP, IGES, DWG, DXF (max 25MB each)</div>
-                <input type="file" id="rfq-file-input" multiple accept=".pdf,.step,.stp,.iges,.igs,.dwg,.dxf,.xlsx,.csv" style="display:none;">
-              </div>
-            </div>
-
-            <!-- Additional Requirements -->
-            <div style="background:#fff; border-radius:4px; padding:24px; margin-bottom:2px;">
-              <h2 style="font-size:16px; font-weight:700; color:#111; margin:0 0 16px 0;">Additional Requirements</h2>
-              <div style="margin-bottom:16px;">
-                <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Certifications Required</label>
-                <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                  <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#333; cursor:pointer;">
-                    <input type="checkbox" name="rfq-cert" value="ISO9001" style="accent-color:#007185;"> ISO 9001
-                  </label>
-                  <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#333; cursor:pointer;">
-                    <input type="checkbox" name="rfq-cert" value="IATF16949" style="accent-color:#007185;"> IATF 16949
-                  </label>
-                  <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#333; cursor:pointer;">
-                    <input type="checkbox" name="rfq-cert" value="AS9100" style="accent-color:#007185;"> AS9100
-                  </label>
-                  <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#333; cursor:pointer;">
-                    <input type="checkbox" name="rfq-cert" value="RoHS" style="accent-color:#007185;"> RoHS / REACH
-                  </label>
-                  <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#333; cursor:pointer;">
-                    <input type="checkbox" name="rfq-cert" value="UL" style="accent-color:#007185;"> UL Listed
-                  </label>
-                </div>
+          <!-- Product Details -->
+          <div style="background:#fff; border-radius:4px; padding:24px; margin-bottom:2px;">
+            <h2 style="font-size:16px; font-weight:700; color:#111; margin:0 0 16px 0;">Product Details</h2>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+              <div>
+                <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Part
+                  Number / MPN</label>
+                <input type="text" id="rfq-mpn" placeholder="e.g. ATMEGA328P-AU"
+                  style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
               </div>
               <div>
-                <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Special Terms or Notes</label>
-                <textarea id="rfq-notes" rows="4" placeholder="Any additional requirements, special packaging, NDA needs, consignment terms, etc."
-                  style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit; resize:vertical;"></textarea>
+                <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Product
+                  Description</label>
+                <input type="text" id="rfq-desc" placeholder="Brief description of the component"
+                  style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Target
+                  Quantity</label>
+                <input type="number" id="rfq-qty" placeholder="e.g. 50000"
+                  style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Target
+                  Unit Price (USD)</label>
+                <input type="text" id="rfq-target-price" placeholder="e.g. $0.85"
+                  style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Required
+                  Delivery Date</label>
+                <input type="date" id="rfq-delivery-date"
+                  style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Preferred
+                  Manufacturer</label>
+                <input type="text" id="rfq-mfg" placeholder="Any or specific"
+                  style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit;">
               </div>
             </div>
+          </div>
 
-            <!-- Submit -->
-            <div style="background:#fff; border-radius:4px; padding:24px; display:flex; align-items:center; justify-content:space-between;">
-              <div style="font-size:13px; color:#666;">All quotes are reviewed within 1–2 business days.</div>
-              <button type="submit" id="mkt-rfq-submit"
-                style="background:#007185; color:#fff; border:none; border-radius:4px; padding:12px 32px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap; box-shadow:0 2px 8px rgba(0,113,133,0.25); transition:background 0.2s;"
-                onmouseover="this.style.background='#005f6b'" onmouseout="this.style.background='#007185'">
-                Submit RFQ
-              </button>
+          <!-- Attachments -->
+          <div style="background:#fff; border-radius:4px; padding:24px; margin-bottom:2px;">
+            <h2 style="font-size:16px; font-weight:700; color:#111; margin:0 0 16px 0;">Attachments</h2>
+            <div
+              style="border:2px dashed #d1d5db; border-radius:8px; padding:32px; text-align:center; cursor:pointer; transition:border-color 0.2s;"
+              onmouseover="this.style.borderColor='#007185'" onmouseout="this.style.borderColor='#d1d5db'"
+              onclick="document.getElementById('rfq-file-input').click()">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5"
+                style="margin-bottom:8px;">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              <div style="font-size:14px; color:#333; font-weight:600;">Drag & drop files here, or click to browse</div>
+              <div style="font-size:12px; color:#888; margin-top:4px;">Accepts PDF, STEP, IGES, DWG, DXF (max 25MB each)
+              </div>
+              <input type="file" id="rfq-file-input" multiple accept=".pdf,.step,.stp,.iges,.igs,.dwg,.dxf,.xlsx,.csv"
+                style="display:none;">
             </div>
-          </form>
-        </div>
+          </div>
+
+          <!-- Additional Requirements -->
+          <div style="background:#fff; border-radius:4px; padding:24px; margin-bottom:2px;">
+            <h2 style="font-size:16px; font-weight:700; color:#111; margin:0 0 16px 0;">Additional Requirements</h2>
+            <div style="margin-bottom:16px;">
+              <label
+                style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Certifications
+                Required</label>
+              <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#333; cursor:pointer;">
+                  <input type="checkbox" name="rfq-cert" value="ISO9001" style="accent-color:#007185;"> ISO 9001
+                </label>
+                <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#333; cursor:pointer;">
+                  <input type="checkbox" name="rfq-cert" value="IATF16949" style="accent-color:#007185;"> IATF 16949
+                </label>
+                <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#333; cursor:pointer;">
+                  <input type="checkbox" name="rfq-cert" value="AS9100" style="accent-color:#007185;"> AS9100
+                </label>
+                <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#333; cursor:pointer;">
+                  <input type="checkbox" name="rfq-cert" value="RoHS" style="accent-color:#007185;"> RoHS / REACH
+                </label>
+                <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#333; cursor:pointer;">
+                  <input type="checkbox" name="rfq-cert" value="UL" style="accent-color:#007185;"> UL Listed
+                </label>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:4px;">Special
+                Terms or Notes</label>
+              <textarea id="rfq-notes" rows="4"
+                placeholder="Any additional requirements, special packaging, NDA needs, consignment terms, etc."
+                style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:3px; font-size:14px; box-sizing:border-box; font-family:inherit; resize:vertical;"></textarea>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div
+            style="background:#fff; border-radius:4px; padding:24px; display:flex; align-items:center; justify-content:space-between;">
+            <div style="font-size:13px; color:#666;">All quotes are reviewed within 1–2 business days.</div>
+            <button type="submit" id="mkt-rfq-submit"
+              style="background:#007185; color:#fff; border:none; border-radius:4px; padding:12px 32px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap; box-shadow:0 2px 8px rgba(0,113,133,0.25); transition:background 0.2s;"
+              onmouseover="this.style.background='#005f6b'" onmouseout="this.style.background='#007185'">
+              Submit RFQ
+            </button>
+          </div>
+        </form>
       </div>
+    </div>
 
     </div>
 
@@ -3239,13 +3395,22 @@
           <div>
             <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Legal</h4>
             <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
-              <li><a href="data-protection.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Data Protection</a></li>
-              <li><a href="email-security.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Email Security</a></li>
-              <li><a href="privacy-policy.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Privacy Policy</a></li>
-              <li><a href="website-terms.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Website Terms</a></li>
-              <li><a href="conditions-of-sale.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Conditions of Sale</a></li>
-              <li><a href="cookie-policy.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Cookie Policy</a></li>
-              <li><a href="nda.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">NDA</a></li>
+              <li><a href="data-protection.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Data Protection</a>
+              </li>
+              <li><a href="email-security.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Email Security</a></li>
+              <li><a href="privacy-policy.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Privacy Policy</a></li>
+              <li><a href="website-terms.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Website Terms</a></li>
+              <li><a href="conditions-of-sale.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Conditions of Sale</a>
+              </li>
+              <li><a href="cookie-policy.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Cookie Policy</a></li>
+              <li><a href="nda.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">NDA</a></li>
             </ul>
           </div>
         </div>
@@ -3262,8 +3427,10 @@
           <li><strong>USA:</strong> 500 Terry Francine Street, San Francisco, CA 94158</li>
         </ul>
         <div style="margin-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
-          <p style="font-size: 11px; color: var(--color-steel-400); margin-bottom: 8px;">AtlasDT is a trademark and a brand that belongs to Paniani Products Pty Ltd</p>
-          <img src="/logos/paniani-logo.png" alt="Paniani Products" class="paniani-footer-logo" style="height: 16px; width: auto; opacity: 0.8; vertical-align: middle;">
+          <p style="font-size: 11px; color: var(--color-steel-400); margin-bottom: 8px;">AtlasDT is a trademark and a
+            brand that belongs to Paniani Products Pty Ltd</p>
+          <img src="/logos/paniani-logo.png" alt="Paniani Products" class="paniani-footer-logo"
+            style="height: 16px; width: auto; opacity: 0.8; vertical-align: middle;">
         </div>
       </div>
 
@@ -3384,9 +3551,11 @@
               <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars:
                 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
             </div>
-                        <div class="auth-input-group" style="display: flex; gap: 10px; align-items: start; margin-top: 10px; margin-bottom: 15px;">
+            <div class="auth-input-group"
+              style="display: flex; gap: 10px; align-items: start; margin-top: 10px; margin-bottom: 15px;">
               <input type="checkbox" id="signup-marketing" style="margin-top: 4px;">
-              <label for="signup-marketing" style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
+              <label for="signup-marketing"
+                style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
                 I would like to receive newsletters, promotions, and updates from Atlas DT.
               </label>
             </div>
@@ -3476,54 +3645,85 @@
   </script>
 
 
-    <script type="text/javascript" src="https://res.public.onecdn.static.microsoft/customerconnect/v1/7dttl/init.js" id="chatbot" environmentId="016ca71b-616b-e187-b02d-3fcb9c6568c2" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://res.public.onecdn.static.microsoft/customerconnect/v1/7dttl/init.js"
+    id="chatbot" environmentId="016ca71b-616b-e187-b02d-3fcb9c6568c2" crossorigin="anonymous"></script>
   <!-- Shipping Address Modal -->
-  <div id="shipping-address-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 10000; opacity: 1; pointer-events: auto;">
-    <div class="modal-content" style="background: var(--color-bg); width: 90%; max-width: 500px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
-      <div style="padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+  <div id="shipping-address-modal" class="hidden"
+    style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 10000; opacity: 1; pointer-events: auto;">
+    <div class="modal-content"
+      style="background: var(--color-bg); width: 90%; max-width: 500px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+      <div
+        style="padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
         <h3 style="margin: 0; font-size: 18px; font-weight: 600; color: var(--color-white);">Shipping Address</h3>
-        <button id="close-shipping-modal" style="background: transparent; border: none; color: var(--color-steel-400); cursor: pointer; font-size: 24px; line-height: 1;">&times;</button>
+        <button id="close-shipping-modal"
+          style="background: transparent; border: none; color: var(--color-steel-400); cursor: pointer; font-size: 24px; line-height: 1;">&times;</button>
       </div>
       <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; max-height: 70vh;">
         <!-- Fields -->
         <div class="rfq-field" style="margin-bottom:0;">
-          <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Company Name (Optional)</label>
-          <input type="text" id="ship-modal-company" placeholder="e.g. Acme Corp" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+          <label
+            style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Company
+            Name (Optional)</label>
+          <input type="text" id="ship-modal-company" placeholder="e.g. Acme Corp"
+            style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
         </div>
         <div class="rfq-field" style="margin-bottom:0;">
-          <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Attention To</label>
-          <input type="text" id="ship-modal-attention" placeholder="Contact Name" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+          <label
+            style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Attention
+            To</label>
+          <input type="text" id="ship-modal-attention" placeholder="Contact Name"
+            style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
         </div>
         <div class="rfq-field" style="margin-bottom:0;">
-          <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Phone Number</label>
-          <input type="text" id="ship-modal-phone" placeholder="+1 (555) 000-0000" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+          <label
+            style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Phone
+            Number</label>
+          <input type="text" id="ship-modal-phone" placeholder="+1 (555) 000-0000"
+            style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
         </div>
         <div class="rfq-field" style="margin-bottom:0;">
-          <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Address Line 1</label>
-          <input type="text" id="ship-modal-address1" placeholder="Street address, P.O. box, etc." style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+          <label
+            style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Address
+            Line 1</label>
+          <input type="text" id="ship-modal-address1" placeholder="Street address, P.O. box, etc."
+            style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
         </div>
         <div class="rfq-field" style="margin-bottom:0;">
-          <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Address Line 2 (Optional)</label>
-          <input type="text" id="ship-modal-address2" placeholder="Apartment, suite, unit, building, floor, etc." style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+          <label
+            style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Address
+            Line 2 (Optional)</label>
+          <input type="text" id="ship-modal-address2" placeholder="Apartment, suite, unit, building, floor, etc."
+            style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
           <div class="rfq-field" style="margin-bottom:0;">
-            <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">City</label>
-            <input type="text" id="ship-modal-city" placeholder="City" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+            <label
+              style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">City</label>
+            <input type="text" id="ship-modal-city" placeholder="City"
+              style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
           </div>
           <div class="rfq-field" style="margin-bottom:0;">
-            <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">State / Province</label>
-            <input type="text" id="ship-modal-province" placeholder="State/Province" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+            <label
+              style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">State
+              / Province</label>
+            <input type="text" id="ship-modal-province" placeholder="State/Province"
+              style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
           </div>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
           <div class="rfq-field" style="margin-bottom:0;">
-            <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Postcode / ZIP</label>
-            <input type="text" id="ship-modal-postcode" placeholder="ZIP Code" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+            <label
+              style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Postcode
+              / ZIP</label>
+            <input type="text" id="ship-modal-postcode" placeholder="ZIP Code"
+              style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
           </div>
           <div class="rfq-field" style="margin-bottom:0;">
-            <label style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Destination Region</label>
-            <select id="ship-modal-country" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+            <label
+              style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Destination
+              Region</label>
+            <select id="ship-modal-country"
+              style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
               <option value="north_america">North America</option>
               <option value="europe">Europe</option>
               <option value="oceania">Oceania / Australia</option>
@@ -3533,9 +3733,13 @@
           </div>
         </div>
       </div>
-      <div style="padding: 16px 24px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: flex-end; gap: 12px; background: rgba(0,0,0,0.2);">
-        <button id="cancel-shipping-modal" style="padding: 8px 16px; background: transparent; border: 1px solid var(--color-steel-600); color: var(--color-steel-200); border-radius: 8px; cursor: pointer; font-weight: 600;">Cancel</button>
-        <button id="save-shipping-modal" style="padding: 8px 16px; background: var(--color-electric); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Save Address</button>
+      <div
+        style="padding: 16px 24px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: flex-end; gap: 12px; background: rgba(0,0,0,0.2);">
+        <button id="cancel-shipping-modal"
+          style="padding: 8px 16px; background: transparent; border: 1px solid var(--color-steel-600); color: var(--color-steel-200); border-radius: 8px; cursor: pointer; font-weight: 600;">Cancel</button>
+        <button id="save-shipping-modal"
+          style="padding: 8px 16px; background: var(--color-electric); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Save
+          Address</button>
       </div>
     </div>
   </div>
@@ -3546,4 +3750,5 @@
     }
   </style>
 </body>
+
 </html>

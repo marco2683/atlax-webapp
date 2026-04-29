@@ -13,6 +13,7 @@
 
 import { analyzeFile, renderThumbnail } from './geometry-analyzer.js';
 import { calculateQuote, getMaterialsForTech, getFinishesForTech, techHasTooling } from './quote-engine.js';
+import { getActivePricingConfig } from '../utils/pricing-loader.js';
 import { supabase } from '../utils/supabaseClient.js';
 import { getCurrentUser } from '../services/auth.js';
 import JSZip from 'jszip';
@@ -25,6 +26,7 @@ let hasQuotedOnce = false;
 
 // Accumulated quotes for the right panel
 const quotedParts = new Map(); // partIdx → { partName, quote, config }
+let shippingData = {}; // Shipping address data (hoisted for access by calculateAndDisplayQuote)
 
 // Bulk upload file tracking
 let bulkFiles = []; // Array of actual File objects for upload
@@ -66,33 +68,49 @@ function createPartPanelHTML(partIdx) {
   return `
     <details class="rfq-part-card-container rfq-part-card needs-tech-selection" data-part="${partIdx}" open>
       <summary>
-        <div style="display: flex; gap: 16px; align-items: center; width: 100%;">
-          <!-- Small Thumbnail -->
+        <div style="display: flex; gap: 12px; align-items: flex-start; width: 100%;">
+          <!-- Larger Thumbnail -->
           <div class="rfq-part-thumb-box rfq-part-thumb-wrapper" style="flex-shrink: 0; position: relative;">
             <div class="rfq-results-placeholder" data-part="${partIdx}" style="text-align: center; color: var(--color-steel-400, #94a3b8); width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
             </div>
             <div class="rfq-results hidden" data-part="${partIdx}" style="position:absolute; top:0; left:0; width:100%; height:100%; display: flex; align-items: center; justify-content: center;">
               <div class="rfq-results__thumbnail" data-part="${partIdx}" style="width:100%; height:100%; display: flex; align-items: center; justify-content: center;"></div>
             </div>
           </div>
           
-          <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
-            <input type="text" class="rfq-part-name rfq-part-name-input" data-part="${partIdx}" placeholder="Part Name (e.g. Housing Top...)" value="Part ${partIdx + 1}" onclick="event.stopPropagation();" onkeydown="event.stopPropagation();" style="font-size: 14px; font-weight: 700; padding: 6px 10px; border-radius:6px; width: 100%; max-width: 400px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: inherit; transition: all 0.2s;" />
-            <div style="font-size: 11px; color: var(--color-steel-400, #94a3b8); display: flex; gap: 12px; align-items: center; padding-left: 2px;">
-              <span>Tech: <span class="summary-tech" data-part="${partIdx}" style="color: #f59e0b; font-weight: 600;">Required</span></span>
-              <span>Mat: <span class="summary-mat" data-part="${partIdx}" style="color: #f59e0b; font-weight: 600;">Required</span></span>
-              <span>Qty: <span class="summary-qty" data-part="${partIdx}" style="font-weight: 600;">1</span></span>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+            <!-- Row 1: Full-width title -->
+            <input type="text" class="rfq-part-name rfq-part-name-input" data-part="${partIdx}" placeholder="Part Name (e.g. Housing Top...)" value="Part ${partIdx + 1}" onclick="event.stopPropagation();" onkeydown="event.stopPropagation();" style="font-size: 14px; font-weight: 700; padding: 5px 10px; border-radius:6px; width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: inherit; transition: all 0.2s;" />
               
-              <!-- Warning Message if incomplete -->
-              <span class="rfq-part-status-msg" data-part="${partIdx}" style="color: #f59e0b; margin-left: auto; display: flex; align-items: center; gap: 4px;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                Missing minimum info
-              </span>
+            <!-- Row 2: 4 Geometry Stats in 1x4 grid -->
+            <div class="rfq-results hidden" data-part="${partIdx}" style="background: transparent; border: none; padding: 0; margin: 5px 0 0 0;">
+              <div class="rfq-results__grid rfq-results__grid--inline" data-part="${partIdx}" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; font-size: 10px; color: var(--color-steel-400, #94a3b8); background: transparent; padding: 0; border: none; width: 100%;">
+                <div class="rfq-stat" style="display: flex; flex-direction: column; gap: 1px;"><span class="rfq-stat__label" style="font-weight:700; font-size: 8px; text-transform: uppercase;">Dimensions</span><span class="rfq-stat__value" data-stat="dimensions" style="font-weight: 500; color: var(--color-text, inherit); font-size: 9px;">—</span></div>
+                <div class="rfq-stat" style="display: flex; flex-direction: column; gap: 1px;"><span class="rfq-stat__label" style="font-weight:700; font-size: 8px; text-transform: uppercase;">Volume</span><span class="rfq-stat__value" data-stat="volume" style="font-weight: 500; color: var(--color-text, inherit); font-size: 9px;">—</span></div>
+                <div class="rfq-stat" style="display: flex; flex-direction: column; gap: 1px;"><span class="rfq-stat__label" style="font-weight:700; font-size: 8px; text-transform: uppercase;">Est. Weight</span><span class="rfq-stat__value rfq-stat-weight" data-part="${partIdx}" style="font-weight: 500; color: var(--color-text, inherit); font-size: 9px;">—</span></div>
+                <div class="rfq-stat" style="display: flex; flex-direction: column; gap: 1px;"><span class="rfq-stat__label" style="font-weight:700; font-size: 8px; text-transform: uppercase;">Est. Process Time</span><span class="rfq-stat__value rfq-stat-time" data-part="${partIdx}" style="font-weight: 600; color: var(--color-electric, #3b82f6); font-size: 9px;">—</span></div>
+              </div>
+            </div>
+
+            <!-- Row 3: Status info + complete tick, all one line -->
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <div style="font-size: 11px; color: var(--color-steel-400, #94a3b8); display: flex; gap: 10px; align-items: center;">
+                <span>Tech: <span class="summary-tech" data-part="${partIdx}" style="color: #f59e0b; font-weight: 600;">Required</span></span>
+                <span>Mat: <span class="summary-mat" data-part="${partIdx}" style="color: #f59e0b; font-weight: 600;">Required</span></span>
+                <span>Qty: <span class="summary-qty" data-part="${partIdx}" style="font-weight: 600;">1</span></span>
+                <span class="rfq-part-status-msg" data-part="${partIdx}" style="color: #f59e0b; display: flex; align-items: center; gap: 4px;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  Missing minimum info
+                </span>
+              </div>
+              <div class="rfq-results hidden" data-part="${partIdx}" style="display: flex; align-items: center; gap: 6px; background: transparent; border: none; padding: 0; margin: 0; border-radius: 0;">
+                <div class="rfq-results__status" data-part="${partIdx}" style="font-size: 9px; font-weight: 600; color: #10b981; line-height: 1;">Waiting for file...</div>
+              </div>
             </div>
           </div>
 
-          <div style="display: flex; align-items: center; gap: 12px; margin-left: 12px;">
+          <div style="display: flex; align-items: flex-start; gap: 8px; margin-left: 4px; padding-top: 2px;">
             <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
             <button class="rfq-part-remove" data-part="${partIdx}" title="Remove part" style="background: none; border: none; color: var(--color-steel-400, #94a3b8); cursor: pointer; padding: 4px; display: flex; align-items: center;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -103,22 +121,104 @@ function createPartPanelHTML(partIdx) {
       
       <div class="rfq-part-card-body">
         <div style="display: flex; gap: 16px; align-items: stretch; margin-bottom: 24px;">
-          <!-- Left side: Geometry -->
-          <div style="flex: 1; display: flex; flex-direction: column; justify-content: stretch;">
-            <div class="rfq-results hidden" data-part="${partIdx}" style="height: 100%; display: flex; flex-direction: column;">
-              <div class="rfq-results__grid rfq-results__grid--inline" data-part="${partIdx}" style="flex: 1; position: relative; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 12px; color: var(--color-steel-400, #94a3b8); background: rgba(0,0,0,0.1); padding: 12px 12px 28px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
-                <div class="rfq-stat" style="display: flex; flex-direction: column; gap: 2px;"><span class="rfq-stat__label" style="font-weight:700; font-size: 10px; text-transform: uppercase;">Dimensions</span><span class="rfq-stat__value" data-stat="dimensions" style="font-weight: 500; color: var(--color-text, inherit);">—</span></div>
-                <div class="rfq-stat" style="display: flex; flex-direction: column; gap: 2px;"><span class="rfq-stat__label" style="font-weight:700; font-size: 10px; text-transform: uppercase;">Volume</span><span class="rfq-stat__value" data-stat="volume" style="font-weight: 500; color: var(--color-text, inherit);">—</span></div>
-                <div class="rfq-stat" style="display: flex; flex-direction: column; gap: 2px;"><span class="rfq-stat__label" style="font-weight:700; font-size: 10px; text-transform: uppercase;">Estimated Weight</span><span class="rfq-stat__value rfq-stat-weight" data-part="${partIdx}" style="font-weight: 500; color: var(--color-text, inherit);">—</span></div>
-                <div class="rfq-stat" style="display: flex; flex-direction: column; gap: 2px;"><span class="rfq-stat__label" style="font-weight:700; font-size: 10px; text-transform: uppercase;">Est. Process Time</span><span class="rfq-stat__value rfq-stat-time" data-part="${partIdx}" style="font-weight: 600; color: var(--color-electric, #3b82f6);">—</span></div>
-                <!-- Real-time Status inside grid -->
-                <div class="rfq-results__status" data-part="${partIdx}" style="position: absolute; bottom: 8px; left: 12px; font-size: 11px; font-weight: 600; color: #10b981;">Waiting for file...</div>
+          <!-- Middle Section: Configurations -->
+          <div class="rfq-fields-col" style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
+            <!-- Row 1: Technology, Quantity & Lead Time -->
+            <div class="rfq-fields-grid" style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 0; padding: 12px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-lg);">
+              <div class="rfq-field rfq-field--accent">
+                <label style="color: var(--color-electric); font-size: 11px;">Primary Technology</label>
+                <select class="rfq-process" data-part="${partIdx}" style="font-size: 14px; font-weight: 600; padding: 10px 12px; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.05);">
+                  <option value="" disabled selected>Select Technology...</option>
+                  <option value="cnc">CNC Machining</option>
+                  <option value="vac_casting">Silicone Vacuum Casting</option>
+                  <option value="injection">Injection moulding</option>
+                  <option value="compression">Compression Moulding</option>
+                  <option value="sheet">Sheet metal</option>
+                  <option value="casting">Die-Casting</option>
+                  <option value="other">Other</option>
+                </select>
+                <input type="text" class="rfq-other-tech hidden" data-part="${partIdx}" placeholder="Please specify technology..." style="font-size: 13px; font-weight: 500; padding: 10px 14px; margin-top: 8px;" />
+              </div>
+              <div class="rfq-field">
+                <label>Quantity</label>
+                <input type="number" class="rfq-quantity" data-part="${partIdx}" value="1" min="1" style="font-size: 14px; font-weight: 600; padding: 10px 12px;" />
+              </div>
+              <div class="rfq-field">
+                <label>Lead Time</label>
+                <select class="rfq-lead-time" data-part="${partIdx}" style="padding: 10px 12px; font-size: 14px;">
+                  <option value="economy">Economy</option>
+                  <option value="standard" selected>Standard</option>
+                  <option value="express">Express</option>
+                  <option value="rush">Rush</option>
+                </select>
               </div>
             </div>
-          </div>
+
+            <!-- Row 2: Material, Color, Surface Finish -->
+            <div class="rfq-fields-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 0;">
+              <div class="rfq-field">
+                <label>Material</label>
+                <select class="rfq-material" data-part="${partIdx}">
+                  <option value="" disabled selected>Select Technology First</option>
+                </select>
+                <input type="text" class="rfq-other-material hidden" data-part="${partIdx}" placeholder="Please specify material..." style="font-size: 13px; font-weight: 500; padding: 10px 14px; margin-top: 8px;" />
+              </div>
+              <div class="rfq-field">
+                <label>Color</label>
+                <input type="text" class="rfq-color" data-part="${partIdx}" placeholder="White, RAL 7016..." />
+              </div>
+              <div class="rfq-field">
+                <label>Surface Finish</label>
+                <select class="rfq-finish" data-part="${partIdx}">
+                  <option value="as-machined">As Machined</option>
+                  <option value="bead-blast">Bead Blasted</option>
+                  <option value="anodized">Anodized</option>
+                  <option value="powder-coat">Powder Coated</option>
+                  <option value="polished">Polished</option>
+                  <option value="sandblast">Sandblasted</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Tooling Details (Dynamically shown based on Process) -->
+            <div class="rfq-tooling-details hidden" data-part="${partIdx}" style="margin-top: 0px; padding: 12px; background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.4); border-radius: var(--radius-md); transition: all 0.3s ease;">
+              <div class="rfq-tooling-status-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: #ef4444; transition: color 0.3s ease;">
+                <svg class="rfq-tooling-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <h4 class="rfq-tooling-title" style="margin: 0; font-size: 13px; font-weight: 600;">Tooling Details Required</h4>
+              </div>
+              <div class="rfq-fields-grid rfq-fields-grid--1x2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="rfq-field" style="margin-bottom: 0;">
+                  <label style="color: var(--color-steel-200);">Tooling Tier</label>
+                  <select class="rfq-tooling-type" data-part="${partIdx}">
+                    <option value="" disabled selected>Select Tier...</option>
+                    <option value="prototype">Prototype (Soft Tooling, < 1k parts)</option>
+                    <option value="low_volume">Low Volume (P20 Steel, < 10k parts)</option>
+                    <option value="high_volume">High Volume (Hardened H13, 100k+ parts)</option>
+                  </select>
+                </div>
+                <div class="rfq-field" style="margin-bottom: 0;">
+                  <label style="color: var(--color-steel-200);">Cavitation</label>
+                  <select class="rfq-tooling-cavities" data-part="${partIdx}">
+                    <option value="auto" selected>Auto-calculate</option>
+                    <option value="1">1-Cavity</option>
+                    <option value="2">2-Cavity</option>
+                    <option value="4">4-Cavity</option>
+                    <option value="8">8-Cavity</option>
+                  </select>
+                  <div class="rfq-throughput-estimate" style="font-size: 10px; color: var(--color-steel-400); margin-top: 6px; display: none;">Est. Throughput: --</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom Details / Post-Processing Notes -->
+            <div class="rfq-custom-details"><label>Additional Notes & Requirements</label>
+              <textarea class="rfq-custom-notes" data-part="${partIdx}" rows="2" placeholder="Surface finish details, coating specs, heat treatments, certifications, special requirements..."></textarea>
+            </div>
+          </div> <!-- Closes rfq-fields-col -->
           
-          <!-- Right side: 2D Upload Square -->
-          <div class="rfq-engine__upload-zone rfq-upload-zone-square" id="rfq-upload-zone-2d-${partIdx}" style="flex: 0 0 140px; margin: 0; min-height: 0; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <!-- Right side: 2D Upload Square (now aligned next to config column) -->
+          <div class="rfq-engine__upload-zone rfq-upload-zone-square" id="rfq-upload-zone-2d-${partIdx}" style="flex: 0 0 140px; margin: 0; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: auto;">
             <input type="file" class="rfq-file-input-2d" data-part="${partIdx}" multiple accept=".pdf,.dwg,.dxf,.png,.jpg,.jpeg,.doc,.docx" hidden />
             <div class="upload-icon" style="color: var(--color-steel-400, #94a3b8); margin-bottom: 6px;">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
@@ -127,107 +227,11 @@ function createPartPanelHTML(partIdx) {
             <p style="font-size: 9px; color: var(--color-steel-400, #94a3b8); margin-top: 2px;">Drawings or Docs</p>
             <div class="upload-file-list hidden" id="upload-file-list-2d-${partIdx}" style="width: 100%; margin-top: 6px;"></div>
           </div>
-        </div>
-
-        <!-- Middle Section: Configurations -->
-      <div class="rfq-fields-col" style="display: flex; flex-direction: column; gap: 12px;">
-        <!-- Row 1: Technology, Quantity & Lead Time -->
-        <div class="rfq-fields-grid" style="grid-template-columns: 2fr 1fr 1fr; margin-bottom: 0; padding: 12px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-lg);">
-          <div class="rfq-field rfq-field--accent">
-            <label style="color: var(--color-electric); font-size: 11px;">Primary Technology</label>
-            <select class="rfq-process" data-part="${partIdx}" style="font-size: 14px; font-weight: 600; padding: 10px 12px; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.05);">
-              <option value="" disabled selected>Select Technology...</option>
-              <option value="cnc">CNC Machining</option>
-              <option value="vac_casting">Silicone Vacuum Casting</option>
-              <option value="injection">Injection moulding</option>
-              <option value="compression">Compression Moulding</option>
-              <option value="sheet">Sheet metal</option>
-              <option value="casting">Die-Casting</option>
-              <option value="other">Other</option>
-            </select>
-            <input type="text" class="rfq-other-tech hidden" data-part="${partIdx}" placeholder="Please specify technology..." style="font-size: 13px; font-weight: 500; padding: 10px 14px; margin-top: 8px;" />
-          </div>
-          <div class="rfq-field">
-            <label>Quantity</label>
-            <input type="number" class="rfq-quantity" data-part="${partIdx}" value="1" min="1" style="font-size: 14px; font-weight: 600; padding: 10px 12px;" />
-          </div>
-          <div class="rfq-field">
-            <label>Lead Time</label>
-            <select class="rfq-lead-time" data-part="${partIdx}" style="padding: 10px 12px; font-size: 14px;">
-              <option value="economy">Economy</option>
-              <option value="standard" selected>Standard</option>
-              <option value="express">Express</option>
-              <option value="rush">Rush</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Row 2: Material, Color, Surface Finish -->
-        <div class="rfq-fields-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 0;">
-          <div class="rfq-field">
-            <label>Material</label>
-            <select class="rfq-material" data-part="${partIdx}">
-              <option value="" disabled selected>Select Technology First</option>
-            </select>
-            <input type="text" class="rfq-other-material hidden" data-part="${partIdx}" placeholder="Please specify material..." style="font-size: 13px; font-weight: 500; padding: 10px 14px; margin-top: 8px;" />
-          </div>
-          <div class="rfq-field">
-            <label>Color</label>
-            <input type="text" class="rfq-color" data-part="${partIdx}" placeholder="White, RAL 7016..." />
-          </div>
-          <div class="rfq-field">
-            <label>Surface Finish</label>
-            <select class="rfq-finish" data-part="${partIdx}">
-              <option value="as-machined">As Machined</option>
-              <option value="bead-blast">Bead Blasted</option>
-              <option value="anodized">Anodized</option>
-              <option value="powder-coat">Powder Coated</option>
-              <option value="polished">Polished</option>
-              <option value="sandblast">Sandblasted</option>
-              <option value="custom">Custom</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Tooling Details (Dynamically shown based on Process) -->
-        <div class="rfq-tooling-details hidden" data-part="${partIdx}" style="margin-top: 0px; padding: 12px; background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.4); border-radius: var(--radius-md); transition: all 0.3s ease;">
-          <div class="rfq-tooling-status-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: #ef4444; transition: color 0.3s ease;">
-            <svg class="rfq-tooling-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <h4 class="rfq-tooling-title" style="margin: 0; font-size: 13px; font-weight: 600;">Tooling Details Required</h4>
-          </div>
-          <div class="rfq-fields-grid rfq-fields-grid--1x2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <div class="rfq-field" style="margin-bottom: 0;">
-              <label style="color: var(--color-steel-200);">Tooling Tier</label>
-              <select class="rfq-tooling-type" data-part="${partIdx}">
-                <option value="" disabled selected>Select Tier...</option>
-                <option value="prototype">Prototype (Soft Tooling, < 1k parts)</option>
-                <option value="low_volume">Low Volume (P20 Steel, < 10k parts)</option>
-                <option value="high_volume">High Volume (Hardened H13, 100k+ parts)</option>
-              </select>
-            </div>
-            <div class="rfq-field" style="margin-bottom: 0;">
-              <label style="color: var(--color-steel-200);">Cavitation</label>
-              <select class="rfq-tooling-cavities" data-part="${partIdx}">
-                <option value="auto" selected>Auto-calculate</option>
-                <option value="1">1-Cavity</option>
-                <option value="2">2-Cavity</option>
-                <option value="4">4-Cavity</option>
-                <option value="8">8-Cavity</option>
-              </select>
-              <div class="rfq-throughput-estimate" style="font-size: 10px; color: var(--color-steel-400); margin-top: 6px; display: none;">Est. Throughput: --</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Custom Details / Post-Processing Notes -->
-        <div class="rfq-custom-details"><label>Additional Notes & Requirements</label>
-          <textarea class="rfq-custom-notes" data-part="${partIdx}" rows="2" placeholder="Surface finish details, coating specs, heat treatments, certifications, special requirements..."></textarea>
-        </div>
-      </div> <!-- Closes rfq-fields-col -->
-      
-      <!-- Missing file input block (used programmatically by handleFiles but doesn't need to be clickable by user in card) -->
-      <div class="upload-file-list hidden" data-part="${partIdx}" style="display:none;"></div>
-      <input type="file" class="rfq-file-input" data-part="${partIdx}" hidden />
+        </div> <!-- Closes flex container -->
+        
+        <!-- Missing file input block (used programmatically by handleFiles but doesn't need to be clickable by user in card) -->
+        <div class="upload-file-list hidden" data-part="${partIdx}" style="display:none;"></div>
+        <input type="file" class="rfq-file-input" data-part="${partIdx}" hidden />
       </div> <!-- Closes rfq-part-card-body -->
     </details>`;
 }
@@ -282,7 +286,7 @@ export function initRFQController() {
   const saveShippingModal = document.getElementById('save-shipping-modal');
   const shippingSummaryText = document.getElementById('shipping-summary-text');
 
-  let shippingData = {};
+  // shippingData is module-level (hoisted for calculateAndDisplayQuote access)
 
   if (calcShippingCb && shippingSection) {
     calcShippingCb.addEventListener('change', (e) => {
@@ -373,7 +377,7 @@ export function initRFQController() {
       if (card && e.target.value) {
         card.classList.remove('needs-tech-selection');
         card.style.borderColor = 'rgba(16, 185, 129, 0.4)'; // green border
-        card.style.background = 'rgba(0, 0, 0, 0.15)'; // reset bg
+        card.style.background = 'rgba(16, 185, 129, 0.05)'; // transparent green bg
       }
     }
     if (e.target.matches('.rfq-part-name, .rfq-process, .rfq-material, .rfq-finish, .rfq-lead-time, .rfq-tooling-type, .rfq-tooling-cavities, .rfq-quantity, .rfq-other-tech, .rfq-other-material, .rfq-color, .rfq-threads, .rfq-tolerance')) {
@@ -450,6 +454,30 @@ export function initRFQController() {
       uploadedParts.push({ ...p, storage_path: storagePath, bucket: bucket });
     }
 
+    // Determine shipping info at submission time
+    let submittedShipping = null;
+    const shippingCb = document.getElementById('calc-shipping-cb');
+    if (shippingCb?.checked) {
+      const selectedRadio = document.querySelector('input[name="rfq_shipping"]:checked');
+      const shippingCostVal = selectedRadio ? parseFloat(selectedRadio.value) : 0;
+      // Detect which option label
+      const radioLabel = selectedRadio?.closest('label')?.textContent?.trim() || '';
+      let shippingMethod = 'Economy Air';
+      let shippingDays = '';
+      if (radioLabel.toLowerCase().includes('sea')) { shippingMethod = 'Sea Freight'; }
+      else if (radioLabel.toLowerCase().includes('express')) { shippingMethod = 'Express Air'; }
+      const daysMatch = radioLabel.match(/\(([^)]+)\)/);
+      if (daysMatch) shippingDays = daysMatch[1];
+      submittedShipping = {
+        method: shippingMethod,
+        cost: shippingCostVal,
+        transit_days: shippingDays,
+        destination: shippingData.country || '',
+        address: shippingData
+      };
+      grandTotal += shippingCostVal;
+    }
+
     const rfqData = {
       type: 'instant',
       project_name: projName,
@@ -458,16 +486,32 @@ export function initRFQController() {
       total_price: grandTotal,
       target_timeline: 'Flexible',
       notes: 'Generated via Instant Quoting Engine',
-      parts: uploadedParts.map(p => ({
-        name: p.partName || `Part ${p.config?.process || ''}`,
-        process: p.config?.process || p.quote?.techLabel || '',
-        qty: p.config?.quantity || 1,
-        material: p.config?.material || p.quote?.materialLabel || '',
-        finish: p.config?.finish || '',
-        price: p.quote?.totalPrice || 0,
-        storage_path: p.storage_path,
-        bucket: p.bucket
-      })),
+      shipping: submittedShipping,
+      parts: uploadedParts.map(p => {
+        // Serialize analysis without the heavy geometry mesh data
+        let serializedAnalysis = null;
+        if (p.analysis) {
+          serializedAnalysis = {
+            boundingBox: p.analysis.boundingBox || null,
+            volume: p.analysis.volume || null,
+            surfaceArea: p.analysis.surfaceArea || null,
+            mass: p.analysis.mass || null,
+            triangleCount: p.analysis.triangleCount || null
+          };
+        }
+        return {
+          name: p.partName || `Part ${p.config?.process || ''}`,
+          process: p.config?.process || p.quote?.techLabel || '',
+          qty: p.config?.quantity || 1,
+          material: p.config?.material || p.quote?.materialLabel || '',
+          finish: p.config?.finish || '',
+          price: p.quote?.totalPrice || 0,
+          lead_time: p.quote?.leadTimeDays || null,
+          analysis: serializedAnalysis,
+          storage_path: p.storage_path,
+          bucket: p.bucket
+        };
+      }),
       submitted_at: new Date().toISOString()
     };
 
@@ -1254,6 +1298,7 @@ function renderQuoteResult() {
       
       // Get the configured shipping region (default to rest_of_world if not found)
       const selRegion = shippingData.country || 'rest_of_world';
+      const PRICING_CONFIG = getActivePricingConfig();
       const shippingRegions = PRICING_CONFIG.globalSettings?.shipping?.regions || {};
       const reg = shippingRegions[selRegion] || shippingRegions['rest_of_world'];
       
@@ -1315,6 +1360,11 @@ function renderQuoteResult() {
       ${grandToolingTotal > 0 ? `
       <div class="rfq-quote-grand-total__note" style="margin-top: 4px; font-size: 11px; color: var(--color-amber-500); text-align: right;">
         Includes $${grandToolingTotal.toFixed(2)} one-off tooling cost
+      </div>` : ''}
+      ${!document.getElementById('calc-shipping-cb')?.checked ? `
+      <div style="margin-top: 8px; padding: 6px 10px; border-radius: 6px; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.2); display: flex; align-items: center; gap: 6px; font-size: 11px; color: #f59e0b;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Shipping not included — enable below to estimate
       </div>` : ''}
     </div>
   `;

@@ -479,7 +479,6 @@ function openRFQPreviewModal(rfq) {
     alert("No files or parts associated with this RFQ.");
     return;
   }
-  let currentPartIndex = 0;
 
   const isBankTransferPending = data.payment_method === 'bank_transfer' && !['paid', 'shipped', 'done', 'cancelled'].includes(rfq.status);
 
@@ -609,37 +608,13 @@ function openRFQPreviewModal(rfq) {
           </div>
         </div>
 
-        <!-- Main Content Split -->
-        <div style="display:flex; flex:1; overflow:hidden;">
-          <!-- Viewer Column -->
-          <div style="flex:1; background:#0e1117; position:relative; display:flex; flex-direction:column;">
-            <div id="rfq-preview-3d-container" style="flex:1; width:100%;"></div>
-            
-            <div style="position:absolute; bottom:20px; left:0; right:0; display:flex; justify-content:center; gap:16px; pointer-events:none;">
-              <button id="rfq-prev-btn" style="pointer-events:auto; background:rgba(255,255,255,0.1); color:#fff; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition:0.2s;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
-              </button>
-              <div id="rfq-part-counter" style="color:#fff; display:flex; align-items:center; font-size:14px; font-weight:600;">1 / ${parts.length}</div>
-              <button id="rfq-next-btn" style="pointer-events:auto; background:rgba(255,255,255,0.1); color:#fff; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition:0.2s;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-              </button>
-            </div>
-          </div>
-          
-          <!-- Info Column -->
-          <div id="rfq-info-col" style="width:360px; background:#fff; padding:24px; border-left:1px solid #e2e8f0; display:flex; flex-direction:column; overflow-y:auto;">
-            ${reminderHtml}
-            <div style="margin-bottom:20px;">
-              <div style="font-size:11px; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Part Details</div>
-              <h3 id="rfq-part-name" style="margin:0; font-size:16px; color:#0f172a; font-weight:700; word-break:break-word;"></h3>
-            </div>
-            
-            <div id="rfq-part-info" style="display:flex; flex-direction:column; gap:16px;"></div>
-            
-            <div style="margin-top:auto; padding-top:24px; border-top:1px solid #e2e8f0;">
-               <a id="rfq-download-btn" href="#" target="_blank" style="display:block; width:100%; text-align:center; padding:12px; background:#f1f5f9; color:#0f172a; font-weight:600; font-size:14px; text-decoration:none; border-radius:8px; border:1px solid #e2e8f0; transition:0.2s;">Download Source File</a>
-            </div>
-          </div>
+        <!-- Status Timeline (read-only) -->
+        <div id="rfq-user-timeline" style="display: flex; align-items: flex-start; justify-content: space-between; position: relative; padding: 14px 28px 50px 28px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; flex-shrink: 0;"></div>
+
+        <!-- Parts List -->
+        <div id="rfq-info-col" style="flex:1; overflow-y:auto; padding:24px 28px;">
+          ${reminderHtml}
+          <div id="rfq-parts-list" style="display:flex; flex-direction:column; gap:12px;"></div>
         </div>
         
       </div>
@@ -647,92 +622,218 @@ function openRFQPreviewModal(rfq) {
   `;
   document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-  const modal = document.getElementById('rfq-preview-modal');
-  const prevBtn = document.getElementById('rfq-prev-btn');
-  const nextBtn = document.getElementById('rfq-next-btn');
-  const counterEl = document.getElementById('rfq-part-counter');
-  const nameEl = document.getElementById('rfq-part-name');
-  const infoEl = document.getElementById('rfq-part-info');
-  const dlBtn = document.getElementById('rfq-download-btn');
-  const container = document.getElementById('rfq-preview-3d-container');
+  // ── Populate read-only timeline ──
+  {
+    const commLog = data.communication_log || [];
+    const statusIdx = ['submitted', 'under_review', 'confirmed', 'paid', 'processing', 'shipped'].indexOf(currentStatus);
+    const documents = Array.isArray(data.documents) ? data.documents : [];
+    const overrides = data.timeline_overrides || {};
 
-  if (parts.length <= 1) {
-    prevBtn.style.display = 'none';
-    nextBtn.style.display = 'none';
-    counterEl.style.display = 'none';
+    const stepSubmitted = overrides['Submitted'] !== undefined ? overrides['Submitted'] : true;
+    const stepReview = overrides['Under Review'] !== undefined ? overrides['Under Review'] : (statusIdx >= 1 || currentStatus !== 'submitted');
+    const stepInfo = overrides['Info Req.'] !== undefined ? overrides['Info Req.'] : (commLog.length > 0);
+    const hasBeenConfirmed = data.confirmed_at || data.payment_status === 'awaiting_payment' || ['confirmed','paid','processing','shipped','done'].includes(currentStatus);
+    const stepConfirmed = overrides['Confirmed'] !== undefined ? overrides['Confirmed'] : (hasBeenConfirmed || statusIdx >= 2);
+    const quotedDoc = documents.slice().reverse().find(d => d.type === 'quotation');
+    const stepQuote = overrides['Quoted'] !== undefined ? overrides['Quoted'] : !!quotedDoc;
+    const stepPaid = overrides['Paid'] !== undefined ? overrides['Paid'] : (data.payment_status === 'paid' || statusIdx >= 3);
+    const stepProcessing = overrides['Processing'] !== undefined ? overrides['Processing'] : (statusIdx >= 4);
+    const stepFinished = overrides['Finished'] !== undefined ? overrides['Finished'] : (statusIdx >= 5);
+
+    const timelineSteps = [
+      { label: 'Submitted', active: stepSubmitted },
+      { label: 'Under Review', active: stepReview },
+      { label: 'Info Req.', active: stepInfo },
+      { label: 'Confirmed', active: stepConfirmed },
+      { label: 'Quoted', active: stepQuote },
+      { label: 'Paid', active: stepPaid },
+      { label: 'Processing', active: stepProcessing },
+      { label: 'Finished', active: stepFinished }
+    ];
+
+    const tlEl = document.getElementById('rfq-user-timeline');
+    if (tlEl) {
+      tlEl.innerHTML = `
+        <div style="position: absolute; top: 26px; left: 60px; right: 60px; height: 2px; background: #e2e8f0; z-index: 1;"></div>
+        ${timelineSteps.map((step, i) => {
+          const blockTrack = currentStatus === 'rejected' && i >= 3;
+          const isNextActive = timelineSteps[i+1]?.active && !blockTrack;
+          const showActiveTrack = step.active && isNextActive && i < timelineSteps.length - 1;
+          return `
+          <div style="display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; flex: 1;">
+            ${showActiveTrack ? '<div style="position: absolute; top: 12px; left: 50%; right: -50%; height: 2px; background: #10b981; z-index: -1;"></div>' : ''}
+            <div style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid #fff; box-shadow: 0 0 0 1px ${(step.active && !blockTrack) ? '#059669' : '#cbd5e1'}; background: ${(step.active && !blockTrack) ? '#10b981' : '#f8fafc'}; color: ${(step.active && !blockTrack) ? '#fff' : '#64748b'}; transition: all 0.2s;">
+              ${(step.active && !blockTrack) ? '✓' : (i + 1)}
+            </div>
+            <div style="font-size: 10px; font-weight: 600; color: ${(step.active && !blockTrack) ? '#0f172a' : '#64748b'}; margin-top: 6px; text-align: center; text-transform: uppercase; letter-spacing: 0.3px;">
+              ${step.label}
+            </div>
+            ${step.label === 'Confirmed' ? `
+              <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 20px; background: ${currentStatus === 'rejected' ? '#ef4444' : '#e2e8f0'}; z-index: -1;"></div>
+              <div style="position: absolute; top: 44px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid #fff; box-shadow: 0 0 0 1px ${currentStatus === 'rejected' ? '#ef4444' : '#cbd5e1'}; background: ${currentStatus === 'rejected' ? '#ef4444' : '#f8fafc'}; color: ${currentStatus === 'rejected' ? '#fff' : '#64748b'}; transition: all 0.2s;">
+                  ✕
+                </div>
+                <div style="font-size: 10px; font-weight: 600; color: ${currentStatus === 'rejected' ? '#ef4444' : '#94a3b8'}; margin-top: 6px; text-transform: uppercase;">Rejected</div>
+              </div>
+            ` : ''}
+          </div>`;
+        }).join('')}
+      `;
+    }
   }
 
-  const renderCurrentPart = () => {
-    const p = parts[currentPartIndex];
-    const fileName = p.name || p.file_name || `Part ${currentPartIndex + 1}`;
-    counterEl.textContent = `${currentPartIndex + 1} / ${parts.length}`;
-    nameEl.textContent = fileName;
-    
-    // Info Panel
-    let infoHtml = '';
-    const addRow = (lbl, val) => `<div style="background:#f8fafc; padding:12px 16px; border-radius:8px; border:1px solid #f1f5f9;"><div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:2px;">${lbl}</div><div style="font-size:14px; color:#0f172a; font-weight:600;">${val}</div></div>`;
-    
-    if (data.type === 'instant') {
-      infoHtml += addRow('Technology', p.process || '—');
-      infoHtml += addRow('Material', p.material || '—');
-      infoHtml += addRow('Finish', p.finish || '—');
-      infoHtml += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">${addRow('Qty', p.qty || 1)}${addRow('Price', '$' + (p.price||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}))}</div>`;
+  const modal = document.getElementById('rfq-preview-modal');
+  const partsList = document.getElementById('rfq-parts-list');
 
-      // Customer notes / additional requirements
-      const partNotes = p.customDetails || p.notes || '';
-      if (partNotes && partNotes.trim()) {
-        infoHtml += `
-          <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:12px 16px;">
-            <div style="font-size:10px; color:#92400e; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:6px;">
-              📝 Customer Notes
-            </div>
-            <div style="font-size:13px; color:#1c1917; line-height:1.6; white-space:pre-wrap;">${partNotes.trim()}</div>
-          </div>`;
+  // ── Build all part cards ──
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co';
+
+  partsList.innerHTML = parts.map((p, idx) => {
+    const fileName = p.name || p.file_name || `Part ${idx + 1}`;
+    const path = p.storage_path || p.path;
+    const bucket = p.bucket || 'rfq-uploads';
+    const dlUrl = path ? `${supabaseUrl}/storage/v1/object/public/${bucket}/${path}?download=${encodeURIComponent(fileName)}` : '';
+
+    // Build inline specs as plain text
+    let specLines = '';
+    if (data.type === 'instant') {
+      const items = [];
+      if (p.process) items.push(`<span style="font-weight:700; color:#0f172a;">Technology:</span> ${p.process}`);
+      if (p.material) items.push(`<span style="font-weight:700; color:#0f172a;">Material:</span> ${p.material}`);
+      if (p.finish) items.push(`<span style="font-weight:700; color:#0f172a;">Finish:</span> ${p.finish}`);
+      items.push(`<span style="font-weight:700; color:#0f172a;">Qty:</span> ${p.qty || 1}`);
+      specLines = `<div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:5px; font-size:12px; color:#475569; line-height:1.6;">${items.join('<span style="color:#cbd5e1;">·</span>')}</div>`;
+    } else {
+      const items = [`<span style="font-weight:700; color:#0f172a;">Service:</span> ${data.service || '—'}`];
+      if (data.timeline) items.push(`<span style="font-weight:700; color:#0f172a;">Timeline:</span> ${data.timeline}`);
+      if (data.quantity) items.push(`<span style="font-weight:700; color:#0f172a;">Qty:</span> ${data.quantity}`);
+      if (p.size) items.push(`<span style="font-weight:700; color:#0f172a;">File Size:</span> ${(p.size/1024).toFixed(1)} KB`);
+      specLines = `<div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:5px; font-size:12px; color:#475569; line-height:1.6;">${items.join('<span style="color:#cbd5e1;">·</span>')}</div>`;
+    }
+
+    // Geometry analysis as plain text line
+    let geoHtml = '';
+    if (p.analysis) {
+      const a = p.analysis;
+      const geoItems = [];
+      if (a.boundingBox) geoItems.push(`<span style="font-weight:700; color:#0f172a;">Dimensions:</span> ${a.boundingBox.length.toFixed(1)} × ${a.boundingBox.width.toFixed(1)} × ${a.boundingBox.height.toFixed(1)} mm`);
+      if (a.volume) geoItems.push(`<span style="font-weight:700; color:#0f172a;">Volume:</span> ${(a.volume / 1000).toFixed(2)} cm³`);
+      if (a.surfaceArea) geoItems.push(`<span style="font-weight:700; color:#0f172a;">Surface:</span> ${(a.surfaceArea / 100).toFixed(2)} cm²`);
+      if (a.triangleCount) geoItems.push(`<span style="font-weight:700; color:#0f172a;">Triangles:</span> ${a.triangleCount.toLocaleString()}`);
+      if (geoItems.length) {
+        geoHtml = `<div style="display:flex; gap:16px; flex-wrap:wrap; font-size:11px; color:#64748b; line-height:1.6; margin-top:3px;">${geoItems.join('<span style="color:#e2e8f0;">·</span>')}</div>`;
       }
-      
-      // Geometry Details
-      if (p.analysis) {
-        infoHtml += `<div style="margin-top:24px; font-size:10px; color:#94a3b8; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; margin-bottom:8px;">Geometry Analysis</div>`;
-        const a = p.analysis;
-        const dims = a.boundingBox ? `${a.boundingBox.length.toFixed(1)} × ${a.boundingBox.width.toFixed(1)} × ${a.boundingBox.height.toFixed(1)} mm` : '—';
-        infoHtml += addRow('Bounding Box', dims);
-        if (a.volume) infoHtml += addRow('Volume', `${(a.volume / 1000).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})} cm³`);
-        if (a.surfaceArea) infoHtml += addRow('Surface Area', `${(a.surfaceArea / 100).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})} cm²`);
+    }
+
+    // Customer notes
+    let notesHtml = '';
+    const partNotes = p.customDetails || p.notes || '';
+    if (partNotes && partNotes.trim()) {
+      notesHtml = `<div style="margin-top:8px; background:#fffbeb; border:1px solid #fde68a; border-radius:6px; padding:8px 12px; font-size:12px; color:#92400e; line-height:1.5;"><span style="font-weight:700;">📝 Notes:</span> ${partNotes.trim()}</div>`;
+    }
+
+    // Price
+    const priceHtml = data.type === 'instant' && p.price ? `<div style="font-size:16px; font-weight:800; color:#15803d; white-space:nowrap;">$${Number(p.price).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>` : '';
+
+    return `
+    <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:16px 20px; display:flex; gap:16px; align-items:flex-start; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.06)'" onmouseout="this.style.boxShadow=''">
+      <!-- Thumbnail -->
+      <div class="rfq-part-thumb" data-idx="${idx}" style="width:72px; height:72px; min-width:72px; background:#0e1117; border-radius:10px; overflow:hidden; display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative;">
+        <div style="color:#475569; font-size:28px;">🧊</div>
+      </div>
+
+      <!-- Details -->
+      <div style="flex:1; min-width:0;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+          <div style="min-width:0;">
+            <div style="font-size:14px; font-weight:700; color:#0f172a; word-break:break-word; line-height:1.3;">${fileName}</div>
+            ${specLines}
+            ${geoHtml}
+            ${notesHtml}
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0;">
+            ${priceHtml}
+            ${dlUrl ? `<a href="${dlUrl}" target="_blank" download="${fileName}" style="font-size:11px; color:#3b82f6; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px; white-space:nowrap;" onmouseover="this.style.color='#1d4ed8'" onmouseout="this.style.color='#3b82f6'">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download
+            </a>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── Totals Summary ──
+  if (data.type === 'instant') {
+    const subtotal = parts.reduce((sum, p) => sum + (Number(p.price) || 0), 0);
+    const shipping = data.shipping;
+    const grandTotal = Number(data.total_price) || subtotal;
+
+    let totalsHtml = `
+    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:20px 24px; margin-top:4px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; color:#475569; margin-bottom:8px;">
+        <span>Parts Subtotal <span style="color:#94a3b8;">(${parts.length} part${parts.length !== 1 ? 's' : ''})</span></span>
+        <span style="font-weight:700; color:#0f172a;">$${subtotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
+      </div>`;
+
+    if (shipping && shipping.cost > 0) {
+      totalsHtml += `
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; color:#475569; margin-bottom:8px;">
+        <span>
+          <span style="font-weight:600; color:#0f172a;">Shipping</span> — ${shipping.method || 'Economy Air'}
+          ${shipping.transit_days ? `<span style="color:#94a3b8; font-size:11px; margin-left:4px;">(${shipping.transit_days})</span>` : ''}
+        </span>
+        <span style="font-weight:700; color:#0f172a;">$${Number(shipping.cost).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
+      </div>`;
+      if (shipping.destination) {
+        totalsHtml += `
+        <div style="font-size:11px; color:#94a3b8; margin-bottom:8px;">
+          Destination: ${shipping.destination}
+        </div>`;
       }
     } else {
-      infoHtml += addRow('Service', data.service || '—');
-      infoHtml += addRow('Timeline', data.timeline || '—');
-      infoHtml += addRow('Qty Required', data.quantity || '—');
-      if (p.size) infoHtml += addRow('File Size', `${(p.size/1024).toFixed(1)} KB`);
+      totalsHtml += `
+      <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:#f59e0b; background:rgba(234,179,8,0.06); border:1px solid rgba(234,179,8,0.15); border-radius:6px; padding:6px 10px; margin-bottom:8px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Shipping not included in this estimate
+      </div>`;
     }
-    infoEl.innerHTML = infoHtml;
-    
-    // Download Link
+
+    // Lead time
+    const leadTimes = parts.map(p => p.lead_time).filter(Boolean);
+    if (leadTimes.length > 0) {
+      const maxLead = Math.max(...leadTimes);
+      totalsHtml += `
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:#64748b; margin-bottom:8px;">
+        <span>Est. Production Lead Time</span>
+        <span style="font-weight:600; color:#0f172a;">${maxLead} business days</span>
+      </div>`;
+    }
+
+    totalsHtml += `
+      <div style="border-top:2px solid #e2e8f0; padding-top:12px; margin-top:4px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:15px; font-weight:700; color:#0f172a;">Grand Total</span>
+        <span style="font-size:20px; font-weight:800; color:#15803d;">$${grandTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
+      </div>
+    </div>`;
+
+    partsList.innerHTML += totalsHtml;
+  }
+
+  // Render 3D thumbnails asynchronously
+  partsList.querySelectorAll('.rfq-part-thumb').forEach(thumbEl => {
+    const idx = parseInt(thumbEl.dataset.idx);
+    const p = parts[idx];
     const path = p.storage_path || p.path;
     const bucket = p.bucket || 'rfq-uploads';
     if (path) {
-      dlBtn.href = `${import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co'}/storage/v1/object/public/${bucket}/${path}?download=${encodeURIComponent(fileName)}`;
-      dlBtn.download = fileName;
-      dlBtn.style.display = 'block';
-      
-      // Derive extension from storage path (real filename) — not the user-facing part name
-      const fileExt = (path.split('.').pop() || fileName.split('.').pop() || '').toLowerCase();
-      render3DPreview({ storage_path: path, file_type: fileExt, bucket: bucket }, container);
-    } else {
-      dlBtn.style.display = 'none';
-      container.innerHTML = '<div style="display:flex; height:100%; align-items:center; justify-content:center; color:#64748b; flex-direction:column;"><div style="font-size:48px; margin-bottom:16px;">🧊</div><div>3D Preview Unavailable</div><div style="font-size:12px; margin-top:8px;">File not uploaded to storage</div></div>';
+      const fileExt = (path.split('.').pop() || '').toLowerCase();
+      render3DPreview({ storage_path: path, file_type: fileExt, bucket: bucket }, thumbEl);
     }
-  };
-
-  prevBtn.addEventListener('click', () => {
-    currentPartIndex = (currentPartIndex - 1 + parts.length) % parts.length;
-    renderCurrentPart();
-  });
-  nextBtn.addEventListener('click', () => {
-    currentPartIndex = (currentPartIndex + 1) % parts.length;
-    renderCurrentPart();
   });
 
+  // Close & delete handlers
   document.getElementById('rfq-preview-close')?.addEventListener('click', () => {
     modal.remove();
   });
@@ -745,7 +846,7 @@ function openRFQPreviewModal(rfq) {
       const { error } = await supabase.from('rfq_history').delete().eq('id', rfq.id);
       if (error) throw error;
       modal.remove();
-      await loadRFQs(); // Refresh the workspace table
+      await loadRFQs();
     } catch (e) {
       alert('Failed to delete quote: ' + e.message);
       btn.disabled = false;
@@ -754,8 +855,6 @@ function openRFQPreviewModal(rfq) {
   });
 
   modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
-
-  renderCurrentPart();
 
   // ── Payment Panel (shown when admin has confirmed the quote) ──
   if (data.payment_status === 'awaiting_payment' && rfq.status === 'confirmed') {

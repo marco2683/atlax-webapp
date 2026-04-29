@@ -1104,16 +1104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               <input type="text" name="country" value="${s.country || ''}" placeholder="China">
             </div>
           </div>
-          <!-- Reduce Lat/Lng Width by making them part of a 4-col grid with address -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr 2fr 2fr; gap: 10px; margin-bottom: 10px;">
-            <div class="admin-field">
-              <label>Latitude</label>
-              <input type="number" step="any" name="lat" value="${s.lat || ''}" placeholder="22.5431">
-            </div>
-            <div class="admin-field">
-              <label>Longitude</label>
-              <input type="number" step="any" name="lng" value="${s.lng || ''}" placeholder="114.0579">
-            </div>
+          <div class="admin-form-grid cols-2" style="margin-bottom: 10px;">
             <div class="admin-field">
               <label>Full Address (English)</label>
               <input type="text" name="address" value="${s.address || ''}" placeholder="Building 12, Bao'an...">
@@ -1158,16 +1149,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
           </div>
 
-          <!-- Contact 3: Quality -->
-          <div class="admin-form-grid cols-3" style="margin-top: 8px;">
-            <div class="admin-field">
-              <label>Quality Manager Name</label>
-              <input type="text" name="qualityName" value="${s.qualityName || ''}" placeholder="Chen Hua">
-            </div>
-            <div class="admin-field">
-              <label>Quality Manager Email</label>
-              <input type="email" name="qualityEmail" value="${s.qualityEmail || ''}" placeholder="chen@example.com">
-            </div>
+          <div class="admin-form-grid cols-1" style="margin-top: 8px;">
             <div class="admin-field">
               <label>Tax ID / VAT No.</label>
               <input type="text" name="taxId" value="${s.taxId || ''}" placeholder="9144000...">
@@ -1182,13 +1164,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             Technical Capabilities & Certifications
           </div>
           
-          <div style="margin: 8px 0 8px 0; font-size: 11px; font-weight: bold; color: var(--color-electric); text-transform: uppercase;">Manufacturing Stages</div>
-          <div class="admin-checkbox-grid">
-            ${STAGES.map(st => `
-              <label class="admin-checkbox">
-                <input type="checkbox" name="stages" value="${st}" ${(s.stages || []).includes(st) ? 'checked' : ''}>
-                <span>${st}</span>
-              </label>`).join('')}
+          <div style="margin: 8px 0 8px 0; font-size: 11px; font-weight: bold; color: var(--color-electric); text-transform: uppercase;">Best For</div>
+          <div class="admin-field">
+            <label>Best For <span class="hint">(comma-separated — what this supplier excels at)</span></label>
+            <input type="text" name="bestFor" value="${(s.bestFor || []).join(', ')}" placeholder="Die Casting, Aluminium Parts, Complex Geometries…">
+          </div>
+
+          <div style="margin: 20px 0 8px 0; font-size: 11px; font-weight: bold; color: var(--color-electric); text-transform: uppercase;">Internal Capabilities</div>
+          <div class="admin-field">
+            <label>Internal Capabilities <span class="hint">(comma-separated — in-house processes)</span></label>
+            <input type="text" name="internalCapabilities" value="${(s.internalCapabilities || []).join(', ')}" placeholder="CNC Machining, Anodizing, CMM Inspection, Tooling…">
           </div>
 
           <div style="margin: 20px 0 8px 0; font-size: 11px; font-weight: bold; color: var(--color-electric); text-transform: uppercase;">Specific Technologies</div>
@@ -1205,99 +1190,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <span>${c}</span>
               </label>`).join('')}
           </div>
-          <div class="admin-form-grid cols-2" style="margin-top:16px;">
+          <div class="admin-form-grid cols-1" style="margin-top:16px;">
             <div class="admin-field">
               <label>Other Certifications <span class="hint">(comma-separated)</span></label>
               <input type="text" name="otherCertifications" value="${(s.otherCertifications || []).join(', ')}" placeholder="Specific Industry Standards...">
             </div>
-            <div class="admin-field">
-              <label>Factory Score <span class="hint">(0–100)</span></label>
-              <div class="admin-range-row">
-                <input type="range" name="factoryScore" min="0" max="100" value="${s.factoryScore || 50}" id="admin-sup-score-range">
-                <span class="admin-range-val" id="admin-sup-score-val">${s.factoryScore || 50}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="admin-form-grid cols-3" style="margin-top:16px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.05);">
-            <div class="admin-field">
-              <label>Free Capacity (%)</label>
-              <input type="number" name="freeCapacity" value="${s.freeCapacity || ''}" placeholder="25">
-            </div>
-            <div class="admin-field">
-              <label>Outsourcing Ratio (%)</label>
-              <input type="number" name="outsourcingRatio" value="${s.outsourcingRatio || ''}" placeholder="10">
-            </div>
-            <div class="admin-field">
-              <label>Outsourcing Ratio (%)</label>
-              <input type="number" name="outsourcingRatio" value="${s.outsourcingRatio || ''}" placeholder="10">
-            </div>
-            <div class="admin-field">
-              <label title="Verified Status (0=No, 1=Partial, 2=Yes)">Verified (0-2)</label>
-              <input type="number" name="scoreV" min="0" max="2" value="${s.scoreV || 0}">
-            </div>
-            <div class="admin-field">
-              <label>Speed Score (0-10)</label>
-              <input type="number" name="scoreSpeed" min="0" max="10" value="${s.scoreSpeed || 0}">
-            </div>
-            <div class="admin-field">
-              <label>Complexity Score (0-10)</label>
-              <input type="number" name="scoreComplexity" min="0" max="10" value="${s.scoreComplexity || 0}">
-            </div>
-            <div class="admin-field">
-              <label>Low Volume (0-10)</label>
-              <input type="number" name="scoreLowVol" min="0" max="10" value="${s.scoreLowVol || 0}">
-            </div>
-            <div class="admin-field">
-              <label>High Precision (0-10)</label>
-              <input type="number" name="scorePrecision" min="0" max="10" value="${s.scorePrecision || 0}">
-            </div>
-          </div>
-        </div>
-
-        <!-- ─── SECTION 3.5: Atlas Factory Qualification Matrix ─── -->
-        <div class="admin-form-section">
-          <div class="admin-form-section-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Atlas Qualification Matrix
-          </div>
-          <div class="admin-form-grid cols-4">
-            <div class="admin-field">
-              <label>Technical Capability (0-2)</label>
-              <input type="number" name="scoreTc" min="0" max="2" value="${s.scoreTc || 0}">
-            </div>
-            <div class="admin-field">
-              <label>Ownership Ethos (0-2)</label>
-              <input type="number" name="scoreOe" min="0" max="2" value="${s.scoreOe || 0}">
-            </div>
-            <div class="admin-field">
-              <label>Quality Assurance (0-2)</label>
-              <input type="number" name="scoreQs" min="0" max="2" value="${s.scoreQs || 0}">
-            </div>
-            <div class="admin-field">
-              <label>Cost Competitiveness (0-10)</label>
-              <input type="number" name="scoreCost" min="0" max="10" value="${s.scoreCost || 0}">
-            </div>
-          </div>
-          <div class="admin-form-grid cols-2" style="margin-top: 12px;">
-            <div class="admin-field">
-              <label>Primary Advantage Type</label>
-              <select name="primaryAdvantageType">
-                <option value="none" ${(!s.primaryAdvantageType || s.primaryAdvantageType === 'none') ? 'selected' : ''}>Not Specified</option>
-                <option value="technical" ${s.primaryAdvantageType === 'technical' ? 'selected' : ''}>Technical Capability</option>
-                <option value="ethos" ${s.primaryAdvantageType === 'ethos' ? 'selected' : ''}>Ownership Ethos</option>
-                <option value="quality" ${s.primaryAdvantageType === 'quality' ? 'selected' : ''}>Quality Assurance</option>
-                <option value="cost" ${s.primaryAdvantageType === 'cost' ? 'selected' : ''}>Cost & Speed Profile</option>
-              </select>
-            </div>
-            <div class="admin-field">
-              <label>Best For (Product Type / Fit)</label>
-              <input type="text" name="bestFor" value="${s.bestFor || ''}" placeholder="e.g. Consumer Electronics, Medical Plastics...">
-            </div>
-          </div>
-          <div class="admin-field" style="margin-top: 12px;">
-            <label>Main Advantage Summary</label>
-            <textarea name="mainAdvantage" rows="2" placeholder="e.g. We selected them for their excellent balance of rapid tooling deployment...">${s.mainAdvantage || ''}</textarea>
           </div>
         </div>
 
@@ -1576,17 +1473,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
         </div>
 
-        <!-- ─── SECTION 7: Internal Notes ─── -->
-        <div class="admin-form-section">
-          <div class="admin-form-section-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Internal Staff Notes
-          </div>
-          <div class="admin-field">
-            <label>Private Notes <span class="hint">(not visible to users)</span></label>
-            <textarea name="internalNotes" rows="3" placeholder="Payment terms: NET 30. Contact prefers WeChat.">${s.internalNotes || ''}</textarea>
-          </div>
-        </div>
+
 
         <!-- ─── Submit ─── -->
         <div class="admin-form-actions">
@@ -1705,18 +1592,85 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('admin-sup-cancel')?.addEventListener('click', () => { pageTitle.textContent = 'Suppliers CRM Directory'; renderSuppliersTable(); });
     document.getElementById('admin-sup-cancel-top')?.addEventListener('click', () => { pageTitle.textContent = 'Suppliers CRM Directory'; renderSuppliersTable(); });
 
-    document.getElementById('admin-sync-onedrive-btn')?.addEventListener('click', (e) => {
+    document.getElementById('admin-sync-onedrive-btn')?.addEventListener('click', async (e) => {
       const btn = e.currentTarget;
       const originalHTML = btn.innerHTML;
       btn.innerHTML = `<svg class="spinner" viewBox="0 0 50 50" style="width:14px;height:14px;stroke:currentColor;animation:spin 1s linear infinite;"><circle cx="25" cy="25" r="20" fill="none" stroke-width="5" stroke-linecap="round"></circle></svg> Syncing...`;
       btn.style.pointerEvents = 'none';
-      setTimeout(() => {
-        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg> <span style="color:#10b981;">Synced to OneDrive</span>`;
+
+      try {
+        // Gather supplier name from form
+        const supplierName = document.querySelector('[name="name"]')?.value?.trim() || 'Unknown Supplier';
+        const folderPath = `AtlasDT/Suppliers/${supplierName}`;
+
+        // Collect all document URLs from the form
+        const docFields = [
+          { label: 'RFI Onboarding Form', url: document.querySelector('[name="docRFI"]')?.value?.trim() },
+          { label: 'Company Presentation', url: document.querySelector('[name="docPresentation"]')?.value?.trim() },
+          { label: 'Quality Certifications', url: document.querySelector('[name="docCertifications"]')?.value?.trim() },
+        ];
+        // Also collect other downloadable documents
+        document.querySelectorAll('#admin-sup-img-docs input[name="doc_url"]').forEach((inp, i) => {
+          const url = inp.value?.trim();
+          if (url) docFields.push({ label: `Document_${i + 1}`, url });
+        });
+
+        const validDocs = docFields.filter(d => d.url && d.url.startsWith('http'));
+
+        if (validDocs.length === 0) {
+          alert('No documents to sync. Please upload files first and save the supplier.');
+          btn.innerHTML = originalHTML;
+          btn.style.pointerEvents = '';
+          return;
+        }
+
+        let synced = 0;
+        let failed = 0;
+
+        for (const doc of validDocs) {
+          try {
+            // Derive filename from URL
+            const urlParts = doc.url.split('/');
+            const fileName = decodeURIComponent(urlParts[urlParts.length - 1].split('?')[0]) || `${doc.label}.pdf`;
+
+            await fetch('/.netlify/functions/webhook-sharepoint', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                file_name: fileName,
+                file_url: doc.url,
+                folder_path: folderPath,
+                metadata: {
+                  supplier_name: supplierName,
+                  document_type: doc.label,
+                  synced_at: new Date().toISOString()
+                }
+              })
+            });
+            synced++;
+          } catch (err) {
+            console.warn(`Failed to sync ${doc.label}:`, err);
+            failed++;
+          }
+        }
+
+        if (failed === 0) {
+          btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg> <span style="color:#10b981;">${synced} files synced to OneDrive</span>`;
+        } else {
+          btn.innerHTML = `<span style="color:#f59e0b;">⚠ ${synced} synced, ${failed} failed</span>`;
+        }
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.style.pointerEvents = '';
+        }, 4000);
+      } catch (err) {
+        console.error('OneDrive sync failed:', err);
+        btn.innerHTML = `<span style="color:#ef4444;">❌ Sync failed</span>`;
         setTimeout(() => {
           btn.innerHTML = originalHTML;
           btn.style.pointerEvents = '';
         }, 3000);
-      }, 1500);
+      }
     });
     document.getElementById('admin-sup-score-range')?.addEventListener('input', e => {
       document.getElementById('admin-sup-score-val').textContent = e.target.value;
@@ -1760,7 +1714,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         scoreCost: parseInt(fd.get('scoreCost') || 0),
         primaryAdvantageType: fd.get('primaryAdvantageType'),
         mainAdvantage: fd.get('mainAdvantage'),
-        bestFor: fd.get('bestFor'),
+        bestFor: fd.get('bestFor') ? fd.get('bestFor').split(',').map(s => s.trim()).filter(Boolean) : [],
+        internalCapabilities: fd.get('internalCapabilities') ? fd.get('internalCapabilities').split(',').map(s => s.trim()).filter(Boolean) : [],
         scoreLowVol: parseInt(fd.get('scoreLowVol') || 0),
         scoreComplexity: parseInt(fd.get('scoreComplexity') || 0),
         scorePrecision: parseInt(fd.get('scorePrecision') || 0),
@@ -1833,6 +1788,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         btn.textContent = '✓ Saved!';
         btn.style.background = '#10b981';
         
+        // ── Auto-geocode address if lat/lng missing ──
+        const addressToGeocode = payload.address || payload.addressZh || '';
+        const currentLat = parseFloat(dbPayload.data?.lat || 0);
+        const currentLng = parseFloat(dbPayload.data?.lng || 0);
+        if (addressToGeocode && (!currentLat || !currentLng)) {
+          try {
+            const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressToGeocode)}&limit=1`, {
+              headers: { 'Accept-Language': 'en' }
+            });
+            const geoData = await geoRes.json();
+            if (geoData && geoData.length > 0) {
+              const lat = parseFloat(geoData[0].lat);
+              const lng = parseFloat(geoData[0].lon);
+              if (lat && lng) {
+                const updatedData = { ...dbPayload.data, lat, lng };
+                await supabase.from('suppliers').update({ data: updatedData }).eq('id', dbPayload.id);
+                console.log(`📍 Auto-geocoded "${addressToGeocode}" → ${lat}, ${lng}`);
+              }
+            }
+          } catch (geoErr) {
+            console.warn('Geocoding failed (non-critical):', geoErr);
+          }
+        }
+
         // Reload data and redirect after a short delay
         await loadCRMData();
         setTimeout(() => {
@@ -2189,9 +2168,80 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
     `).join('');
 
-    const currentStatusForConfirm = rfq.status || data.status || 'submitted';
-    const hasBeenConfirmed = !!data.confirmed_price || !!data.confirmed_at || ['confirmed', 'processing', 'paid', 'shipped'].includes(currentStatusForConfirm);
+    const hasBeenConfirmed = !!data.confirmed_price || !!data.confirmed_at || ['confirmed', 'processing', 'paid', 'shipped'].includes(rfq.status || data.status || 'submitted');
     const confirmedDateStr = data.confirmed_at ? new Date(data.confirmed_at).toLocaleDateString() : (hasBeenConfirmed ? new Date(rfq.created_at).toLocaleDateString() : '');
+
+    function getTimelineHTML() {
+      const commLog = data.communication_log || [];
+      const currentStatusForConfirm = rfq.status || data.status || 'submitted';
+      const statusIdx = ['submitted', 'under_review', 'confirmed', 'paid', 'processing', 'shipped'].indexOf(currentStatusForConfirm);
+      const documents = Array.isArray(data.documents) ? data.documents : [];
+      const overrides = data.timeline_overrides || {};
+      
+      const stepSubmitted = overrides['Submitted'] !== undefined ? overrides['Submitted'] : true;
+      const stepReview = overrides['Under Review'] !== undefined ? overrides['Under Review'] : (statusIdx >= 1 || currentStatusForConfirm !== 'submitted');
+      const stepInfo = overrides['Info Req.'] !== undefined ? overrides['Info Req.'] : (commLog.length > 0);
+      const stepConfirmed = overrides['Confirmed'] !== undefined ? overrides['Confirmed'] : (hasBeenConfirmed || statusIdx >= 2);
+      
+      const quotedDoc = documents.slice().reverse().find(d => d.type === 'quotation');
+      const stepQuote = overrides['Quoted'] !== undefined ? overrides['Quoted'] : !!quotedDoc;
+      
+      const invoiceDoc = documents.slice().reverse().find(d => (d.type === 'proforma' || d.type === 'invoice'));
+      const stepPaid = overrides['Paid'] !== undefined ? overrides['Paid'] : (data.payment_status === 'paid' || statusIdx >= 3);
+      const stepProcessing = overrides['Processing'] !== undefined ? overrides['Processing'] : (statusIdx >= 4);
+      const stepFinished = overrides['Finished'] !== undefined ? overrides['Finished'] : (statusIdx >= 5);
+
+      const oneDriveFolderUrl = 'https://atlasdt-my.sharepoint.com/:f:/p/marco/IgA2BW4xyeGPQr0vPyDUAYLZAU-o-wqXaNquagRu-EK1exA?e=Qpb0sV';
+
+      const timelineSteps = [
+        { label: 'Submitted', active: stepSubmitted },
+        { label: 'Under Review', active: stepReview },
+        { label: 'Info Req.', active: stepInfo },
+        { label: 'Confirmed', active: stepConfirmed },
+        { label: 'Quoted', active: stepQuote, link: oneDriveFolderUrl, linkText: quotedDoc ? quotedDoc.docRef : 'View Quote' },
+        { label: 'Paid', active: stepPaid, link: oneDriveFolderUrl, linkText: invoiceDoc ? invoiceDoc.docRef : 'View Invoice' },
+        { label: 'Processing', active: stepProcessing },
+        { label: 'Finished', active: stepFinished }
+      ];
+
+      return `
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; position: relative; padding: 16px 28px 64px 28px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; flex-shrink: 0;">
+          <div style="position: absolute; top: 28px; left: 60px; right: 60px; height: 2px; background: #e2e8f0; z-index: 1;"></div>
+          ${timelineSteps.map((step, i) => {
+            // If rejected, don't show active green tracks past Confirmed
+            const blockTrack = currentStatusForConfirm === 'rejected' && i >= 3;
+            const isNextActive = timelineSteps[i+1]?.active && !blockTrack;
+            const showActiveTrack = step.active && isNextActive && i < timelineSteps.length - 1;
+            
+            return `
+            <div style="display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; flex: 1;">
+              ${showActiveTrack ? '<div style="position: absolute; top: 12px; left: 50%; right: -50%; height: 2px; background: #10b981; z-index: -1;"></div>' : ''}
+              <div class="timeline-step-circle" data-step="${step.label}" data-active="${step.active}" style="cursor: pointer; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid #fff; box-shadow: 0 0 0 1px ${(step.active && !blockTrack) ? '#059669' : '#cbd5e1'}; background: ${(step.active && !blockTrack) ? '#10b981' : '#f8fafc'}; color: ${(step.active && !blockTrack) ? '#fff' : '#64748b'}; transition: all 0.2s;">
+                ${(step.active && !blockTrack) ? '✓' : (i + 1)}
+              </div>
+              <div style="font-size: 10px; font-weight: 600; color: ${(step.active && !blockTrack) ? '#0f172a' : '#64748b'}; margin-top: 6px; text-align: center; text-transform: uppercase; letter-spacing: 0.3px;">
+                ${step.label}
+              </div>
+              ${(step.active && !blockTrack) && step.link ? `
+                <a href="${step.link}" target="_blank" style="font-size: 9px; color: #3b82f6; text-decoration: none; margin-top: 2px; display: flex; align-items: center; gap: 2px;">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                  ${step.linkText}
+                </a>
+              ` : '<div style="height:15px; margin-top:2px;"></div>'}
+              
+              ${step.label === 'Confirmed' ? `
+                <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 20px; background: ${currentStatusForConfirm === 'rejected' ? '#ef4444' : '#e2e8f0'}; z-index: -1;"></div>
+                <div style="position: absolute; top: 44px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
+                  <div class="timeline-step-circle" data-step="Rejected" style="cursor: pointer; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid #fff; box-shadow: 0 0 0 1px ${currentStatusForConfirm === 'rejected' ? '#ef4444' : '#cbd5e1'}; background: ${currentStatusForConfirm === 'rejected' ? '#ef4444' : '#f8fafc'}; color: ${currentStatusForConfirm === 'rejected' ? '#fff' : '#64748b'}; transition: all 0.2s;">
+                    ✕
+                  </div>
+                  <div style="font-size: 10px; font-weight: 600; color: ${currentStatusForConfirm === 'rejected' ? '#ef4444' : '#94a3b8'}; margin-top: 6px; text-transform: uppercase;">Rejected</div>
+                </div>
+              ` : ''}
+            </div>
+          `}).join('')}
+        </div>`;
+    }
 
     const confirmBtnHtml = hasBeenConfirmed 
       ? `<div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
@@ -2203,9 +2253,9 @@ document.addEventListener('DOMContentLoaded', async () => {
            <div style="font-size:10px; color:#64748b; font-weight:600;">${confirmedDateStr}</div>
          </div>`
       : `<button id="rfq-confirm-client-btn" data-rfq-id="${rfq.id}"
-            style="padding:7px 16px; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(22,163,74,0.35);">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Confirm to Client
+            style="padding:0 12px; height:32px; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; border:none; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:4px; box-shadow:0 2px 8px rgba(22,163,74,0.35); box-sizing: border-box; white-space:nowrap;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Confirm
           </button>`;
 
     const modal = document.createElement('div');
@@ -2236,6 +2286,12 @@ document.addEventListener('DOMContentLoaded', async () => {
           <button id="rfq-modal-close" style="background:none; border:none; font-size:26px; cursor:pointer; color:#94a3b8; line-height:1; padding:4px 8px; border-radius:6px;">&times;</button>
         </div>
 
+        <!-- ── Timeline ── -->
+        <div id="rfq-timeline-wrapper">
+          ${getTimelineHTML()}
+        </div>
+
+
         <!-- ── Action Bar Row 1: Status & Assigned To ── -->
         <div style="padding:10px 28px; background:#fff; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
           <div style="display:flex; align-items:center; gap:8px;">
@@ -2255,42 +2311,51 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
 
         <!-- ── Action Bar Row 2: Pricing & Actions ── -->
-        <div style="padding:14px 28px; background:#f8fafc; border-bottom:1px solid #e2e8f0; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; flex-shrink:0;">
-          <div style="display:flex; align-items:center; gap:8px;">
-            <label style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Final Price (USD)</label>
-            <input id="rfq-modal-final-price" type="number" step="0.01" min="0"
-              value="${data.admin_final_price || data.total_price || ''}"
-              placeholder="Override price"
-              style="padding:7px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; font-family:inherit; width:130px; background:#fff;">
+        <div style="padding:14px 28px; background:#f8fafc; border-bottom:1px solid #e2e8f0; display:flex; align-items:center; justify-content:space-between; flex-wrap:nowrap; gap:16px; flex-shrink:0;">
+          <div style="display:flex; align-items:flex-end; gap:8px; flex-shrink:0;">
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <label style="font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Final Price (USD)</label>
+              <input id="rfq-modal-final-price" type="number" step="0.01" min="0" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\\..*)\\./g, '$1'); if(this.value.includes('.')){ const parts = this.value.split('.'); if(parts[1].length > 2) this.value = parts[0] + '.' + parts[1].slice(0,2); }"
+                value="${data.admin_final_price || data.total_price || ''}"
+                placeholder="0.00"
+                style="padding:6px 10px; border-radius:6px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; font-family:inherit; width:90px; background:#fff; height: 32px; box-sizing: border-box;">
+            </div>
             <button id="rfq-save-price-btn" data-rfq-id="${rfq.id}"
-              style="padding:7px 14px; background:#0f172a; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;">Update</button>
+              style="padding:0 12px; height: 32px; background:#0f172a; color:#fff; border:none; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; box-sizing: border-box;">Update</button>
           </div>
           
           <!-- Actions on the right -->
-          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:nowrap; overflow-x:auto;">
             ${confirmBtnHtml}
-            <button id="rfq-generate-quote-btn" style="padding:7px 14px; background:#fff; color:#0f172a; border:1px solid #e2e8f0; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;" title="Generate Formal Quotation">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-              Generate Quotation
+            ${(data.payment_method === 'bank_transfer' && !['paid','shipped','done'].includes(rfq.status)) ? `
+            <button id="rfq-confirm-bank-payment-btn" data-rfq-id="${rfq.id}"
+              style="padding:6px 12px; height:32px; background:linear-gradient(135deg,#059669,#047857); color:#fff; border:none; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px; font-family:inherit; box-sizing:border-box; white-space:nowrap; box-shadow:0 2px 8px rgba(5,150,105,0.3);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Confirm Payment Received
+            </button>` : ''}
+            <button id="rfq-generate-quote-btn" style="padding:6px 10px; height:32px; background:#fff; color:#0f172a; border:1px solid #e2e8f0; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px; font-family:inherit; box-sizing: border-box; white-space:nowrap;" title="Generate Formal Quotation">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Quote
             </button>
-            <button id="rfq-generate-invoice-btn" style="padding:7px 14px; background:#fff; color:#0f172a; border:1px solid #e2e8f0; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;" title="Generate Proforma/Commercial Invoice">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-              Generate Invoice
+            <button id="rfq-generate-invoice-btn" style="padding:6px 10px; height:32px; background:#fff; color:#0f172a; border:1px solid #e2e8f0; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px; font-family:inherit; box-sizing: border-box; white-space:nowrap;" title="Generate Proforma/Commercial Invoice">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Invoice
             </button>
-            <button id="rfq-request-info-btn" style="padding:7px 14px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;" title="Ask the client for more details via email">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              Request Info
+            <button id="rfq-request-info-btn" style="padding:6px 10px; height:32px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px; font-family:inherit; box-sizing: border-box; white-space:nowrap;" title="Ask the client for more details via email">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Req Info
             </button>
-            <button id="rfq-reject-btn" style="padding:7px 14px; background:#fff7ed; color:#ea580c; border:1px solid #fed7aa; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-              Reject Quote
+            <button id="rfq-reject-btn" style="padding:6px 10px; height:32px; background:#fff7ed; color:#ea580c; border:1px solid #fed7aa; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px; font-family:inherit; box-sizing: border-box; white-space:nowrap;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              Reject
             </button>
-            <button id="rfq-delete-btn" style="padding:7px 14px; background:#fee2e2; color:#dc2626; border:1px solid #fecaca; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit;" title="Permanently delete from DB — dev use">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            <button id="rfq-delete-btn" style="padding:6px 10px; height:32px; background:#fee2e2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px; font-family:inherit; box-sizing: border-box; white-space:nowrap;" title="Permanently delete from DB — dev use">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
               Delete
             </button>
           </div>
         </div>
+
 
         <!-- Reject reason panel (hidden by default) -->
         <div id="rfq-reject-panel" style="display:${rfq.status === 'rejected' ? 'block' : 'none'}; padding:12px 28px; background:#fff7ed; border-bottom:2px solid #fed7aa;">
@@ -2386,28 +2451,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             <!-- Parts table (instant) or Files (bulk) -->
             ${data.type === 'instant' ? `
             <div>
-              <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:10px;">Quoted Parts (${data.parts?.length || 0})</div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:700; letter-spacing:0.5px;">Quoted Parts (<span id="admin-parts-count">${data.parts?.length || 0}</span>)</div>
+                <button id="admin-add-part-btn" style="padding:4px 8px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer;">+ Add Line</button>
+              </div>
               <div style="border:1px solid #e2e8f0; border-radius:12px; overflow:hidden;">
-                <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                <table id="rfq-admin-parts-table" style="width:100%; border-collapse:collapse; font-size:12px;">
                   <thead style="background:#f8fafc;">
                     <tr style="border-bottom:1px solid #e2e8f0; text-align:left;">
-                      <th style="padding:10px 12px; font-weight:600; color:#475569;">Part</th>
+                      <th style="padding:10px 12px; font-weight:600; color:#475569;">Part Name</th>
                       <th style="padding:10px 12px; font-weight:600; color:#475569;">Technology</th>
                       <th style="padding:10px 12px; font-weight:600; color:#475569;">Material</th>
-                      <th style="padding:10px 12px; font-weight:600; color:#475569;">Qty</th>
-                      <th style="padding:10px 12px; font-weight:600; color:#475569;">Price</th>
+                      <th style="padding:10px 12px; font-weight:600; color:#475569; width:60px;">Qty</th>
+                      <th style="padding:10px 12px; font-weight:600; color:#475569; width:90px;">Price</th>
+                      <th style="padding:10px 12px; width:40px;"></th>
                     </tr>
                   </thead>
-                  <tbody>
-                    ${(data.parts || []).map(p => `
-                    <tr style="border-bottom:${p.customDetails ? '0' : '1px solid #f1f5f9'};">
-                      <td style="padding:10px 12px; color:#0f172a; font-weight:500;">${p.name || '—'}</td>
-                      <td style="padding:10px 12px; color:#334155;">${p.process || '—'}</td>
-                      <td style="padding:10px 12px; color:#334155;">${p.material || '—'}</td>
-                      <td style="padding:10px 12px; color:#0f172a; font-weight:600;">${p.qty || 1}</td>
-                      <td style="padding:10px 12px; color:#10b981; font-weight:700;">$${(p.price || 0).toLocaleString(undefined, {minimumFractionDigits:2})}</td>
-                    </tr>
-                    ${p.customDetails ? `<tr style="border-bottom:1px solid #f1f5f9;background:#fffbeb;"><td colspan="5" style="padding:6px 12px 10px;font-size:11px;color:#92400e;"><span style="font-weight:700;margin-right:6px;">📝 Notes:</span>${p.customDetails}</td></tr>` : ''}`).join('')}
+                  <tbody id="rfq-admin-parts-tbody">
+                    <!-- Rendered by renderAdminPartsTable() -->
                   </tbody>
                 </table>
               </div>
@@ -2427,9 +2488,110 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.body.appendChild(modal);
 
+    // ── Admin Parts Table Logic ──
+    const partsTbody = modal.querySelector('#rfq-admin-parts-tbody');
+    const partsTableEl = modal.querySelector('#rfq-admin-parts-table');
+    
+    function updateAdminPartsTotal() {
+      let total = 0;
+      (data.parts || []).forEach(p => { total += (p.qty || 1) * (p.price || 0); });
+      const finalPriceInp = modal.querySelector('#rfq-modal-final-price');
+      if (finalPriceInp) finalPriceInp.value = total.toFixed(2);
+      
+      const quotedTotalDisp = modal.querySelector('#admin-quoted-total-display');
+      if (quotedTotalDisp) quotedTotalDisp.textContent = '$' + total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+    function renderAdminPartsTable() {
+       if (!partsTbody) return;
+       partsTbody.innerHTML = (data.parts || []).map((p, i) => `
+         <tr data-idx="${i}" style="border-bottom:${p.customDetails ? '0' : '1px solid #f1f5f9'};">
+           <td style="padding:6px 12px; color:#0f172a; font-weight:500;">
+             <input class="admin-part-input" data-field="name" value="${p.name || ''}" placeholder="Part Name" style="width:100%; border:1px solid transparent; background:transparent; font-size:12px; font-family:inherit; padding:4px; outline:none;" />
+           </td>
+           <td style="padding:6px 12px; color:#334155;">
+             <input class="admin-part-input" data-field="process" value="${p.process || ''}" placeholder="Process" style="width:100%; border:1px solid transparent; background:transparent; font-size:12px; font-family:inherit; padding:4px; outline:none;" />
+           </td>
+           <td style="padding:6px 12px; color:#334155;">
+             <input class="admin-part-input" data-field="material" value="${p.material || ''}" placeholder="Material" style="width:100%; border:1px solid transparent; background:transparent; font-size:12px; font-family:inherit; padding:4px; outline:none;" />
+           </td>
+           <td style="padding:6px 12px; color:#0f172a; font-weight:600;">
+             <input class="admin-part-input" type="number" data-field="qty" value="${p.qty || 1}" style="width:50px; border:1px solid transparent; background:transparent; font-size:12px; font-weight:600; font-family:inherit; padding:4px; outline:none;" />
+           </td>
+           <td style="padding:6px 12px; color:#10b981; font-weight:700;">
+             <div style="display:flex; align-items:center;">$<input class="admin-part-input" type="number" step="0.01" data-field="price" value="${p.price || 0}" style="width:60px; border:1px solid transparent; background:transparent; color:#10b981; font-weight:700; font-size:12px; font-family:inherit; padding:4px; outline:none; margin-left:2px;" /></div>
+           </td>
+           <td style="padding:6px 4px; text-align:center;">
+             <button class="admin-part-remove-btn" data-idx="${i}" style="background:none; border:none; color:#ef4444; font-size:16px; cursor:pointer;" title="Remove part">&times;</button>
+           </td>
+         </tr>
+         ${p.customDetails ? `<tr style="border-bottom:1px solid #f1f5f9;background:#fffbeb;"><td colspan="6" style="padding:6px 12px 10px;font-size:11px;color:#92400e;"><span style="font-weight:700;margin-right:6px;">📝 Notes:</span>${p.customDetails}</td></tr>` : ''}
+       `).join('');
+       
+       const countSpan = modal.querySelector('#admin-parts-count');
+       if (countSpan) countSpan.textContent = (data.parts || []).length;
+    }
+
+    if (partsTbody) {
+      renderAdminPartsTable();
+    }
+
+    if (partsTableEl) {
+       partsTableEl.addEventListener('input', (e) => {
+         if (e.target.classList.contains('admin-part-input')) {
+           const row = e.target.closest('tr');
+           const idx = parseInt(row.dataset.idx);
+           const field = e.target.dataset.field;
+           if (field === 'qty' || field === 'price') {
+             data.parts[idx][field] = Number(e.target.value) || 0;
+             updateAdminPartsTotal();
+           } else {
+             data.parts[idx][field] = e.target.value;
+           }
+         }
+       });
+       partsTableEl.addEventListener('click', (e) => {
+         if (e.target.classList.contains('admin-part-remove-btn')) {
+           const idx = parseInt(e.target.dataset.idx);
+           data.parts.splice(idx, 1);
+           renderAdminPartsTable();
+           updateAdminPartsTotal();
+         }
+       });
+    }
+
+    modal.querySelector('#admin-add-part-btn')?.addEventListener('click', () => {
+       data.parts = data.parts || [];
+       data.parts.push({ name: '', process: '', material: '', qty: 1, price: 0 });
+       renderAdminPartsTable();
+    });
+
     // Close modal
     modal.querySelector('#rfq-modal-close').addEventListener('click', () => modal.remove());
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+
+    // Timeline toggle
+    modal.querySelector('#rfq-timeline-wrapper').addEventListener('click', async (e) => {
+      const circle = e.target.closest('.timeline-step-circle');
+      if (!circle) return;
+      const stepLabel = circle.dataset.step;
+      const currentlyActive = circle.dataset.active === 'true';
+      
+      data.timeline_overrides = data.timeline_overrides || {};
+      data.timeline_overrides[stepLabel] = !currentlyActive;
+      
+      // Update DOM optimistically
+      modal.querySelector('#rfq-timeline-wrapper').innerHTML = getTimelineHTML();
+      
+      try {
+        await fetch('/.netlify/functions/admin-rfqs', {
+          method: 'PATCH',
+          body: JSON.stringify({ id: rfq.id, updates: { rfq_data: data } })
+        });
+      } catch(err) {
+        console.error('Failed to save timeline override', err);
+      }
+    });
 
     // Status change in modal
     // Status change in modal
@@ -2450,11 +2612,74 @@ document.addEventListener('DOMContentLoaded', async () => {
           // Update the table row's select too
           const tableSelect = contentRouting.querySelector(`.admin-rfq-status-select[data-rfq-id="${rfqId}"]`);
           if (tableSelect) tableSelect.value = newStatus;
+
+          rfq.status = newStatus;
+          data.status = newStatus;
+          modal.querySelector('#rfq-timeline-wrapper').innerHTML = getTimelineHTML();
         } catch (err) {
           alert('Failed to update status: ' + err.message);
         }
       });
     }
+
+    // Confirm Bank Payment Received
+    modal.querySelector('#rfq-confirm-bank-payment-btn')?.addEventListener('click', async (e) => {
+      const btn = e.target.closest('button');
+      if (!confirm('Confirm that bank transfer payment has been received for this RFQ?')) return;
+      btn.disabled = true;
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Saving...';
+      try {
+        const paidAt = new Date().toISOString();
+        data.payment_status = 'paid';
+        data.paid_at = paidAt;
+        rfq.status = 'paid';
+        data.status = 'paid';
+
+        await fetch('/.netlify/functions/admin-rfqs', {
+          method: 'PATCH',
+          body: JSON.stringify({ id: rfq.id, updates: { status: 'paid', rfq_data: data } })
+        });
+
+        // Update the status dropdown in modal
+        const statusSel = modal.querySelector('#rfq-modal-status');
+        if (statusSel) statusSel.value = 'paid';
+
+        // Update the timeline
+        modal.querySelector('#rfq-timeline-wrapper').innerHTML = getTimelineHTML();
+
+        // Update table row
+        const tableSelect = document.querySelector(`.admin-rfq-status-select[data-rfq-id="${rfq.id}"]`);
+        if (tableSelect) tableSelect.value = 'paid';
+
+        // Send payment confirmation email
+        try {
+          await fetch('/.netlify/functions/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'payment_confirmed',
+              email: data.user_email || data.client_email || '',
+              name: data.client_name || data.user_name || 'Customer',
+              projectName: data.project_name || 'Manufacturing Order',
+              amount: Number(data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}),
+              bankRef: `ADT-${(rfq.id||'').slice(0,8).toUpperCase()}`
+            })
+          });
+        } catch(emailErr) {
+          console.warn('Payment confirmation email skipped:', emailErr);
+        }
+
+        // Replace button with success badge
+        btn.outerHTML = `<div style="display:flex; align-items:center; gap:5px; padding:6px 12px; background:#dcfce7; color:#15803d; border-radius:8px; font-size:11px; font-weight:700; border:1px solid #bbf7d0;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Payment Confirmed
+        </div>`;
+      } catch (err) {
+        alert('Failed to confirm payment: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Confirm Payment Received';
+      }
+    });
 
     // Assignee change in modal
     const modalAssigneeSelect = modal.querySelector('#rfq-modal-assignee');
@@ -2470,6 +2695,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           name = parts[1];
         }
 
+        data.assigned_to_email = email;
+        data.assigned_to_name = name;
         const updatedData = { ...data, assigned_to_email: email, assigned_to_name: name };
 
         try {
@@ -3054,18 +3281,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!textInput) { console.error('No text input found for upload target'); return; }
         
         const parentLabel = _new.parentElement;
-        const acceptAttr = _new.accept || '';
         const ogLabel = parentLabel.innerHTML;
         parentLabel.innerHTML = '⏳ Uploading...';
         
         try {
           const ext = file.name.split('.').pop();
-          const fileName = `admin_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
+          // Build a supplier-scoped path: suppliers/{slug}/{original-or-unique-name}
+          const supplierName = document.querySelector('[name="name"]')?.value?.trim() || 'unknown';
+          const slug = supplierName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+          const fileName = `suppliers/${slug}/${Date.now()}_${safeName}`;
           
           if (!supabase) {
              throw new Error('Supabase client not found.');
           }
-          const { data, error } = await supabase.storage.from('supplier-assets').upload(fileName, file);
+          const { data, error } = await supabase.storage.from('supplier-assets').upload(fileName, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
           if (error) throw error;
           
           const { data: publicData } = supabase.storage.from('supplier-assets').getPublicUrl(fileName);

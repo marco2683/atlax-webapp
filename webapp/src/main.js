@@ -519,11 +519,24 @@ function switchView(view, globe) {
   });
 
   const supplierViewToggle = document.getElementById('supplier-view-toggle');
+  const flatearthToggle = document.getElementById('flatearth-view-toggle');
+  
   if (supplierViewToggle) {
     if (view !== 'suppliers') {
       supplierViewToggle.classList.add('hidden');
     } else {
       supplierViewToggle.classList.remove('hidden');
+    }
+  }
+
+  if (flatearthToggle) {
+    if (view !== 'suppliers') {
+      flatearthToggle.classList.add('hidden');
+    } else {
+      const isTabular = document.querySelector('.view-toggle-btn[data-view="table"]')?.classList.contains('active');
+      if (!isTabular) {
+        flatearthToggle.classList.remove('hidden');
+      }
     }
   }
 

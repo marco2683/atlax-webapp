@@ -1,7 +1,7 @@
 /* ============================================================
    PRD — Supplier Detail Modal (Comprehensive Dossier)
-   Updated: 2026-04-01 – Added photo gallery, video, materials,
-   production capacity, trade, sustainability, sample sections
+   Updated: 2026-04-29 – Document download icons, address/map,
+   categorized image gallery, modern typography
    ============================================================ */
 
 const DEFAULT_BANNER = 'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1200&q=80';
@@ -31,31 +31,6 @@ export function setCurrentTier(tierId) {
   if (!document.getElementById('supplier-modal')?.classList.contains('hidden')) {
     renderCurrentCard();
   }
-}
-
-function generateClassifiers(factoryScore) {
-  const seed = factoryScore || 70;
-  const jitter = (offset) => Math.max(0, Math.min(100, seed + offset));
-  const dims = {
-    speed:      jitter(Math.floor((seed * 3) % 21) - 10),
-    cost:       jitter(Math.floor((seed * 7) % 25) - 12),
-    complexity: jitter(Math.floor((seed * 11) % 19) - 8),
-    lowVolume:  jitter(Math.floor((seed * 13) % 23) - 15),
-    precision:  jitter(Math.floor((seed * 17) % 17) - 5),
-  };
-  const toLabel = (score) => {
-    if (score >= 85) return { label: 'Excellent', color: '#10b981', bg: 'rgba(16,185,129,0.12)' };
-    if (score >= 70) return { label: 'Good', color: '#3b82f6', bg: 'rgba(59,130,246,0.12)' };
-    if (score >= 55) return { label: 'Average', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' };
-    return { label: 'Limited', color: '#6b7280', bg: 'rgba(107,114,128,0.12)' };
-  };
-  return [
-    { name: 'Speed',          ...toLabel(dims.speed) },
-    { name: 'Cost',           ...toLabel(dims.cost) },
-    { name: 'Complexity',     ...toLabel(dims.complexity) },
-    { name: 'Low Volume',     ...toLabel(dims.lowVolume) },
-    { name: 'High-Precision', ...toLabel(dims.precision) },
-  ];
 }
 
 export function openSupplierCarousel(techName, suppliers) {
@@ -98,10 +73,6 @@ function updateCounter() {
   if (el) el.textContent = `${currentIndex + 1} / ${currentSuppliers.length}`;
 }
 
-// Removed Mock Data Functions
-
-// Removed Mock trade data
-
 /* ── Main Render ── */
 function renderCurrentCard() {
   const body = document.getElementById('supplier-modal-body');
@@ -115,224 +86,256 @@ function renderCurrentCard() {
     title.style.alignItems = 'center';
     title.style.justifyContent = 'flex-start';
     title.style.marginRight = '20px';
-    title.style.gap = '24px';
+    title.style.gap = '16px';
     
-    // Process tech and tag pills precisely from capabilities and tags
-    // Removed techPills and tagPills entirely to clean up the top left corner
+    const _addressEN = s.address || s.addressEN || (s.city && s.country ? `${s.city}, ${s.country}` : 'China');
     
     title.innerHTML = `
-      <div style="display: flex; gap: 48px; border-left: 1px solid #e2e8f0; padding-left: 32px; flex: 1.5; justify-content: flex-start; align-items: center;">
-        <!-- Quality Score -->
-        <div style="display: flex; flex-direction: column; gap: 6px;">
-          <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Quality Score</span>
-          <div style="font-size: 24px; font-weight: 800; color: #0f172a; line-height: 1; display: flex; align-items: baseline;">
-            ${s.factoryScore || '92'}<span style="font-size: 14px; color: #64748b; font-weight: 600; margin-left: 2px;">/100</span>
-            <span class="sup-pill sup-pill--green" style="margin-left: 8px; font-size: 11px; vertical-align: middle;">Excellent</span>
-          </div>
-        </div>
-
-        <!-- Foundation -->
-        <div style="display: flex; flex-direction: column; gap: 6px;">
-          <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Company Foundation</span>
-          <div style="font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1; padding-top: 3px;">
-            Est. ${s.yearEstablished || '2008'} <span style="font-size: 13px; color: #64748b; font-weight: 500;">(${new Date().getFullYear() - parseInt(s.yearEstablished || 2008)} yrs)</span>
-          </div>
-        </div>
-
-        <!-- Certifications -->
-        <div style="display: flex; flex-direction: column; gap: 6px;">
-          <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Certifications & Compliance</span>
-          <div style="display: flex; align-items: center; gap: 12px; padding-top: 3px;">
-            <div style="font-size: 15px; font-weight: 700; color: #166534; line-height: 1;">
-              ${(s.certifications || []).slice(0, 3).join(', ') || 'ISO 9001:2015, ISO 14001'}
-            </div>
-            <button onclick="alert('Downloading Certificates...')" style="background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; box-shadow: 0 1px 2px rgba(21, 128, 61, 0.05);">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              Download
-            </button>
-          </div>
+      <div style="width: 48px; height: 48px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800; color: #475569; flex-shrink:0; font-family:'Inter',sans-serif;">
+        ${s.name.substring(0, 2).toUpperCase()}
+      </div>
+      <div style="font-family: 'Inter', sans-serif; min-width:0;">
+        <h2 style="margin:0; font-size:20px; font-weight:800; color:#0f172a; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.name}</h2>
+        <div style="color:#64748b; font-size:12px; display:flex; align-items:center; gap:5px; font-weight:500; margin-top:3px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${_addressEN}</span>
         </div>
       </div>
     `;
   }
 
-  const score = s.factoryScore || 70;
-
-  const bannerUrl = safeImgUrl(s.banner || s.bannerImage || DEFAULT_BANNER);
   const email = s.email || 'sales@' + s.name.toLowerCase().replace(/[^a-z]/g, '') + '.com';
   const phone = s.phone || '';
-  const wechat = s.wechat || '';
-  const userTier = sessionStorage.getItem('atlasdt_tier') || 'basic';
-  const tierCheck = String(userTier).toLowerCase().trim();
-  const isProAccess = ['professional', 'pro', 'enterprise'].includes(tierCheck);
-
-  const isContactsLocked = !isProAccess;
-  const isIntelLocked = !isProAccess;
 
   const supplierId = s.id || s.name;
   const isShortlisted = !!document.querySelector(`.shortlist-item[data-id="${supplierId}"]`);
-  const shortlistBtnHTML = isShortlisted
-    ? `<button class="sup-banner__add-shortlist-btn" id="modal-add-to-shortlist" style="background: rgba(16, 185, 129, 0.25); border-color: rgba(16, 185, 129, 0.5); color: #10b981; pointer-events: none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>Shortlisted</span>
-      </button>`
-    : `<button class="sup-banner__add-shortlist-btn" id="modal-add-to-shortlist">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span>Add to Shortlist</span>
-      </button>`;
-
-  let productImgs = s.images?.product || [];
-  let facilityImgs = [...(s.images?.facility || []), ...(s.images?.equipment || []), ...(s.images?.factory || [])];
   
-  // Use s.url as primary, fallback to s.website
+  let productImgs = s.images?.product || [];
+  let facilityImgs = s.images?.facility || [];
+  let equipmentImgs = s.images?.equipment || [];
+  let certImgs = s.certificates || [];
+  let factoryImgs = s.images?.factory || [];
+  
   let websiteUrl = s.url || s.website;
 
-  const exportCountries = s.exportCountries || (s.factoryScore >= 75 ? Math.floor(5 + score / 8) : 2);
+  // Document availability
+  const hasRFI = !!(s.docRFI);
+  const hasPPT = !!(s.docPresentation);
+  const hasCerts = !!(s.docCertifications);
 
-  const mapUrl = `https://maps.google.com/?q=${encodeURIComponent((s.city || '') + ', ' + (s.country || ''))}`;
-  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent((s.city || '') + ', ' + (s.country || ''))}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+  // Address
+  const addressEN = s.address || s.addressEN || (s.city && s.country ? `${s.city}, ${s.country}` : '');
+  const addressCN = s.addressZh || s.addressCN || s.address_cn || '';
 
-  const renderImageGrid = (imgs) => {
-    const gridItems = Array.from({length: 6}, (_, i) => {
-      if (i < imgs.length) {
-        return `<div style="background: url('${safeImgUrl(imgs[i])}') center/cover; aspect-ratio: 1; border-radius: 8px; width: 100%;"></div>`;
-      } else {
-        return `<div style="aspect-ratio: 1; border: 1px dashed rgba(255,255,255,0.15); border-radius: 8px; width: 100%;"></div>`;
-      }
-    });
-    return `<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 12px 0;">${gridItems.join('')}</div>`;
+  // Map URLs
+  const googleMapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addressEN || s.city || '')}`;
+  const baiduMapUrl = addressCN ? `https://map.baidu.com/search?querytype=s&wd=${encodeURIComponent(addressCN)}` : '';
+
+  // Doc download card builder — larger, with descriptive icons + labels
+  const docDownloadCard = (available, url, label, iconSvg, accentColor) => {
+    if (available && url) {
+      return `<a href="${url}" target="_blank" download title="Download ${label}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; padding:14px 10px; border-radius:10px; border:1px solid ${accentColor}30; background:${accentColor}08; text-decoration:none; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='${accentColor}18'; this.style.borderColor='${accentColor}60'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px ${accentColor}15'" onmouseout="this.style.background='${accentColor}08'; this.style.borderColor='${accentColor}30'; this.style.transform=''; this.style.boxShadow=''">
+        <div style="width:36px; height:36px; border-radius:10px; background:${accentColor}15; display:flex; align-items:center; justify-content:center; color:${accentColor};">${iconSvg}</div>
+        <span style="font-size:10px; font-weight:700; color:${accentColor}; text-transform:uppercase; letter-spacing:0.04em; text-align:center; line-height:1.3;">${label}</span>
+      </a>`;
+    }
+    return `<div title="${label} — Not available" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; padding:14px 10px; border-radius:10px; border:1px dashed #e2e8f0; background:#fafafa; cursor:not-allowed; opacity:0.4;">
+      <div style="width:36px; height:36px; border-radius:10px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; color:#94a3b8;">${iconSvg}</div>
+      <span style="font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.04em; text-align:center; line-height:1.3;">${label}</span>
+    </div>`;
   };
 
-  const getTcBullets = (score) => score == 2 ? '<li>High-precision 5-axis CNC machining</li><li>In-house tooling and die design team</li><li>Advanced CMM and metrology lab</li>' : '<li>Standard robust manufacturing capability</li><li>Basic tooling modifications in-house</li><li>Proven equipment reliability</li>';
-  const getOeBullets = (score) => score == 2 ? '<li>Proactive DFM feedback within 24 hours</li><li>Direct line communication to management</li><li>Transparent delay and issue reporting</li>' : '<li>Responsive to standard RFQ requests</li><li>Good communication during production</li><li>Standard response times</li>';
-  const getQsBullets = (score) => score == 2 ? '<li>Statistical Process Control (SPC) active</li><li>Comprehensive IQC material quarantine</li><li>Traceability through specialized ERP</li>' : '<li>Basic visual and dimensional IQC</li><li>Standard end-of-line checking</li><li>Manual batch tracking implemented</li>';
-  const getCostBullets = (score) => (parseInt(score) > 8) ? '<li>Aggressive amortized tooling setups</li><li>Low overhead costs translating to unit price</li><li>Fast operational setups maximizing speed</li>' : '<li>Market-standard pricing for their tier</li><li>Average setup and NRE costs</li><li>Reliable delivery standard times</li>';
+  // More representative SVG icons
+  const rfiIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>`;
+  const pptIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><polygon points="10,7 10,13 15,10" fill="currentColor" stroke="none"/></svg>`;
+  const certsIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>`;
 
-  const advColors = {
-    technical: { border: '#c7d2fe', bg: '#eef2ff', text: '#3730a3', icon: '#4f46e5' },
-    ethos: { border: '#fde68a', bg: '#fffbeb', text: '#92400e', icon: '#d97706' },
-    quality: { border: '#a7f3d0', bg: '#ecfdf5', text: '#065f46', icon: '#059669' },
-    cost: { border: '#bae6fd', bg: '#f0f9ff', text: '#075985', icon: '#0ea5e9' },
-    none: { border: '#e2e8f0', bg: '#f8fafc', text: '#475569', icon: '#94a3b8' }
+  // Certifications list
+  const certsList = (s.certifications || []).concat(s.otherCertifications || []).filter(Boolean);
+
+  // Image gallery renderer
+  const renderImageCategory = (catTitle, imgs) => {
+    if (!imgs || imgs.length === 0) return '';
+    return `
+    <div style="margin-bottom:24px;">
+      <h4 style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.06em; margin:0 0 12px 0; font-family:'Inter',sans-serif;">${catTitle}</h4>
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
+        ${imgs.map(img => `
+          <div style="aspect-ratio:1; border-radius:10px; overflow:hidden; border:1px solid #e2e8f0; cursor:pointer; transition:transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.03)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.1)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">
+            <img src="${safeImgUrl(img)}" alt="${catTitle}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
   };
-  const pAdv = s.primaryAdvantageType || 'none';
-  const advStyle = advColors[pAdv] || advColors['none'];
-  const getBoxStyle = (type) => pAdv === type ? `box-shadow: 0 0 0 2px ${advColors[type].icon}; border-color: transparent;` : 'border: 1px solid #e2e8f0;';
-  const getStar = (type) => pAdv === type ? `<div style="position: absolute; top: -12px; right: -12px; background: ${advColors[type].icon}; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.15); z-index: 2;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>` : '';
 
   body.innerHTML = `
-<div class="sup-dossier-simple" style="padding: 32px; background: #fff; height:100%; overflow-y: auto;">
+<div class="sup-dossier-simple" style="padding: 32px; background: #fff; height:100%; overflow-y: auto; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
   
-  <!-- Header: Name & Contact -->
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e2e8f0;">
-    <div style="display: flex; align-items: center; gap: 20px;">
-      <div style="width: 64px; height: 64px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: #475569;">
-        ${s.name.substring(0, 2).toUpperCase()}
-      </div>
-      <div>
-        <h2 style="margin: 0 0 8px 0; font-size: 28px; color: #0f172a; font-weight: 800;">${s.name}</h2>
-        <div style="color: #64748b; font-size: 15px; display: flex; align-items: center; gap: 8px; font-weight: 500;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          ${s.address || (s.city + ', ' + s.country)}
-        </div>
-      </div>
-    </div>
+  <!-- Top Bar: Download Cards + Contact Buttons -->
+  <div style="display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid #e2e8f0; gap: 20px;">
     
-    <!-- Primary Contact -->
-    <div style="display: flex; gap: 16px; align-items: center;">
-      <a href="mailto:${email}" style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1px solid #cbd5e1; color: #0f172a; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; transition: background 0.2s;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        ${email}
-      </a>
-      ${websiteUrl ? `<a href="${websiteUrl.startsWith('http') ? websiteUrl : 'https://' + websiteUrl}" target="_blank" style="display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #cbd5e1; color: #2563eb; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; transition: background 0.2s;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        Website
-      </a>` : ''}
+    <!-- Document Download Cards -->
+    <div style="display: flex; gap: 12px; flex: 1;">
+      ${docDownloadCard(hasRFI, s.docRFI, 'RFI Form', rfiIcon, '#2563eb')}
+      ${docDownloadCard(hasPPT, s.docPresentation, 'Presentation', pptIcon, '#7c3aed')}
+      ${docDownloadCard(hasCerts, s.docCertifications, 'Certifications', certsIcon, '#059669')}
     </div>
+
+    <!-- Certifications Badges (top-right) -->
+    ${certsList.length > 0 ? `<div style="display: flex; flex-direction: column; gap: 6px; justify-content: center;">
+      <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        <span style="font-size: 10px; font-weight: 800; color: #0f766e; text-transform: uppercase; letter-spacing: 0.05em;">Certifications</span>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+        ${certsList.map(c => `<span style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; background:rgba(13,148,136,0.08); border:1px solid rgba(13,148,136,0.25); border-radius:6px; font-size:11px; font-weight:700; color:#0f766e;">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          ${c}
+        </span>`).join('')}
+      </div>
+    </div>` : ''}
   </div>
 
-  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px; margin-bottom: 40px;">
+  <div style="display: grid; grid-template-columns: 1fr 300px; gap: 32px;">
     
-    <!-- Left Column: Description & Best For -->
-    <div style="display: flex; flex-direction: column; gap: 32px;">
+    <!-- ═══ Left Column ═══ -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+
       <!-- Description -->
       <div>
-        <h3 style="font-size: 13px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">Company Overview</h3>
-        <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0; font-weight: 400;">
-          ${s.description || 'This supplier is a leading manufacturer in the Pearl River Delta region, specializing in high-quality production and engineering services. They have a proven track record of delivering consistent results for international clients, adhering strictly to global quality standards.'}
+        <h3 style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin: 0 0 10px 0; letter-spacing: 0.06em;">Company Overview</h3>
+        <p style="font-size: 14px; color: #334155; line-height: 1.8; margin: 0; font-weight: 400;">
+          ${s.description || 'This supplier is a leading manufacturer in the Pearl River Delta region, specializing in high-quality production and engineering services.'}
         </p>
       </div>
 
-      <!-- Best For (Moved from right, enhanced colors) -->
-      <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 12px; padding: 24px; box-shadow: inset 0 2px 4px rgba(255,255,255,0.5);">
-        <h3 style="font-size: 14px; font-weight: 800; color: #1e3a8a; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; letter-spacing: 0.05em;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          Best For
-        </h3>
-        <ul style="margin: 0; padding-left: 24px; color: #1e40af; font-size: 15px; line-height: 1.8; font-weight: 600;">
-          ${(s.technologies || []).concat(s.tags || []).slice(0, 4).map(t => 
-            `<li style="margin-bottom: 8px;">${t}</li>`
-          ).join('') || '<li style="margin-bottom: 8px;">Standard manufacturing processes</li><li style="margin-bottom: 8px;">Cost-effective production runs</li>'}
-        </ul>
+
+
+      <!-- Best For + Internal Capabilities (50/50) -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <!-- Best For -->
+        <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 10px; padding: 18px 20px;">
+          <h3 style="font-size: 12px; font-weight: 800; color: #1e3a8a; text-transform: uppercase; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px; letter-spacing: 0.05em;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Best For
+          </h3>
+          <ul style="margin: 0; padding-left: 20px; color: #1e40af; font-size: 13px; line-height: 1.7; font-weight: 600;">
+            ${(s.bestFor || s.technologies || []).slice(0, 6).map(t => 
+              `<li style="margin-bottom: 3px;">${t}</li>`
+            ).join('') || '<li>Standard manufacturing processes</li>'}
+          </ul>
+        </div>
+
+        <!-- Internal Capabilities -->
+        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #bbf7d0; border-radius: 10px; padding: 18px 20px;">
+          <h3 style="font-size: 12px; font-weight: 800; color: #14532d; text-transform: uppercase; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px; letter-spacing: 0.05em;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            Internal Capabilities
+          </h3>
+          <ul style="margin: 0; padding-left: 20px; color: #166534; font-size: 13px; line-height: 1.7; font-weight: 600;">
+            ${(s.internalCapabilities || s.technologies || []).slice(0, 6).map(t => 
+              `<li style="margin-bottom: 3px;">${t}</li>`
+            ).join('') || '<li>In-house tooling &amp; assembly</li>'}
+          </ul>
+        </div>
       </div>
+
+      <!-- Image Gallery (categorized, vertical scroll, left-aligned) -->
+      ${renderImageCategory('Product Images', productImgs)}
+      ${renderImageCategory('Facility', facilityImgs.length > 0 ? facilityImgs : factoryImgs)}
+      ${renderImageCategory('Equipment', equipmentImgs)}
+      ${renderImageCategory('Certifications', certImgs)}
+
     </div>
 
-    <!-- Right Column: Capabilities & Details -->
-    <div style="display: flex; flex-direction: column; gap: 24px;">
-      
-      <!-- Internal Capabilities (Moved from left, 2-column dot points) -->
-      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
-        <h3 style="font-size: 13px; font-weight: 800; color: #0f172a; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.05em;">
-          Internal Capabilities
-        </h3>
-        <ul style="margin: 0; padding-left: 18px; color: #475569; font-size: 13px; line-height: 1.8; font-weight: 500; columns: 2; column-gap: 16px;">
-          ${(s.technologies || []).concat(s.tags || []).slice(0, 12).map(t => 
-            `<li style="margin-bottom: 6px;">${t}</li>`
-          ).join('')}
-        </ul>
-      </div>
+    <!-- ═══ Right Column ═══ -->
+    <div style="display: flex; flex-direction: column; gap: 14px;">
 
-      <!-- Contact Info -->
-      <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-           <span style="font-size: 13px; color: #64748b; font-weight: 500;">Phone</span>
-           <span style="font-size: 14px; color: #0f172a; font-weight: 600;">${phone || '--'}</span>
+      <!-- Contacts -->
+      <h4 style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin: 0; font-family: 'Inter', sans-serif;">Contacts</h4>
+      <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px;">
+        ${s.contactName ? `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Primary Contact</span>
+           <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${s.contactName}</span>
+        </div>` : ''}
+        ${email ? `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Email</span>
+           <a href="mailto:${email}" style="font-size: 13px; color: #2563eb; font-weight: 600; text-decoration: none;">${email}</a>
+        </div>` : ''}
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Phone</span>
+           <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${phone || '—'}</span>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-           <span style="font-size: 13px; color: #64748b; font-weight: 500;">Est.</span>
-           <span style="font-size: 14px; color: #0f172a; font-weight: 600;">${s.yearEstablished || '--'}</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Established</span>
+           <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${s.yearEstablished || '—'}</span>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center;">
-           <span style="font-size: 13px; color: #64748b; font-weight: 500;">Employees</span>
-           <span style="font-size: 14px; color: #0f172a; font-weight: 600;">${s.employees || '--'}</span>
+           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Employees</span>
+           <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${s.employees || '—'}</span>
         </div>
+        ${websiteUrl ? `<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f1f5f9;">
+           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Website</span>
+           <a href="${websiteUrl.startsWith('http') ? websiteUrl : 'https://' + websiteUrl}" target="_blank" style="font-size: 13px; color: #2563eb; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 4px;">
+             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+             Visit
+           </a>
+        </div>` : ''}
       </div>
       
-      <!-- Actions -->
-      <div style="display: flex; flex-direction: column; gap: 8px;">
-        ${shortlistBtnHTML.replace('sup-banner__add-shortlist-btn', 'CTA-BTN' + (isShortlisted ? ' CTA-BTN--added' : '')).replace('CTA-BTN', 'style="width: 100%; padding: 14px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; display:flex; align-items:center; justify-content:center; gap:8px; ' + (isShortlisted ? 'background:#ecfdf5; color:#10b981; border:1px solid #a7f3d0;"' : 'background:#0f172a; color:white;"'))}
-      </div>
-    </div>
-  </div>
+      <!-- Add to Shortlist -->
+      <button id="modal-add-to-shortlist" style="width:100%; padding:12px 16px; border-radius:10px; font-weight:700; font-size:13px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; ${isShortlisted ? 'background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; pointer-events:none;' : 'background:#0f172a; color:#fff;'}">
+        ${isShortlisted 
+          ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg><span>Shortlisted</span>' 
+          : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Add to Shortlist</span>'}
+      </button>
 
-  <!-- Image Gallery (Scrollable) -->
-  ${[...productImgs, ...facilityImgs].length > 0 ? `
-  <div style="margin-top: 24px;">
-    <h3 style="font-size: 13px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.05em;">Facility & Product Images</h3>
-    <div style="display: flex; gap: 16px; overflow-x: auto; padding-bottom: 16px; -webkit-overflow-scrolling: touch;">
-      ${[...productImgs, ...facilityImgs].map(img => `
-        <div style="flex: 0 0 auto; width: 240px; height: 180px; background: url('${safeImgUrl(img)}') center/cover no-repeat; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);"></div>
-      `).join('')}
+      <!-- Address Section -->
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px;">
+        <h4 style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 10px 0;">Address</h4>
+        ${addressEN ? `
+        <a href="${googleMapUrl}" target="_blank" style="display: flex; align-items: flex-start; gap: 8px; text-decoration: none; color: #334155; font-size: 13px; line-height: 1.5; font-weight: 500; margin-bottom: 6px;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#334155'">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>${addressEN}</span>
+        </a>` : ''}
+        ${addressCN ? `
+        <a href="${baiduMapUrl}" target="_blank" style="display: flex; align-items: flex-start; gap: 8px; text-decoration: none; color: #64748b; font-size: 13px; line-height: 1.5; font-weight: 500;" onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#64748b'">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>${addressCN}</span>
+        </a>` : ''}
+        ${!addressEN && !addressCN ? '<div style="font-size:12px; color:#94a3b8; font-style:italic;">No address on file</div>' : ''}
+      </div>
+
+      <!-- Map Embed -->
+      ${addressEN ? `
+      <div style="border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; height: 180px;">
+        <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(addressEN)}&t=&z=13&ie=UTF8&iwloc=&output=embed" style="width: 100%; height: 100%; border: none;" loading="lazy" allowfullscreen></iframe>
+      </div>` : ''}
+      ${addressCN ? `
+      <a href="${baiduMapUrl}" target="_blank" style="display:block; border-radius:10px; overflow:hidden; border:1px solid #bfdbfe; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.borderColor='#60a5fa'; this.style.boxShadow='0 4px 12px rgba(59,130,246,0.12)'" onmouseout="this.style.borderColor='#bfdbfe'; this.style.boxShadow=''">
+        <div style="height:120px; position:relative;">
+          <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(addressCN)}&t=&z=14&ie=UTF8&iwloc=&output=embed" style="width:100%; height:100%; border:none; pointer-events:none;" loading="lazy"></iframe>
+          <div style="position:absolute; inset:0; background:linear-gradient(180deg, transparent 60%, rgba(239,246,255,0.9) 100%);"></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; padding:10px 14px; background:#eff6ff;">
+          <div style="width:30px; height:30px; background:#3b82f6; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div style="min-width:0;">
+            <div style="font-size:11px; font-weight:700; color:#1e40af;">Open in Baidu Maps →</div>
+            <div style="font-size:10px; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${addressCN}</div>
+          </div>
+        </div>
+      </a>` : ''}
+
     </div>
   </div>
-  ` : ''}
 
 </div>
   `;
 
-
-
-  // Attach event listeners
+  // Attach shortlist event listener
   if (!isShortlisted) {
     body.querySelector('#modal-add-to-shortlist')?.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -340,17 +343,13 @@ function renderCurrentCard() {
       window.dispatchEvent(new CustomEvent('prd-add-to-shortlist', { 
         detail: { supplier: s, techName: document.getElementById('supplier-modal-title').textContent.replace(' Suppliers', '') } 
       }));
-      btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> <span>Shortlisted</span>`;
-      btn.style.background = 'rgba(16, 185, 129, 0.25)';
-      btn.style.borderColor = 'rgba(16, 185, 129, 0.5)';
-      btn.style.color = '#10b981';
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> <span>Shortlisted</span>`;
+      btn.style.background = '#ecfdf5';
+      btn.style.border = '1px solid #a7f3d0';
+      btn.style.color = '#059669';
       btn.style.pointerEvents = 'none';
     });
   }
-
-  body.querySelector('#modal-send-rfq')?.addEventListener('click', () => console.log('[Atlas DT] RFQ submitted for:', s.name));
-  body.querySelector('#modal-attach-files')?.addEventListener('click', () => console.log('[Atlas DT] Upload drawings'));
-  body.querySelector('#modal-engage-consulting')?.addEventListener('click', () => console.log('[Atlas DT] Consulting engaged for:', s.name));
 
   body.querySelectorAll('.sup-section--locked').forEach(el => {
     el.addEventListener('click', () => {
@@ -358,4 +357,3 @@ function renderCurrentCard() {
     });
   });
 }
-

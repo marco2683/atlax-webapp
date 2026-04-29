@@ -6,6 +6,7 @@
    ============================================================ */
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { supabase } from '../utils/supabaseClient.js';
 
 const DOC_TYPES = {
   quotation:  { title: 'Quotation',          prefix: 'QT',  emailSubject: 'Your Quotation from AtlasDT' },
@@ -46,7 +47,8 @@ export async function openDocumentGenerator({ docType, rfq, rfqData, profile, rf
   const parts = data.parts || [];
 
   // Build initial line items from RFQ parts
-  let lineItems = parts.map(p => ({
+  let lineItems = parts.map((p, i) => ({
+    _origIdx: i,
     description: p.name || 'Part',
     details: [p.process, p.material].filter(Boolean).join(' · '),
     qty: Number(p.qty) || 1,
@@ -61,6 +63,23 @@ export async function openDocumentGenerator({ docType, rfq, rfqData, profile, rf
   const custEmail   = profile?.email || '';
   const custCompany = profile?.company || '';
   const projectName = data.project_name || 'Unnamed Project';
+  const getAddr = (a) => {
+    if (!a) return {};
+    if (typeof a === 'string') {
+      try {
+        return JSON.parse(a);
+      } catch (e) {
+        return { line1: a }; // fallback for legacy plain text addresses
+      }
+    }
+    return a;
+  };
+  const bAddr = getAddr(profile?.address);
+  const sAddr = getAddr(profile?.shipping_address);
+  const bPhone = [bAddr.phone_prefix, bAddr.phone].filter(Boolean).join(' ');
+  const sPhone = [sAddr.phone_prefix, sAddr.phone].filter(Boolean).join(' ');
+
+  const isShipDifferent = !!sAddr.line1 && sAddr.line1 !== bAddr.line1;
 
   // ── Build Modal HTML ──────────────────────────────────────
   const overlay = document.createElement('div');
@@ -124,14 +143,14 @@ export async function openDocumentGenerator({ docType, rfq, rfqData, profile, rf
             </div>
             <div id="doc-bill-full" style="display:none;margin-top:8px;">
               <div style="display:grid;grid-template-columns:1fr;gap:6px;">
-                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Address Line 1</label><input id="doc-bill-addr1" value="" placeholder="Street address" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
-                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Address Line 2</label><input id="doc-bill-addr2" value="" placeholder="Suite, unit, etc." style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
+                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Address Line 1</label><input id="doc-bill-addr1" value="${bAddr.line1 || ''}" placeholder="Street address" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
+                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Address Line 2</label><input id="doc-bill-addr2" value="${bAddr.line2 || ''}" placeholder="Suite, unit, etc." style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;">
-                <div><label style="font-size:10px;color:#64748b;font-weight:600;">City</label><input id="doc-bill-city" value="" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
-                <div><label style="font-size:10px;color:#64748b;font-weight:600;">State / Province</label><input id="doc-bill-state" value="" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
-                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Postcode</label><input id="doc-bill-postcode" value="" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
-                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Phone</label><input id="doc-bill-phone" value="" placeholder="Optional" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
+                <div><label style="font-size:10px;color:#64748b;font-weight:600;">City</label><input id="doc-bill-city" value="${bAddr.city || ''}" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
+                <div><label style="font-size:10px;color:#64748b;font-weight:600;">State / Province</label><input id="doc-bill-state" value="${bAddr.state || ''}" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
+                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Postcode</label><input id="doc-bill-postcode" value="${bAddr.postcode || ''}" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
+                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Phone</label><input id="doc-bill-phone" value="${bPhone}" placeholder="Optional" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
               </div>
             </div>
           </div>
@@ -141,26 +160,26 @@ export async function openDocumentGenerator({ docType, rfq, rfqData, profile, rf
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
               <div style="font-size:10px;color:#475569;text-transform:uppercase;font-weight:700;letter-spacing:.5px;">Ship To</div>
               <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:#64748b;font-weight:600;cursor:pointer;">
-                <input id="doc-ship-same" type="checkbox" checked style="cursor:pointer;accent-color:#2563eb;" /> Same as billing
+                <input id="doc-ship-same" type="checkbox" ${!isShipDifferent ? 'checked' : ''} style="cursor:pointer;accent-color:#2563eb;" /> Same as billing
               </label>
             </div>
-            <div id="doc-ship-fields" style="display:none;">
+            <div id="doc-ship-fields" style="display:${isShipDifferent ? 'block' : 'none'};">
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Name</label><input id="doc-ship-name" value="" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
-                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Company</label><input id="doc-ship-company" value="" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
+                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Name</label><input id="doc-ship-name" value="${custName}" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
+                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Company</label><input id="doc-ship-company" value="${custCompany}" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
               </div>
               <div style="display:grid;grid-template-columns:1fr;gap:6px;margin-top:6px;">
-                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Address Line 1</label><input id="doc-ship-addr1" value="" placeholder="Street address" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
-                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Address Line 2</label><input id="doc-ship-addr2" value="" placeholder="Suite, unit, etc." style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
+                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Address Line 1</label><input id="doc-ship-addr1" value="${sAddr.line1 || ''}" placeholder="Street address" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
+                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Address Line 2</label><input id="doc-ship-addr2" value="${sAddr.line2 || ''}" placeholder="Suite, unit, etc." style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;">
-                <div><label style="font-size:10px;color:#64748b;font-weight:600;">City</label><input id="doc-ship-city" value="" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
-                <div><label style="font-size:10px;color:#64748b;font-weight:600;">State / Province</label><input id="doc-ship-state" value="" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
-                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Postcode</label><input id="doc-ship-postcode" value="" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
-                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Phone</label><input id="doc-ship-phone" value="" placeholder="Optional" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
+                <div><label style="font-size:10px;color:#64748b;font-weight:600;">City</label><input id="doc-ship-city" value="${sAddr.city || ''}" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
+                <div><label style="font-size:10px;color:#64748b;font-weight:600;">State / Province</label><input id="doc-ship-state" value="${sAddr.state || ''}" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
+                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Postcode</label><input id="doc-ship-postcode" value="${sAddr.postcode || ''}" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
+                <div><label style="font-size:10px;color:#64748b;font-weight:600;">Phone</label><input id="doc-ship-phone" value="${sPhone}" placeholder="Optional" style="width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;margin-top:2px;box-sizing:border-box;" /></div>
               </div>
             </div>
-            <div id="doc-ship-same-msg" style="padding:12px 0;color:#94a3b8;font-size:12px;font-style:italic;">Same as billing address</div>
+            <div id="doc-ship-same-msg" style="padding:12px 0;color:#94a3b8;font-size:12px;font-style:italic;display:${isShipDifferent ? 'none' : 'block'};">Same as billing address</div>
           </div>
         </div>
 
@@ -206,6 +225,18 @@ SWIFT / BIC: NATAAU3303</textarea>
   const linesContainer = overlay.querySelector('#doc-lines-container');
   const totalsEl       = overlay.querySelector('#doc-totals');
 
+  function updateTotals() {
+    const subtotal = lineItems.reduce((s,li) => s + (li.qty * li.unitPrice), 0);
+    const gstOn = overlay.querySelector('#doc-gst-toggle')?.checked || false;
+    const gstAmt = gstOn ? subtotal * 0.10 : 0;
+    const grandTotal = subtotal + gstAmt;
+    totalsEl.innerHTML = `
+      <div style="display:flex;justify-content:space-between;width:240px;padding:2px 0;"><span style="color:#64748b;font-weight:500;">Subtotal</span><span style="font-weight:600;">$${fmt(subtotal)}</span></div>
+      ${gstOn ? `<div style="display:flex;justify-content:space-between;width:240px;padding:2px 0;"><span style="color:#64748b;font-weight:500;">GST (10%)</span><span style="font-weight:600;">$${fmt(gstAmt)}</span></div>` : ''}
+      <div style="display:flex;justify-content:space-between;width:240px;padding:4px 0;border-top:1px solid #e2e8f0;margin-top:2px;"><span style="font-weight:700;">Grand Total</span><span style="font-weight:800;color:#10b981;font-size:15px;">$${fmt(grandTotal)}</span></div>
+    `;
+  }
+
   function renderLines() {
     linesContainer.innerHTML = `
       <table style="width:100%;border-collapse:collapse;font-size:12px;">
@@ -226,31 +257,27 @@ SWIFT / BIC: NATAAU3303</textarea>
             <td style="padding:6px 8px;"><input data-field="details" value="${li.details||''}" style="width:100%;padding:5px 8px;border:1px solid #e2e8f0;border-radius:5px;font-size:12px;font-family:inherit;" /></td>
             <td style="padding:6px 8px;"><input data-field="qty" type="number" min="1" value="${li.qty}" style="width:100%;padding:5px 4px;border:1px solid #e2e8f0;border-radius:5px;font-size:12px;text-align:center;font-family:inherit;" /></td>
             <td style="padding:6px 8px;"><input data-field="unitPrice" type="number" step="0.01" min="0" value="${li.unitPrice}" style="width:100%;padding:5px 8px;border:1px solid #e2e8f0;border-radius:5px;font-size:12px;text-align:right;font-family:inherit;" /></td>
-            <td style="padding:6px 12px;text-align:right;font-weight:600;color:#0f172a;">$${fmt(li.qty * li.unitPrice)}</td>
+            <td class="line-total" style="padding:6px 12px;text-align:right;font-weight:600;color:#0f172a;">$${fmt(li.qty * li.unitPrice)}</td>
             <td style="padding:6px 4px;text-align:center;"><button class="doc-remove-line" data-idx="${i}" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px;line-height:1;" title="Remove">&times;</button></td>
           </tr>`).join('')}
         </tbody>
       </table>`;
 
-    const subtotal = lineItems.reduce((s,li) => s + (li.qty * li.unitPrice), 0);
-    const gstOn = overlay.querySelector('#doc-gst-toggle')?.checked || false;
-    const gstAmt = gstOn ? subtotal * 0.10 : 0;
-    const grandTotal = subtotal + gstAmt;
-    totalsEl.innerHTML = `
-      <div style="display:flex;justify-content:space-between;width:240px;padding:2px 0;"><span style="color:#64748b;font-weight:500;">Subtotal</span><span style="font-weight:600;">$${fmt(subtotal)}</span></div>
-      ${gstOn ? `<div style="display:flex;justify-content:space-between;width:240px;padding:2px 0;"><span style="color:#64748b;font-weight:500;">GST (10%)</span><span style="font-weight:600;">$${fmt(gstAmt)}</span></div>` : ''}
-      <div style="display:flex;justify-content:space-between;width:240px;padding:4px 0;border-top:1px solid #e2e8f0;margin-top:2px;"><span style="font-weight:700;">Grand Total</span><span style="font-weight:800;color:#10b981;font-size:15px;">$${fmt(grandTotal)}</span></div>
-    `;
+    updateTotals();
 
-    // Wire inline edits
+    // Wire inline edits without re-rendering to preserve focus
     linesContainer.querySelectorAll('input').forEach(inp => {
-      inp.addEventListener('change', () => {
+      inp.addEventListener('input', () => {
         const row = inp.closest('tr');
         const idx = Number(row.dataset.idx);
         const field = inp.dataset.field;
-        if (field === 'qty' || field === 'unitPrice') lineItems[idx][field] = Number(inp.value) || 0;
-        else lineItems[idx][field] = inp.value;
-        renderLines();
+        if (field === 'qty' || field === 'unitPrice') {
+          lineItems[idx][field] = Number(inp.value) || 0;
+          row.querySelector('.line-total').textContent = '$' + fmt(lineItems[idx].qty * lineItems[idx].unitPrice);
+          updateTotals();
+        } else {
+          lineItems[idx][field] = inp.value;
+        }
       });
     });
 
@@ -560,12 +587,90 @@ SWIFT / BIC: NATAAU3303</textarea>
     return doc;
   }
 
+  // ── Sync Helper ──
+  const uploadAndSyncDoc = async (pdfBase64, docData) => {
+    const ts = Date.now();
+    const fileName = `${docData.title.replace(/\s+/g,'_')}_${docData.docRef}_${today()}_${ts}.pdf`;
+    const cleanFileName = `${docData.title.replace(/\s+/g,'_')}_${docData.docRef}_${today()}.pdf`;
+    const storagePath = `documents/${docData.rfqRef}/${fileName}`;
+    
+    // Use Netlify function to bypass RLS
+    const uploadRes = await fetch('/.netlify/functions/storage-upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fileBase64: pdfBase64,
+        fileName: fileName,
+        filePath: storagePath,
+        contentType: 'application/pdf',
+        bucket: 'product_assets'
+      })
+    });
+
+    if (!uploadRes.ok) {
+      const errTxt = await uploadRes.text();
+      console.error('Netlify upload error:', errTxt);
+      throw new Error(`Storage upload failed: ${uploadRes.statusText}`);
+    }
+
+    const uploadData = await uploadRes.json();
+    if (!uploadData.success) {
+      throw new Error(`Storage upload failed: ${uploadData.error || 'Unknown error'}`);
+    }
+
+    if (uploadData.publicUrl) {
+      // Sync to OneDrive via webhook
+      const folderIdentifier = docData.customer.company || docData.customer.name;
+      const companySuffix = folderIdentifier ? ` - ${folderIdentifier.replace(/[\/\\?%*:|"<>]/g, '')}` : '';
+      const spRes = await fetch('/.netlify/functions/webhook-sharepoint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          file_name: cleanFileName,
+          file_url: uploadData.publicUrl,
+          folder_path: `RFQs/${docData.rfqRef}${companySuffix}`,
+          metadata: { rfqRef: docData.rfqRef, type: docData.type }
+        })
+      });
+      if (!spRes.ok) {
+        throw new Error('SharePoint webhook failed: ' + spRes.statusText);
+      }
+    } else {
+      throw new Error('Could not get public URL for document');
+    }
+  };
+
+  // ── Sync Helper for Parts ──
+  function getSyncedParts() {
+    return lineItems.map(li => {
+      let basePart = li._origIdx !== undefined ? (data.parts || data.items || [])[li._origIdx] : {};
+      const descParts = li.description.split(' - ');
+      const name = descParts[0]?.trim() || li.description;
+      const material = descParts.slice(1).join(' - ').trim() || '';
+      
+      const detParts = (li.details || '').split(' · ');
+      const process = detParts[0]?.trim() || li.details;
+      const finish = detParts.slice(1).join(' · ').trim() || '';
+      
+      return {
+        ...basePart,
+        name: name,
+        material: material,
+        process: process,
+        finish: finish,
+        qty: li.qty,
+        price: li.unitPrice
+      };
+    });
+  }
+
   // ── Download PDF ──
   overlay.querySelector('#doc-download-btn').addEventListener('click', () => {
     const docData = collectDocData();
     const pdf = generatePDF(docData);
     const fileName = `AtlasDT_${docData.title.replace(/\s+/g,'_')}_${docData.docRef}_${docData.projectName.replace(/[^a-zA-Z0-9]/g,'_')}.pdf`;
     pdf.save(fileName);
+    uploadAndSyncDoc(pdf.output('datauristring').split(',')[1], docData);
   });
 
   // ── Save Draft ──
@@ -583,7 +688,13 @@ SWIFT / BIC: NATAAU3303</textarea>
     if (existIdx >= 0) docs[existIdx] = docData;
     else docs.push(docData);
 
-    const updatedData = { ...data, documents: docs };
+    const updatedData = { 
+      ...data, 
+      documents: docs,
+      parts: getSyncedParts(),
+      admin_final_price: docData.total,
+      total_price: docData.total
+    };
 
     try {
       const res = await fetch('/.netlify/functions/admin-rfqs', {
@@ -593,17 +704,23 @@ SWIFT / BIC: NATAAU3303</textarea>
       if (!res.ok) throw new Error('Failed to save');
 
       // Update local cache
+      Object.assign(data, updatedData); // Keep internal reference up to date!
       rfq.rfq_data = updatedData;
       if (rfqs) {
         const obj = rfqs.find(r => r.id === rfq.id);
         if (obj) obj.rfq_data = updatedData;
       }
+      
+      // If we are in admin view, refresh the modal to show synced data
+      if (window.renderRfqDetailModal) {
+        document.getElementById('admin-rfq-detail-modal')?.remove();
+        window.renderRfqDetailModal(rfq);
+      }
 
       btn.textContent = 'Saved ✓';
-      btn.style.background = '#16a34a';
-      setTimeout(() => { btn.textContent = 'Save Draft'; btn.style.background = '#0f172a'; btn.disabled = false; }, 2000);
+      setTimeout(() => { btn.textContent = 'Save Draft'; btn.disabled = false; }, 2000);
     } catch (err) {
-      alert('Failed to save draft: ' + err.message);
+      alert('Error saving draft: ' + err.message);
       btn.textContent = 'Save Draft';
       btn.disabled = false;
     }
@@ -611,35 +728,51 @@ SWIFT / BIC: NATAAU3303</textarea>
 
   // ── Send to Customer ──
   overlay.querySelector('#doc-send-btn').addEventListener('click', async () => {
-    const docData = collectDocData();
-    const customerEmail = docData.customer.email;
-    if (!customerEmail) { alert('Please enter the customer email.'); return; }
-
     const btn = overlay.querySelector('#doc-send-btn');
     btn.disabled = true;
     btn.textContent = 'Generating PDF…';
-
+    
     try {
+      const docData = collectDocData();
+      const customerEmail = docData.customer.email;
+      if (!customerEmail) { alert('Please enter the customer email.'); btn.disabled = false; return; }
+      
+      docData.status = 'sent';
+      docData.sentAt = new Date().toISOString();
+
+      // Append to rfq_data.documents[]
+      const docs = data.documents || [];
+      const existIdx = docs.findIndex(d => d.docRef === docData.docRef);
+      if (existIdx >= 0) docs[existIdx] = docData;
+      else docs.push(docData);
+
+      const updatedData = { 
+        ...data, 
+        documents: docs,
+        parts: getSyncedParts(),
+        admin_final_price: docData.total,
+        total_price: docData.total
+      };
+
       // 1. Generate PDF as base64
       const pdf = generatePDF(docData);
       const pdfBase64 = pdf.output('datauristring').split(',')[1];
       const fileName = `AtlasDT_${docData.title.replace(/\s+/g,'_')}_${docData.docRef}_${docData.projectName.replace(/[^a-zA-Z0-9]/g,'_')}.pdf`;
 
-      // 2. Save as "sent" draft
-      docData.status = 'sent';
-      docData.sentAt = new Date().toISOString();
-      const docs = data.documents || [];
-      const existIdx = docs.findIndex(d => d.docRef === docData.docRef);
-      if (existIdx >= 0) docs[existIdx] = docData;
-      else docs.push(docData);
-      const updatedData = { ...data, documents: docs };
-
+      // 2. Save DB changes
       await fetch('/.netlify/functions/admin-rfqs', {
         method: 'PATCH',
         body: JSON.stringify({ id: rfq.id, updates: { rfq_data: updatedData } }),
       });
+      Object.assign(data, updatedData); // Keep internal reference up to date!
       rfq.rfq_data = updatedData;
       if (rfqs) { const obj = rfqs.find(r => r.id === rfq.id); if (obj) obj.rfq_data = updatedData; }
+      
+      // Refresh admin view optimistically
+      if (window.renderRfqDetailModal) {
+        document.getElementById('admin-rfq-detail-modal')?.remove();
+        window.renderRfqDetailModal(rfq);
+      }
 
       btn.textContent = 'Sending email…';
 
@@ -665,9 +798,13 @@ SWIFT / BIC: NATAAU3303</textarea>
 
       btn.textContent = 'Sent ✓';
       btn.style.background = '#16a34a';
-      setTimeout(() => { btn.textContent = 'Send to Customer'; btn.style.background = ''; btn.disabled = false; }, 3000);
+      
+      // Also upload and sync to SharePoint
+      await uploadAndSyncDoc(pdfBase64, docData);
+
+      setTimeout(() => { document.body.removeChild(overlay); }, 1500);
     } catch (err) {
-      alert('Failed to send: ' + err.message);
+      alert('Failed to send document: ' + err.message);
       btn.textContent = 'Send to Customer';
       btn.disabled = false;
     }

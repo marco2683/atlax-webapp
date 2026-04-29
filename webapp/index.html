@@ -384,7 +384,7 @@
 
       <!-- USP Display Area -->
       <div class="pb-usp-container"
-        style="position: absolute; bottom: 35vh; left: 0; right: 0; display: flex; justify-content: center; align-items: center; perspective: 1200px; padding: 0 20px; pointer-events: none;">
+        style="position: absolute; bottom: 30vh; left: 0; right: 0; display: flex; justify-content: center; align-items: center; perspective: 1200px; padding: 0 20px; pointer-events: none;">
         <p id="usp-text" class="pb-usp-text"
           style="color: rgba(255, 255, 255, 0.85); font-family: 'Outfit', sans-serif; font-size: clamp(18px, 1.5vw, 24px); font-weight: 200; letter-spacing: 0.5px; text-align: center; max-width: 1000px; line-height: 1.5; opacity: 0; transform: scale(0.85); pointer-events: none; margin: 0;">
         </p>
@@ -428,7 +428,7 @@
 
       <!-- Scroll to Who We Are Arrow -->
       <div
-        style="position: absolute; bottom: 20vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 10; transition: opacity 0.3s; opacity: 0.7;"
+        style="position: absolute; bottom: 15vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 10; transition: opacity 0.3s; opacity: 0.7;"
         onclick="document.getElementById('who-we-are').scrollIntoView({ behavior: 'smooth' })"
         onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
         <span
@@ -443,7 +443,7 @@
     </div>
   </header>
   <!-- WHO WE ARE SECTION -->
-  <section id="who-we-are" class="prd-who-section" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding-top: 80px; position: relative; padding-bottom: 80px;">
+  <section id="who-we-are" class="prd-who-section" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding-top: 50px; position: relative; padding-bottom: 80px;">
         <div class="prd-who-inner" style="flex-shrink: 0; align-items: flex-start;">
       <!-- LEFT: Messaging + Pillars -->
       <div class="prd-who-left" style="display: flex; flex-direction: column; gap: 64px;">
@@ -477,7 +477,7 @@
           ecosystem in the world. You start from an advantage that most companies spend years trying to reach.
         </p>
         </div>
-        <div class="prd-pillars" style="margin-top: 16px; gap: 16px;">
+        <div class="prd-pillars" style="margin-top: -40px; gap: 16px;">
           <div class="prd-pillar">
             <span class="prd-pillar-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
@@ -557,11 +557,11 @@
         
         <!-- Typographic Message -->
         <div class="prd-message-block m-fade-up"
-          style="text-align: center; max-width: 90%; margin-left: auto; margin-right: auto; padding-bottom: 0;">
+          style="text-align: center; max-width: 90%; margin-left: auto; margin-right: auto; padding-bottom: 0; margin-top: 54px;">
           <p
             style="font-family: var(--font-body), 'Inter', sans-serif; font-style: italic; font-size: 18px; font-weight: 400; line-height: 1.5; color: #64748b; margin: 0;">
-            "We eliminate the <span style="text-decoration: line-through; opacity: 0.7;">overhead</span> and <span
-              style="text-decoration: line-through; opacity: 0.7;">processes for the sake of process</span>. Every ounce
+            "We eliminate the <span style="font-weight: 600;">overhead</span> and <span
+              style="font-weight: 600;">processes for the sake of process</span>. Every ounce
             of our engineering effort is concentrated purely on advancing your product."
           </p>
         </div>
@@ -598,7 +598,7 @@
         <div class="pb-stages-grid" style="grid-template-columns: repeat(3, 1fr); padding-bottom: 20px;">
                     <!-- CARD 1 -->
           <div style="background: transparent; border: none; box-shadow: none; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px;">
-            <div style="position: relative; width: 100%; height: 260px; border-radius: 16px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); background: #f8fafc;">
+            <div style="position: relative; width: 100%; aspect-ratio: 1; border-radius: 16px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); background: #f8fafc;">
               <img src="/assets/images/phases/concept.png" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
               <div style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(15, 23, 42, 0.85) 100%); pointer-events: none;"></div>
               <div style="position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; pointer-events: none;">
@@ -615,7 +615,7 @@
 
           <!-- CARD 2 -->
           <div style="background: transparent; border: none; box-shadow: none; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px;">
-            <div style="position: relative; width: 100%; height: 260px; border-radius: 16px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); background: #f8fafc;">
+            <div style="position: relative; width: 100%; aspect-ratio: 1; border-radius: 16px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); background: #f8fafc;">
               <img src="/assets/images/phases/prototype.png" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
               <div style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(15, 23, 42, 0.85) 100%); pointer-events: none;"></div>
               <div style="position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; pointer-events: none;">
@@ -632,7 +632,7 @@
 
           <!-- CARD 3 -->
           <div style="background: transparent; border: none; box-shadow: none; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px;">
-            <div style="position: relative; width: 100%; height: 260px; border-radius: 16px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); background: #f8fafc;">
+            <div style="position: relative; width: 100%; aspect-ratio: 1; border-radius: 16px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); background: #f8fafc;">
               <img src="/assets/images/expertise/factory-automation.png" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
               <div style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(15, 23, 42, 0.85) 100%); pointer-events: none;"></div>
               <div style="position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; pointer-events: none;">
@@ -668,13 +668,13 @@
     <div class="prd-expertise-inner">
       <div class="prd-expertise-header m-fade-up">
         <h2 class="prd-expertise-title">Manufacturing Capabilities.</h2>
-        <p class="prd-expertise-desc">From first prototype to mass production — every technology you need, under one roof of relationships.</p>
+        <p class="prd-expertise-desc">Every technology you need, under one roof of relationships.</p>
       </div>
 
-      <div class="prd-expertise-grid m-fade-up" style="gap: 16px;">
+      <div class="prd-expertise-grid m-fade-up" style="gap: 16px; grid-template-columns: repeat(3, 1fr);">
 
-        <!-- Rapid Prototyping — Featured -->
-        <div class="prd-exp-card prd-exp-card--large">
+        <!-- Rapid Prototyping — Tall (1 col × 2 rows) -->
+        <div class="prd-exp-card prd-exp-card--tall">
           <div class="prd-exp-img-wrap" style="height: 100px;">
             <img src="/assets/images/expertise/rapid-prototyping.png" alt="Rapid Prototyping">
             <div class="prd-exp-img-overlay">
@@ -694,7 +694,7 @@
           </div>
         </div>
 
-        <!-- Injection Moulding -->
+        <!-- Tooling & Injection Moulding — Wide (2 cols) -->
         <div class="prd-exp-card prd-exp-card--wide">
           <div class="prd-exp-img-wrap" style="height: 100px;">
             <img src="/assets/images/expertise/injection-moulding.png" alt="Injection Moulding">
@@ -749,12 +749,12 @@
           </div>
         </div>
 
-        <!-- Electronics PCBA -->
-        <div class="prd-exp-card prd-exp-card--wide">
+        <!-- Electronics Development -->
+        <div class="prd-exp-card">
           <div class="prd-exp-img-wrap" style="height: 100px;">
-            <img src="/assets/images/expertise/electronics-pcba.png" alt="Electronics & PCBA">
+            <img src="/assets/images/expertise/electronics-pcba.png" alt="Electronics Development">
             <div class="prd-exp-img-overlay">
-              <h3 class="prd-exp-img-title">Electronics &amp; PCBA</h3>
+              <h3 class="prd-exp-img-title">Electronics Development</h3>
               <p class="prd-exp-img-desc">Schematic to tested board. IPC Class 2 &amp; 3.</p>
             </div>
           </div>
@@ -787,204 +787,161 @@
           </div>
         </div>
 
+        <!-- See Full Capabilities — fills bottom-right grid cell -->
+        <div style="display: flex; align-items: center; justify-content: center;">
+          <a href="services.html" class="btn-marketing btn-marketing--primary"
+            style="display: inline-flex; align-items: center; gap: 8px;">
+            See Full Capabilities
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+
       </div><!-- end .prd-expertise-grid -->
 
-      <div class="m-fade-up" style="text-align: center; margin-top: 56px;">
-        <a href="services.html" class="btn-marketing btn-marketing--primary"
-          style="display: inline-flex; align-items: center; gap: 8px;">
-          See Full Capabilities
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2">
-            <path d="M5 12h14" />
-            <path d="m12 5 7 7-7 7" />
-          </svg>
-        </a>
+      <!-- Scroll to Platform Arrow -->
+      <div
+        style="display: flex; flex-direction: column; align-items: center; cursor: pointer; margin-top: 24px; transition: opacity 0.3s; opacity: 0.5;"
+        onclick="document.getElementById('platform').scrollIntoView({ behavior: 'smooth' })"
+        onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='0.5'">
+        <span
+          style="color: #5eead4; font-family: 'Outfit', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; font-weight: 700;">The Platform</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5eead4"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: bounce-arrow 2s infinite;">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
       </div>
     </div>
   </section>
 
   <!-- ── MANUFACTURING ENGINE PLATFORM SECTION ──────────────── -->
-  <section class="prd-platform-section" id="platform">
-    <div class="prd-platform-inner">
-      <p class="prd-who-eyebrow">The Platform</p>
-      <div class="prd-platform-header m-fade-up">
-        <h2 class="prd-platform-title">Discover our Platform</h2>
-        <p class="prd-platform-subtitle">Tools built for the real world of hardware development</p>
+  <section class="prd-platform-section" id="platform" style="scroll-margin-top: 20px; padding: 60px 40px 40px; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+    <div class="prd-platform-inner" style="max-width: 1400px; width: 100%;">
+      <div class="prd-platform-header m-fade-up" style="margin-bottom: 28px;">
+        <p class="prd-who-eyebrow">The Platform</p>
+        <h2 class="prd-platform-title" style="margin-bottom: 8px;">Discover our Platform</h2>
+        <p class="prd-platform-subtitle">Tools built for the real world of hardware development.</p>
       </div>
 
-      <!-- Row 1: Supply Chain Discovery (screenshot left) -->
-      <div class="prd-tool-row m-fade-up">
-        <div class="prd-tool-screenshot">
+      <!-- Bento Grid -->
+      <style>
+        .platform-bento { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(310px, auto); gap: 16px; }
+        .platform-card { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid rgba(0,0,0,0.08); transition: transform 0.4s cubic-bezier(0.19,1,0.22,1), box-shadow 0.3s; }
+        .platform-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.12); }
+        .platform-card--tall { grid-row: span 2; }
+        .platform-card--wide { grid-column: span 2; }
+        .platform-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.19,1,0.22,1); }
+        .platform-card:hover img { transform: scale(1.04); }
+        .platform-card__overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,23,42,0.92) 0%, rgba(15,23,42,0.55) 50%, rgba(15,23,42,0.15) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
+        .platform-card__tag { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; padding: 3px 10px; border-radius: 6px; width: fit-content; margin-bottom: 6px; font-weight: 700; }
+        .platform-card__title { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 600; color: #fff; margin: 0 0 4px; }
+        .platform-card__desc { font-size: 0.78rem; color: rgba(255,255,255,0.65); line-height: 1.45; margin: 0 0 8px; }
+        .platform-card__list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 3px; }
+        .platform-card__list li { font-size: 0.72rem; color: rgba(255,255,255,0.5); line-height: 1.35; padding-left: 12px; position: relative; }
+        .platform-card__list li::before { content: '\2192'; position: absolute; left: 0; font-size: 9px; }
+        .platform-card__cta { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; transition: all 0.3s; width: fit-content; margin-top: 8px; }
+        .platform-card__cta:hover { filter: brightness(1.15); transform: translateY(-1px); }
+      </style>
+
+      <div class="platform-bento m-fade-up">
+
+        <!-- Supply Chain Discovery — Tall -->
+        <div class="platform-card platform-card--tall">
           <img src="/assets/images/platform/supply-chain.png" alt="Supply Chain Discovery">
-        </div>
-        <div class="prd-tool-text">
-          <span class="prd-tool-tag"
-            style="background:rgba(15,118,110,0.1);color:#0f766e;border:1px solid rgba(15,118,110,0.3);">
-            <svg width="10" height="10" fill="#0f766e" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" />
-            </svg>
-            Workhorse
-          </span>
-          <h3 class="prd-tool-name">Supply Chain Discovery</h3>
-          <p class="prd-tool-desc">Your direct gateway to our vetted PRD supplier network. Search, filter, compare, and
-            shortlist factories across 12 manufacturing categories — with full audit trails, certifications, and
-            capacity data at your fingertips.</p>
-          <ul class="prd-tool-list">
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>500+ pre-audited suppliers — ISO certs, MOQ, lead-time, capacity</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>Downloadable reports, audit summaries &amp; NDA templates</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>Save shortlists to your Workspace, share with your team</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>Globe + tabular view — filter by region, tech, and certification</li>
-          </ul>
-          <a href="/app.html#suppliers" class="prd-tool-cta"
-            style="background:rgba(15,118,110,0.1);color:#0f766e;border-color:rgba(15,118,110,0.3);">
-            Discover Suppliers
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
-          </a>
-        </div>
-      </div>
-
-      <!-- Row 2: Project Quote + Instant Quote (reversed — screenshot right) -->
-      <div class="prd-tool-row prd-tool-row--reverse m-fade-up">
-        <div class="prd-tool-screenshot">
-          <img src="/assets/images/platform/project-quote.png" alt="Project &amp; Instant Quoting">
-        </div>
-        <div class="prd-tool-text">
-          <span class="prd-tool-tag"
-            style="background:rgba(29,78,216,0.1);color:#1d4ed8;border:1px solid rgba(29,78,216,0.3);">
-            <svg width="10" height="10" fill="#1d4ed8" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" />
-            </svg>
-            Quoting Engine
-          </span>
-          <h3 class="prd-tool-name">Project Quote &amp; Instant Parts Quote</h3>
-          <p class="prd-tool-desc">Two quoting modes for every stage. Instant Quote gives you real, pre-negotiated
-            prices for standard manufactured components — upload your CAD and get a number in minutes. Project Quote
-            lets our team go deep on complex assemblies, BOMs, and multi-part projects with human-backed analysis.</p>
-          <ul class="prd-tool-list">
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>Instant Quote: real pre-negotiated prices — CNC, injection, sheet metal, PCBA</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>Upload STEP/IGES — geometry engine extracts mass, volume &amp; complexity</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>Project Quote: full BOM review, DFM feedback, and human negotiation</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>All quotes saved to your Workspace — track, compare, and approve</li>
-          </ul>
-          <div style="display:flex;gap:12px;flex-wrap:wrap;">
-            <a href="/app.html#instant-quote" class="prd-tool-cta"
-              style="background:rgba(29,78,216,0.1);color:#1d4ed8;border-color:rgba(29,78,216,0.3);">
-              Instant Quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </a>
-            <a href="/app.html#project-quote" class="prd-tool-cta"
-              style="background:rgba(0,0,0,0.05);color:#374151;border-color:rgba(0,0,0,0.18);">
-              Project Quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
+          <div class="platform-card__overlay">
+            <span class="platform-card__tag" style="background: rgba(16,185,129,0.2); color: #6ee7b7;">
+              <svg width="8" height="8" fill="#6ee7b7" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+              Workhorse
+            </span>
+            <h3 class="platform-card__title">Supply Chain Discovery</h3>
+            <p class="platform-card__desc">Direct gateway to our vetted PRD supplier network. Search, filter, compare, and shortlist factories across 12 categories.</p>
+            <ul class="platform-card__list">
+              <li>500+ pre-audited suppliers with ISO certs</li>
+              <li>Downloadable reports &amp; NDA templates</li>
+              <li>Save shortlists, share with your team</li>
+              <li>Globe + tabular view with filters</li>
+            </ul>
+            <a href="/app.html#suppliers" class="platform-card__cta" style="background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3);">
+              Discover Suppliers
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </a>
           </div>
         </div>
-      </div>
 
-      <!-- Row 3: OEM Marketplace (screenshot left) -->
-      <div class="prd-tool-row m-fade-up">
-        <div class="prd-tool-screenshot">
+        <!-- Project Quote &amp; Instant Quote — Wide -->
+        <div class="platform-card platform-card--wide">
+          <img src="/assets/images/platform/project-quote.png" alt="Quoting Engine">
+          <div class="platform-card__overlay">
+            <span class="platform-card__tag" style="background: rgba(59,130,246,0.2); color: #93c5fd;">
+              <svg width="8" height="8" fill="#93c5fd" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+              Quoting Engine
+            </span>
+            <h3 class="platform-card__title">Project Quote &amp; Instant Parts Quote</h3>
+            <p class="platform-card__desc">Instant Quote gives pre-negotiated prices for standard parts. Project Quote lets our team analyse complex assemblies and BOMs.</p>
+            <ul class="platform-card__list">
+              <li>CNC, injection, sheet metal, PCBA pricing</li>
+              <li>Upload STEP/IGES for geometry analysis</li>
+              <li>Full BOM review, DFM, human negotiation</li>
+            </ul>
+            <div style="display: flex; gap: 8px;">
+              <a href="/app.html#instant-quote" class="platform-card__cta" style="background: rgba(59,130,246,0.2); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3);">
+                Instant Quote
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </a>
+              <a href="/app.html#project-quote" class="platform-card__cta" style="background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15);">
+                Project Quote
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- OEM Marketplace -->
+        <div class="platform-card">
           <img src="/assets/images/platform/marketplace.png" alt="OEM Marketplace">
+          <div class="platform-card__overlay">
+            <span class="platform-card__tag" style="background: rgba(139,92,246,0.2); color: #c4b5fd;">
+              <svg width="8" height="8" fill="#c4b5fd" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+              Marketplace
+            </span>
+            <h3 class="platform-card__title">OEM Marketplace</h3>
+            <p class="platform-card__desc">Western access to China's industrial OEM ecosystem. Motors, sensors, PLCs — same factories, 40-70% cheaper.</p>
+            <ul class="platform-card__list">
+              <li>Chinese industrial OEM brands</li>
+              <li>Request samples, datasheets, raise a PO</li>
+            </ul>
+            <a href="/app.html#catalog" class="platform-card__cta" style="background: rgba(139,92,246,0.2); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3);">
+              Browse Marketplace
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+          </div>
         </div>
-        <div class="prd-tool-text">
-          <span class="prd-tool-tag"
-            style="background:rgba(109,40,217,0.1);color:#6d28d9;border:1px solid rgba(109,40,217,0.3);">
-            <svg width="10" height="10" fill="#6d28d9" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" />
-            </svg>
-            Marketplace
-          </span>
-          <h3 class="prd-tool-name">OEM Marketplace</h3>
-          <p class="prd-tool-desc">Western access to China's industrial OEM ecosystem. Browse thousands of branded
-            industrial products — motors, actuators, sensors, controllers, enclosures — often manufactured in the same
-            factories supplying global tier-1 brands, at a fraction of the price.</p>
-          <ul class="prd-tool-list">
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>Chinese industrial OEM brands — equivalent quality, 40–70% cheaper</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>Motors, sensors, drives, enclosures, PLCs &amp; industrial automation</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>Same factories as Siemens, Bosch, Schneider — without the margin</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>Request samples, get datasheets, raise a PO — all in-platform</li>
-          </ul>
-          <a href="/app.html#catalog" class="prd-tool-cta"
-            style="background:rgba(109,40,217,0.1);color:#6d28d9;border-color:rgba(109,40,217,0.3);">
-            Browse Marketplace <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2">
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
-          </a>
-        </div>
-      </div>
 
-      <!-- Row 4: Find Designers & Engineers (reversed) -->
-      <div class="prd-tool-row prd-tool-row--reverse m-fade-up">
-        <div class="prd-tool-screenshot">
+        <!-- Find Designers &amp; Engineers -->
+        <div class="platform-card">
           <img src="/images/showcase-6.png" alt="Find Designers and Engineers">
+          <div class="platform-card__overlay">
+            <span class="platform-card__tag" style="background: rgba(244,114,182,0.2); color: #f9a8d4;">
+              <svg width="8" height="8" fill="#f9a8d4" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+              Expert Network
+            </span>
+            <h3 class="platform-card__title">Find Designers &amp; Engineers</h3>
+            <p class="platform-card__desc">Pre-vetted industrial designers and mechanical engineers. Augment your team for production-ready design.</p>
+            <ul class="platform-card__list">
+              <li>Hire pre-vetted hardware professionals</li>
+              <li>Manage contracts and NDAs in-platform</li>
+            </ul>
+            <a href="/app.html#designers" class="platform-card__cta" style="background: rgba(244,114,182,0.2); color: #f9a8d4; border: 1px solid rgba(244,114,182,0.3);">
+              Browse Network
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+          </div>
         </div>
-        <div class="prd-tool-text">
-          <span class="prd-tool-tag"
-            style="background:rgba(139,92,246,0.1);color:#c4b5fd;border:1px solid rgba(139,92,246,0.3);">
-            <svg width="10" height="10" fill="#c4b5fd" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" />
-            </svg>
-            Live Expert Network
-          </span>
-          <h3 class="prd-tool-name">Find Designers &amp; Engineers</h3>
-          <p class="prd-tool-desc">Need extra hands to prepare your designs for mass production? Access our Global
-            Designer Network to find pre-vetted industrial designers and mechanical engineers. Seamlessly augment your
-            team, collaborate on CAD, and transition concepts to reality inside a single unified workspace.</p>
-          <ul class="prd-tool-list">
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>Hire pre-vetted hardware and industrial professionals</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>Manage contracts and NDAs securely in the platform</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>Build multidisciplinary teams for complex product launches</li>
-          </ul>
-          <a href="app.html#designers" class="prd-tool-cta"
-            style="background:rgba(139,92,246,0.1);color:#c4b5fd;border-color:rgba(139,92,246,0.3);text-decoration:none;display:inline-flex;">
-            Browse Network
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </a>
-        </div>
-      </div>
+
+      </div><!-- end .platform-bento -->
 
     </div>
   </section>

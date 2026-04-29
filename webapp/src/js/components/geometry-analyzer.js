@@ -93,35 +93,69 @@ export function renderThumbnail(geometry, container, size = 120) {
   renderer.setClearColor(0x000000, 0);
   container.innerHTML = '';
   container.appendChild(renderer.domElement);
-  renderer.domElement.style.borderRadius = '8px';
+  renderer.domElement.style.borderRadius = '6px';
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100000);
 
-  // Lights
-  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-  dirLight.position.set(1, 1, 1);
+  // Better lighting for shading effect
+  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+  const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+  dirLight.position.set(1, 1.5, 1);
   scene.add(dirLight);
+  const fillLight = new THREE.DirectionalLight(0x8899bb, 0.3);
+  fillLight.position.set(-1, 0.5, -0.5);
+  scene.add(fillLight);
 
-  // Mesh
+  // Solid mesh material
   const material = new THREE.MeshPhongMaterial({
-    color: 0x6699cc,
-    specular: 0x222222,
-    shininess: 40,
+    color: 0x7daaca,
+    specular: 0x334455,
+    shininess: 60,
     flatShading: false,
   });
 
+  // Edge material
+  const edgeMaterial = new THREE.LineBasicMaterial({
+    color: 0x334455,
+    linewidth: 1,
+    transparent: true,
+    opacity: 0.35,
+  });
+
   let mesh;
+  const edgeGroup = new THREE.Group();
+
   if (geometry.isBufferGeometry) {
     mesh = new THREE.Mesh(geometry, material);
+    // Add edges
+    const edges = new THREE.EdgesGeometry(geometry, 30);
+    edgeGroup.add(new THREE.LineSegments(edges, edgeMaterial));
   } else if (geometry.isGroup) {
     mesh = geometry;
+    // Add edges to each child mesh
+    mesh.traverse((child) => {
+      if (child.isMesh && child.geometry) {
+        try {
+          const edges = new THREE.EdgesGeometry(child.geometry, 30);
+          const edgeLine = new THREE.LineSegments(edges, edgeMaterial);
+          edgeLine.position.copy(child.position);
+          edgeLine.rotation.copy(child.rotation);
+          edgeLine.scale.copy(child.scale);
+          edgeGroup.add(edgeLine);
+        } catch (e) { /* skip if edge computation fails */ }
+      }
+    });
   } else {
     mesh = new THREE.Mesh(geometry, material);
+    try {
+      const edges = new THREE.EdgesGeometry(geometry, 30);
+      edgeGroup.add(new THREE.LineSegments(edges, edgeMaterial));
+    } catch (e) { /* skip */ }
   }
 
   scene.add(mesh);
+  scene.add(edgeGroup);
 
   // Fit camera to model (ISO view)
   const box = new THREE.Box3().setFromObject(mesh);
@@ -130,7 +164,7 @@ export function renderThumbnail(geometry, container, size = 120) {
   const maxDim = Math.max(bSize.x, bSize.y, bSize.z);
   const fov = camera.fov * (Math.PI / 180);
   let dist = maxDim / (2 * Math.tan(fov / 2));
-  dist *= 1.0;
+  dist *= 0.72;
 
   // ISO angle
   camera.position.set(
