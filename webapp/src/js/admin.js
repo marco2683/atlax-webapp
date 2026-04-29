@@ -1899,7 +1899,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       const requesterCompany = profile.company || data.company || '';
       const projectName = data.project_name || 'Unnamed Project';
       const service = serviceLabels[data.service] || data.service || '—';
-      const qty = data.estimated_quantity || data.quantity || '—';
+      const qty = data.type === 'instant' 
+        ? (data.parts || []).reduce((acc, p) => acc + (Number(p.qty) || 1), 0) 
+        : (data.estimated_quantity || data.quantity || '—');
       const timeline = data.timeline || '—';
       const fileCount = (data.files || []).length;
       
@@ -2112,7 +2114,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const service = serviceLabels[data.service] || data.service || '—';
-    const qty = data.estimated_quantity || data.quantity || '—';
+    // For instant quotes, compute qty from actual part quantities
+    const qty = data.type === 'instant' 
+      ? (data.parts || []).reduce((acc, p) => acc + (Number(p.qty) || 1), 0) 
+      : (data.estimated_quantity || data.quantity || '—');
     const timeline = timelineLabels[data.target_timeline] || data.target_timeline || timelineLabels[data.timeline] || data.timeline || '—';
     const notes = data.notes || '<span style="color:#94a3b8; font-style:italic;">No notes provided</span>';
     const contactMe = data.contact_me ? '✅ Yes' : '—';
@@ -2407,7 +2412,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               </div>
               <div style="background:#f8fafc; padding:12px 14px; border-radius:10px; border:1px solid #f1f5f9;">
                 <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Quantity</div>
-                <div style="font-size:13px; color:#0f172a; font-weight:600;">${qty}</div>
+                <div id="admin-qty-display" style="font-size:13px; color:#0f172a; font-weight:600;">${qty}</div>
               </div>
               <div style="background:#f8fafc; padding:12px 14px; border-radius:10px; border:1px solid #f1f5f9;">
                 <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Timeline</div>
@@ -2463,7 +2468,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                       <th style="padding:10px 12px; font-weight:600; color:#475569;">Technology</th>
                       <th style="padding:10px 12px; font-weight:600; color:#475569;">Material</th>
                       <th style="padding:10px 12px; font-weight:600; color:#475569; width:60px;">Qty</th>
-                      <th style="padding:10px 12px; font-weight:600; color:#475569; width:90px;">Price</th>
+                      <th style="padding:10px 12px; font-weight:600; color:#475569; width:90px;">Line Total</th>
                       <th style="padding:10px 12px; width:40px;"></th>
                     </tr>
                   </thead>
@@ -2493,13 +2498,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     const partsTableEl = modal.querySelector('#rfq-admin-parts-table');
     
     function updateAdminPartsTotal() {
+      // price per part already includes quantity (totalPrice = unitPrice × qty from quote engine)
+      // so we just sum the prices directly
       let total = 0;
-      (data.parts || []).forEach(p => { total += (p.qty || 1) * (p.price || 0); });
+      let totalQty = 0;
+      (data.parts || []).forEach(p => {
+        total += (Number(p.price) || 0);
+        totalQty += (Number(p.qty) || 1);
+      });
       const finalPriceInp = modal.querySelector('#rfq-modal-final-price');
       if (finalPriceInp) finalPriceInp.value = total.toFixed(2);
       
       const quotedTotalDisp = modal.querySelector('#admin-quoted-total-display');
       if (quotedTotalDisp) quotedTotalDisp.textContent = '$' + total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+
+      // Update quantity display on left panel
+      const qtyDisp = modal.querySelector('#admin-qty-display');
+      if (qtyDisp) qtyDisp.textContent = totalQty;
+
+      // Update parts count
+      const countSpan = modal.querySelector('#admin-parts-count');
+      if (countSpan) countSpan.textContent = (data.parts || []).length;
+
+      // Sync data totals
+      data.total_price = total;
+      data.estimated_quantity = totalQty;
     }
 
     function renderAdminPartsTable() {
@@ -2774,7 +2797,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Confirm to Client — triggers payment flow on user side
     modal.querySelector('#rfq-confirm-client-btn')?.addEventListener('click', async (e) => {
-      const rfqId = e.target.dataset.rfqId;
+      const rfqId = e.target.closest('button').dataset.rfqId || rfq.id;
       const confirmedPrice = parseFloat(modal.querySelector('#rfq-modal-final-price')?.value) || data.total_price || 0;
       if (!confirmedPrice || confirmedPrice <= 0) {
         alert('Please set a valid Final Price before confirming to the client.');

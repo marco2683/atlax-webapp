@@ -3594,7 +3594,6 @@
         return;
       }
 
-      // Show arrows & thumbs strip
       if (prev) prev.style.display = 'flex';
       if (next) next.style.display = 'flex';
       if (thumbsEl) {
@@ -3621,7 +3620,6 @@
       const m = _pdpMedia[_pdpIdx];
       const mainImg = document.getElementById('pdp-image');
       if (mainImg && m) mainImg.src = m.src || '/placeholder.png';
-      // Highlight active thumb
       const thumbsEl = document.getElementById('pdp-carousel-thumbs');
       if (thumbsEl) {
         [...thumbsEl.children].forEach((t, i) => {
@@ -3631,7 +3629,6 @@
     }
 
     // ── Marketplace Auth Label Sync ─────────────────────────────
-    // Re-use the site-wide Supabase auth state to update the login label
     import('/src/js/services/auth.js').then(({ getCurrentUser }) => {
       getCurrentUser().then(user => {
         const label = document.getElementById('catalog-auth-label');
@@ -3644,86 +3641,56 @@
     }).catch(() => { });
   </script>
 
-
   <script type="text/javascript" src="https://res.public.onecdn.static.microsoft/customerconnect/v1/7dttl/init.js"
     id="chatbot" environmentId="016ca71b-616b-e187-b02d-3fcb9c6568c2" crossorigin="anonymous"></script>
+
   <!-- Shipping Address Modal -->
   <div id="shipping-address-modal" class="hidden"
-    style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 10000; opacity: 1; pointer-events: auto;">
-    <div class="modal-content"
-      style="background: var(--color-bg); width: 90%; max-width: 500px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
-      <div
-        style="padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="margin: 0; font-size: 18px; font-weight: 600; color: var(--color-white);">Shipping Address</h3>
-        <button id="close-shipping-modal"
-          style="background: transparent; border: none; color: var(--color-steel-400); cursor: pointer; font-size: 24px; line-height: 1;">&times;</button>
+    style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 10000;">
+    <div class="ship-modal-card">
+      <div class="ship-modal-header">
+        <h3 class="ship-modal-title">Shipping Address</h3>
+        <button id="close-shipping-modal" class="ship-modal-close">&times;</button>
       </div>
-      <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; max-height: 70vh;">
-        <!-- Fields -->
-        <div class="rfq-field" style="margin-bottom:0;">
-          <label
-            style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Company
-            Name (Optional)</label>
-          <input type="text" id="ship-modal-company" placeholder="e.g. Acme Corp"
-            style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+      <div class="ship-modal-body">
+        <div class="ship-field">
+          <label class="ship-label">Company Name (Optional)</label>
+          <input type="text" id="ship-modal-company" class="ship-input" placeholder="e.g. Acme Corp">
         </div>
-        <div class="rfq-field" style="margin-bottom:0;">
-          <label
-            style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Attention
-            To</label>
-          <input type="text" id="ship-modal-attention" placeholder="Contact Name"
-            style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+        <div class="ship-field">
+          <label class="ship-label">Attention To</label>
+          <input type="text" id="ship-modal-attention" class="ship-input" placeholder="Contact Name">
         </div>
-        <div class="rfq-field" style="margin-bottom:0;">
-          <label
-            style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Phone
-            Number</label>
-          <input type="text" id="ship-modal-phone" placeholder="+1 (555) 000-0000"
-            style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+        <div class="ship-field">
+          <label class="ship-label">Phone Number</label>
+          <input type="text" id="ship-modal-phone" class="ship-input" placeholder="+1(555) 000-0000">
         </div>
-        <div class="rfq-field" style="margin-bottom:0;">
-          <label
-            style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Address
-            Line 1</label>
-          <input type="text" id="ship-modal-address1" placeholder="Street address, P.O. box, etc."
-            style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+        <div class="ship-field">
+          <label class="ship-label">Address Line 1</label>
+          <input type="text" id="ship-modal-address1" class="ship-input" placeholder="Street address, P.O. box, etc.">
         </div>
-        <div class="rfq-field" style="margin-bottom:0;">
-          <label
-            style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Address
-            Line 2 (Optional)</label>
-          <input type="text" id="ship-modal-address2" placeholder="Apartment, suite, unit, building, floor, etc."
-            style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+        <div class="ship-field">
+          <label class="ship-label">Address Line 2 (Optional)</label>
+          <input type="text" id="ship-modal-address2" class="ship-input" placeholder="Apartment, suite, unit, etc.">
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-          <div class="rfq-field" style="margin-bottom:0;">
-            <label
-              style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">City</label>
-            <input type="text" id="ship-modal-city" placeholder="City"
-              style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+          <div class="ship-field">
+            <label class="ship-label">City</label>
+            <input type="text" id="ship-modal-city" class="ship-input" placeholder="City">
           </div>
-          <div class="rfq-field" style="margin-bottom:0;">
-            <label
-              style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">State
-              / Province</label>
-            <input type="text" id="ship-modal-province" placeholder="State/Province"
-              style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+          <div class="ship-field">
+            <label class="ship-label">State / Province</label>
+            <input type="text" id="ship-modal-province" class="ship-input" placeholder="State/Province">
           </div>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-          <div class="rfq-field" style="margin-bottom:0;">
-            <label
-              style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Postcode
-              / ZIP</label>
-            <input type="text" id="ship-modal-postcode" placeholder="ZIP Code"
-              style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+          <div class="ship-field">
+            <label class="ship-label">Postcode / ZIP</label>
+            <input type="text" id="ship-modal-postcode" class="ship-input" placeholder="ZIP Code">
           </div>
-          <div class="rfq-field" style="margin-bottom:0;">
-            <label
-              style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Destination
-              Region</label>
-            <select id="ship-modal-country"
-              style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; font-size:14px; color:#f8fafc; background: #1e293b; outline:none; transition:all 0.2s;">
+          <div class="ship-field">
+            <label class="ship-label">Destination Region</label>
+            <select id="ship-modal-country" class="ship-input">
               <option value="north_america">North America</option>
               <option value="europe">Europe</option>
               <option value="oceania">Oceania / Australia</option>
@@ -3733,22 +3700,52 @@
           </div>
         </div>
       </div>
-      <div
-        style="padding: 16px 24px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: flex-end; gap: 12px; background: rgba(0,0,0,0.2);">
-        <button id="cancel-shipping-modal"
-          style="padding: 8px 16px; background: transparent; border: 1px solid var(--color-steel-600); color: var(--color-steel-200); border-radius: 8px; cursor: pointer; font-weight: 600;">Cancel</button>
-        <button id="save-shipping-modal"
-          style="padding: 8px 16px; background: var(--color-electric); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Save
-          Address</button>
+      <div class="ship-modal-footer">
+        <button id="cancel-shipping-modal" class="ship-btn-cancel">Cancel</button>
+        <button id="save-shipping-modal" class="ship-btn-save">Save Address</button>
       </div>
     </div>
   </div>
 
   <style>
-    #shipping-address-modal.hidden {
-      display: none !important;
+    #shipping-address-modal.hidden { display: none !important; }
+    .ship-modal-card {
+      width: 90%; max-width: 500px; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); background: #fff; border: 1px solid #e2e8f0;
     }
+    .ship-modal-header { padding: 20px 24px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+    .ship-modal-title { margin: 0; font-size: 18px; font-weight: 700; color: #0f172a; }
+    .ship-modal-close { background: transparent; border: none; color: #94a3b8; cursor: pointer; font-size: 24px; line-height: 1; }
+    .ship-modal-close:hover { color: #334155; }
+    .ship-modal-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; max-height: 70vh; }
+    .ship-field { margin-bottom: 0; }
+    .ship-label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; color: #475569; }
+    .ship-input {
+      width: 100%; padding: 10px 14px; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s; box-sizing: border-box;
+      background: #f8fafc; border: 1px solid #cbd5e1; color: #0f172a; font-family: inherit;
+    }
+    .ship-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+    .ship-input::placeholder { color: #94a3b8; }
+    .ship-modal-footer { padding: 16px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 12px; background: #f8fafc; }
+    .ship-btn-cancel { padding: 8px 16px; background: transparent; border: 1px solid #cbd5e1; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; }
+    .ship-btn-cancel:hover { background: #f1f5f9; color: #334155; }
+    .ship-btn-save { padding: 8px 16px; background: #3b82f6; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; }
+    .ship-btn-save:hover { background: #2563eb; }
+
+    /* Dark mode */
+    [data-theme="dark"] .ship-modal-card { background: #0f172a; border-color: rgba(255,255,255,0.08); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+    [data-theme="dark"] .ship-modal-header { border-bottom-color: rgba(255,255,255,0.06); }
+    [data-theme="dark"] .ship-modal-title { color: #f8fafc; }
+    [data-theme="dark"] .ship-modal-close { color: #64748b; }
+    [data-theme="dark"] .ship-label { color: #94a3b8; }
+    [data-theme="dark"] .ship-input { background: #1e293b; border-color: #334155; color: #f8fafc; }
+    [data-theme="dark"] .ship-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+    [data-theme="dark"] .ship-input::placeholder { color: #475569; }
+    [data-theme="dark"] .ship-modal-footer { background: rgba(0,0,0,0.2); border-top-color: rgba(255,255,255,0.06); }
+    [data-theme="dark"] .ship-btn-cancel { border-color: #475569; color: #94a3b8; }
+    [data-theme="dark"] .ship-btn-cancel:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
   </style>
+
 </body>
 
 </html>

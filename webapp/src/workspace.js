@@ -686,10 +686,12 @@ function openRFQPreviewModal(rfq) {
   const modal = document.getElementById('rfq-preview-modal');
   const partsList = document.getElementById('rfq-parts-list');
 
+
   // ── Build all part cards ──
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co';
 
   partsList.innerHTML = parts.map((p, idx) => {
+
     const fileName = p.name || p.file_name || `Part ${idx + 1}`;
     const path = p.storage_path || p.path;
     const bucket = p.bucket || 'rfq-uploads';
@@ -717,7 +719,13 @@ function openRFQPreviewModal(rfq) {
     if (p.analysis) {
       const a = p.analysis;
       const geoItems = [];
-      if (a.boundingBox) geoItems.push(`<span style="font-weight:700; color:#0f172a;">Dimensions:</span> ${a.boundingBox.length.toFixed(1)} × ${a.boundingBox.width.toFixed(1)} × ${a.boundingBox.height.toFixed(1)} mm`);
+      if (a.boundingBox) {
+        const bb = a.boundingBox;
+        const bbL = (bb.length ?? bb.x ?? 0);
+        const bbW = (bb.width ?? bb.y ?? 0);
+        const bbH = (bb.height ?? bb.z ?? 0);
+        geoItems.push(`<span style="font-weight:700; color:#0f172a;">Dimensions:</span> ${Number(bbL).toFixed(1)} × ${Number(bbW).toFixed(1)} × ${Number(bbH).toFixed(1)} mm`);
+      }
       if (a.volume) geoItems.push(`<span style="font-weight:700; color:#0f172a;">Volume:</span> ${(a.volume / 1000).toFixed(2)} cm³`);
       if (a.surfaceArea) geoItems.push(`<span style="font-weight:700; color:#0f172a;">Surface:</span> ${(a.surfaceArea / 100).toFixed(2)} cm²`);
       if (a.triangleCount) geoItems.push(`<span style="font-weight:700; color:#0f172a;">Triangles:</span> ${a.triangleCount.toLocaleString()}`);

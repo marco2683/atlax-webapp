@@ -482,7 +482,7 @@ export function initRFQController() {
       type: 'instant',
       project_name: projName,
       service: 'Instant Quote',
-      estimated_quantity: partsArray.reduce((acc, p) => acc + (p.qty || 1), 0),
+      estimated_quantity: partsArray.reduce((acc, p) => acc + (p.config?.quantity || 1), 0),
       total_price: grandTotal,
       target_timeline: 'Flexible',
       notes: 'Generated via Instant Quoting Engine',
