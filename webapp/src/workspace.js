@@ -865,7 +865,12 @@ function openRFQPreviewModal(rfq) {
   modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
 
   // ── Payment Panel (shown when admin has confirmed the quote) ──
-  if (data.payment_status === 'awaiting_payment' && rfq.status === 'confirmed') {
+  // Show payment options if the RFQ is confirmed and payment has NOT been completed.
+  // Accept either explicit awaiting_payment flag OR just the confirmed status (admin may
+  // have used the status dropdown rather than the "Confirm to Client" button).
+  const paymentPending = data.payment_status === 'awaiting_payment'
+    || (rfq.status === 'confirmed' && data.payment_status !== 'paid');
+  if (paymentPending && rfq.status === 'confirmed') {
     injectPaymentPanel(rfq, data, modal);
   }
 }
