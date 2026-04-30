@@ -255,7 +255,14 @@ async function bootApp() {
   document.getElementById('supplier-loading').style.display = 'none';
   document.getElementById('supplier-app').style.display = 'flex';
 
-  document.getElementById('sidebar-factory-name').textContent = `${factoryRecord.name} | Global`;
+  document.getElementById('sidebar-factory-name').textContent = factoryRecord.name || 'My Factory';
+
+  // Avatar initials
+  const avatarEl = document.getElementById('sp-avatar-initials');
+  if (avatarEl && factoryRecord.name) {
+    const words = factoryRecord.name.split(' ');
+    avatarEl.textContent = (words[0]?.[0] || '') + (words[1]?.[0] || '');
+  }
 
   document.getElementById('supplier-logout-btn').addEventListener('click', async () => {
     await logoutUser();
@@ -268,167 +275,422 @@ async function bootApp() {
   categories = catRes.data || [];
   categoryParameters = paramRes.data || [];
 
-  // Bind top nav
-  document.getElementById('nav-inventory').addEventListener('click', loadCatalogTab);
-  document.getElementById('nav-orders')?.addEventListener('click', loadOrdersTab);
+  // Nav link helpers
+  const navLinks = document.querySelectorAll('.sp-nav-link');
+  function setActiveNav(id) {
+    navLinks.forEach(l => l.classList.remove('active'));
+    document.getElementById(id)?.classList.add('active');
+  }
 
-  loadCatalogTab(); 
+  // Theme toggle
+  const savedTheme = localStorage.getItem('sp-theme');
+  if (savedTheme === 'light') document.body.classList.add('sp-light');
+  const themeBtn = document.getElementById('sp-theme-toggle');
+  function updateThemeIcon() {
+    if (themeBtn) themeBtn.textContent = document.body.classList.contains('sp-light') ? '🌙' : '☀️';
+  }
+  updateThemeIcon();
+  themeBtn?.addEventListener('click', () => {
+    document.body.classList.toggle('sp-light');
+    localStorage.setItem('sp-theme', document.body.classList.contains('sp-light') ? 'light' : 'dark');
+    updateThemeIcon();
+  });
+
+  document.getElementById('nav-dashboard')?.addEventListener('click', () => { setActiveNav('nav-dashboard'); loadDashboardTab(); });
+  document.getElementById('nav-inventory')?.addEventListener('click', () => { setActiveNav('nav-inventory'); loadCatalogTab(); });
+  document.getElementById('nav-orders')?.addEventListener('click', () => { setActiveNav('nav-orders'); loadOrdersTab(); });
+  document.getElementById('nav-publish')?.addEventListener('click', () => { setActiveNav('nav-publish'); renderCreateProductForm(); });
+
+  // Default: Dashboard
+  loadDashboardTab();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TAB: CATALOG (Manage Inventory Amazon Style)
+// TAB: DASHBOARD (KPI Overview + Notifications)
+// ─────────────────────────────────────────────────────────────────────────────
+async function loadDashboardTab() {
+  const routing = document.getElementById('supplier-content-routing');
+
+  // Load products + orders in parallel
+  await supabase.from('products').update({ supplier_id: factoryRecord.id }).ilike('mpn', '%OPTO%');
+  const [prodRes, orderRes] = await Promise.all([
+    supabase.from('products').select('*').eq('supplier_id', factoryRecord.id),
+    supabase.from('rfq_history').select('*').order('created_at', { ascending: false })
+  ]);
+  myProducts = prodRes.data || [];
+  const allOrders = (orderRes.data || []).filter(r => r.rfq_data && String(r.rfq_data.supplier_id) === String(factoryRecord.id));
+
+  const totalProducts = myProducts.length;
+  const oosCount = myProducts.filter(p => !p.stock_quantity || p.stock_quantity === 0).length;
+  const categories_set = new Set(myProducts.map(p => p.category_id).filter(Boolean));
+  const pendingOrders = allOrders.filter(o => o.status === 'submitted').length;
+  const totalRevenue = myProducts.reduce((s, p) => s + (Number(p.base_price || 0) * (p.stock_quantity || 0)), 0);
+
+  routing.innerHTML = `
+    <div class="sp-container">
+      <h1 class="sp-page-title">Welcome back, ${factoryRecord.name}</h1>
+
+      <!-- KPI Grid -->
+      <div class="sp-kpi-grid">
+        <div class="sp-kpi-card">
+          <div class="sp-kpi-icon sp-kpi-icon--blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+          <div class="sp-kpi-label">Total Products</div>
+          <div class="sp-kpi-value">${totalProducts}</div>
+          <div class="sp-kpi-sub">${categories_set.size} categories</div>
+        </div>
+        <div class="sp-kpi-card">
+          <div class="sp-kpi-icon sp-kpi-icon--green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <div class="sp-kpi-label">Inventory Value</div>
+          <div class="sp-kpi-value">$${totalRevenue.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
+          <div class="sp-kpi-sub">Across all listings</div>
+        </div>
+        <div class="sp-kpi-card ${pendingOrders > 0 ? 'sp-kpi-card--warning' : ''}">
+          <div class="sp-kpi-icon sp-kpi-icon--amber"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div class="sp-kpi-label">Orders to Fulfill</div>
+          <div class="sp-kpi-value">${pendingOrders}</div>
+          <div class="sp-kpi-sub">${allOrders.length} total orders</div>
+        </div>
+        <div class="sp-kpi-card ${oosCount > 0 ? 'sp-kpi-card--danger' : ''}">
+          <div class="sp-kpi-icon sp-kpi-icon--red"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div class="sp-kpi-label">Stock Warnings</div>
+          <div class="sp-kpi-value">${oosCount}</div>
+          <div class="sp-kpi-sub">${oosCount > 0 ? 'Items out of stock' : 'All stocked'}</div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="sp-notifications">
+        <div class="sp-notifications-header">
+          <span class="sp-notifications-title">Recent Activity</span>
+        </div>
+        ${pendingOrders > 0 ? `<div class="sp-notification-item"><span class="sp-notification-dot sp-notification-dot--amber"></span><span class="sp-notification-text"><strong>${pendingOrders} pending RFQ request${pendingOrders > 1 ? 's' : ''}</strong> awaiting your response</span><span class="sp-notification-time">Action needed</span></div>` : ''}
+        ${oosCount > 0 ? `<div class="sp-notification-item"><span class="sp-notification-dot sp-notification-dot--red"></span><span class="sp-notification-text"><strong>${oosCount} product${oosCount > 1 ? 's' : ''}</strong> out of stock — update inventory to avoid missed opportunities</span><span class="sp-notification-time">Warning</span></div>` : ''}
+        ${totalProducts === 0 ? `<div class="sp-notification-item"><span class="sp-notification-dot sp-notification-dot--blue"></span><span class="sp-notification-text">Get started by adding your first product listing</span><span class="sp-notification-time">Tip</span></div>` : ''}
+        ${pendingOrders === 0 && oosCount === 0 && totalProducts > 0 ? `<div class="sp-notification-item"><span class="sp-notification-dot sp-notification-dot--blue"></span><span class="sp-notification-text">All clear — no urgent actions required</span><span class="sp-notification-time">Now</span></div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB: CATALOG (Product Listings — Redesigned)
 // ─────────────────────────────────────────────────────────────────────────────
 async function loadCatalogTab() {
   const routing = document.getElementById('supplier-content-routing');
   
   routing.innerHTML = `
-    <div class="amz-container">
-      <h1 class="amz-page-title">Manage All Inventory</h1>
-      
-      <div class="amz-tabs">
-        <div class="amz-tab active">All listings</div>
-        <div class="amz-tab">Complete drafts</div>
-        <div class="amz-tab">Activate listings</div>
-        <div class="amz-tab">Enhance listings</div>
-        <div class="amz-tab">Review listing changes</div>
-      </div>
-
-      <div class="amz-toolbar">
-        <div class="amz-search-bar">
-          <select class="amz-search-select"><option>All</option></select>
-          <input type="text" class="amz-search-input" placeholder="Search SKU, Title, ASIN, UPC/EAN">
-          <button style="border:none; background:#FFF; padding:0 12px; cursor:pointer;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          </button>
+    <div class="sp-container">
+      <h1 class="sp-page-title">Products</h1>
+      <div class="sp-table-toolbar">
+        <div class="sp-search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" id="sp-product-search" placeholder="Search by name, SKU, or category...">
         </div>
-        <button class="amz-btn" id="btn-create-product">Add a product</button>
+        <button class="sp-btn sp-btn--primary" id="btn-create-product">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Product
+        </button>
       </div>
-
-      <div id="catalog-grid" style="min-height: 400px; background:#FFF; border: 1px solid var(--amz-border); border-top:none;">
-        <div style="padding: 40px; text-align:center; color: var(--amz-text-light);">Loading listings...</div>
-      </div>
+      <div id="catalog-grid"></div>
     </div>
   `;
 
   document.getElementById('btn-create-product').addEventListener('click', () => renderCreateProductForm());
 
-  // Dev Helper: Auto-assign mock components to the logged-in supplier so they can test updates
   await supabase.from('products').update({ supplier_id: factoryRecord.id }).ilike('mpn', '%OPTO%');
-  const { data, error } = await supabase.from('products').select('*').eq('supplier_id', factoryRecord.id);
+  const { data } = await supabase.from('products').select('*').eq('supplier_id', factoryRecord.id);
   myProducts = data || [];
 
   const grid = document.getElementById('catalog-grid');
+
+  // Search filter
+  document.getElementById('sp-product-search')?.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase();
+    const rows = grid.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(q) ? '' : 'none';
+    });
+  });
+
   if (myProducts.length === 0) {
-    grid.innerHTML = `
-      <div style="text-align: center; padding: 60px;">
-        <div style="font-weight: 700; margin-bottom: 8px;">No listings found.</div>
-        <div style="font-size: 13px; color: var(--amz-text-light);">Create a new listing to start selling.</div>
-      </div>
-    `;
-  } else {
-    grid.innerHTML = `
-      <table class="amz-table">
-        <thead>
-          <tr>
-            <th style="width:30px;"><input type="checkbox"></th>
-            <th>Listing status</th>
-            <th style="width:300px;">Product details</th>
-            <th>Performance</th>
-            <th>Inventory</th>
-            <th>Price and shipping cost</th>
-            <th style="text-align:right;">Estimated fees</th>
-            <th style="width:100px;"></th>
-          </tr>
-        </thead>
-        <tbody>
-          ${myProducts.map(p => {
-            const stock = p.stock_quantity || 0;
-            const price = Number(p.base_price || 0).toFixed(2);
-            
-            const isOOS = stock === 0;
-            const statusBadge = isOOS 
-              ? '<span class="amz-badge amz-badge-red">Out of stock</span><span style="color:var(--amz-link); font-size:12px;">Replenish inventory</span>'
-              : '<span class="amz-badge amz-badge-gray">Active</span>';
-
-            return `
-              <tr>
-                <td><input type="checkbox"></td>
-                <td>
-                  ${statusBadge}
-                  <div style="color:var(--amz-text-light); font-size:11px; margin-top:4px;">Just now</div>
-                </td>
-                <td>
-                  <div class="amz-product-meta">
-                    <img src="${p.image_url || p.specs?.images?.[0] || p.specs?.image_url || '/placeholder.png'}" class="amz-product-thumb">
-                    <div class="amz-product-info">
-                      <a class="amz-product-title" data-product-id="${p.id}">${p.description || p.mpn}</a>
-                      <div class="amz-product-sub">ASIN: ${p.id.substring(0,8).toUpperCase()}<br>SKU: ${p.mpn}</div>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="amz-metrics">
-                    <span class="amz-metric-label">Sales</span><span class="amz-metric-val">--</span>
-                    <span class="amz-metric-label">Units sold</span><span class="amz-metric-val">--</span>
-                    <span class="amz-metric-label">Page views</span><span class="amz-metric-val">--</span>
-                    <span class="amz-metric-label">Sales rank</span><span class="amz-metric-val">--</span>
-                  </div>
-                </td>
-                <td>
-                   <div class="amz-metrics">
-                    <span class="amz-metric-label"><strong>Available</strong></span><span class="amz-metric-val"><strong>${stock}</strong></span>
-                    <span class="amz-metric-label">Inbound</span><span class="amz-metric-val">0</span>
-                    <span class="amz-metric-label">Unfulfillable</span><span class="amz-metric-val">0</span>
-                    <span class="amz-metric-label">Reserved</span><span class="amz-metric-val">0</span>
-                  </div>
-                </td>
-                <td>
-                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                     <span style="font-weight:700;">Price</span>
-                     <div style="display:flex; align-items:center; border:1px solid var(--amz-input-border); border-radius:4px; overflow:hidden;">
-                        <span style="background:#F0F2F2; padding:4px 8px; border-right:1px solid var(--amz-input-border); color:var(--amz-text-light);">USD</span>
-                        <input type="text" class="amz-inline-input" value="${price}" style="border:none; width:60px;" data-update-id="${p.id}">
-                     </div>
-                   </div>
-                   <div style="font-size:12px; color:var(--amz-text-light);">
-                     Lowest price: --
-                   </div>
-                </td>
-                <td style="text-align:right;">
-                  <div style="font-weight:700;">Total fees</div>
-                  <div style="color:var(--amz-text-light);">FBA fee</div>
-                  <a style="color:var(--amz-link); font-size:11px;">Calculate revenue</a>
-                </td>
-                <td style="text-align:right;">
-                  <button class="amz-btn btn-edit-prod" data-id="${p.id}">Edit</button>
-                </td>
-              </tr>
-            `;
-          }).join('')}
-        </tbody>
-      </table>
-    `;
-
-    document.querySelectorAll('.btn-edit-prod, .amz-product-title').forEach(el => {
-      el.addEventListener('click', (e) => {
-        const id = e.currentTarget.dataset.id || e.currentTarget.dataset.productId;
-        renderCreateProductForm(id);
-      });
-    });
-
-    // Handle inline price update demo
-    document.querySelectorAll('.amz-inline-input').forEach(el => {
-      el.addEventListener('change', async (e) => {
-        const id = e.target.dataset.updateId;
-        const newPrice = Number(e.target.value);
-        if(!isNaN(newPrice)) {
-          e.target.style.opacity = '0.5';
-          await supabase.from('products').update({ base_price: newPrice }).eq('id', id);
-          e.target.style.opacity = '1';
-        }
-      });
-    });
+    grid.innerHTML = `<div class="sp-table-wrapper"><div class="sp-empty-state"><div class="sp-empty-title">No products yet</div><div class="sp-empty-sub">Create your first listing to start receiving orders.</div></div></div>`;
+    return;
   }
+
+  // ── Build category tree ──
+  // Group products by category. Build parent→sub hierarchy.
+  const catMap = {};
+  categories.forEach(c => { catMap[c.id] = c; });
+  const productsByCat = {};
+  myProducts.forEach(p => {
+    const cid = p.category_id || '__uncategorized__';
+    if (!productsByCat[cid]) productsByCat[cid] = [];
+    productsByCat[cid].push(p);
+  });
+
+  // Build ordered list: parent categories (with their subs) then uncategorized
+  const rootCats = categories.filter(c => !c.parent_id);
+  const orderedGroups = []; // { cat, subGroups: [{ cat, products }], products (direct) }
+  const usedCatIds = new Set();
+
+  rootCats.forEach(root => {
+    const subs = categories.filter(c => c.parent_id === root.id);
+    const subGroups = subs.map(sub => {
+      usedCatIds.add(sub.id);
+      return { cat: sub, products: productsByCat[sub.id] || [] };
+    }).filter(sg => sg.products.length > 0);
+    const directProducts = productsByCat[root.id] || [];
+    usedCatIds.add(root.id);
+    if (directProducts.length > 0 || subGroups.length > 0) {
+      orderedGroups.push({ cat: root, subGroups, products: directProducts });
+    }
+  });
+
+  // Categories that are children but whose parent isn't a root (orphaned)
+  Object.keys(productsByCat).forEach(cid => {
+    if (cid === '__uncategorized__' || usedCatIds.has(cid)) return;
+    const cat = catMap[cid];
+    if (cat) {
+      orderedGroups.push({ cat, subGroups: [], products: productsByCat[cid] });
+      usedCatIds.add(cid);
+    }
+  });
+
+  // Uncategorized last
+  if (productsByCat['__uncategorized__']?.length) {
+    orderedGroups.push({ cat: { id: '__uncategorized__', name: 'Uncategorized' }, subGroups: [], products: productsByCat['__uncategorized__'] });
+  }
+
+  // ── Render product row HTML (reusable) ──
+  function renderProductRow(p) {
+    const stock = p.stock_quantity || 0;
+    const isOOS = stock === 0;
+    const tiers = (p.pricing_tiers && p.pricing_tiers.length > 0)
+      ? p.pricing_tiers.slice(0, 3)
+      : [{ min_quantity: 1, unit_price: Number(p.base_price || 0), lead_time_days: '' }];
+    while (tiers.length < 3) tiers.push({ min_quantity: '', unit_price: '', lead_time_days: '' });
+    const tiersHtml = tiers.map((t, i) => `
+      <div class="sp-tier-row">
+        <span class="sp-tier-moq">MOQ</span>
+        <input type="number" min="0" value="${t.min_quantity || ''}" placeholder="—" data-pid="${p.id}" data-tier="${i}" data-tf="qty">
+        <span class="sp-tier-label">→ $</span>
+        <input type="number" step="0.01" min="0" value="${t.unit_price || ''}" placeholder="—" data-pid="${p.id}" data-tier="${i}" data-tf="price">
+        <span class="sp-tier-label">/</span>
+        <input type="number" min="0" value="${t.lead_time_days || ''}" placeholder="—" data-pid="${p.id}" data-tier="${i}" data-tf="lead">
+        <span class="sp-tier-label">days</span>
+      </div>
+    `).join('');
+    return `
+      <tr data-row-id="${p.id}" class="sp-drag-row" draggable="true">
+        <td style="width:4%"><span class="sp-drag-grip" title="Drag to move">⠿</span></td>
+        <td style="width:26%">
+          <div class="sp-product-cell">
+            <img src="${p.image_url || p.specs?.images?.[0] || '/placeholder.png'}" class="sp-product-thumb" alt="">
+            <div class="sp-product-info">
+              <span class="sp-product-name" data-product-id="${p.id}">${p.description || p.mpn}</span>
+              <span class="sp-product-mpn">${p.mpn}</span>
+            </div>
+          </div>
+        </td>
+        <td><span class="sp-status ${isOOS ? 'sp-status--oos' : 'sp-status--active'}">${isOOS ? 'Out of stock' : 'Active'}</span></td>
+        <td><input type="number" class="sp-inline-input sp-inline-input--wide" value="${stock}" min="0" data-field="stock" data-id="${p.id}"></td>
+        <td style="width:34%"><div class="sp-tiers-mini">${tiersHtml}</div></td>
+        <td style="width:90px">
+          <div class="sp-row-actions">
+            <button class="sp-row-save" data-save-id="${p.id}" disabled>Save</button>
+            <button class="sp-row-btn btn-edit-prod" data-id="${p.id}">Edit</button>
+          </div>
+        </td>
+      </tr>`;
+  }
+
+  // ── Render category group HTML ──
+  function renderCatGroup(group, isSub = false) {
+    const prods = group.products || [];
+    const subHtml = (group.subGroups || []).map(sg => renderCatGroup(sg, true)).join('');
+    const tableRows = prods.map(p => renderProductRow(p)).join('');
+    const isUncat = group.cat.id === '__uncategorized__';
+    const nameClass = isUncat ? 'sp-cat-name sp-uncat-label' : 'sp-cat-name';
+    const totalCount = prods.length + (group.subGroups || []).reduce((s, sg) => s + (sg.products?.length || 0), 0);
+    return `
+      <div class="sp-cat-group ${isSub ? 'sp-cat-sub' : ''}" data-cat-id="${group.cat.id}" draggable="${!isSub}" >
+        <div class="sp-cat-header" data-cat-toggle="${group.cat.id}">
+          ${!isSub ? '<span class="sp-cat-drag-handle" title="Drag to reorder">⠿</span>' : ''}
+          <span class="sp-cat-chevron">▼</span>
+          <span class="${nameClass}">${group.cat.name}</span>
+          <span class="sp-cat-count">${totalCount}</span>
+        </div>
+        <div class="sp-cat-body" data-cat-body="${group.cat.id}">
+          ${subHtml}
+          ${tableRows ? `
+            <div class="sp-table-wrapper" style="border-radius:0; border-top:none;">
+              <table class="sp-table">
+                <thead><tr>
+                  <th style="width:4%"></th>
+                  <th style="width:26%">Product</th><th>Status</th><th>Stock</th>
+                  <th style="width:34%">Pricing Tiers <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:0.6;">(MOQ → Price / Lead)</span></th>
+                  <th style="width:90px"></th>
+                </tr></thead>
+                <tbody>${tableRows}</tbody>
+              </table>
+            </div>` : ''}
+        </div>
+      </div>`;
+  }
+
+  // ── Master table header ──
+  grid.innerHTML = `
+    <div class="sp-table-wrapper" style="margin-bottom:8px;">
+      <table class="sp-table">
+        <thead><tr>
+          <th style="width:4%"></th>
+          <th style="width:26%">Product</th>
+          <th>Status</th>
+          <th>Stock</th>
+          <th style="width:34%">Pricing Tiers  <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:0.6;">(MOQ → Price / Lead)</span></th>
+          <th style="width:90px"></th>
+        </tr></thead>
+      </table>
+    </div>
+    ${orderedGroups.map(g => renderCatGroup(g)).join('')}
+  `;
+
+  // ── Collapse / expand category headers ──
+  grid.querySelectorAll('.sp-cat-header').forEach(header => {
+    header.addEventListener('click', (e) => {
+      // Ignore if clicking drag handle
+      if (e.target.closest('.sp-cat-drag-handle')) return;
+      const catId = header.dataset.catToggle;
+      const body = grid.querySelector(`[data-cat-body="${catId}"]`);
+      if (!body) return;
+      const isCollapsed = body.classList.contains('collapsed');
+      if (isCollapsed) {
+        body.style.maxHeight = body.scrollHeight + 'px';
+        body.classList.remove('collapsed');
+        header.classList.remove('collapsed');
+        setTimeout(() => { body.style.maxHeight = 'none'; }, 260);
+      } else {
+        body.style.maxHeight = body.scrollHeight + 'px';
+        requestAnimationFrame(() => {
+          body.style.maxHeight = '0px';
+          body.classList.add('collapsed');
+          header.classList.add('collapsed');
+        });
+      }
+    });
+  });
+
+  // ── Edit & detail click handlers ──
+  grid.querySelectorAll('.btn-edit-prod, .sp-product-name').forEach(el => {
+    el.addEventListener('click', (e) => {
+      const id = e.currentTarget.dataset.id || e.currentTarget.dataset.productId;
+      renderCreateProductForm(id);
+    });
+  });
+
+  // ── Dirty tracking & Save ──
+  function markRowDirty(productId) {
+    const saveBtn = grid.querySelector(`.sp-row-save[data-save-id="${productId}"]`);
+    if (saveBtn) saveBtn.disabled = false;
+  }
+  grid.querySelectorAll('.sp-inline-input[data-field="stock"]').forEach(el => {
+    el.addEventListener('input', () => markRowDirty(el.dataset.id));
+  });
+  grid.querySelectorAll('.sp-tier-row input').forEach(el => {
+    el.addEventListener('input', () => markRowDirty(el.dataset.pid));
+  });
+
+  grid.querySelectorAll('.sp-row-save').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const pid = btn.dataset.saveId;
+      const prod = myProducts.find(p => p.id === pid);
+      if (!prod) return;
+      btn.textContent = 'Saving…';
+      btn.classList.add('sp-saving');
+      const stockInput = grid.querySelector(`.sp-inline-input[data-id="${pid}"]`);
+      const stockVal = stockInput ? Number(stockInput.value) || 0 : (prod.stock_quantity || 0);
+      const tierInputs = grid.querySelectorAll(`.sp-tier-row input[data-pid="${pid}"]`);
+      const tiersMap = {};
+      tierInputs.forEach(inp => {
+        const idx = Number(inp.dataset.tier);
+        if (!tiersMap[idx]) tiersMap[idx] = { min_quantity: 0, unit_price: 0, lead_time_days: 0 };
+        const val = Number(inp.value) || 0;
+        if (inp.dataset.tf === 'qty') tiersMap[idx].min_quantity = val;
+        else if (inp.dataset.tf === 'price') tiersMap[idx].unit_price = val;
+        else if (inp.dataset.tf === 'lead') tiersMap[idx].lead_time_days = val;
+      });
+      const cleanTiers = Object.values(tiersMap).filter(t => t.min_quantity || t.unit_price);
+      const base_price = cleanTiers[0]?.unit_price || 0;
+      const { error } = await supabase.from('products').update({
+        stock_quantity: stockVal, pricing_tiers: cleanTiers, base_price
+      }).eq('id', pid);
+      if (!error) {
+        prod.stock_quantity = stockVal; prod.pricing_tiers = cleanTiers; prod.base_price = base_price;
+        btn.textContent = '✓ Saved'; btn.disabled = true;
+        setTimeout(() => { btn.textContent = 'Save'; btn.classList.remove('sp-saving'); }, 1500);
+      } else {
+        btn.textContent = 'Error'; btn.classList.remove('sp-saving');
+        setTimeout(() => { btn.textContent = 'Save'; btn.disabled = false; }, 2000);
+      }
+    });
+  });
+
+  // ── Drag & Drop: products between categories ──
+  let draggedRow = null;
+  grid.querySelectorAll('tr.sp-drag-row').forEach(row => {
+    row.addEventListener('dragstart', (e) => {
+      draggedRow = row;
+      row.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', row.dataset.rowId);
+    });
+    row.addEventListener('dragend', () => {
+      draggedRow = null;
+      row.classList.remove('dragging');
+      grid.querySelectorAll('.drag-over, .drag-over-row').forEach(el => el.classList.remove('drag-over', 'drag-over-row'));
+    });
+  });
+
+  // Drop targets: category groups
+  grid.querySelectorAll('.sp-cat-group').forEach(group => {
+    group.addEventListener('dragover', (e) => {
+      if (!draggedRow) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      group.classList.add('drag-over');
+    });
+    group.addEventListener('dragleave', (e) => {
+      if (!group.contains(e.relatedTarget)) group.classList.remove('drag-over');
+    });
+    group.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      group.classList.remove('drag-over');
+      if (!draggedRow) return;
+      const productId = draggedRow.dataset.rowId;
+      const targetCatId = group.dataset.catId;
+      if (targetCatId === '__uncategorized__') return;
+
+      // Move the row DOM into this group's tbody
+      const tbody = group.querySelector('tbody');
+      if (tbody && draggedRow.parentElement !== tbody) {
+        tbody.appendChild(draggedRow);
+        // Update count badges
+        grid.querySelectorAll('.sp-cat-group').forEach(g => {
+          const cnt = g.querySelectorAll('tr.sp-drag-row').length;
+          const badge = g.querySelector('.sp-cat-count');
+          if (badge) badge.textContent = cnt;
+        });
+      }
+
+      // Persist to DB
+      const prod = myProducts.find(p => p.id === productId);
+      if (prod) {
+        prod.category_id = targetCatId;
+        await supabase.from('products').update({ category_id: targetCatId }).eq('id', productId);
+      }
+    });
+  });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -461,6 +723,10 @@ function renderCreateProductForm(editProdId = null) {
   };
 
   const asinMock = prod ? prod.id.substring(0,8).toUpperCase() : 'NEW_ASIN';
+
+  // Pre-escape HTML for source textarea (avoids regex in template literal)
+  const rawHtml = prod?.rich_description || '';
+  const escHtml = rawHtml.split('<').join('&lt;').split('>').join('&gt;');
 
   routing.innerHTML = `
 <div class="amz-container">
@@ -607,7 +873,7 @@ function renderCreateProductForm(editProdId = null) {
         <h2 style="font-size:16px; font-weight:700; border-bottom:2px solid #007185; padding-bottom:6px; margin-bottom:16px; color:#111; display:inline-block;">Product Overview</h2>
         
         <div style="border: 1px solid #ccc; border-radius: 4px; background: #fff; margin-bottom:32px; box-shadow:0 1px 4px rgba(0,0,0,0.03);" id="rich-editor-wrapper">
-          <div style="background: #f9f9f9; padding: 8px 12px; border-bottom: 1px solid #ccc; display:flex; gap: 8px; flex-wrap:wrap;">
+          <div style="background: #f9f9f9; padding: 8px 12px; border-bottom: 1px solid #ccc; display:flex; gap: 8px; flex-wrap:wrap; align-items:center;" id="editor-toolbar">
             <button type="button" onclick="document.execCommand('formatBlock',false,'H1')" style="background:#fff; border:1px solid #d5d9d9; border-radius:3px; cursor:pointer; font-weight:700; padding:4px 10px; font-size:12px; color:#333;">H1</button>
             <button type="button" onclick="document.execCommand('formatBlock',false,'H2')" style="background:#fff; border:1px solid #d5d9d9; border-radius:3px; cursor:pointer; font-weight:700; padding:4px 10px; font-size:12px; color:#333;">H2</button>
             <hr style="width:1px; height:20px; background:#ccc; border:none; margin:0 4px;">
@@ -620,8 +886,13 @@ function renderCreateProductForm(editProdId = null) {
                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Image
             </button>
             <input type="file" accept="image/*" id="rich-desc-img-upload" style="display:none;">
+            <div class="sp-editor-mode-toggle">
+              <button type="button" id="btn-mode-visual" class="active">Visual</button>
+              <button type="button" id="btn-mode-html">HTML</button>
+            </div>
           </div>
           <div id="rich-description" contenteditable="true" style="min-height: 220px; padding: 20px; outline: none; font-size:14px; line-height:1.7; color:#222; overflow:hidden;">${prod?.rich_description || ''}</div>
+          <textarea id="html-source-editor" style="display:none;">${escHtml}</textarea>
         </div>
 
         <!-- Applications -->
@@ -809,6 +1080,34 @@ function renderCreateProductForm(editProdId = null) {
     }
   });
 
+  // ── Visual / HTML source toggle ──
+  const htmlSourceEditor = document.getElementById('html-source-editor');
+  const btnVisual = document.getElementById('btn-mode-visual');
+  const btnHtml = document.getElementById('btn-mode-html');
+  const toolbarButtons = document.querySelectorAll('#editor-toolbar > button[onclick], #editor-toolbar > button[style*="flex"]');
+
+  btnHtml?.addEventListener('click', () => {
+    // Switch to HTML source mode
+    htmlSourceEditor.value = richDesc.innerHTML;
+    richDesc.style.display = 'none';
+    htmlSourceEditor.style.display = 'block';
+    btnHtml.classList.add('active');
+    btnVisual.classList.remove('active');
+    // Disable formatting buttons
+    toolbarButtons.forEach(b => { b.style.opacity = '0.3'; b.style.pointerEvents = 'none'; });
+  });
+
+  btnVisual?.addEventListener('click', () => {
+    // Switch back to visual mode — apply HTML source
+    richDesc.innerHTML = htmlSourceEditor.value;
+    richDesc.style.display = 'block';
+    htmlSourceEditor.style.display = 'none';
+    btnVisual.classList.add('active');
+    btnHtml.classList.remove('active');
+    // Re-enable formatting buttons
+    toolbarButtons.forEach(b => { b.style.opacity = '1'; b.style.pointerEvents = 'auto'; });
+  });
+
   if (prod) {
     const initialName = getCatName(prod.category_id);
     document.getElementById('p-category').value = initialName;
@@ -938,7 +1237,9 @@ function renderCreateProductForm(editProdId = null) {
        }
     });
 
-    const richDesc = document.getElementById('rich-description').innerHTML;
+    const htmlSrcEl = document.getElementById('html-source-editor');
+    const richDescEl = document.getElementById('rich-description');
+    const richDesc = (htmlSrcEl && htmlSrcEl.style.display !== 'none') ? htmlSrcEl.value : richDescEl.innerHTML;
     const applications = document.getElementById('p-applications')?.value || '';
     const internalSku = document.getElementById('internal-sku').value;
 
@@ -1114,27 +1415,15 @@ async function loadOrdersTab() {
   const routing = document.getElementById('supplier-content-routing');
   
   routing.innerHTML = `
-    <div class="amz-container">
-      <h1 class="amz-page-title">Manage Orders & RFQs</h1>
-      
-      <div class="amz-tabs">
-        <div class="amz-tab active">Pending Requests</div>
-        <div class="amz-tab">Quoted / Action Required</div>
-        <div class="amz-tab">Shipped</div>
-      </div>
-
-      <div class="amz-toolbar">
-        <div class="amz-search-bar">
-          <input type="text" class="amz-search-input" placeholder="Search Order ID, MPN, Customer Name">
-          <button style="border:none; background:#FFF; padding:0 12px; cursor:pointer;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#565959" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          </button>
+    <div class="sp-container">
+      <h1 class="sp-page-title">Orders & RFQs</h1>
+      <div class="sp-table-toolbar">
+        <div class="sp-search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search by Order ID, MPN, or customer...">
         </div>
       </div>
-
-      <div id="orders-grid" style="min-height: 400px; background:#FFF; border: 1px solid var(--amz-border); border-top:none;">
-        <div style="padding: 40px; text-align:center; color: var(--amz-text-light);">Loading orders...</div>
-      </div>
+      <div id="orders-grid"></div>
     </div>
   `;
 
@@ -1154,18 +1443,13 @@ async function loadOrdersTab() {
   });
 
   if (myOrders.length === 0) {
-    grid.innerHTML = `
-      <div style="text-align: center; padding: 60px;">
-        <div style="font-weight: 700; margin-bottom: 8px;">No active orders.</div>
-        <div style="font-size: 13px; color: var(--amz-text-light);">Once a user requests a quote or adds to basket, it will appear here.</div>
-      </div>
-    `;
+    grid.innerHTML = `<div class="sp-table-wrapper"><div class="sp-empty-state"><div class="sp-empty-title">No active orders</div><div class="sp-empty-sub">Once a customer submits an RFQ, it will appear here.</div></div></div>`;
     return;
   }
 
   // Render Table
   let html = `
-    <table class="amz-table">
+    <div class="sp-table-wrapper"><table class="sp-table">
       <thead>
         <tr>
           <th>Order Date</th>
@@ -1207,7 +1491,7 @@ async function loadOrdersTab() {
       `;
   });
 
-  html += `</tbody></table>`;
+  html += `</tbody></table></div>`;
   grid.innerHTML = html;
 
   // Bind update buttons

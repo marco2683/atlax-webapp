@@ -385,6 +385,30 @@ export function initGlobe(containerId, suppliers = []) {
     renderPoints();
   }
 
+  /**
+   * Disable all user interaction with the globe (scroll, zoom, rotate, pan).
+   * Used when the globe is visible but the user is on a non-globe screen.
+   */
+  function disableInteraction() {
+    controls.enableRotate = false;
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.autoRotate = false;
+    // Prevent the canvas from capturing pointer/wheel events
+    container.style.pointerEvents = 'none';
+  }
+
+  /**
+   * Re-enable user interaction with the globe.
+   */
+  function enableInteraction() {
+    controls.enableRotate = true;
+    controls.enableZoom = true;
+    controls.enablePan = true;
+    if (!rotationStopped) controls.autoRotate = true;
+    container.style.pointerEvents = '';
+  }
+
   return {
     globe,
     stopRotation,
@@ -394,6 +418,8 @@ export function initGlobe(containerId, suppliers = []) {
     resize,
     highlightSupplier,
     clearHighlight,
+    enableInteraction,
+    disableInteraction,
     updateShortlistNetwork: (sl) => {
       shortlistActive = sl && sl.length > 0;
       // Update the set of shortlisted IDs so dots can be recolored
@@ -438,5 +464,7 @@ function createNoopController() {
     resize: () => {},
     highlightSupplier: () => {},
     clearHighlight: () => {},
+    enableInteraction: () => {},
+    disableInteraction: () => {},
   };
 }

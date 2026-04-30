@@ -260,9 +260,7 @@ export function initRFQController() {
       mainFileInput.click();
     });
     mainDropZone.addEventListener('click', (e) => {
-      if (e.target.closest('.upload-icon') || e.target.closest('.upload-text')) {
-        mainFileInput.click();
-      }
+      mainFileInput.click();
     });
     mainDropZone.addEventListener('dragover', (e) => { e.preventDefault(); mainDropZone.classList.add('drag-over'); });
     mainDropZone.addEventListener('dragleave', () => mainDropZone.classList.remove('drag-over'));

@@ -416,6 +416,11 @@ function openTabularView() {
   const bottomResults = document.getElementById('bottom-results-container');
   if (bottomResults) bottomResults.style.display = 'none';
 
+  // Hide scroll hint and disable globe interaction in tabular mode
+  const scrollHint = document.getElementById('scroll-hint');
+  if (scrollHint) scrollHint.style.display = 'none';
+  window.dispatchEvent(new CustomEvent('prd-globe-interaction', { detail: { enabled: false } }));
+
   document.querySelector('.view-toggle-btn[data-view="table"]')?.classList.add('active');
   document.querySelector('.view-toggle-btn[data-view="globe"]')?.classList.remove('active');
   document.getElementById('flatearth-view-toggle')?.classList.add('hidden');
@@ -449,6 +454,11 @@ function openGlobeView() {
   
   viewToggle.classList.remove('hidden');
   
+  // Show scroll hint and enable globe interaction in globe mode
+  const scrollHint = document.getElementById('scroll-hint');
+  if (scrollHint) scrollHint.style.display = '';
+  window.dispatchEvent(new CustomEvent('prd-globe-interaction', { detail: { enabled: true } }));
+
   document.querySelector('.view-toggle-btn[data-view="globe"]')?.classList.add('active');
   document.querySelector('.view-toggle-btn[data-view="table"]')?.classList.remove('active');
   document.getElementById('flatearth-view-toggle')?.classList.remove('hidden');

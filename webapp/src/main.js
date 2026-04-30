@@ -140,6 +140,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     switchView(e.detail.view, globe);
   });
 
+  // Globe interaction toggle (used by supplier-engine.js for tabular/globe switching)
+  window.addEventListener('prd-globe-interaction', (e) => {
+    if (e.detail.enabled) {
+      globe.enableInteraction();
+    } else {
+      globe.disableInteraction();
+    }
+  });
+
   // Handle initial state from URL hash (e.g. app.html#project-quote)
   const initialHash = window.location.hash.replace('#', '');
   if (initialHash && initialHash !== 'suppliers') {
@@ -541,12 +550,18 @@ function switchView(view, globe) {
   }
 
   // Global resets based on view type
+  const scrollHint = document.getElementById('scroll-hint');
+
   if (view === 'suppliers' || view === 'home') {
     heroTitleContainer?.classList.remove('hidden');
     if (searchBar) { searchBar.style.opacity = '1'; searchBar.style.pointerEvents = 'auto'; }
     if (tagline) tagline.style.opacity = '1';
     if (globeContainer) globeContainer.style.opacity = '1';
     if (heroOverlay) heroOverlay.style.opacity = '1';
+    if (scrollHint) scrollHint.style.display = '';
+    // Globe interaction is managed by supplier-engine.js (tabular vs globe toggle)
+    // Re-enable here as a default; tabular will disable it if needed
+    globe.enableInteraction();
     
     // Auth guard for Basic Tier: Hide search components if they aren't supposed to see suppliers
     if (sysTier === 'basic') {
@@ -554,6 +569,10 @@ function switchView(view, globe) {
     }
   } else {
     heroTitleContainer?.classList.add('hidden');
+    // Hide scroll hint on non-supplier views (RFQ, designers, etc.)
+    if (scrollHint) scrollHint.style.display = 'none';
+    // Disable globe interaction so scroll/zoom don't interfere with page scrolling
+    globe.disableInteraction();
   }
 
   if (view === 'project-quote') {

@@ -5,74 +5,89 @@
   <link rel="icon" type="image/svg+xml" href="/logo-mark.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Atlas DT — Supplier Portal</title>
-
-  <!-- Web fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta name="description" content="AtlasDT Supplier Portal — Manage your product catalog, track orders, and grow your B2B presence.">
   <link rel="stylesheet" href="/src/css/supplier-amazon.css">
-
 </head>
 <body>
-  <!-- Loading State / Fallback -->
-  <div id="supplier-loading" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.9); z-index: 999; display: flex; justify-content: center; align-items: center;">
-    <div style="text-align: center; color: var(--amz-text-dark);">
-      <p style="margin-top: 16px; font-weight:700;">Loading Seller Central...</p>
+  <!-- Loading State -->
+  <div id="supplier-loading" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--sp-bg, #0B0F19); z-index: 999; display: flex; justify-content: center; align-items: center;">
+    <div style="text-align: center;">
+      <div style="width: 32px; height: 32px; border: 3px solid rgba(59,130,246,0.2); border-top-color: #3B82F6; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px;"></div>
+      <p style="color: #94A3B8; font-weight: 500; font-size: 14px; font-family: 'Inter', sans-serif;">Loading Portal...</p>
     </div>
+    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
   </div>
 
-  <!-- Onboarding Link Mode -->
-  <div id="supplier-onboarding" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.9); z-index: 999; display: none; justify-content: center; align-items: center;">
-    <div style="background: #FFF; border: 1px solid var(--amz-border); box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 440px; padding: 32px; text-align: center;">
-      <h2 style="margin: 0 0 8px 0; font-size:18px;">Register as a Seller</h2>
-      <p style="color: #666; font-size: 13px; margin-bottom: 24px;">Link your account to an existing seller profile or register a new facility.</p>
-      <form id="onboarding-form" style="text-align: left;">
-        <div style="margin-bottom: 12px;">
-          <label style="display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700;">Legal Business Name</label>
+  <!-- Onboarding (unchanged logic, restyled) -->
+  <div id="supplier-onboarding" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--sp-bg, #0B0F19); z-index: 999; justify-content: center; align-items: center;">
+    <div style="background: var(--sp-bg-raised, #111827); border: 1px solid rgba(148,163,184,0.12); border-radius: 12px; box-shadow: 0 24px 64px rgba(0,0,0,0.5); width: 440px; padding: 36px;">
+      <h2 style="margin: 0 0 8px 0; font-size: 18px; color: #F1F5F9; font-weight: 700;">Register as a Supplier</h2>
+      <p style="color: #94A3B8; font-size: 13px; margin-bottom: 24px;">Link your account to a supplier profile or register a new facility.</p>
+      <form id="onboarding-form">
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px;">Legal Business Name</label>
           <input type="text" id="onboard-factory-name" required placeholder="Shenzhen Precision Manufacturing Ltd." class="amz-form-input">
         </div>
         <div style="margin-bottom: 24px;">
-          <label style="display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700;">Primary Focus</label>
+          <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px;">Primary Focus</label>
           <select id="onboard-factory-focus" required class="amz-form-input">
             <option value="OEM">Original Equipment Manufacturer (OEM)</option>
             <option value="DISTRIBUTOR">Component Distributor</option>
             <option value="CM">Contract Manufacturer</option>
           </select>
         </div>
-        <button type="submit" class="amz-btn amz-btn-yellow" style="width: 100%;">Agree and Create Profile</button>
+        <button type="submit" style="width: 100%; padding: 12px; background: #3B82F6; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s;">Create Profile & Continue</button>
       </form>
     </div>
   </div>
 
-  <!-- Main Authenticated Portal -->
-  <div id="supplier-app" style="display: none; height: 100%; width: 100%; flex-direction: column;">
-    
-    <header class="amz-header">
-      <div class="amz-header-inner">
-        <div class="amz-header-left">
-          <div class="amz-header-logo" style="display:flex; align-items:center;">
-            <img src="/logos/atlax-logo-original.png" alt="AtlasDT" style="height: 24px; vertical-align: middle;">
-            <span style="color:#333; margin-left:12px; font-weight:500; font-size:14px; position:relative; top:2px;">Seller Platform 卖家平台</span>
+  <!-- Main Portal App -->
+  <div id="supplier-app" style="display: none; min-height: 100vh; flex-direction: column;">
+
+    <!-- ═══ HEADER / NAV ═══ -->
+    <header class="sp-header">
+      <div class="sp-header-inner">
+        <div class="sp-header-left">
+          <div class="sp-header-logo">
+            <img src="/logos/atlasdt-logo-full.svg" alt="AtlasDT">
+            <div class="sp-logo-divider"></div>
+            <span class="sp-portal-badge">Supplier Portal</span>
           </div>
-          <div style="color: #64748B; font-size: 13px; margin-left: 20px; border-left: 1px solid #CBD5E1; padding-left:20px;" id="sidebar-factory-name">My Factory | Global</div>
+          <div class="sp-factory-name" id="sidebar-factory-name">My Factory</div>
         </div>
-        <div class="amz-header-nav">
-          <a class="amz-header-link" id="nav-inventory">Inventory Details</a>
-          <a class="amz-header-link" id="nav-publish">Publish Product</a>
-          <a class="amz-header-link" id="nav-orders">Order Management</a>
-          <a class="amz-header-link" id="nav-analytics">Analytics</a>
-        </div>
-        <div class="amz-header-right">
-          <a class="amz-header-icon" title="Notifications">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+
+        <nav class="sp-header-nav">
+          <a class="sp-nav-link active" id="nav-dashboard">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
           </a>
-          <a class="amz-header-link" style="font-size: 13px; font-weight:500;" id="lang-toggle-btn">EN / 中</a>
-          <div class="amz-header-profile" title="Profile & Settings">
-            <div class="amz-avatar">SR</div>
-            <a class="amz-header-link" style="font-size: 13px;" id="supplier-logout-btn" data-i18n="disconnect">Logout</a>
-          </div>
+          <a class="sp-nav-link" id="nav-inventory">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            Products
+          </a>
+          <a class="sp-nav-link" id="nav-orders">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Orders & RFQs
+          </a>
+          <a class="sp-nav-link" id="nav-publish">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Product
+          </a>
+        </nav>
+
+        <div class="sp-header-right">
+          <button class="sp-theme-toggle" id="sp-theme-toggle" title="Toggle light/dark theme">☀️</button>
+          <button class="sp-icon-btn" title="Notifications" id="btn-notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="sp-badge"></span>
+          </button>
+          <div class="sp-avatar" id="sp-avatar-initials">SP</div>
+          <button class="sp-logout-btn" id="supplier-logout-btn">Sign Out</button>
         </div>
       </div>
     </header>
 
+    <!-- ═══ MAIN CONTENT ═══ -->
     <main id="supplier-content-routing">
       <!-- Injected via JS -->
     </main>
@@ -80,6 +95,6 @@
   </div>
 
   <script type="module" src="/src/js/supplier-dashboard.js"></script>
-    <script type="text/javascript" src="https://res.public.onecdn.static.microsoft/customerconnect/v1/7dttl/init.js" id="chatbot" environmentId="016ca71b-616b-e187-b02d-3fcb9c6568c2" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://res.public.onecdn.static.microsoft/customerconnect/v1/7dttl/init.js" id="chatbot" environmentId="016ca71b-616b-e187-b02d-3fcb9c6568c2" crossorigin="anonymous"></script>
 </body>
 </html>

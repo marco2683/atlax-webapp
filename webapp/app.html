@@ -1143,71 +1143,72 @@
             </div>
 
             <div class="rfq-detailed-panel" id="rfq-detailed-panel" style="margin-top: 16px;">
-              <!-- Top Project Info & Shipping Fields -->
-              <div class="rfq-project-info"
-                style="margin-bottom: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: flex-start;">
-                <!-- Left Column -->
-                <div class="rfq-field" style="margin-bottom: 0;">
-                  <label
-                    style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Project
-                    Name</label>
-                  <input type="text" class="rfq-part-name-input" id="instant-rfq-project-name"
-                    placeholder="e.g. Drone Chassis Prototype V2"
-                    style="width:100%; padding:12px 16px; border-radius:10px; font-size:15px; font-weight:600; outline:none; box-shadow:inset 0 2px 4px rgba(0,0,0,0.02); transition:all 0.2s;">
-                </div>
+              <!-- Two-column initial layout: Left = Project Info + Shipping, Right = Drop Zone -->
+              <div class="rfq-initial-layout"
+                style="margin-bottom: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: stretch;">
 
-                <!-- Right Column -->
-                <div style="display: flex; flex-direction: column; gap: 12px;">
+                <!-- Left Column: Project Name + Shipping stacked -->
+                <div style="display: flex; flex-direction: column; gap: 16px;">
                   <div class="rfq-field" style="margin-bottom: 0;">
                     <label
-                      style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--color-steel-200); cursor:pointer;">
-                      <input type="checkbox" id="calc-shipping-cb" style="width:16px; height:16px; cursor:pointer;">
-                      Include Shipping Calculation
-                    </label>
+                      style="display:block; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Project
+                      Name</label>
+                    <input type="text" class="rfq-part-name-input" id="instant-rfq-project-name"
+                      placeholder="e.g. Drone Chassis Prototype V2"
+                      style="width:100%; padding:12px 16px; border-radius:10px; font-size:15px; font-weight:600; outline:none; box-shadow:inset 0 2px 4px rgba(0,0,0,0.02); transition:all 0.2s;">
                   </div>
 
-                  <div id="shipping-details-section" class="hidden"
-                    style="padding:12px 16px; background:var(--color-bg); border-radius:10px; border:1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                      <h4
-                        style="margin:0 0 4px 0; font-size:11px; color:var(--color-steel-400); text-transform: uppercase; letter-spacing: 0.5px;">
-                        Shipping Destination</h4>
-                      <div id="shipping-summary-text"
-                        style="font-size: 13px; color: var(--color-white); font-weight: 500; line-height: 1.4;">
-                        No address provided.
-                      </div>
+                  <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div class="rfq-field" style="margin-bottom: 0;">
+                      <label
+                        style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--color-steel-200); cursor:pointer;">
+                        <input type="checkbox" id="calc-shipping-cb" style="width:16px; height:16px; cursor:pointer;">
+                        Include Shipping Calculation
+                      </label>
                     </div>
-                    <button id="edit-shipping-btn"
-                      style="padding: 6px 12px; background: transparent; border: 1px solid var(--color-electric); color: var(--color-electric); border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; flex-shrink: 0;">Add
-                      Address</button>
+
+                    <div id="shipping-details-section" class="hidden"
+                      style="padding:12px 16px; background:var(--color-bg); border-radius:10px; border:1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <h4
+                          style="margin:0 0 4px 0; font-size:11px; color:var(--color-steel-400); text-transform: uppercase; letter-spacing: 0.5px;">
+                          Shipping Destination</h4>
+                        <div id="shipping-summary-text"
+                          style="font-size: 13px; color: var(--color-white); font-weight: 500; line-height: 1.4;">
+                          No address provided.
+                        </div>
+                      </div>
+                      <button id="edit-shipping-btn"
+                        style="padding: 6px 12px; background: transparent; border: 1px solid var(--color-electric); color: var(--color-electric); border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; flex-shrink: 0;">Add
+                        Address</button>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Main Drop Zone -->
-              <div class="rfq-engine__upload-zone" id="rfq-main-upload-zone"
-                style="margin-bottom: 32px; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                <input type="file" id="rfq-main-file-input" multiple
-                  accept=".step,.stp,.stl,.obj,.3mf,.iges,.igs,.dxf,.sldprt,.ipt,.x_t,.x_b,.3dxml,.catpart,.prt,.sat,.jt"
-                  hidden />
-                <div class="upload-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1.5">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="17 8 12 3 7 8" />
-                    <line x1="12" y1="3" x2="12" y2="15" />
-                  </svg>
+                <!-- Right Column: Drag & Drop Zone -->
+                <div class="rfq-engine__upload-zone" id="rfq-main-upload-zone"
+                  style="margin-bottom: 0; min-height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                  <input type="file" id="rfq-main-file-input" multiple
+                    accept=".step,.stp,.stl,.obj,.3mf,.iges,.igs,.dxf,.sldprt,.ipt,.x_t,.x_b,.3dxml,.catpart,.prt,.sat,.jt"
+                    hidden />
+                  <div class="upload-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="1.5">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="17 8 12 3 7 8" />
+                      <line x1="12" y1="3" x2="12" y2="15" />
+                    </svg>
+                  </div>
+                  <div class="upload-text" style="text-align: center;">
+                    <h3>Drag & Drop 3D CAD Files</h3>
+                    <p style="margin-top: 4px;">Upload multiple files. We'll generate a part card for each.</p>
+                  </div>
+                  <div class="upload-formats" style="margin-top: 16px; text-align: center;">
+                    <p style="font-size: 10.5px; color: var(--color-steel-400);">Supported: STEP, STP, SLDPRT, STL, IGES,
+                      X_T. <br>Other formats will be flagged and may not be readable by the 3D engine.</p>
+                  </div>
                 </div>
-                <div class="upload-text" style="text-align: center;">
-                  <h3>Drag & Drop 3D CAD Files</h3>
-                  <p style="margin-top: 4px;">Upload multiple files. We'll generate a part card for each.</p>
-                </div>
-                <button class="upload-btn" id="rfq-main-select-btn" style="margin: 16px auto 0;">Select 3D
-                  Files</button>
-                <div class="upload-formats" style="margin-top: 16px; text-align: center;">
-                  <p style="font-size: 10.5px; color: var(--color-steel-400);">Supported: STEP, STP, SLDPRT, STL, IGES,
-                    X_T. <br>Other formats will be flagged and may not be readable by the 3D engine.</p>
-                </div>
+
               </div>
 
               <!-- Container for dynamically generated vertical cards -->
