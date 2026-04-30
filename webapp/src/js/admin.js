@@ -1906,7 +1906,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       const fileCount = (data.files || []).length;
       
       const tech = data.type === 'instant' ? (data.parts && data.parts.length > 0 ? data.parts[0].process + (data.parts.length > 1 ? ` (+${data.parts.length-1})` : '') : 'Multiple') : '—';
-      const price = data.total_price ? `$${data.total_price.toLocaleString(undefined, {minimumFractionDigits: 2})}` : '—';
+      // Compute correct total from parts data (sum of p.price = line totals incl. shipping items)
+      const computedTotal = data.type === 'instant' && data.parts?.length
+        ? data.parts.reduce((acc, p) => acc + (Number(p.price) || 0), 0)
+        : (data.admin_final_price || data.total_price || 0);
+      const price = computedTotal ? `$${computedTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}` : '—';
       const date = new Date(rfq.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       const currentStatus = rfq.status || 'submitted';
 
@@ -1920,7 +1924,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <tr data-rfq-id="${rfq.id}" data-status="${currentStatus}"
           data-sort-name="${projectName.toLowerCase()}"
           data-sort-requester="${requesterName.toLowerCase()}"
-          data-sort-price="${data.total_price || data.admin_final_price || 0}"
+          data-sort-price="${computedTotal || 0}"
           data-sort-status="${currentStatus}"
           data-sort-date="${rfq.created_at || ''}">
           <td style="max-width:180px;">
@@ -2377,7 +2381,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div id="rfq-request-info-panel" style="display:${commLog.length > 0 ? 'block' : 'none'}; padding:12px 28px; background:#eff6ff; border-bottom:2px solid #bfdbfe;">
           <div style="font-size:12px; font-weight:700; color:#1e3a8a; margin-bottom:12px;">Request More Information / Communication History</div>
           
-          <div id="rfq-comm-log-container" style="max-height:300px; overflow-y:auto; margin-bottom:12px; display:${commLog.length > 0 ? 'block' : 'none'};">
+          <div id="rfq-comm-log-container" style="margin-bottom:12px; display:${commLog.length > 0 ? 'block' : 'none'};">
             ${commLogHtml}
           </div>
 
@@ -2391,35 +2395,38 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
         <!-- ── Body (scrollable) ── -->
-        <div style="flex:1; overflow-y:auto; padding:28px; display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+        <div style="flex:1; overflow-y:auto; padding:28px; display:flex; flex-direction:column; gap:24px;">
 
-          <!-- LEFT COLUMN -->
-          <div style="display:flex; flex-direction:column; gap:20px;">
+          <!-- INFO ROW — single horizontal line -->
+          <div style="display:flex; gap:12px; flex-wrap:nowrap; align-items:stretch;">
 
-            <!-- Requester card -->
-            <div style="background:#f0f9ff; padding:16px 20px; border-radius:12px; border:1px solid #bae6fd;">
-              <div style="font-size:10px; color:#0369a1; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:10px;">Requester</div>
-              <div style="font-size:15px; color:#0f172a; font-weight:700;">${requesterName}</div>
-              ${requesterEmail ? `<a href="mailto:${requesterEmail}" style="font-size:12px; color:#0369a1; margin-top:4px; display:block;">${requesterEmail}</a>` : ''}
-              ${requesterCompany ? `<div style="font-size:12px; color:#64748b; margin-top:2px;">${requesterCompany}</div>` : ''}
+            <!-- Requester -->
+            <div style="background:#f0f9ff; padding:14px 18px; border-radius:12px; border:1px solid #bae6fd; min-width:180px; flex:1.2;">
+              <div style="font-size:9px; color:#0369a1; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:6px;">Requester</div>
+              <div style="font-size:14px; color:#0f172a; font-weight:700; line-height:1.3;">${requesterName}</div>
+              ${requesterEmail ? `<a href="mailto:${requesterEmail}" style="font-size:11px; color:#0369a1; margin-top:3px; display:block; text-decoration:none;">${requesterEmail}</a>` : ''}
+              ${requesterCompany ? `<div style="font-size:11px; color:#64748b; margin-top:1px;">${requesterCompany}</div>` : ''}
             </div>
 
-            <!-- Project info grid -->
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-              <div style="background:#f8fafc; padding:12px 14px; border-radius:10px; border:1px solid #f1f5f9;">
-                <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Service</div>
-                <div style="font-size:13px; color:#0f172a; font-weight:600;">${service}</div>
-              </div>
-              <div style="background:#f8fafc; padding:12px 14px; border-radius:10px; border:1px solid #f1f5f9;">
-                <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Quantity</div>
-                <div id="admin-qty-display" style="font-size:13px; color:#0f172a; font-weight:600;">${qty}</div>
-              </div>
-              <div style="background:#f8fafc; padding:12px 14px; border-radius:10px; border:1px solid #f1f5f9;">
-                <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Timeline</div>
-                <div style="font-size:13px; color:#0f172a; font-weight:600;">${timeline}</div>
-              </div>
-              ${data.type === 'instant' ? `
-              <div style="background:${data.payment_status === 'paid' ? '#f0fdf4' : '#f0fdf4'}; padding:12px 14px; border-radius:10px; border:1px solid ${data.payment_status === 'paid' ? '#86efac' : '#bbf7d0'};">
+            <!-- Service -->
+            <div style="background:#f8fafc; padding:14px 18px; border-radius:12px; border:1px solid #f1f5f9; flex:0.8;">
+              <div style="font-size:9px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Service</div>
+              <div style="font-size:13px; color:#0f172a; font-weight:600;">${service}</div>
+            </div>
+
+            <!-- Quantity -->
+            <div style="background:#f8fafc; padding:14px 18px; border-radius:12px; border:1px solid #f1f5f9; flex:0.5;">
+              <div style="font-size:9px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Quantity</div>
+              <div id="admin-qty-display" style="font-size:13px; color:#0f172a; font-weight:600;">${qty}</div>
+            </div>
+
+            <!-- Timeline -->
+            <div style="background:#f8fafc; padding:14px 18px; border-radius:12px; border:1px solid #f1f5f9; flex:0.6;">
+              <div style="font-size:9px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Timeline</div>
+              <div style="font-size:13px; color:#0f172a; font-weight:600;">${timeline}</div>
+            </div>
+            ${data.type === 'instant' ? `
+            <div style="background:${data.payment_status === 'paid' ? '#f0fdf4' : '#f0fdf4'}; padding:14px 18px; border-radius:12px; border:1px solid ${data.payment_status === 'paid' ? '#86efac' : '#bbf7d0'}; flex:1;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                   <div style="font-size:10px; color:#166534; text-transform:uppercase; font-weight:600;">${data.payment_status === 'paid' ? '💳 Amount Paid' : 'Quoted Total'}</div>
                   ${data.payment_status === 'paid' ? `<span style="background:#16a34a; color:#fff; font-size:9px; font-weight:800; padding:2px 7px; border-radius:20px; letter-spacing:0.5px;">PAID</span>` : ''}
@@ -2427,49 +2434,50 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div id="admin-quoted-total-display" style="font-size:15px; color:#15803d; font-weight:800;">$${(data.amount_paid || data.admin_final_price || data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
                 ${data.paid_at ? `<div style="font-size:11px; color:#4ade80; margin-top:4px;">Paid ${new Date(data.paid_at).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>` : ''}
               </div>` : `
-              <div style="background:#f8fafc; padding:12px 14px; border-radius:10px; border:1px solid #f1f5f9;">
-                <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Contact Requested</div>
-                <div style="font-size:13px; color:#0f172a; font-weight:600;">${contactMe}</div>
-              </div>`}
-            </div>
-
-            <!-- Project Notes -->
-            <div>
-              <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:8px;">Client Notes</div>
-              <div style="background:#f8fafc; padding:14px; border-radius:10px; border:1px solid #f1f5f9; font-size:13px; line-height:1.6; color:#334155; min-height:80px;">${notes}</div>
-            </div>
-
-            <!-- Admin Internal Notes -->
-            <div>
-              <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:8px;">Internal Notes (Admin Only)</div>
-              <textarea id="rfq-admin-notes" rows="4" placeholder="Add internal notes, pricing rationale, supplier contacts..."
-                style="width:100%; box-sizing:border-box; padding:12px 14px; border-radius:10px; border:1px solid #e2e8f0; font-size:13px; font-family:inherit; line-height:1.6; color:#334155; resize:vertical; background:#fff;">${data.admin_notes || ''}</textarea>
-              <button id="rfq-save-notes-btn" data-rfq-id="${rfq.id}"
-                style="margin-top:8px; padding:7px 16px; background:#0f172a; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;">Save Notes</button>
-            </div>
-
+            <div style="background:#f8fafc; padding:14px 18px; border-radius:12px; border:1px solid #f1f5f9; flex:0.8;">
+              <div style="font-size:9px; color:#94a3b8; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Contact Requested</div>
+              <div style="font-size:13px; color:#0f172a; font-weight:600;">${contactMe}</div>
+            </div>`}
           </div>
 
-          <!-- RIGHT COLUMN -->
-          <div style="display:flex; flex-direction:column; gap:20px;">
+            <!-- Notes row — side by side -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+              <div>
+                <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:8px;">Client Notes</div>
+                <div style="background:#f8fafc; padding:14px; border-radius:10px; border:1px solid #f1f5f9; font-size:13px; line-height:1.6; color:#334155; min-height:70px;">${notes}</div>
+              </div>
+              <div>
+                <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:8px;">Internal Notes (Admin Only)</div>
+                <textarea id="rfq-admin-notes" rows="3" placeholder="Add internal notes, pricing rationale, supplier contacts..."
+                  style="width:100%; box-sizing:border-box; padding:12px 14px; border-radius:10px; border:1px solid #e2e8f0; font-size:13px; font-family:inherit; line-height:1.6; color:#334155; resize:vertical; background:#fff;">${data.admin_notes || ''}</textarea>
+                <button id="rfq-save-notes-btn" data-rfq-id="${rfq.id}"
+                  style="margin-top:6px; padding:6px 14px; background:#0f172a; color:#fff; border:none; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit;">Save Notes</button>
+              </div>
+            </div>
 
-            <!-- Parts table (instant) or Files (bulk) -->
+          <!-- FULL-WIDTH PARTS -->
             ${data.type === 'instant' ? `
             <div>
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; font-weight:700; letter-spacing:0.5px;">Quoted Parts (<span id="admin-parts-count">${data.parts?.length || 0}</span>)</div>
-                <button id="admin-add-part-btn" style="padding:4px 8px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer;">+ Add Line</button>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div style="font-size:11px; color:#0f172a; text-transform:uppercase; font-weight:800; letter-spacing:0.5px;">Quoted Parts (<span id="admin-parts-count">${data.parts?.length || 0}</span>)</div>
+                <button id="rfq-download-all-parts-btn" style="padding:4px 10px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer;">Download All</button>
+                <button id="rfq-open-onedrive-btn" style="padding:4px 10px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer;">OneDrive</button>
+              </div>
+              <button id="admin-add-part-btn" style="padding:4px 8px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer;">+ Add Line</button>
               </div>
               <div style="border:1px solid #e2e8f0; border-radius:12px; overflow:hidden;">
                 <table id="rfq-admin-parts-table" style="width:100%; border-collapse:collapse; font-size:12px;">
                   <thead style="background:#f8fafc;">
                     <tr style="border-bottom:1px solid #e2e8f0; text-align:left;">
-                      <th style="padding:10px 12px; font-weight:600; color:#475569;">Part Name</th>
-                      <th style="padding:10px 12px; font-weight:600; color:#475569;">Technology</th>
-                      <th style="padding:10px 12px; font-weight:600; color:#475569;">Material</th>
-                      <th style="padding:10px 12px; font-weight:600; color:#475569; width:60px;">Qty</th>
-                      <th style="padding:10px 12px; font-weight:600; color:#475569; width:90px;">Line Total</th>
-                      <th style="padding:10px 12px; width:40px;"></th>
+                      <th style="padding:10px 14px; width:30px;"></th>
+                    <th style="padding:10px 14px; font-weight:600; color:#475569;">Part Name</th>
+                    <th style="padding:10px 14px; font-weight:600; color:#475569;">Technology</th>
+                    <th style="padding:10px 14px; font-weight:600; color:#475569;">Material</th>
+                    <th style="padding:10px 14px; font-weight:600; color:#475569; width:60px;">Qty</th>
+                    <th style="padding:10px 14px; font-weight:600; color:#475569; width:100px;">Line Total</th>
+                    <th style="padding:10px 14px; font-weight:600; color:#475569; width:100px;">Actions</th>
+                    <th style="padding:10px 8px; width:30px;"></th>
                     </tr>
                   </thead>
                   <tbody id="rfq-admin-parts-tbody">
@@ -2487,7 +2495,6 @@ document.addEventListener('DOMContentLoaded', async () => {
               ${fileListHTML}
             </div>`}
 
-          </div>
         </div>
       </div>`;
 
@@ -2498,14 +2505,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const partsTableEl = modal.querySelector('#rfq-admin-parts-table');
     
     function updateAdminPartsTotal() {
-      // price per part already includes quantity (totalPrice = unitPrice × qty from quote engine)
-      // so we just sum the prices directly
+      // p.price = line total from quote engine (unitPrice × qty + tooling)
+      // Sum all parts directly — shipping line items are already included as parts
       let total = 0;
       let totalQty = 0;
       (data.parts || []).forEach(p => {
         total += (Number(p.price) || 0);
         totalQty += (Number(p.qty) || 1);
       });
+
       const finalPriceInp = modal.querySelector('#rfq-modal-final-price');
       if (finalPriceInp) finalPriceInp.value = total.toFixed(2);
       
@@ -2525,38 +2533,66 @@ document.addEventListener('DOMContentLoaded', async () => {
       data.estimated_quantity = totalQty;
     }
 
+    // OneDrive folder URL
+    const bankRefClean = `ADT-${(rfq.id||'').slice(0,8).toUpperCase()}`;
+    const odName = `${bankRefClean}_${requesterName}`.replace(/[<>:"\/\\|?*]/g, '_');
+    const odBaseUrl = data.onedrive_folder_url || `https://atlasdt-my.sharepoint.com/personal/marco_atlasdt_onmicrosoft_com/Documents/AtlasDT/RFQs/${encodeURIComponent(odName)}`;
+    const supaUrl = import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co';
+
     function renderAdminPartsTable() {
        if (!partsTbody) return;
-       partsTbody.innerHTML = (data.parts || []).map((p, i) => `
-         <tr data-idx="${i}" style="border-bottom:${p.customDetails ? '0' : '1px solid #f1f5f9'};">
-           <td style="padding:6px 12px; color:#0f172a; font-weight:500;">
-             <input class="admin-part-input" data-field="name" value="${p.name || ''}" placeholder="Part Name" style="width:100%; border:1px solid transparent; background:transparent; font-size:12px; font-family:inherit; padding:4px; outline:none;" />
-           </td>
-           <td style="padding:6px 12px; color:#334155;">
-             <input class="admin-part-input" data-field="process" value="${p.process || ''}" placeholder="Process" style="width:100%; border:1px solid transparent; background:transparent; font-size:12px; font-family:inherit; padding:4px; outline:none;" />
-           </td>
-           <td style="padding:6px 12px; color:#334155;">
-             <input class="admin-part-input" data-field="material" value="${p.material || ''}" placeholder="Material" style="width:100%; border:1px solid transparent; background:transparent; font-size:12px; font-family:inherit; padding:4px; outline:none;" />
-           </td>
-           <td style="padding:6px 12px; color:#0f172a; font-weight:600;">
-             <input class="admin-part-input" type="number" data-field="qty" value="${p.qty || 1}" style="width:50px; border:1px solid transparent; background:transparent; font-size:12px; font-weight:600; font-family:inherit; padding:4px; outline:none;" />
-           </td>
-           <td style="padding:6px 12px; color:#10b981; font-weight:700;">
-             <div style="display:flex; align-items:center;">$<input class="admin-part-input" type="number" step="0.01" data-field="price" value="${p.price || 0}" style="width:60px; border:1px solid transparent; background:transparent; color:#10b981; font-weight:700; font-size:12px; font-family:inherit; padding:4px; outline:none; margin-left:2px;" /></div>
-           </td>
-           <td style="padding:6px 4px; text-align:center;">
-             <button class="admin-part-remove-btn" data-idx="${i}" style="background:none; border:none; color:#ef4444; font-size:16px; cursor:pointer;" title="Remove part">&times;</button>
-           </td>
+       partsTbody.innerHTML = (data.parts || []).map((p, i) => {
+         const hasFile = !!p.storage_path;
+         const ext = (p.storage_path||'').split('.').pop().toLowerCase();
+         const fUrl = hasFile ? `${supaUrl}/storage/v1/object/public/${p.bucket||'rfq-uploads'}/${p.storage_path}` : '';
+         const isCAD = hasFile && ['step','stp','stl','obj','3mf','iges','igs'].includes(ext);
+         return `<tr data-idx="${i}" class="admin-part-row" style="border-bottom:1px solid #f1f5f9;cursor:${isCAD?'pointer':'default'};transition:background .15s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''" ${isCAD?'title="Click to view 3D model"':''}>
+           <td style="padding:8px 10px;text-align:center;"><svg class="admin-part-expand-icon" data-idx="${i}" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></td>
+           <td style="padding:6px 12px;"><input class="admin-part-input" data-field="name" value="${p.name||''}" placeholder="Part Name" style="width:100%;border:1px solid transparent;background:transparent;font-size:12px;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></td>
+           <td style="padding:6px 12px;"><input class="admin-part-input" data-field="process" value="${p.process||''}" placeholder="Process" style="width:100%;border:1px solid transparent;background:transparent;font-size:12px;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></td>
+           <td style="padding:6px 12px;"><input class="admin-part-input" data-field="material" value="${p.material||''}" placeholder="Material" style="width:100%;border:1px solid transparent;background:transparent;font-size:12px;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></td>
+           <td style="padding:6px 12px;"><input class="admin-part-input" type="number" data-field="qty" value="${p.qty||1}" style="width:50px;border:1px solid transparent;background:transparent;font-size:12px;font-weight:600;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></td>
+           <td style="padding:6px 12px;color:#10b981;font-weight:700;"><div style="display:flex;align-items:center;">$<input class="admin-part-input" type="number" step="0.01" data-field="price" value="${p.price||0}" style="width:70px;border:1px solid transparent;background:transparent;color:#10b981;font-weight:700;font-size:12px;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></div></td>
+           <td style="padding:6px 8px;" onclick="event.stopPropagation()"><div style="display:flex;gap:4px;">${isCAD?'<span style="display:inline-flex;align-items:center;gap:2px;padding:3px 8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:4px;color:#2563eb;font-size:10px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;" class="admin-part-view3d" data-view-idx="'+i+'">🧊 3D</span>':''}${hasFile?'<a href="'+fUrl+'" download target="_blank" title="Download" style="display:flex;padding:3px 6px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;color:#475569;text-decoration:none;font-size:13px;">&#x2B07;</a>':''}</div></td>
+           <td style="padding:6px 8px;text-align:center;" onclick="event.stopPropagation()"><button class="admin-part-remove-btn" data-idx="${i}" style="background:none;border:none;color:#ef4444;font-size:16px;cursor:pointer;">&times;</button></td>
          </tr>
-         ${p.customDetails ? `<tr style="border-bottom:1px solid #f1f5f9;background:#fffbeb;"><td colspan="6" style="padding:6px 12px 10px;font-size:11px;color:#92400e;"><span style="font-weight:700;margin-right:6px;">📝 Notes:</span>${p.customDetails}</td></tr>` : ''}
-       `).join('');
-       
+         <tr class="admin-part-detail-row" data-detail-idx="${i}" style="display:none;border-bottom:1px solid #e2e8f0;">
+           <td colspan="8" style="padding:0;"><div style="display:flex;gap:16px;padding:14px 20px;background:#fafbfc;border-top:1px solid #f1f5f9;">
+             <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
+               <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                 ${hasFile?'<a href="'+fUrl+'" download target="_blank" style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:#fff;border:1px solid #e2e8f0;border-radius:6px;font-size:11px;font-weight:600;color:#0f172a;text-decoration:none;">Download '+ext.toUpperCase()+'</a>':''}
+                 <a href="${odBaseUrl}/CAD" target="_blank" style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;font-size:11px;font-weight:600;color:#2563eb;text-decoration:none;">Open in OneDrive</a>
+               </div>
+               <div><div style="font-size:9px;color:#94a3b8;text-transform:uppercase;font-weight:700;margin-bottom:4px;">Part Notes (Admin)</div>
+                 <textarea class="admin-part-notes" data-notes-idx="${i}" rows="2" placeholder="Tooling notes, supplier info..." style="width:100%;box-sizing:border-box;padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;font-size:11px;font-family:inherit;line-height:1.4;color:#334155;resize:vertical;background:#fff;">${p.admin_notes||''}</textarea>
+               </div>
+             </div>
+           </div></td>
+         </tr>`;
+       }).join('');
        const countSpan = modal.querySelector('#admin-parts-count');
        if (countSpan) countSpan.textContent = (data.parts || []).length;
+
+       // Attach 3D viewer buttons (inside stopPropagation cells, so needs direct binding)
+       partsTbody.querySelectorAll('.admin-part-view3d').forEach(btn => {
+         btn.addEventListener('click', async (e) => {
+           e.stopPropagation();
+           const idx = parseInt(btn.dataset.viewIdx);
+           const p = data.parts[idx];
+           if (!p || !p.storage_path) return;
+           const { openAdmin3DViewer } = await import('./components/admin-3d-viewer.js');
+           openAdmin3DViewer(p, (updatedPart) => {
+             data.parts[idx] = { ...data.parts[idx], annotations: updatedPart.annotations };
+           });
+         });
+       });
     }
 
     if (partsTbody) {
       renderAdminPartsTable();
+      // Recalculate totals from actual parts data on initial load
+      // (fixes stale total_price from DB not matching sum of parts)
+      updateAdminPartsTotal();
     }
 
     if (partsTableEl) {
@@ -2587,6 +2623,73 @@ document.addEventListener('DOMContentLoaded', async () => {
        data.parts = data.parts || [];
        data.parts.push({ name: '', process: '', material: '', qty: 1, price: 0 });
        renderAdminPartsTable();
+    });
+
+    // Row click → open 3D viewer; Chevron → expand/collapse detail
+    if (partsTableEl) {
+      partsTableEl.addEventListener('click', async (e) => {
+        // Chevron click → toggle detail row
+        const chevron = e.target.closest('.admin-part-expand-icon');
+        if (chevron) {
+          e.stopPropagation();
+          const idx = chevron.dataset.idx;
+          const detailRow = modal.querySelector(`.admin-part-detail-row[data-detail-idx="${idx}"]`);
+          if (detailRow) {
+            const isOpen = detailRow.style.display !== 'none';
+            detailRow.style.display = isOpen ? 'none' : 'table-row';
+            chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+          }
+          return;
+        }
+
+        // 🧊 3D button click → open viewer
+        const view3dBtn = e.target.closest('.admin-part-view3d');
+        if (view3dBtn) {
+          e.stopPropagation();
+          const viewIdx = parseInt(view3dBtn.dataset.viewIdx);
+          const vp = data.parts[viewIdx];
+          if (vp && vp.storage_path) {
+            const { openAdmin3DViewer } = await import('./components/admin-3d-viewer.js');
+            openAdmin3DViewer(vp, (updatedPart) => {
+              data.parts[viewIdx] = { ...data.parts[viewIdx], annotations: updatedPart.annotations };
+            });
+          }
+          return;
+        }
+
+        // Row click → open 3D viewer if CAD file
+        const row = e.target.closest('.admin-part-row');
+        if (!row) return;
+        const idx = parseInt(row.dataset.idx);
+        const p = data.parts[idx];
+        if (!p || !p.storage_path) return;
+        const partExt = (p.storage_path||'').split('.').pop().toLowerCase();
+        const isCAD = ['step','stp','stl','obj','3mf','iges','igs'].includes(partExt);
+        if (!isCAD) return;
+
+        // Lazy-load the viewer module
+        const { openAdmin3DViewer } = await import('./components/admin-3d-viewer.js');
+        openAdmin3DViewer(p, (updatedPart) => {
+          // Save annotations back to data
+          data.parts[idx] = { ...data.parts[idx], annotations: updatedPart.annotations };
+        });
+      });
+      partsTableEl.addEventListener('change', (e) => {
+        if (e.target.classList.contains('admin-part-notes')) {
+          const idx = parseInt(e.target.dataset.notesIdx);
+          if (data.parts[idx]) data.parts[idx].admin_notes = e.target.value;
+        }
+      });
+    }
+    modal.querySelector('#rfq-open-onedrive-btn')?.addEventListener('click', () => {
+      window.open(odBaseUrl, '_blank');
+    });
+    modal.querySelector('#rfq-download-all-parts-btn')?.addEventListener('click', () => {
+      (data.parts || []).forEach((p, i) => {
+        if (!p.storage_path) return;
+        const url = `${supaUrl}/storage/v1/object/public/${p.bucket||'rfq-uploads'}/${p.storage_path}`;
+        setTimeout(() => { const a = document.createElement('a'); a.href = url; a.download = p.name || 'part'; a.target = '_blank'; document.body.appendChild(a); a.click(); a.remove(); }, i * 400);
+      });
     });
 
     // Close modal
