@@ -795,6 +795,8 @@ body.theme-light .admin-field textarea::placeholder {
   margin-bottom: 20px;
   padding-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.2s, border-color 0.2s;
+  border-radius: var(--radius-md);
 }
 
 .admin-image-category:first-child {
@@ -809,20 +811,139 @@ body.theme-light .admin-field textarea::placeholder {
   font-weight: var(--weight-semibold);
 }
 
+/* Drop zone highlight when dragging image rows across categories */
+.admin-image-category.drag-over {
+  background: rgba(59, 130, 246, 0.06);
+  border: 1px dashed var(--color-electric);
+}
+
 .admin-image-url-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 8px;
+  min-height: 20px;
 }
 
 .admin-img-url-row {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.15s;
+  background: transparent;
+  border-radius: var(--radius-md);
+  padding: 2px 0;
 }
 
-.admin-img-url-row input {
+.admin-img-url-row.dragging {
+  opacity: 0.35;
+  transform: scale(0.97);
+}
+
+.admin-img-url-row.drag-insert-above {
+  box-shadow: 0 -2px 0 0 var(--color-electric);
+}
+
+.admin-img-url-row.drag-insert-below {
+  box-shadow: 0 2px 0 0 var(--color-electric);
+}
+
+/* Drag handle */
+.admin-img-drag-handle {
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 32px;
+  flex-shrink: 0;
+  color: var(--color-steel-500);
+  transition: color 0.2s;
+  user-select: none;
+}
+
+.admin-img-drag-handle:hover {
+  color: var(--color-electric);
+}
+
+.admin-img-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Thumbnail preview */
+.admin-img-thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--color-slate-700);
+  flex-shrink: 0;
+  background: var(--color-void);
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, z-index 0s;
+  position: relative;
+  z-index: 1;
+}
+
+.admin-img-thumb:hover {
+  transform: scale(2.6);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+  z-index: 100;
+  border-color: var(--color-electric);
+}
+
+.admin-img-thumb-empty {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px dashed var(--color-slate-700);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-steel-500);
+  font-size: 14px;
+  background: var(--color-void);
+}
+
+/* Reorder buttons */
+.admin-img-reorder-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.admin-img-reorder-btn {
+  background: transparent;
+  border: 1px solid var(--color-slate-700);
+  color: var(--color-steel-400);
+  width: 22px;
+  height: 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  transition: all 0.15s;
+  padding: 0;
+  line-height: 1;
+}
+
+.admin-img-reorder-btn:hover:not(:disabled) {
+  border-color: var(--color-electric);
+  color: var(--color-electric);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.admin-img-reorder-btn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.admin-img-url-row input[type="text"],
+.admin-img-url-row input[type="url"] {
   flex: 1;
   padding: 10px 14px;
   background: var(--color-void);
@@ -832,6 +953,7 @@ body.theme-light .admin-field textarea::placeholder {
   font-family: inherit;
   font-size: var(--text-sm);
   transition: border-color 0.2s ease;
+  min-width: 0;
 }
 
 .admin-img-url-row input:focus {

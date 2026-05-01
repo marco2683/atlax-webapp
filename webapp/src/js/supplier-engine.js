@@ -774,10 +774,6 @@ function renderTable(data) {
       <td>${supplier.country || '—'}</td>
       <td style="color: #7ee787;">${(supplier.techGroups || [supplier.techGroup]).filter(Boolean).join(', ') || '—'}</td>
       <td>${techsHtml || '—'}</td>
-      <td style="text-align:center; padding:12px 2px;">${getTrafficLightSvg(supplier.scoreTc)}</td>
-      <td style="text-align:center; padding:12px 2px;">${getTrafficLightSvg(supplier.scoreOe)}</td>
-      <td style="text-align:center; padding:12px 2px;">${getTrafficLightSvg(supplier.scoreQs)}</td>
-      <td style="text-align:center; padding:12px 2px;">${getTrafficLightSvg(supplier.scoreV)}</td>
       <td><div style="display:flex; flex-direction:column; justify-content:center;">${certsHtml || '—'}</div></td>
       <td>${docsHtml}</td>
       <td style="text-align:center;" class="shortlist-cell">${shortlistHtml}</td>

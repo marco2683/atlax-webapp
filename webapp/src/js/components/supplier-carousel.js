@@ -9,9 +9,21 @@ const DEFAULT_BANNER = 'https://images.unsplash.com/photo-1565043589221-1a6fd9ae
 /**
  * Proxy insecure (http://) image URLs through images.weserv.nl
  * so they load on our HTTPS site without mixed-content blocking.
+ * Also rewrites any Supabase storage URLs that reference a stale/old
+ * project hostname to the current one from env.
  */
 function safeImgUrl(url) {
   if (!url) return '';
+  
+  // Rewrite any Supabase storage URLs that point to the wrong project host
+  const correctHost = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
+  if (correctHost && url.includes('.supabase.co/storage/')) {
+    const storagePathMatch = url.match(/https?:\/\/[^/]+\.supabase\.co(\/storage\/.*)/);
+    if (storagePathMatch && !url.startsWith(correctHost)) {
+      url = correctHost + storagePathMatch[1];
+    }
+  }
+
   // Already secure or relative — pass through
   if (url.startsWith('https://') || url.startsWith('/') || url.startsWith('data:')) return url;
   // HTTP URL — proxy through weserv

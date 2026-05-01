@@ -225,6 +225,32 @@ body.marketing-page.is-homepage .global-nav-link[data-nav="home"] {
   }
 }
 
+/* ── Workspace link (shared across all pages) ─────── */
+.navbar__workspace-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s;
+  margin-right: 4px;
+}
+
+.navbar__workspace-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+.navbar__workspace-link svg {
+  flex-shrink: 0;
+}
+
 /* Paniani Footer Logo Styles */
 img.paniani-footer-logo { filter: none !important; transition: filter 0.3s ease; }
 body.theme-light img.paniani-footer-logo { filter: brightness(0) !important; }

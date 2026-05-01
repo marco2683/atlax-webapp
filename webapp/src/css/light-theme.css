@@ -1227,16 +1227,18 @@ body.theme-light .tabular-header {
   border-bottom-color: rgba(0, 0, 0, 0.1) !important;
 }
 
-body.theme-light .tabular-search input,
-body.theme-light .filter-group select {
+body.theme-light .tabular-search input,
+body.theme-light .filter-group select,
+body.theme-light .tabular-search-field {
   background: #ffffff !important;
   border-color: rgba(0, 0, 0, 0.1) !important;
   color: #111827 !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
-body.theme-light .tabular-search input:focus,
-body.theme-light .filter-group select:focus {
+body.theme-light .tabular-search input:focus,
+body.theme-light .filter-group select:focus,
+body.theme-light .tabular-search-field:focus {
   border-color: #3b82f6 !important;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
 }

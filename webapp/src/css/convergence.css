@@ -228,6 +228,11 @@
   color: #fff;
   position: relative;
   scroll-margin-top: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .prd-expertise-inner {
@@ -242,11 +247,11 @@
 
 .prd-expertise-title {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 3.2rem);
-  font-weight: 300;
-  color: #fff;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.15;
   letter-spacing: -0.5px;
-  margin-bottom: 16px;
 }
 
 .prd-expertise-desc {
@@ -420,10 +425,10 @@
 
 .prd-platform-title {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 400;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
   color: #0f172a;
-  margin-bottom: 16px;
+  line-height: 1.15;
   letter-spacing: -0.5px;
 }
 
@@ -1006,4 +1011,3 @@
     font-size: 1.4rem;
   }
 }
-

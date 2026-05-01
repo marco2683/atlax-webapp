@@ -177,6 +177,27 @@
   background: rgba(22, 27, 34, 0.9);
 }
 
+/* Standalone search field used inside filter-group */
+.tabular-search-field {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  background: rgba(13, 17, 23, 0.8);
+  color: #c9d1d9;
+  transition: all 0.2s;
+}
+
+.tabular-search-field:focus {
+  outline: none;
+  border-color: #1f6feb;
+  background: rgba(22, 27, 34, 0.9);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
 .tabular-filters {
   display: flex;
   gap: 12px;

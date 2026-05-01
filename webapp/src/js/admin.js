@@ -1325,12 +1325,18 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
           <p class="admin-form-hint">Supply URLs for images and walkthroughs. These populate the supplier profile cards.</p>
 
-          <div class="admin-image-category">
+          <div class="admin-image-category" data-img-name="img_product">
             <h5>Product Samples</h5>
             <div class="admin-image-url-list" id="admin-sup-img-products">
               ${(s.images?.product?.length ? s.images.product : ['']).map(url => `
-                <div class="admin-img-url-row">
+                <div class="admin-img-url-row" draggable="true">
+                  <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
+                  ${url ? `<img src="${url}" class="admin-img-thumb" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
                   <input type="text" name="img_product" value="${url}" placeholder="https://example.com/product-1.jpg">
+                  <div class="admin-img-reorder-group">
+                    <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
+                    <button type="button" class="admin-img-reorder-btn admin-img-move-down" title="Move down">▼</button>
+                  </div>
                   <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
                     📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="image/*">
                   </label>
@@ -1341,12 +1347,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             <button type="button" class="admin-add-row-btn" data-target="admin-sup-img-products" data-name="img_product" data-accept="image/*">+ Add Product Image</button>
           </div>
 
-          <div class="admin-image-category">
+          <div class="admin-image-category" data-img-name="img_facility">
             <h5>Facility / Factory Floor</h5>
             <div class="admin-image-url-list" id="admin-sup-img-facility">
               ${(s.images?.facility?.length ? s.images.facility : ['']).map(url => `
-                <div class="admin-img-url-row">
+                <div class="admin-img-url-row" draggable="true">
+                  <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
+                  ${url ? `<img src="${url}" class="admin-img-thumb" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
                   <input type="text" name="img_facility" value="${url}" placeholder="https://example.com/factory-1.jpg">
+                  <div class="admin-img-reorder-group">
+                    <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
+                    <button type="button" class="admin-img-reorder-btn admin-img-move-down" title="Move down">▼</button>
+                  </div>
                   <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
                     📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="image/*">
                   </label>
@@ -1357,12 +1369,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             <button type="button" class="admin-add-row-btn" data-target="admin-sup-img-facility" data-name="img_facility" data-accept="image/*">+ Add Facility Image</button>
           </div>
 
-          <div class="admin-image-category">
+          <div class="admin-image-category" data-img-name="img_equipment">
             <h5>Equipment / Machinery</h5>
             <div class="admin-image-url-list" id="admin-sup-img-equipment">
               ${(s.images?.equipment?.length ? s.images.equipment : ['']).map(url => `
-                <div class="admin-img-url-row">
+                <div class="admin-img-url-row" draggable="true">
+                  <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
+                  ${url ? `<img src="${url}" class="admin-img-thumb" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
                   <input type="text" name="img_equipment" value="${url}" placeholder="https://example.com/cnc-machine.jpg">
+                  <div class="admin-img-reorder-group">
+                    <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
+                    <button type="button" class="admin-img-reorder-btn admin-img-move-down" title="Move down">▼</button>
+                  </div>
                   <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
                     📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="image/*">
                   </label>
@@ -1373,12 +1391,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             <button type="button" class="admin-add-row-btn" data-target="admin-sup-img-equipment" data-name="img_equipment" data-accept="image/*">+ Add Equipment Image</button>
           </div>
 
-          <div class="admin-image-category">
+          <div class="admin-image-category" data-img-name="img_certificate">
             <h5>Certificates Images</h5>
             <div class="admin-image-url-list" id="admin-sup-img-certs">
               ${(s.certificates?.length ? s.certificates : ['']).map(url => `
-                <div class="admin-img-url-row">
+                <div class="admin-img-url-row" draggable="true">
+                  <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
+                  ${url ? `<img src="${url}" class="admin-img-thumb" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
                   <input type="text" name="img_certificate" value="${url}" placeholder="Paste an image here (Ctrl+V) or type URL">
+                  <div class="admin-img-reorder-group">
+                    <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
+                    <button type="button" class="admin-img-reorder-btn admin-img-move-down" title="Move down">▼</button>
+                  </div>
                   <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
                     📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="image/*">
                   </label>
@@ -3292,6 +3316,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     });
 
+    // ── Helper: build standard image row HTML ──
+    function _buildImgRowHtml(inputName, accept, placeholder) {
+      return `<span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
+        <span class="admin-img-thumb-empty">🖼</span>
+        <input type="text" name="${inputName}" placeholder="${placeholder || 'https://example.com/image.jpg'}">
+        <div class="admin-img-reorder-group">
+          <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
+          <button type="button" class="admin-img-reorder-btn admin-img-move-down" title="Move down">▼</button>
+        </div>
+        <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
+          📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="${accept || 'image/*'}">
+        </label>
+        <button type="button" class="admin-remove-row-btn">✕</button>`;
+    }
+
     // Global Paste Listener for Image Uploads & Comma-Separated URLs
     // Must be done BEFORE wireS3Uploaders so cloneNode doesn't destroy input change listeners
     document.querySelectorAll('.admin-image-url-list').forEach(list => {
@@ -3326,14 +3365,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (!addBtn) continue;
                     row = document.createElement('div');
                     row.className = 'admin-img-url-row';
-                    row.innerHTML = `<input type="text" name="${addBtn.dataset.name}" placeholder="https://example.com/image.jpg">
-                      <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
-                        📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="${addBtn.dataset.accept || 'image/*'}">
-                      </label>
-                      <button type="button" class="admin-remove-row-btn">✕</button>`;
+                    row.setAttribute('draggable', 'true');
+                    row.innerHTML = _buildImgRowHtml(addBtn.dataset.name, addBtn.dataset.accept);
                     _list.appendChild(row);
                     wireRemoveButtons(row);
                     wireS3Uploaders(row);
+                    wireImageRowDragAndReorder(row);
                 }
                 const textInput = row.querySelector('input[type="text"], input[type="url"]');
                 if (textInput) {
@@ -3347,6 +3384,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (error) throw error;
                     const { data: publicData } = supabase.storage.from('supplier-assets').getPublicUrl(fileName);
                     textInput.value = publicData.publicUrl;
+                    _updateRowThumb(row, publicData.publicUrl);
                   } catch(err) {
                     console.error('Pasted Image Upload failed:', err);
                     textInput.value = '';
@@ -3376,18 +3414,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                         if (!addBtn) continue;
                         row = document.createElement('div');
                         row.className = 'admin-img-url-row';
-                        row.innerHTML = `<input type="text" name="${addBtn.dataset.name}" placeholder="https://example.com/image.jpg">
-                          <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
-                            📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="${addBtn.dataset.accept || 'image/*'}">
-                          </label>
-                          <button type="button" class="admin-remove-row-btn">✕</button>`;
+                        row.setAttribute('draggable', 'true');
+                        row.innerHTML = _buildImgRowHtml(addBtn.dataset.name, addBtn.dataset.accept);
                         _list.appendChild(row);
                         wireRemoveButtons(row);
                         wireS3Uploaders(row);
+                        wireImageRowDragAndReorder(row);
                     }
                     const textInput = row.querySelector('input[type="text"], input[type="url"]');
                     if (textInput) {
                         textInput.value = urls[i];
+                        _updateRowThumb(row, urls[i]);
                     }
                 }
             }
@@ -3406,14 +3443,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!list) return;
         const row = document.createElement('div');
         row.className = 'admin-img-url-row';
-        row.innerHTML = `<input type="text" name="${cloneBtn.dataset.name}" placeholder="https://example.com/image.jpg">
-          <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
-            📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="${cloneBtn.dataset.accept || 'image/*'}">
-          </label>
-          <button type="button" class="admin-remove-row-btn">✕</button>`;
+        row.setAttribute('draggable', 'true');
+        row.innerHTML = _buildImgRowHtml(cloneBtn.dataset.name, cloneBtn.dataset.accept);
         list.appendChild(row);
         wireRemoveButtons(row);
         wireS3Uploaders(row);
+        wireImageRowDragAndReorder(row);
       });
     });
 
@@ -3422,6 +3457,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Wire all S3 Uploaders globally
     wireS3Uploaders(document);
+
+    // Wire all image row drag & reorder globally
+    wireImageRowDragAndReorder(document);
   }
 
   function wireRemoveButtons(container = document) {
@@ -3470,6 +3508,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           
           const { data: publicData } = supabase.storage.from('supplier-assets').getPublicUrl(fileName);
           textInput.value = publicData.publicUrl;
+          _updateRowThumb(row, publicData.publicUrl);
           
           parentLabel.innerHTML = '✅ Done';
           setTimeout(() => {
@@ -3483,6 +3522,185 @@ document.addEventListener('DOMContentLoaded', async () => {
             parentLabel.innerHTML = ogLabel;
             wireS3Uploaders(row);
           }, 2000);
+        }
+      });
+    });
+  }
+
+  // ── Update thumbnail in an image row ──
+  function _updateRowThumb(row, url) {
+    if (!row) return;
+    const existingThumb = row.querySelector('.admin-img-thumb');
+    const existingEmpty = row.querySelector('.admin-img-thumb-empty');
+    if (url && url.startsWith('http')) {
+      if (existingThumb) {
+        existingThumb.src = url;
+        existingThumb.style.display = '';
+        if (existingEmpty) existingEmpty.style.display = 'none';
+      } else if (existingEmpty) {
+        const img = document.createElement('img');
+        img.className = 'admin-img-thumb';
+        img.src = url;
+        img.alt = '';
+        img.onerror = function() { this.style.display = 'none'; existingEmpty.style.display = 'flex'; };
+        existingEmpty.parentNode.insertBefore(img, existingEmpty);
+        existingEmpty.style.display = 'none';
+      }
+    } else {
+      if (existingThumb) { existingThumb.style.display = 'none'; }
+      if (existingEmpty) { existingEmpty.style.display = 'flex'; }
+    }
+  }
+
+  // ── Drag & Drop + Reorder for image rows ──
+  let _draggedImgRow = null;
+
+  function wireImageRowDragAndReorder(scopeEl) {
+    const container = scopeEl || document;
+    const rows = container.classList?.contains('admin-img-url-row') 
+      ? [container] 
+      : container.querySelectorAll('.admin-img-url-row');
+
+    rows.forEach(row => {
+      // ── Up/Down reorder buttons ──
+      const upBtn = row.querySelector('.admin-img-move-up');
+      const downBtn = row.querySelector('.admin-img-move-down');
+
+      if (upBtn) {
+        const _up = upBtn.cloneNode(true);
+        upBtn.parentNode.replaceChild(_up, upBtn);
+        _up.addEventListener('click', () => {
+          const prev = row.previousElementSibling;
+          if (prev && prev.classList.contains('admin-img-url-row')) {
+            row.parentNode.insertBefore(row, prev);
+          }
+        });
+      }
+
+      if (downBtn) {
+        const _down = downBtn.cloneNode(true);
+        downBtn.parentNode.replaceChild(_down, downBtn);
+        _down.addEventListener('click', () => {
+          const next = row.nextElementSibling;
+          if (next && next.classList.contains('admin-img-url-row')) {
+            row.parentNode.insertBefore(next, row);
+          }
+        });
+      }
+
+      // ── Drag start — only from the handle ──
+      row.addEventListener('dragstart', (e) => {
+        // Only allow drag from the drag handle
+        if (!e.target.closest('.admin-img-drag-handle') && e.target !== row) {
+          e.preventDefault();
+          return;
+        }
+        _draggedImgRow = row;
+        row.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', ''); // required for Firefox
+      });
+
+      row.addEventListener('dragend', () => {
+        row.classList.remove('dragging');
+        _draggedImgRow = null;
+        // Clean up all visual states
+        document.querySelectorAll('.admin-img-url-row').forEach(r => {
+          r.classList.remove('drag-insert-above', 'drag-insert-below');
+        });
+        document.querySelectorAll('.admin-image-category').forEach(c => {
+          c.classList.remove('drag-over');
+        });
+      });
+
+      row.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (!_draggedImgRow || _draggedImgRow === row) return;
+        e.dataTransfer.dropEffect = 'move';
+        // Determine if we insert above or below
+        const rect = row.getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+        row.classList.remove('drag-insert-above', 'drag-insert-below');
+        if (e.clientY < midY) {
+          row.classList.add('drag-insert-above');
+        } else {
+          row.classList.add('drag-insert-below');
+        }
+      });
+
+      row.addEventListener('dragleave', () => {
+        row.classList.remove('drag-insert-above', 'drag-insert-below');
+      });
+
+      row.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (!_draggedImgRow || _draggedImgRow === row) return;
+        const rect = row.getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+        const list = row.closest('.admin-image-url-list');
+        if (!list) return;
+
+        if (e.clientY < midY) {
+          list.insertBefore(_draggedImgRow, row);
+        } else {
+          list.insertBefore(_draggedImgRow, row.nextSibling);
+        }
+
+        // Update the input name if dropped into a different category
+        const newCategory = list.closest('.admin-image-category');
+        if (newCategory) {
+          const newName = newCategory.dataset.imgName;
+          if (newName) {
+            const inp = _draggedImgRow.querySelector('input[type="text"], input[type="url"]');
+            if (inp) inp.name = newName;
+          }
+        }
+
+        row.classList.remove('drag-insert-above', 'drag-insert-below');
+      });
+
+      // ── Thumbnail live update on URL input blur/change ──
+      const textInput = row.querySelector('input[type="text"], input[type="url"]');
+      if (textInput) {
+        const _updateThumbOnBlur = () => { _updateRowThumb(row, textInput.value); };
+        textInput.removeEventListener('blur', _updateThumbOnBlur);
+        textInput.addEventListener('blur', _updateThumbOnBlur);
+        textInput.addEventListener('change', _updateThumbOnBlur);
+      }
+    });
+
+    // ── Category-level drop targets (for dragging to empty categories) ──
+    document.querySelectorAll('.admin-image-category').forEach(cat => {
+      cat.addEventListener('dragover', (e) => {
+        if (!_draggedImgRow) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        cat.classList.add('drag-over');
+      });
+
+      cat.addEventListener('dragleave', (e) => {
+        // Only remove if leaving the category entirely
+        if (!cat.contains(e.relatedTarget)) {
+          cat.classList.remove('drag-over');
+        }
+      });
+
+      cat.addEventListener('drop', (e) => {
+        e.preventDefault();
+        cat.classList.remove('drag-over');
+        if (!_draggedImgRow) return;
+        // If dropped directly on the category (not on a row), append to the list
+        const targetRow = e.target.closest('.admin-img-url-row');
+        if (targetRow) return; // handled by row drop
+        const list = cat.querySelector('.admin-image-url-list');
+        if (list) {
+          list.appendChild(_draggedImgRow);
+          // Update input name
+          const newName = cat.dataset.imgName;
+          if (newName) {
+            const inp = _draggedImgRow.querySelector('input[type="text"], input[type="url"]');
+            if (inp) inp.name = newName;
+          }
         }
       });
     });
