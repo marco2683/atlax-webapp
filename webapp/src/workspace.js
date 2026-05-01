@@ -366,7 +366,7 @@ async function loadRFQs() {
     
     const typeLabel = data.type === 'instant' ? 'Instant Quote' : 'Project Quote';
     const service = data.type === 'instant' ? 'Instant RFQ' : (serviceLabels[data.service] || data.service || '—');
-    const totalEstimate = data.type === 'instant' && data.total_price ? `$${data.total_price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '—';
+    const totalEstimate = data.type === 'instant' && data.total_price ? `US$${data.total_price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '—';
     
     const statusVal = rfq.status || data.status || 'submitted';
     const fileCount = (data.files || []).length;
@@ -554,7 +554,7 @@ function openRFQPreviewModal(rfq) {
           <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #fef3c7;"><span style="color:#b45309;">BSB</span><strong>083-004</strong></div>
           <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #fef3c7;"><span style="color:#b45309;">Account No.</span><strong>978 360 554</strong></div>
           <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #fef3c7;"><span style="color:#b45309;">SWIFT / BIC</span><strong>NATAAU3303</strong></div>
-          <div style="display:flex; justify-content:space-between; padding:6px 0;"><span style="color:#b45309;">Amount</span><strong style="color:#b45309;">$${Number(data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} AUD</strong></div>
+          <div style="display:flex; justify-content:space-between; padding:6px 0;"><span style="color:#b45309;">Amount</span><strong style="color:#b45309;">US$${Number(data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} USD</strong></div>
         </div>
       </div>
     </div>
@@ -594,7 +594,7 @@ function openRFQPreviewModal(rfq) {
           <div style="display:flex; gap: 24px; align-items:center;">
             <div style="text-align:right;">
               <div style="font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;">Total Value</div>
-              <div style="font-size:16px; color:#15803d; font-weight:800;">$${Number(data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+              <div style="font-size:16px; color:#15803d; font-weight:800;">US$${Number(data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
             </div>
             <div style="text-align:right;">
               <div style="font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;">Total Parts</div>
@@ -746,7 +746,7 @@ function openRFQPreviewModal(rfq) {
     }
 
     // Price
-    const priceHtml = data.type === 'instant' && p.price ? `<div style="font-size:16px; font-weight:800; color:#15803d; white-space:nowrap;">$${Number(p.price).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>` : '';
+    const priceHtml = data.type === 'instant' && p.price ? `<div style="font-size:16px; font-weight:800; color:#15803d; white-space:nowrap;">US$${Number(p.price).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>` : '';
 
     return `
     <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:16px 20px; display:flex; gap:16px; align-items:flex-start; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.06)'" onmouseout="this.style.boxShadow=''">
@@ -786,7 +786,7 @@ function openRFQPreviewModal(rfq) {
     <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:20px 24px; margin-top:4px;">
       <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; color:#475569; margin-bottom:8px;">
         <span>Parts Subtotal <span style="color:#94a3b8;">(${parts.length} part${parts.length !== 1 ? 's' : ''})</span></span>
-        <span style="font-weight:700; color:#0f172a;">$${subtotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
+        <span style="font-weight:700; color:#0f172a;">US$${subtotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
       </div>`;
 
     if (shipping && shipping.cost > 0) {
@@ -796,7 +796,7 @@ function openRFQPreviewModal(rfq) {
           <span style="font-weight:600; color:#0f172a;">Shipping</span> — ${shipping.method || 'Economy Air'}
           ${shipping.transit_days ? `<span style="color:#94a3b8; font-size:11px; margin-left:4px;">(${shipping.transit_days})</span>` : ''}
         </span>
-        <span style="font-weight:700; color:#0f172a;">$${Number(shipping.cost).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
+        <span style="font-weight:700; color:#0f172a;">US$${Number(shipping.cost).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
       </div>`;
       if (shipping.destination) {
         totalsHtml += `
@@ -826,7 +826,7 @@ function openRFQPreviewModal(rfq) {
     totalsHtml += `
       <div style="border-top:2px solid #e2e8f0; padding-top:12px; margin-top:4px; display:flex; justify-content:space-between; align-items:center;">
         <span style="font-size:15px; font-weight:700; color:#0f172a;">Grand Total</span>
-        <span style="font-size:20px; font-weight:800; color:#15803d;">$${grandTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
+        <span style="font-size:20px; font-weight:800; color:#15803d;">US$${grandTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
       </div>
     </div>`;
 
@@ -884,7 +884,7 @@ function injectPaymentPanel(rfq, data, modal) {
   if (!infoCol) return; // fallback guard
 
   const amount = data.confirmed_price || data.total_price || 0;
-  const amountFmt = `$${Number(amount).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+  const amountFmt = `US$${Number(amount).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
 
   const panel = document.createElement('div');
   panel.id = 'rfq-payment-panel';

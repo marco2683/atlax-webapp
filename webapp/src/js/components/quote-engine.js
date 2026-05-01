@@ -303,10 +303,10 @@ export function calculateQuote(geometry, config) {
 
     // ── Display helpers ──────────────────────────────
     formatted: {
-      unitPrice:       `$${round2(unitPriceFinalized).toFixed(2)}`,
-      totalPrice:      `$${round2(totalPrice).toFixed(2)}`,
-      perUnit:         `$${round2(unitPriceFinalized).toFixed(2)} ea.`,
-      toolingCost:     `$${round2(toolingCost).toFixed(2)}`,
+      unitPrice:       `US$${round2(unitPriceFinalized).toFixed(2)}`,
+      totalPrice:      `US$${round2(totalPrice).toFixed(2)}`,
+      perUnit:         `US$${round2(unitPriceFinalized).toFixed(2)} ea.`,
+      toolingCost:     `US$${round2(toolingCost).toFixed(2)}`,
       estimatedWeight: `${round2(estimatedWeightG)}g`,
     },
   };
@@ -320,7 +320,7 @@ function emptyQuote() {
     complexityMult: 1, qtyDiscount: 0, unitPrice: 0, unitPriceWithSetup: 0,
     dfmFee: 0, quantity: 0, volume: 0, surfaceArea: 0, estimatedWeight: 0,
     partsSubtotal: 0, totalPrice: 0,
-    formatted: { unitPrice: '$0.00', totalPrice: '$0.00', perUnit: '$0.00 ea.', toolingCost: '$0.00', estimatedWeight: '0g' },
+    formatted: { unitPrice: 'US$0.00', totalPrice: 'US$0.00', perUnit: 'US$0.00 ea.', toolingCost: 'US$0.00', estimatedWeight: '0g' },
   };
 }
 

@@ -364,6 +364,35 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 });
 
+// ── Search Normalization ─────────────────────────────────
+// Handles British vs American spelling variants so searches
+// for "moulding" match "molding", "aluminium" matches "aluminum", etc.
+const SPELLING_VARIANTS = [
+  ['moulding', 'molding'],
+  ['moulded', 'molded'],
+  ['aluminium', 'aluminum'],
+  ['colour', 'color'],
+  ['anodising', 'anodizing'],
+  ['specialised', 'specialized'],
+  ['customised', 'customized'],
+  ['optimised', 'optimized'],
+  ['fibre', 'fiber'],
+  ['centre', 'center'],
+  ['defence', 'defense'],
+  ['licence', 'license'],
+  ['grey', 'gray'],
+  ['jewellery', 'jewelry'],
+  ['catalyse', 'catalyze'],
+];
+
+function normalizeSpelling(text) {
+  let t = text.toLowerCase();
+  for (const [brit, amer] of SPELLING_VARIANTS) {
+    t = t.replaceAll(brit, amer);
+  }
+  return t;
+}
+
 // ── Search Handler ───────────────────────────────────────
 function handleSearch(globe) {
   const searchInput = document.getElementById('search-input');
@@ -454,9 +483,12 @@ function updateStackedResultsOnly(globe) {
   let groupTitle = appState.query || 'Results';
   
   if (query) {
+    const normQuery = normalizeSpelling(query);
     filteredResults = results.filter(s => {
-      const text = `${s.name} ${s.techGroup} ${(s.technologies || []).join(' ')}`.toLowerCase();
-      return text.includes(query);
+      const text = normalizeSpelling(
+        `${s.name} ${(s.techGroups || [s.techGroup]).filter(Boolean).join(' ')} ${(s.technologies || []).join(' ')}`
+      );
+      return text.includes(normQuery);
     });
   }
 

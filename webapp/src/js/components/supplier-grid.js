@@ -5,6 +5,19 @@
 
 import { openSupplierCarousel } from './supplier-carousel.js';
 
+/**
+ * Proxy insecure (http://) image URLs through images.weserv.nl
+ * so they load on our HTTPS site without mixed-content blocking.
+ */
+function safeImgUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('https://') || url.startsWith('/') || url.startsWith('data:')) return url;
+  if (url.startsWith('http://')) {
+    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}`;
+  }
+  return url;
+}
+
 const POOL_IMAGES = [
   'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=400&q=80',
   'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&q=80',
@@ -230,9 +243,12 @@ function renderGridCards(suppliers) {
       if (s.images.equipment) images.push(...s.images.equipment);
     }
     
+    // Filter out empty/whitespace-only URLs
+    images = images.filter(u => u && u.trim());
+    
     if (images.length === 0) images.push(DEFAULT_BANNER);
     
-    // limit grid preview to 3 or 4 images to stay clean
+    // limit grid preview to max 4 images
     images = images.slice(0, 4);
 
     const techTags = (s.technologies || []).slice(0, 3).map(t => `<span class="sgrid-tag">${t}</span>`).join('');
@@ -248,6 +264,35 @@ function renderGridCards(suppliers) {
 
     const isAdded = Array.from(document.querySelectorAll('.shortlist-item')).some(item => item.dataset.id === String(s.id || s.name));
 
+    // Build image mosaic HTML (2x2 grid, max 4 images)
+    let mosaicHtml = '';
+    if (images.length > 0) {
+      const imgCount = Math.min(images.length, 4);
+      // Dynamic grid: 1 image = full, 2 = side by side, 3 = 1 big + 2 small, 4 = 2x2
+      const gridStyle = imgCount === 1
+        ? 'grid-template-columns: 1fr; grid-template-rows: 140px;'
+        : imgCount === 2
+        ? 'grid-template-columns: 1fr 1fr; grid-template-rows: 140px;'
+        : imgCount === 3
+        ? 'grid-template-columns: 1fr 1fr; grid-template-rows: 90px 90px;'
+        : 'grid-template-columns: 1fr 1fr; grid-template-rows: 90px 90px;';
+
+      const imgTiles = images.slice(0, 4).map((url, i) => {
+        // For 3 images, first image spans 2 rows
+        const spanStyle = (imgCount === 3 && i === 0) ? 'grid-row: 1 / 3;' : '';
+        return `<div style="overflow:hidden; border-radius:6px; ${spanStyle}">
+          <img src="${safeImgUrl(url)}" alt="Supplier image" style="width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.3s ease;" 
+               onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"
+               onerror="this.parentElement.style.background='#f1f5f9'; this.style.display='none';">
+        </div>`;
+      }).join('');
+
+      mosaicHtml = `
+        <div style="display:grid; ${gridStyle} gap:4px; margin-bottom:16px; border-radius:8px; overflow:hidden;">
+          ${imgTiles}
+        </div>`;
+    }
+
     card.innerHTML = `
       <div class="sgrid-card__body">
         <!-- Row 1: Name + Best For -->
@@ -259,18 +304,21 @@ function renderGridCards(suppliers) {
               ${s.city || '—'}, ${s.country || '—'}
             </div>
           </div>
-          ${s.technologies && s.technologies.length > 0 ? `
+          ${(s.bestFor && s.bestFor.length > 0) || (s.technologies && s.technologies.length > 0) ? `
           <div style="background: #f0fdf4; color: #166534; padding: 6px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; border: 1px solid #bbf7d0; text-transform: uppercase; letter-spacing: 0.04em; flex-shrink: 0; max-width: 180px; line-height: 1.5; text-align: center;">
-            <span style="color: #22c55e;">★</span> BEST FOR<br><span style="font-size: 11px; color: #15803d;">${s.technologies[0]}</span>
+            <span style="color: #22c55e;">★</span> BEST FOR<br><span style="font-size: 11px; color: #15803d;">${(s.bestFor && s.bestFor[0]) || s.technologies[0]}</span>
           </div>` : ''}
         </div>
 
-        <!-- Row 2: Sub-Technologies -->
-        <div style="margin-bottom: 16px;">
-          <div style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.06em;">Sub-Technologies</div>
-          <div class="sgrid-card__tags">
-            ${(s.technologies || []).slice(0, 5).map(t => `<span class="sgrid-tag">${t}</span>`).join('')}
+        <!-- Row 2: Sub-Technologies + Image Mosaic -->
+        <div style="display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px;">
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.06em;">Sub-Technologies</div>
+            <div class="sgrid-card__tags">
+              ${(s.technologies || []).slice(0, 5).map(t => `<span class="sgrid-tag">${t}</span>`).join('')}
+            </div>
           </div>
+          ${mosaicHtml ? `<div style="flex: 0 0 220px;">${mosaicHtml}</div>` : ''}
         </div>
 
         <!-- Row 3: Description -->

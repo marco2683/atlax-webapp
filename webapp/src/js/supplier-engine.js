@@ -7,6 +7,31 @@ let suppliersData = [];
 let filteredData = [];
 let tabularShortlist = new Map();
 
+// British vs American spelling normalization for search
+const SPELLING_VARIANTS = [
+  ['moulding', 'molding'],
+  ['moulded', 'molded'],
+  ['aluminium', 'aluminum'],
+  ['colour', 'color'],
+  ['anodising', 'anodizing'],
+  ['specialised', 'specialized'],
+  ['customised', 'customized'],
+  ['optimised', 'optimized'],
+  ['fibre', 'fiber'],
+  ['centre', 'center'],
+  ['defence', 'defense'],
+  ['licence', 'license'],
+  ['grey', 'gray'],
+];
+
+function normalizeSpelling(text) {
+  let t = text.toLowerCase();
+  for (const [brit, amer] of SPELLING_VARIANTS) {
+    t = t.replaceAll(brit, amer);
+  }
+  return t;
+}
+
 // DOM Elements
 let selectionScreen, tabularEngine, globeContainer, viewToggle;
 let searchInput, tableBody, techGroupFilter, tagInput, certPillContainer, countryFilter, segmentPills, resultsInfo;
@@ -574,6 +599,7 @@ function applyFilters() {
   filteredData = suppliersData.filter(s => {
     // 1. Search Query
     if (query) {
+      const normQuery = normalizeSpelling(query);
       const texts = [
         s.name, 
         s.nameZh,
@@ -581,9 +607,9 @@ function applyFilters() {
         ...(s.techGroups || [s.techGroup]).filter(Boolean),
         ...(s.technologies || []), 
         ...(s.tags || [])
-      ].filter(Boolean).map(t => String(t).toLowerCase());
+      ].filter(Boolean).map(t => normalizeSpelling(String(t)));
       
-      const match = texts.some(t => t.includes(query));
+      const match = texts.some(t => t.includes(normQuery));
       if (!match) return false;
     }
 

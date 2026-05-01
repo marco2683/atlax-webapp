@@ -2431,7 +2431,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                   <div style="font-size:10px; color:#166534; text-transform:uppercase; font-weight:600;">${data.payment_status === 'paid' ? '💳 Amount Paid' : 'Quoted Total'}</div>
                   ${data.payment_status === 'paid' ? `<span style="background:#16a34a; color:#fff; font-size:9px; font-weight:800; padding:2px 7px; border-radius:20px; letter-spacing:0.5px;">PAID</span>` : ''}
                 </div>
-                <div id="admin-quoted-total-display" style="font-size:15px; color:#15803d; font-weight:800;">$${(data.amount_paid || data.admin_final_price || data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+                <div id="admin-quoted-total-display" style="font-size:15px; color:#15803d; font-weight:800;">US$${(data.amount_paid || data.admin_final_price || data.total_price || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
                 ${data.paid_at ? `<div style="font-size:11px; color:#4ade80; margin-top:4px;">Paid ${new Date(data.paid_at).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>` : ''}
               </div>` : `
             <div style="background:#f8fafc; padding:14px 18px; border-radius:12px; border:1px solid #f1f5f9; flex:0.8;">
@@ -2475,6 +2475,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <th style="padding:10px 14px; font-weight:600; color:#475569;">Technology</th>
                     <th style="padding:10px 14px; font-weight:600; color:#475569;">Material</th>
                     <th style="padding:10px 14px; font-weight:600; color:#475569; width:60px;">Qty</th>
+                    <th style="padding:10px 14px; font-weight:600; color:#475569; width:90px;">Unit Cost</th>
                     <th style="padding:10px 14px; font-weight:600; color:#475569; width:100px;">Line Total</th>
                     <th style="padding:10px 14px; font-weight:600; color:#475569; width:100px;">Actions</th>
                     <th style="padding:10px 8px; width:30px;"></th>
@@ -2518,7 +2519,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (finalPriceInp) finalPriceInp.value = total.toFixed(2);
       
       const quotedTotalDisp = modal.querySelector('#admin-quoted-total-display');
-      if (quotedTotalDisp) quotedTotalDisp.textContent = '$' + total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+      if (quotedTotalDisp) quotedTotalDisp.textContent = 'US$' + total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
 
       // Update quantity display on left panel
       const qtyDisp = modal.querySelector('#admin-qty-display');
@@ -2552,12 +2553,13 @@ document.addEventListener('DOMContentLoaded', async () => {
            <td style="padding:6px 12px;"><input class="admin-part-input" data-field="process" value="${p.process||''}" placeholder="Process" style="width:100%;border:1px solid transparent;background:transparent;font-size:12px;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></td>
            <td style="padding:6px 12px;"><input class="admin-part-input" data-field="material" value="${p.material||''}" placeholder="Material" style="width:100%;border:1px solid transparent;background:transparent;font-size:12px;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></td>
            <td style="padding:6px 12px;"><input class="admin-part-input" type="number" data-field="qty" value="${p.qty||1}" style="width:50px;border:1px solid transparent;background:transparent;font-size:12px;font-weight:600;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></td>
-           <td style="padding:6px 12px;color:#10b981;font-weight:700;"><div style="display:flex;align-items:center;">$<input class="admin-part-input" type="number" step="0.01" data-field="price" value="${p.price||0}" style="width:70px;border:1px solid transparent;background:transparent;color:#10b981;font-weight:700;font-size:12px;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></div></td>
+           <td style="padding:6px 12px;color:#64748b;font-size:12px;font-weight:500;white-space:nowrap;"><span class="admin-part-unit-cost">US$ ${((Number(p.price)||0) / Math.max(Number(p.qty)||1, 1)).toFixed(2)}</span></td>
+           <td style="padding:6px 12px;color:#10b981;font-weight:700;"><div style="display:flex;align-items:center;">US$<input class="admin-part-input" type="number" step="0.01" data-field="price" value="${p.price||0}" style="width:70px;border:1px solid transparent;background:transparent;color:#10b981;font-weight:700;font-size:12px;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></div></td>
            <td style="padding:6px 8px;" onclick="event.stopPropagation()"><div style="display:flex;gap:4px;">${isCAD?'<span style="display:inline-flex;align-items:center;gap:2px;padding:3px 8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:4px;color:#2563eb;font-size:10px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;" class="admin-part-view3d" data-view-idx="'+i+'">🧊 3D</span>':''}${hasFile?'<a href="'+fUrl+'" download target="_blank" title="Download" style="display:flex;padding:3px 6px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;color:#475569;text-decoration:none;font-size:13px;">&#x2B07;</a>':''}</div></td>
            <td style="padding:6px 8px;text-align:center;" onclick="event.stopPropagation()"><button class="admin-part-remove-btn" data-idx="${i}" style="background:none;border:none;color:#ef4444;font-size:16px;cursor:pointer;">&times;</button></td>
          </tr>
          <tr class="admin-part-detail-row" data-detail-idx="${i}" style="display:none;border-bottom:1px solid #e2e8f0;">
-           <td colspan="8" style="padding:0;"><div style="display:flex;gap:16px;padding:14px 20px;background:#fafbfc;border-top:1px solid #f1f5f9;">
+           <td colspan="9" style="padding:0;"><div style="display:flex;gap:16px;padding:14px 20px;background:#fafbfc;border-top:1px solid #f1f5f9;">
              <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
                <div style="display:flex;gap:8px;flex-wrap:wrap;">
                  ${hasFile?'<a href="'+fUrl+'" download target="_blank" style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:#fff;border:1px solid #e2e8f0;border-radius:6px;font-size:11px;font-weight:600;color:#0f172a;text-decoration:none;">Download '+ext.toUpperCase()+'</a>':''}
@@ -2604,6 +2606,13 @@ document.addEventListener('DOMContentLoaded', async () => {
            if (field === 'qty' || field === 'price') {
              data.parts[idx][field] = Number(e.target.value) || 0;
              updateAdminPartsTotal();
+             // Update unit cost display in this row
+             const unitCostEl = row.querySelector('.admin-part-unit-cost');
+             if (unitCostEl) {
+               const lineTotal = Number(data.parts[idx].price) || 0;
+               const qty = Math.max(Number(data.parts[idx].qty) || 1, 1);
+               unitCostEl.textContent = `US$ ${(lineTotal / qty).toFixed(2)}`;
+             }
            } else {
              data.parts[idx][field] = e.target.value;
            }

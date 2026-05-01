@@ -1260,7 +1260,7 @@ function renderQuoteResult() {
           </div>` : ''}
           <div class="rfq-quote-detail-row">
             <span class="rfq-quote-detail-label">Setup Fee <span class="rfq-badge rfq-badge--setup">PER RUN</span></span>
-            <span class="rfq-quote-detail-value">$${quote.setupFee.toFixed(2)}</span>
+            <span class="rfq-quote-detail-value">US$${quote.setupFee.toFixed(2)}</span>
           </div>
           <div class="rfq-quote-detail-row">
             <span class="rfq-quote-detail-label">Unit Price</span>
@@ -1321,21 +1321,21 @@ function renderQuoteResult() {
                 <input type="radio" name="rfq_shipping" value="${seaFreight}" style="accent-color: var(--color-emerald-500);">
                 <span>Sea Freight <span style="color: var(--color-steel-400); font-size: 11px;">(${seaDays} days)</span></span>
               </div>
-              <span style="font-weight: 600;">$${seaFreight.toFixed(2)}</span>
+              <span style="font-weight: 600;">US$${seaFreight.toFixed(2)}</span>
             </label>
             <label style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; cursor: pointer;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <input type="radio" name="rfq_shipping" value="${economyAir}" checked style="accent-color: var(--color-emerald-500);">
                 <span>Economy Air <span style="color: var(--color-steel-400); font-size: 11px;">(${ecoDays} days)</span></span>
               </div>
-              <span style="font-weight: 600;">$${economyAir.toFixed(2)}</span>
+              <span style="font-weight: 600;">US$${economyAir.toFixed(2)}</span>
             </label>
             <label style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; cursor: pointer;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <input type="radio" name="rfq_shipping" value="${expressAir}" style="accent-color: var(--color-emerald-500);">
                 <span>Express Air <span style="color: var(--color-steel-400); font-size: 11px;">(${expDays} days)</span></span>
               </div>
-              <span style="font-weight: 600;">$${expressAir.toFixed(2)}</span>
+              <span style="font-weight: 600;">US$${expressAir.toFixed(2)}</span>
             </label>
           </div>
         </div>
@@ -1349,15 +1349,15 @@ function renderQuoteResult() {
       ${shippingCost > 0 ? `
       <div class="rfq-quote-grand-total__row" style="font-size: 12px; color: var(--color-steel-500); margin-bottom: 4px; display: flex; justify-content: space-between;">
         <span>Est. Shipping</span>
-        <span class="rfq-quote-grand-total__shipping-val">$${shippingCost.toFixed(2)}</span>
+        <span class="rfq-quote-grand-total__shipping-val">US$${shippingCost.toFixed(2)}</span>
       </div>` : ''}
       <div class="rfq-quote-grand-total__row" style="border-top: 1px solid var(--color-steel-200); padding-top: 12px; display: flex; justify-content: space-between;">
         <span>Grand Total</span>
-        <span class="rfq-quote-grand-total__price" style="font-weight: 700; color: var(--color-emerald-500);">$${grandTotal.toFixed(2)}</span>
+        <span class="rfq-quote-grand-total__price" style="font-weight: 700; color: var(--color-emerald-500);">US$${grandTotal.toFixed(2)}</span>
       </div>
       ${grandToolingTotal > 0 ? `
       <div class="rfq-quote-grand-total__note" style="margin-top: 4px; font-size: 11px; color: var(--color-amber-500); text-align: right;">
-        Includes $${grandToolingTotal.toFixed(2)} one-off tooling cost
+        Includes US$${grandToolingTotal.toFixed(2)} one-off tooling cost
       </div>` : ''}
       ${!document.getElementById('calc-shipping-cb')?.checked ? `
       <div style="margin-top: 8px; padding: 6px 10px; border-radius: 6px; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.2); display: flex; align-items: center; gap: 6px; font-size: 11px; color: #f59e0b;">
@@ -1378,8 +1378,8 @@ function renderQuoteResult() {
        const updatedTotal = baseTotal + newShipping;
        const grandTotalEl = breakdownEl.querySelector('.rfq-quote-grand-total__price');
        const estShippingEl = breakdownEl.querySelector('.rfq-quote-grand-total__shipping-val');
-       if (grandTotalEl) grandTotalEl.textContent = `$${updatedTotal.toFixed(2)}`;
-       if (estShippingEl) estShippingEl.textContent = `$${newShipping.toFixed(2)}`;
+       if (grandTotalEl) grandTotalEl.textContent = `US$${updatedTotal.toFixed(2)}`;
+       if (estShippingEl) estShippingEl.textContent = `US$${newShipping.toFixed(2)}`;
     });
   });
 
