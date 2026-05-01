@@ -581,7 +581,10 @@ function openRFQPreviewModal(rfq) {
         <!-- Top Summary Bar -->
         <div style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc; flex-shrink:0;">
           <div>
-            <div style="font-size:12px; color:#3b82f6; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">${data.project_name || 'Instant RFQ Project'}</div>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+              <div style="font-size:12px; color:#3b82f6; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">${data.project_name || 'Instant RFQ Project'}</div>
+              <span style="font-size:11px; font-family:'SF Mono','Fira Code',monospace; color:#64748b; background:#f1f5f9; border:1px solid #e2e8f0; padding:2px 8px; border-radius:5px; letter-spacing:0.3px; user-select:all; cursor:default;" title="Quote Reference">REF ADT-${(rfq.id||'').slice(0,8).toUpperCase()}</span>
+            </div>
             <div style="display:flex; align-items:center; gap: 12px;">
               <h2 style="margin:0; font-size:20px; color:#0f172a; font-weight:700;">Quote Overview</h2>
               ${statusHtml}
