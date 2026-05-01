@@ -1331,7 +1331,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               ${(s.images?.product?.length ? s.images.product : ['']).map(url => `
                 <div class="admin-img-url-row" draggable="true">
                   <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
-                  ${url ? `<img src="${url}" class="admin-img-thumb" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
+                  ${url ? `<img src="${url}" class="admin-img-thumb" referrerpolicy="no-referrer" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
                   <input type="text" name="img_product" value="${url}" placeholder="https://example.com/product-1.jpg">
                   <div class="admin-img-reorder-group">
                     <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
@@ -1353,7 +1353,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               ${(s.images?.facility?.length ? s.images.facility : ['']).map(url => `
                 <div class="admin-img-url-row" draggable="true">
                   <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
-                  ${url ? `<img src="${url}" class="admin-img-thumb" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
+                  ${url ? `<img src="${url}" class="admin-img-thumb" referrerpolicy="no-referrer" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
                   <input type="text" name="img_facility" value="${url}" placeholder="https://example.com/factory-1.jpg">
                   <div class="admin-img-reorder-group">
                     <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
@@ -1375,7 +1375,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               ${(s.images?.equipment?.length ? s.images.equipment : ['']).map(url => `
                 <div class="admin-img-url-row" draggable="true">
                   <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
-                  ${url ? `<img src="${url}" class="admin-img-thumb" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
+                  ${url ? `<img src="${url}" class="admin-img-thumb" referrerpolicy="no-referrer" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
                   <input type="text" name="img_equipment" value="${url}" placeholder="https://example.com/cnc-machine.jpg">
                   <div class="admin-img-reorder-group">
                     <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
@@ -1397,7 +1397,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               ${(s.certificates?.length ? s.certificates : ['']).map(url => `
                 <div class="admin-img-url-row" draggable="true">
                   <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
-                  ${url ? `<img src="${url}" class="admin-img-thumb" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
+                  ${url ? `<img src="${url}" class="admin-img-thumb" referrerpolicy="no-referrer" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
                   <input type="text" name="img_certificate" value="${url}" placeholder="Paste an image here (Ctrl+V) or type URL">
                   <div class="admin-img-reorder-group">
                     <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>

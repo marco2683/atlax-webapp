@@ -281,7 +281,7 @@ function renderGridCards(suppliers) {
         // For 3 images, first image spans 2 rows
         const spanStyle = (imgCount === 3 && i === 0) ? 'grid-row: 1 / 3;' : '';
         return `<div style="overflow:hidden; border-radius:6px; ${spanStyle}">
-          <img src="${safeImgUrl(url)}" alt="Supplier image" style="width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.3s ease;" 
+          <img src="${safeImgUrl(url)}" alt="Supplier image" referrerpolicy="no-referrer" style="width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.3s ease;" 
                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"
                onerror="this.parentElement.style.background='#f1f5f9'; this.style.display='none';">
         </div>`;

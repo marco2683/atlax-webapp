@@ -174,7 +174,7 @@ function renderCurrentCard() {
       <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
         ${imgs.map(img => `
           <div style="aspect-ratio:1; border-radius:10px; overflow:hidden; border:1px solid #e2e8f0; cursor:pointer; transition:transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.03)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.1)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">
-            <img src="${safeImgUrl(img)}" alt="${catTitle}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
+            <img src="${safeImgUrl(img)}" alt="${catTitle}" referrerpolicy="no-referrer" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
           </div>
         `).join('')}
       </div>
