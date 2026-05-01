@@ -387,6 +387,7 @@ async function loadRFQs() {
           data-sort-status="${rfq.status || ''}">
         <td>
           <div class="ws-td-primary" style="font-weight: 600;">${projectName}</div>
+          <div style="font-size:10px; color:#64748b; font-family:'SF Mono','Fira Code',monospace; margin-top:2px; letter-spacing:0.3px; opacity:0.7;">ADT-${(rfq.id||'').slice(0,8).toUpperCase()}</div>
         </td>
         <td class="ws-td-muted" style="font-size: 12px; font-weight: 600; color: var(--color-electric);">${typeLabel}</td>
         <td class="ws-td-muted" style="font-size: 12px;">${service}</td>
