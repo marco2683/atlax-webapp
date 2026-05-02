@@ -174,12 +174,12 @@ function renderCurrentCard() {
 
   const renderServiceButton = (label, type) => {
     if (!currentUser) {
-       return `<button onclick="document.getElementById('auth-modal').classList.remove('hidden');" style="padding: 8px 12px; font-size: 11px; font-weight: 700; color: #334155; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+       return `<button onclick="document.getElementById('auth-modal').classList.remove('hidden');" style="padding: 8px 12px; font-size: 11px; font-weight: 700; color: #047857; background: rgba(255,255,255,0.8); border: 1px solid rgba(52,211,153,0.4); border-radius: 6px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#ffffff'; this.style.borderColor='#10b981'" onmouseout="this.style.background='rgba(255,255,255,0.8)'; this.style.borderColor='rgba(52,211,153,0.4)'">
          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:-2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
          ${label}
        </button>`;
     }
-    return `<button onclick="window.openServiceInquiry('${type}', '${s.name.replace(/'/g, "\\'")}')" style="padding: 8px 12px; font-size: 11px; font-weight: 700; color: #0f172a; background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" onmouseover="this.style.borderColor='#94a3b8'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.05)'" onmouseout="this.style.borderColor='#cbd5e1'; this.style.boxShadow='0 1px 2px rgba(0,0,0,0.05)'">
+    return `<button onclick="window.openServiceInquiry('${type}', '${s.name.replace(/'/g, "\\'")}')" style="padding: 8px 12px; font-size: 11px; font-weight: 700; color: #fff; background: #10b981; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(16,185,129,0.2);" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 6px rgba(16,185,129,0.3)'" onmouseout="this.style.background='#10b981'; this.style.transform=''; this.style.boxShadow='0 2px 4px rgba(16,185,129,0.2)'">
       ${label}
     </button>`;
   };
@@ -224,13 +224,18 @@ function renderCurrentCard() {
     </div>
 
     <!-- Center/Right: AtlasDT Services -->
-    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px; border-left: 1px solid #e2e8f0; padding-left: 20px;">
-      <h4 style="font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">AtlasDT Premium Services</h4>
-      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-         ${renderServiceButton('Request Full Factory Audit', 'Full Factory Audit')}
-         ${renderServiceButton('Verify Legal & Licenses', 'Verify Legal & Licenses')}
-         ${renderServiceButton('Manage My Project', 'Manage My Project')}
-         ${renderServiceButton('Get Competitive Quote', 'Get Competitive Quote')}
+    <div style="flex: 1; border-left: 1px solid #e2e8f0; padding-left: 20px;">
+      <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1px solid #a7f3d0; border-radius: 12px; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.05);">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          <h4 style="font-size: 11px; font-weight: 800; color: #065f46; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">AtlasDT Premium Services</h4>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+           ${renderServiceButton('Request Full Factory Audit', 'Full Factory Audit')}
+           ${renderServiceButton('Verify Legal & Licenses', 'Verify Legal & Licenses')}
+           ${renderServiceButton('Manage My Project', 'Manage My Project')}
+           ${renderServiceButton('Get Competitive Quote', 'Get Competitive Quote')}
+        </div>
       </div>
     </div>
 
