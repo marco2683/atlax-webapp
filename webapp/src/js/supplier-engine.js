@@ -69,29 +69,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const urlParams = new URLSearchParams(window.location.search);
   const justSubscribed = urlParams.get('success') === 'true';
 
-  const tierCheck = String(userTier).toLowerCase().trim();
-  const isProAccess = ['professional', 'pro', 'enterprise'].includes(tierCheck);
-
-  if (isAuthenticated || justSubscribed) {
-    if (isProAccess || justSubscribed) {
-      openGlobeView();
-    } else {
-      window.dispatchEvent(new CustomEvent('prd-nav-switch', { detail: { view: 'rfq' } }));
-      document.getElementById('sales-funnel')?.classList.add('hidden');
-    }
-  } else {
-    // Not authenticated → show auth modal immediately, skip sales funnel
-    selectionScreen.classList.add('hidden');
-    
-    const authModal = document.getElementById('auth-modal');
-    if (authModal) {
-      authModal.classList.remove('hidden');
-    } else {
-      // Fallback: redirect to home with login param
-      window.location.href = '/index.html?auth=login';
-      return;
-    }
-  }
+  // Allow free access to the application
+  openGlobeView();
 
   // Load unified data
   try {
@@ -149,58 +128,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
       
-      // Check if user is actually authenticated
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        // Enforce Authentication
-        const authModal = document.getElementById('auth-modal');
-        if (authModal) {
-          authModal.classList.remove('hidden');
-          // Switch to signup view
-          const btnSignupToggle = document.getElementById('toggle-to-signup');
-          if (btnSignupToggle) btnSignupToggle.click();
-          
-          // Pre-select the tier in dropdown
-          const pendingTier = btn.dataset.tier || 'basic';
-          const signupTierSelect = document.getElementById('signup-tier');
-          if (signupTierSelect) {
-            signupTierSelect.value = pendingTier;
-          }
-        } else {
-          window.location.href = '/index.html';
-        }
-        return;
-      }
-      
-      // If they are logged in but somehow see this, let check if they clicked Pro
-      const tier = btn.dataset.tier || 'basic';
-      if (tier === 'professional' || tier === 'enterprise') {
-        const originalText = btn.textContent;
-        btn.textContent = 'Loading Stripe...';
-        btn.disabled = true;
-        try {
-          const response = await fetch('/.netlify/functions/create-checkout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: session.user.id })
-          });
-          const data = await response.json();
-          if (data.url) {
-            window.location.href = data.url;
-          } else {
-            alert("Checkout Error: " + JSON.stringify(data));
-            btn.textContent = originalText;
-            btn.disabled = false;
-          }
-        } catch(e) {
-          alert("Network/Fetch Error: " + e.message);
-          btn.textContent = originalText;
-          btn.disabled = false;
-        }
-      } else {
-        openGlobeView();
-      }
+      // Allow free access
+      openGlobeView();
     });
   });
 
@@ -682,11 +611,8 @@ function renderTable(data) {
     const tr = document.createElement('tr');
     tr.dataset.id = supplier.id;
     
-    // Blurring mechanism for unauthenticated users
+    // Provide name
     let nameHtml = supplier.name || 'Unknown Supplier';
-    if (!isAuthenticated) {
-      nameHtml = `<span class="blurred-name" title="Sign up to view full supplier list">${supplier.name}</span>`;
-    }
 
     // Segment styling
     let segClass = 'tag-tier1';
@@ -766,7 +692,6 @@ function renderTable(data) {
         <div style="display: flex; flex-direction: column; align-items: flex-start;">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
             ${nameHtml}
-            ${!isAuthenticated ? '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>' : ''}
           </div>
           ${segmentHtml}
         </div>
@@ -806,18 +731,9 @@ function renderTable(data) {
          return;
        }
 
-       if (!isAuthenticated) {
-         const authModal = document.getElementById('auth-modal');
-         if (authModal) {
-           authModal.classList.remove('hidden');
-         } else {
-           alert('Please create an account or sign in to view detailed supplier profiles.');
-         }
-       } else {
-         window.dispatchEvent(new CustomEvent('prd-open-supplier', {
-           detail: { techName: supplier.techGroup || 'Manufacturing Partner', supplier }
-         }));
-       }
+       window.dispatchEvent(new CustomEvent('prd-open-supplier', {
+         detail: { techName: supplier.techGroup || 'Manufacturing Partner', supplier }
+       }));
     });
 
     // Staggered animation effect

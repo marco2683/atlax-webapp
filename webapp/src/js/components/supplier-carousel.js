@@ -3,6 +3,7 @@
    Updated: 2026-04-29 – Document download icons, address/map,
    categorized image gallery, modern typography
    ============================================================ */
+import { supabase } from '../utils/supabaseClient.js';
 
 const DEFAULT_BANNER = 'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1200&q=80';
 
@@ -37,6 +38,17 @@ let currentIndex = 0;
 let currentSuppliers = [];
 let currentTechName = '';
 let currentTier = 'free';
+
+let currentUser = null;
+supabase.auth.getSession().then(({ data: { session } }) => {
+  currentUser = session?.user || null;
+});
+supabase.auth.onAuthStateChange((_event, session) => {
+  currentUser = session?.user || null;
+  if (document.getElementById('supplier-modal') && !document.getElementById('supplier-modal').classList.contains('hidden')) {
+    renderCurrentCard();
+  }
+});
 
 export function setCurrentTier(tierId) {
   currentTier = tierId;
@@ -143,18 +155,33 @@ function renderCurrentCard() {
   const googleMapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addressEN || s.city || '')}`;
   const baiduMapUrl = addressCN ? `https://map.baidu.com/search?querytype=s&wd=${encodeURIComponent(addressCN)}` : '';
 
-  // Doc download card builder — larger, with descriptive icons + labels
+  // Doc download card builder — narrow icons
   const docDownloadCard = (available, url, label, iconSvg, accentColor) => {
+    if (!currentUser) {
+       return `<div onclick="document.getElementById('auth-modal').classList.remove('hidden');" title="Sign in to download ${label}" style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1px dashed #cbd5e1; background:#f8fafc; cursor:pointer; color:#94a3b8; transition:all 0.2s;" onmouseover="this.style.background='#e2e8f0'; this.style.color='${accentColor}'; this.style.borderColor='${accentColor}60'">
+         ${iconSvg}
+       </div>`;
+    }
     if (available && url) {
-      return `<a href="${url}" target="_blank" download title="Download ${label}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; padding:14px 10px; border-radius:10px; border:1px solid ${accentColor}30; background:${accentColor}08; text-decoration:none; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='${accentColor}18'; this.style.borderColor='${accentColor}60'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px ${accentColor}15'" onmouseout="this.style.background='${accentColor}08'; this.style.borderColor='${accentColor}30'; this.style.transform=''; this.style.boxShadow=''">
-        <div style="width:36px; height:36px; border-radius:10px; background:${accentColor}15; display:flex; align-items:center; justify-content:center; color:${accentColor};">${iconSvg}</div>
-        <span style="font-size:10px; font-weight:700; color:${accentColor}; text-transform:uppercase; letter-spacing:0.04em; text-align:center; line-height:1.3;">${label}</span>
+      return `<a href="${url}" target="_blank" download title="Download ${label}" style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1px solid ${accentColor}30; background:${accentColor}08; text-decoration:none; cursor:pointer; color:${accentColor}; transition:all 0.2s;" onmouseover="this.style.background='${accentColor}18'; this.style.borderColor='${accentColor}60'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px ${accentColor}15'" onmouseout="this.style.background='${accentColor}08'; this.style.borderColor='${accentColor}30'; this.style.transform=''; this.style.boxShadow=''">
+        ${iconSvg}
       </a>`;
     }
-    return `<div title="${label} — Not available" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; padding:14px 10px; border-radius:10px; border:1px dashed #e2e8f0; background:#fafafa; cursor:not-allowed; opacity:0.4;">
-      <div style="width:36px; height:36px; border-radius:10px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; color:#94a3b8;">${iconSvg}</div>
-      <span style="font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.04em; text-align:center; line-height:1.3;">${label}</span>
+    return `<div title="${label} — Not available" style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1px dashed #e2e8f0; background:#fafafa; cursor:not-allowed; color:#cbd5e1;">
+      ${iconSvg}
     </div>`;
+  };
+
+  const renderServiceButton = (label, type) => {
+    if (!currentUser) {
+       return `<button onclick="document.getElementById('auth-modal').classList.remove('hidden');" style="padding: 8px 12px; font-size: 11px; font-weight: 700; color: #334155; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:-2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+         ${label}
+       </button>`;
+    }
+    return `<button onclick="window.openServiceInquiry('${type}', '${s.name.replace(/'/g, "\\'")}')" style="padding: 8px 12px; font-size: 11px; font-weight: 700; color: #0f172a; background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" onmouseover="this.style.borderColor='#94a3b8'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.05)'" onmouseout="this.style.borderColor='#cbd5e1'; this.style.boxShadow='0 1px 2px rgba(0,0,0,0.05)'">
+      ${label}
+    </button>`;
   };
 
   // More representative SVG icons
@@ -187,15 +214,28 @@ function renderCurrentCard() {
   <!-- Top Bar: Download Cards + Contact Buttons -->
   <div style="display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid #e2e8f0; gap: 20px;">
     
-    <!-- Document Download Cards -->
-    <div style="display: flex; gap: 12px; flex: 1;">
-      ${docDownloadCard(hasRFI, s.docRFI, 'RFI Form', rfiIcon, '#2563eb')}
-      ${docDownloadCard(hasPPT, s.docPresentation, 'Presentation', pptIcon, '#7c3aed')}
-      ${docDownloadCard(hasCerts, s.docCertifications, 'Certifications', certsIcon, '#059669')}
+    <!-- Left: Downloads -->
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <h4 style="font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Downloads</h4>
+      <div style="display: flex; gap: 8px;">
+        ${docDownloadCard(hasPPT, s.docPresentation, 'Presentation', pptIcon, '#7c3aed')}
+        ${docDownloadCard(hasCerts, s.docCertifications, 'Certifications', certsIcon, '#059669')}
+      </div>
+    </div>
+
+    <!-- Center/Right: AtlasDT Services -->
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px; border-left: 1px solid #e2e8f0; padding-left: 20px;">
+      <h4 style="font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">AtlasDT Premium Services</h4>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+         ${renderServiceButton('Request Full Factory Audit', 'Full Factory Audit')}
+         ${renderServiceButton('Verify Legal & Licenses', 'Verify Legal & Licenses')}
+         ${renderServiceButton('Manage My Project', 'Manage My Project')}
+         ${renderServiceButton('Get Competitive Quote', 'Get Competitive Quote')}
+      </div>
     </div>
 
     <!-- Certifications Badges (top-right) -->
-    ${certsList.length > 0 ? `<div style="display: flex; flex-direction: column; gap: 6px; justify-content: center;">
+    ${certsList.length > 0 ? `<div style="display: flex; flex-direction: column; gap: 6px; justify-content: center; border-left: 1px solid #e2e8f0; padding-left: 20px;">
       <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
         <span style="font-size: 10px; font-weight: 800; color: #0f766e; text-transform: uppercase; letter-spacing: 0.05em;">Certifications</span>
@@ -264,9 +304,29 @@ function renderCurrentCard() {
     <!-- ═══ Right Column ═══ -->
     <div style="display: flex; flex-direction: column; gap: 14px;">
 
-      <!-- Contacts -->
-      <h4 style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin: 0; font-family: 'Inter', sans-serif;">Contacts</h4>
+      <!-- At a Glance -->
+      <h4 style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin: 0; font-family: 'Inter', sans-serif;">At a Glance</h4>
       <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Established</span>
+           <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${s.yearEstablished || '—'}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Employees</span>
+           <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${s.employees || '—'}</span>
+        </div>
+      </div>
+
+      <!-- Contacts (Blurred if !currentUser) -->
+      <h4 style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin: 0; font-family: 'Inter', sans-serif;">Contacts</h4>
+      <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; position:relative; overflow:hidden;">
+        ${!currentUser ? `
+        <div style="position:absolute; inset:0; background:rgba(255,255,255,0.65); backdrop-filter:blur(5px); z-index:10; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <div style="font-size:11px; font-weight:700; color:#334155; text-align:center; padding:0 10px;">Sign in to view direct contact info</div>
+          <button onclick="document.getElementById('auth-modal').classList.remove('hidden');" style="padding:6px 16px; background:#0f172a; color:#fff; border:none; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">Sign In</button>
+        </div>
+        ` : ''}
         ${s.contactName ? `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
            <span style="font-size: 12px; color: #64748b; font-weight: 500;">Primary Contact</span>
            <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${s.contactName}</span>
@@ -278,14 +338,6 @@ function renderCurrentCard() {
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
            <span style="font-size: 12px; color: #64748b; font-weight: 500;">Phone</span>
            <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${phone || '—'}</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Established</span>
-           <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${s.yearEstablished || '—'}</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Employees</span>
-           <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${s.employees || '—'}</span>
         </div>
         ${websiteUrl ? `<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f1f5f9;">
            <span style="font-size: 12px; color: #64748b; font-weight: 500;">Website</span>
@@ -369,3 +421,21 @@ function renderCurrentCard() {
     });
   });
 }
+
+// Global helper for opening service inquiry contact form
+window.openServiceInquiry = (serviceName, suppName) => {
+  const overlay = document.getElementById('atlasdt-contact-overlay');
+  if (overlay) {
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    const msgField = document.querySelector('#atlasdt-contact-form textarea[name="message"]');
+    if (msgField) {
+      msgField.value = `Hi AtlasDT,\n\nI would like to request the following service:\n- Service: ${serviceName}\n- Supplier: ${suppName}\n\nPlease let me know the next steps and pricing.`;
+    }
+    const typeField = document.querySelector('#atlasdt-contact-form select[name="inquiryType"]');
+    if (typeField) {
+      typeField.value = "partnership";
+    }
+  }
+};
+
