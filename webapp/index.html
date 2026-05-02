@@ -1733,27 +1733,28 @@
     }
   </style>
   <section id="locations" class="m-locations-map-section"
-    style="position: relative; background-color: #f9fafb; padding: 40px 0 60px 0;">
-    <div style="position: relative; z-index: 1;">
+    style="position: relative; background-color: #f9fafb; padding: 60px 0; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 80vh;">
+    
+    <div style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); text-align: center; width: 100%; z-index: 10; pointer-events: none;">
+      <h2 class="m-section-title" style="color: var(--color-void); margin: 0; display: inline-block;">Locations</h2>
+    </div>
+
+    <div style="position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); text-align: center; width: 100%; max-width: 800px; padding: 0 20px; z-index: 10; pointer-events: none;">
+      <p class="m-section-desc" style="color: #444; margin: 0; text-shadow: 0 2px 10px rgba(255,255,255,0.9), 0 -2px 10px rgba(255,255,255,0.9); line-height: 1.5;">From our innovation HQ in
+        Melbourne, to the massive manufacturing floors in Shenzhen, supported by our growing presence in California
+        and Italy.</p>
+    </div>
+
+    <div style="position: relative; z-index: 1; width: 100%; max-width: 1200px;">
 
       <div class="m-map-container m-fade-up"
-        style="position: relative; width: 100%; border: none; background: transparent; overflow: hidden; line-height: 0;">
-        <div style="position: relative; width: 100%; margin-top: -12%; margin-bottom: -5%;">
+        style="position: relative; width: 100%; border: none; background: transparent; line-height: 0;">
+        <div style="position: relative; width: 100%; margin-top: -6%; margin-bottom: -6%;">
           <!-- Image dictates height to keep percentages perfect -->
           <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg"
             style="width: 100%; height: auto; opacity: 0.15; filter: grayscale(1) contrast(1.5) brightness(0.8); mix-blend-mode: multiply; pointer-events: none; display: block;">
 
           <div style="position: absolute; inset: 0; pointer-events: none; font-family: 'Inter', sans-serif;">
-            
-            <div style="position: absolute; top: 16%; left: 50%; transform: translateX(-50%); text-align: center; width: 100%; pointer-events: auto;">
-              <h2 class="m-section-title" style="color: var(--color-void); margin: 0; display: inline-block;">Locations</h2>
-            </div>
-            
-            <div style="position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%); text-align: center; width: 100%; max-width: 800px; padding: 0 20px; pointer-events: auto;">
-              <p class="m-section-desc" style="color: #444; margin: 0; text-shadow: 0 2px 10px rgba(255,255,255,0.8), 0 -2px 10px rgba(255,255,255,0.8); line-height: 1.5;">From our innovation HQ in
-                Melbourne, to the massive manufacturing floors in Shenzhen, supported by our growing presence in California
-                and Italy.</p>
-            </div>
 
             <!-- California -->
             <div class="map-node"
