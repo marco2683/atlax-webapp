@@ -113,8 +113,9 @@ export function initAuthModal() {
         err.textContent = error.message;
         err.classList.add('visible');
       } else {
-        // Redirect into the engine after successful login
-        window.location.href = '/app.html';
+        // Do not redirect to /app.html, simply close the modal to keep the user where they are
+        closeModal();
+        loginForm.reset();
       }
     });
   }
