@@ -243,8 +243,8 @@ export function generatePDF(docData, logoDataUrl) {
   return doc;
 }
 
-export async function uploadAndSyncDoc(pdfBase64, docData) {
-  const fileName = `AtlasDT_${docData.title.replace(/\s+/g,'_')}_${docData.docRef}_${docData.projectName.replace(/[^a-zA-Z0-9]/g,'_')}.pdf`;
+export async function uploadAndSyncDoc(fileBase64, docData, opts = { ext: 'pdf', mime: 'application/pdf' }) {
+  const fileName = `AtlasDT_${docData.title.replace(/\s+/g,'_')}_${docData.docRef}_${docData.projectName.replace(/[^a-zA-Z0-9]/g,'_')}.${opts.ext}`;
   const storagePath = `${docData.rfqRef}/${fileName}`;
 
   console.log('[HeadlessDocs] Uploading PDF via Netlify function...', { storagePath, bucket: 'rfq-docs' });
@@ -254,10 +254,10 @@ export async function uploadAndSyncDoc(pdfBase64, docData) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      fileBase64: pdfBase64,
+      fileBase64: fileBase64,
       fileName: fileName,
       filePath: storagePath,
-      contentType: 'application/pdf',
+      contentType: opts.mime,
       bucket: 'rfq-docs'
     })
   });
