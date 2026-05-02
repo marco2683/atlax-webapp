@@ -35,7 +35,7 @@ async function getLogoBase64() {
 }
 
 // ── PUBLIC: open the document generator modal ───────────────
-export async function openDocumentGenerator({ docType, rfq, rfqData, profile, rfqs }) {
+export async function openDocumentGenerator({ docType, rfq, rfqData, profile, rfqs, onComplete }) {
   // Pre-fetch logo
   const logoDataUrl = await getLogoBase64();
   const cfg = DOC_TYPES[docType];
@@ -798,13 +798,16 @@ SWIFT / BIC: NATAAU3303</textarea>
       });
       if (!emailRes.ok) throw new Error('Email delivery failed');
 
-      btn.textContent = 'Sent ✓';
-      btn.style.background = '#16a34a';
+      btn.innerHTML = '&#10003; Saved & Sent';
+      btn.style.background = '#64748b';
       
       // Also upload and sync to SharePoint
       await uploadAndSyncDoc(pdfBase64, docData);
 
-      setTimeout(() => { document.body.removeChild(overlay); }, 1500);
+      setTimeout(() => { 
+        document.body.removeChild(overlay); 
+        if (onComplete) onComplete();
+      }, 1500);
     } catch (err) {
       alert('Failed to send document: ' + err.message);
       btn.textContent = 'Send to Customer';

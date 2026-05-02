@@ -231,6 +231,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     await loadCRMData();
     updateNavBadges();
+    
+    // Listen for incoming RFQs or admin status changes to auto-update
+    supabase.channel('admin-rfqs-tracker')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'admin_rfqs' }, () => {
+        updateNavBadges();
+        const rfqTab = document.querySelector('.admin-nav-item[data-tab="rfqs"]');
+        const modalOpen = document.querySelector('#admin-rfq-modal-overlay');
+        if (rfqTab && rfqTab.classList.contains('active') && !modalOpen) {
+          renderRFQs();
+        }
+      })
+      .subscribe();
     renderOverview();
     navItems.forEach(tab => {
       // Clone to remove old listeners
@@ -2216,13 +2228,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const hasBeenConfirmed = !!data.confirmed_price || !!data.confirmed_at || ['confirmed', 'processing', 'paid', 'shipped'].includes(rfq.status || data.status || 'submitted');
     const confirmedDateStr = data.confirmed_at ? new Date(data.confirmed_at).toLocaleDateString() : (hasBeenConfirmed ? new Date(rfq.created_at).toLocaleDateString() : '');
 
-    const documents = Array.isArray(data.documents) ? data.documents : [];
-    const overrides = data.timeline_overrides || {};
-    const quotedDoc = documents.slice().reverse().find(d => d.type === 'quotation');
-    const stepQuote = overrides['Quoted'] !== undefined ? overrides['Quoted'] : !!quotedDoc;
-    const isQuoteLocked = (stepQuote || hasBeenConfirmed) && !data.is_amending;
-
     function getTimelineHTML() {
+      const documents = Array.isArray(data.documents) ? data.documents : [];
+      const overrides = data.timeline_overrides || {};
+      const quotedDoc = documents.slice().reverse().find(d => d.type === 'quotation');
+      const stepQuote = overrides['Quoted'] !== undefined ? overrides['Quoted'] : !!quotedDoc;
+      const isQuoteLocked = (stepQuote || hasBeenConfirmed) && !data.is_amending;
+      
       const commLog = data.communication_log || [];
       const currentStatusForConfirm = rfq.status || data.status || 'submitted';
       const statusIdx = ['submitted', 'under_review', 'confirmed', 'paid', 'processing', 'shipped'].indexOf(currentStatusForConfirm);
@@ -2962,13 +2974,6 @@ document.addEventListener('DOMContentLoaded', async () => {
           body: JSON.stringify({ id: rfq.id, updates: { status: 'paid', rfq_data: data } })
         });
 
-        // Update the status dropdown in modal
-        const statusSel = modal.querySelector('#rfq-modal-status');
-        if (statusSel) statusSel.value = 'paid';
-
-        // Update the timeline
-        modal.querySelector('#rfq-timeline-wrapper').innerHTML = getTimelineHTML();
-
         // Update table row
         const tableSelect = document.querySelector(`.admin-rfq-status-select[data-rfq-id="${rfq.id}"]`);
         if (tableSelect) tableSelect.value = 'paid';
@@ -2996,6 +3001,11 @@ document.addEventListener('DOMContentLoaded', async () => {
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
           Payment Confirmed
         </div>`;
+
+        setTimeout(() => {
+          modal.remove();
+          openRFQDetailModal(rfq, profileMap, rfqs);
+        }, 1500);
       } catch (err) {
         alert('Failed to confirm payment: ' + err.message);
         btn.disabled = false;
@@ -3157,30 +3167,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         data.status = 'confirmed';
         data.confirmed_at = confirmedAtIso;
         
-        // Refresh Timeline
-        modal.querySelector('#rfq-timeline-wrapper').innerHTML = getTimelineHTML();
-
-        // Visual feedback
-        const btnContainer = btn.parentElement;
-        const newHtml = `
-          <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
-            <button disabled style="padding:7px 16px; background:#f1f5f9; color:#16a34a; border:1px solid #bbf7d0; border-radius:8px; font-size:12px; font-weight:700; cursor:default; font-family:inherit; display:flex; align-items:center; gap:6px;">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              Confirmed
-            </button>
-            <div style="font-size:10px; color:#64748b; font-weight:600;">${new Date(confirmedAtIso).toLocaleDateString()}</div>
-          </div>
-        `;
-        btn.outerHTML = newHtml;
-
-        // Update status dropdown in modal to 'confirmed' (Confirmed - Awaiting Payment)
-        const statusSelect = modal.querySelector('#rfq-modal-status');
-        if (statusSelect) statusSelect.value = 'confirmed';
         // Update in table row
         const tableSelect = contentRouting.querySelector(`.admin-rfq-status-select[data-rfq-id="${rfqId}"]`);
         if (tableSelect) tableSelect.value = 'confirmed';
         // Refresh nav badge count
         updateNavBadges();
+
+        btn.textContent = '✓ Sent & Saved';
+        btn.style.background = '#64748b';
+        btn.style.color = '#fff';
+        btn.style.border = 'none';
+
+        setTimeout(() => {
+          modal.remove();
+          openRFQDetailModal(rfq, profileMap, rfqs);
+        }, 1500);
 
         // Send confirmation email to client
         const bankRef = `ADT-${rfqId.slice(0,8).toUpperCase()}`;
@@ -3207,13 +3208,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ── Generate Quotation ───────────────────────────────────────
     modal.querySelector('#rfq-generate-quote-btn')?.addEventListener('click', async () => {
       const { openDocumentGenerator } = await import('./services/doc-generator.js');
-      openDocumentGenerator({ docType: 'quotation', rfq, rfqData: data, profile: profileMap[rfq.user_id], rfqs });
+      openDocumentGenerator({ 
+        docType: 'quotation', rfq, rfqData: data, profile: profileMap[rfq.user_id], rfqs,
+        onComplete: () => {
+          modal.remove();
+          openRFQDetailModal(rfq, profileMap, rfqs);
+        }
+      });
     });
 
     // ── Generate Invoice ───────────────────────────────────────
     modal.querySelector('#rfq-generate-invoice-btn')?.addEventListener('click', async () => {
       const { openDocumentGenerator } = await import('./services/doc-generator.js');
-      openDocumentGenerator({ docType: 'proforma', rfq, rfqData: data, profile: profileMap[rfq.user_id], rfqs });
+      openDocumentGenerator({ 
+        docType: 'proforma', rfq, rfqData: data, profile: profileMap[rfq.user_id], rfqs,
+        onComplete: () => {
+          modal.remove();
+          openRFQDetailModal(rfq, profileMap, rfqs);
+        }
+      });
     });
 
     // ── Request More Info ─────────────────────────────────────
