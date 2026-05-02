@@ -2292,6 +2292,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                   </button>
                 </div>
               ` : ''}
+              
+              ${(step.label === 'Processing' && step.active) ? `
+                <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 36px; background: #e2e8f0; z-index: -1;"></div>
+                <div style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 6px; align-items: center;">
+                  <button class="admin-cancel-order-btn" data-rfq-id="${rfq.id}" style="cursor: pointer; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; transition: all 0.2s; white-space: nowrap;">
+                    Cancel Order
+                  </button>
+                  <button class="admin-refund-order-btn" data-rfq-id="${rfq.id}" style="cursor: pointer; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; background: ${data.payment_status === 'refunded' ? '#dcfce7' : '#ffedd5'}; color: ${data.payment_status === 'refunded' ? '#15803d' : '#9a3412'}; border: 1px solid ${data.payment_status === 'refunded' ? '#bbf7d0' : '#fdba74'}; transition: all 0.2s; white-space: nowrap;">
+                    ${data.payment_status === 'refunded' ? 'Refunded ✓' : 'Refund'}
+                  </button>
+                </div>
+              ` : ''}
             </div>
           `}).join('')}
         </div>`;
@@ -2522,7 +2534,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <button id="rfq-download-all-parts-btn" style="padding:4px 10px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer;">Download All</button>
                 <button id="rfq-open-onedrive-btn" style="padding:4px 10px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer;">OneDrive</button>
               </div>
-              <button id="admin-add-part-btn" style="padding:4px 8px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer;">+ Add Line</button>
+              <button id="admin-add-part-btn" style="padding:4px 8px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer; display:${isQuoteLocked ? 'none' : 'block'};">+ Add Line</button>
               </div>
               <div style="border:1px solid #e2e8f0; border-radius:12px; overflow:hidden;">
                 <table id="rfq-admin-parts-table" style="width:100%; border-collapse:collapse; font-size:12px;">
@@ -2607,14 +2619,14 @@ document.addEventListener('DOMContentLoaded', async () => {
          const isCAD = hasFile && ['step','stp','stl','obj','3mf','iges','igs'].includes(ext);
          return `<tr data-idx="${i}" class="admin-part-row" style="border-bottom:1px solid #f1f5f9;cursor:${isCAD?'pointer':'default'};transition:background .15s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''" ${isCAD?'title="Click to view 3D model"':''}>
            <td style="padding:8px 10px;text-align:center;"><svg class="admin-part-expand-icon" data-idx="${i}" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></td>
-           <td style="padding:6px 12px;"><input class="admin-part-input" data-field="name" value="${p.name||''}" placeholder="Part Name" style="width:100%;border:1px solid transparent;background:transparent;font-size:12px;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></td>
-           <td style="padding:6px 12px;"><input class="admin-part-input" data-field="process" value="${p.process||''}" placeholder="Process" style="width:100%;border:1px solid transparent;background:transparent;font-size:12px;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></td>
-           <td style="padding:6px 12px;"><input class="admin-part-input" data-field="material" value="${p.material||''}" placeholder="Material" style="width:100%;border:1px solid transparent;background:transparent;font-size:12px;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></td>
-           <td style="padding:6px 12px;"><input class="admin-part-input" type="number" data-field="qty" value="${p.qty||1}" style="width:50px;border:1px solid transparent;background:transparent;font-size:12px;font-weight:600;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></td>
+           <td style="padding:6px 12px;"><input class="admin-part-input" data-field="name" value="${p.name||''}" placeholder="Part Name" style="width:100%;border:1px solid transparent;background:transparent;font-size:12px;font-family:inherit;padding:4px;outline:none;color:${isQuoteLocked ? '#94a3b8' : 'inherit'};" onclick="event.stopPropagation()" ${isQuoteLocked ? 'disabled' : ''}/></td>
+           <td style="padding:6px 12px;"><input class="admin-part-input" data-field="process" value="${p.process||''}" placeholder="Process" style="width:100%;border:1px solid transparent;background:transparent;font-size:12px;font-family:inherit;padding:4px;outline:none;color:${isQuoteLocked ? '#94a3b8' : 'inherit'};" onclick="event.stopPropagation()" ${isQuoteLocked ? 'disabled' : ''}/></td>
+           <td style="padding:6px 12px;"><input class="admin-part-input" data-field="material" value="${p.material||''}" placeholder="Material" style="width:100%;border:1px solid transparent;background:transparent;font-size:12px;font-family:inherit;padding:4px;outline:none;color:${isQuoteLocked ? '#94a3b8' : 'inherit'};" onclick="event.stopPropagation()" ${isQuoteLocked ? 'disabled' : ''}/></td>
+           <td style="padding:6px 12px;"><input class="admin-part-input" type="number" data-field="qty" value="${p.qty||1}" style="width:50px;border:1px solid transparent;background:transparent;font-size:12px;font-weight:600;font-family:inherit;padding:4px;outline:none;color:${isQuoteLocked ? '#94a3b8' : 'inherit'};" onclick="event.stopPropagation()" ${isQuoteLocked ? 'disabled' : ''}/></td>
            <td style="padding:6px 12px;color:#64748b;font-size:12px;font-weight:500;white-space:nowrap;"><span class="admin-part-unit-cost">US$ ${((Number(p.price)||0) / Math.max(Number(p.qty)||1, 1)).toFixed(2)}</span></td>
-           <td style="padding:6px 12px;color:#10b981;font-weight:700;"><div style="display:flex;align-items:center;">US$<input class="admin-part-input" type="number" step="0.01" data-field="price" value="${p.price||0}" style="width:70px;border:1px solid transparent;background:transparent;color:#10b981;font-weight:700;font-size:12px;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()"/></div></td>
+           <td style="padding:6px 12px;color:${isQuoteLocked ? '#94a3b8' : '#10b981'};font-weight:700;"><div style="display:flex;align-items:center;">US$<input class="admin-part-input" type="number" step="0.01" data-field="price" value="${p.price||0}" style="width:70px;border:1px solid transparent;background:transparent;color:${isQuoteLocked ? '#94a3b8' : '#10b981'};font-weight:700;font-size:12px;font-family:inherit;padding:4px;outline:none;" onclick="event.stopPropagation()" ${isQuoteLocked ? 'disabled' : ''}/></div></td>
            <td style="padding:6px 8px;" onclick="event.stopPropagation()"><div style="display:flex;gap:4px;">${isCAD?'<span style="display:inline-flex;align-items:center;gap:2px;padding:3px 8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:4px;color:#2563eb;font-size:10px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;" class="admin-part-view3d" data-view-idx="'+i+'">🧊 3D</span>':''}${hasFile?'<a href="'+fUrl+'" download target="_blank" title="Download" style="display:flex;padding:3px 6px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;color:#475569;text-decoration:none;font-size:13px;">&#x2B07;</a>':''}</div></td>
-           <td style="padding:6px 8px;text-align:center;" onclick="event.stopPropagation()"><button class="admin-part-remove-btn" data-idx="${i}" style="background:none;border:none;color:#ef4444;font-size:16px;cursor:pointer;">&times;</button></td>
+           <td style="padding:6px 8px;text-align:center;" onclick="event.stopPropagation()">${isQuoteLocked ? '' : `<button class="admin-part-remove-btn" data-idx="${i}" style="background:none;border:none;color:#ef4444;font-size:16px;cursor:pointer;">&times;</button>`}</td>
          </tr>
          <tr class="admin-part-detail-row" data-detail-idx="${i}" style="display:none;border-bottom:1px solid #e2e8f0;">
            <td colspan="9" style="padding:0;"><div style="display:flex;gap:16px;padding:14px 20px;background:#fafbfc;border-top:1px solid #f1f5f9;">
@@ -2624,7 +2636,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                  <a href="${odBaseUrl}/CAD" target="_blank" style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;font-size:11px;font-weight:600;color:#2563eb;text-decoration:none;">Open in OneDrive</a>
                </div>
                <div><div style="font-size:9px;color:#94a3b8;text-transform:uppercase;font-weight:700;margin-bottom:4px;">Part Notes (Admin)</div>
-                 <textarea class="admin-part-notes" data-notes-idx="${i}" rows="2" placeholder="Tooling notes, supplier info..." style="width:100%;box-sizing:border-box;padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;font-size:11px;font-family:inherit;line-height:1.4;color:#334155;resize:vertical;background:#fff;">${p.admin_notes||''}</textarea>
+                 <textarea class="admin-part-notes" data-notes-idx="${i}" rows="2" placeholder="Tooling notes, supplier info..." style="width:100%;box-sizing:border-box;padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;font-size:11px;font-family:inherit;line-height:1.4;color:${isQuoteLocked ? '#94a3b8' : '#334155'};resize:vertical;background:${isQuoteLocked ? '#f8fafc' : '#fff'};" ${isQuoteLocked ? 'disabled' : ''}>${p.admin_notes||''}</textarea>
                </div>
              </div>
            </div></td>
@@ -2763,8 +2775,76 @@ document.addEventListener('DOMContentLoaded', async () => {
     modal.querySelector('#rfq-modal-close').addEventListener('click', () => modal.remove());
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
 
-    // Timeline toggle
+    // Timeline toggle and buttons (Event Delegation)
     modal.querySelector('#rfq-timeline-wrapper').addEventListener('click', async (e) => {
+      // 1. Amend Quote
+      if (e.target.closest('#admin-amend-quote-timeline-btn')) {
+        const panel = modal.querySelector('#rfq-amend-panel');
+        if (panel) panel.style.display = 'block';
+        return;
+      }
+      
+      // 2. Cancel Order
+      const cancelBtn = e.target.closest('.admin-cancel-order-btn');
+      if (cancelBtn) {
+        if (!confirm('Are you sure you want to cancel this order? This cannot be easily undone.')) return;
+        cancelBtn.disabled = true;
+        cancelBtn.textContent = 'Canceling...';
+        const rfqId = cancelBtn.dataset.rfqId;
+        data.status = 'rejected';
+        data.payment_status = 'cancelled';
+        rfq.status = 'rejected';
+        
+        try {
+          await fetch('/.netlify/functions/admin-rfqs', {
+            method: 'PATCH',
+            body: JSON.stringify({ id: rfqId, updates: { status: 'rejected', rfq_data: data } })
+          });
+          const rfqObj = rfqs.find(r => r.id === rfqId);
+          if (rfqObj) { rfqObj.status = 'rejected'; rfqObj.rfq_data = data; }
+          modal.querySelector('#rfq-timeline-wrapper').innerHTML = getTimelineHTML();
+          
+          const statusSelect = modal.querySelector('#rfq-modal-status');
+          if (statusSelect) statusSelect.value = 'rejected';
+          const tableSelect = contentRouting.querySelector(`.admin-rfq-status-select[data-rfq-id="${rfqId}"]`);
+          if (tableSelect) tableSelect.value = 'rejected';
+        } catch(err) {
+          alert('Failed to cancel order: ' + err.message);
+          cancelBtn.disabled = false;
+          cancelBtn.textContent = 'Cancel Order';
+        }
+        return;
+      }
+
+      // 3. Refund Order
+      const refundBtn = e.target.closest('.admin-refund-order-btn');
+      if (refundBtn) {
+        if (!confirm('Have you processed the refund for this order? This will mark the payment as refunded.')) return;
+        refundBtn.disabled = true;
+        refundBtn.textContent = 'Refunding...';
+        const rfqId = refundBtn.dataset.rfqId;
+        data.payment_status = 'refunded';
+        
+        try {
+          await fetch('/.netlify/functions/admin-rfqs', {
+            method: 'PATCH',
+            body: JSON.stringify({ id: rfqId, updates: { rfq_data: data } })
+          });
+          const rfqObj = rfqs.find(r => r.id === rfqId);
+          if (rfqObj) { rfqObj.rfq_data = data; }
+          refundBtn.textContent = 'Refunded ✓';
+          refundBtn.style.background = '#dcfce7';
+          refundBtn.style.color = '#15803d';
+          refundBtn.style.borderColor = '#bbf7d0';
+        } catch(err) {
+          alert('Failed to update refund status: ' + err.message);
+          refundBtn.disabled = false;
+          refundBtn.textContent = 'Refund';
+        }
+        return;
+      }
+
+      // 4. Timeline bubble overrides
       const circle = e.target.closest('.timeline-step-circle');
       if (!circle) return;
       const stepLabel = circle.dataset.step;
@@ -2784,6 +2864,47 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
       } catch(err) {
         console.error('Failed to save timeline override', err);
+      }
+    });
+
+    // Amend quote confirmation logic
+    modal.querySelector('#rfq-amend-cancel-btn')?.addEventListener('click', () => {
+      const panel = modal.querySelector('#rfq-amend-panel');
+      if (panel) panel.style.display = 'none';
+    });
+    
+    modal.querySelector('#rfq-amend-confirm-btn')?.addEventListener('click', async (e) => {
+      const reason = modal.querySelector('#rfq-amend-reason').value.trim();
+      if (!reason) {
+        alert('Please provide a reason for amending the quote.');
+        return;
+      }
+      const btn = e.target;
+      btn.disabled = true;
+      btn.textContent = 'Unlocking...';
+      
+      const currentNotes = modal.querySelector('#rfq-admin-notes').value || '';
+      const newNotes = currentNotes + `\n\n[${new Date().toLocaleDateString()}] AMEND QUOTE: ${reason}`;
+      modal.querySelector('#rfq-admin-notes').value = newNotes;
+      data.admin_notes = newNotes;
+      data.is_amending = true;
+      
+      try {
+        await fetch('/.netlify/functions/admin-rfqs', {
+          method: 'PATCH',
+          body: JSON.stringify({ id: rfq.id, updates: { rfq_data: data } })
+        });
+        
+        const rfqObj = rfqs.find(r => r.id === rfq.id);
+        if (rfqObj) rfqObj.rfq_data = data;
+        
+        // Re-render modal to unlock fields
+        modal.remove();
+        openAdminDetailModal(rfq);
+      } catch(err) {
+        alert('Failed to unlock quote: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = 'Unlock for Editing';
       }
     });
 
@@ -3005,6 +3126,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Update local cache
         const rfqObj = rfqs.find(r => r.id === rfqId);
         if (rfqObj) { rfqObj.status = 'confirmed'; rfqObj.rfq_data = updatedData; }
+        
+        // Update local modal references so timeline updates correctly
+        rfq.status = 'confirmed';
+        data.status = 'confirmed';
+        data.confirmed_at = confirmedAtIso;
+        
+        // Refresh Timeline
+        modal.querySelector('#rfq-timeline-wrapper').innerHTML = getTimelineHTML();
 
         // Visual feedback
         const btnContainer = btn.parentElement;

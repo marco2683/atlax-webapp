@@ -326,53 +326,78 @@ exports.handler = async (event, context) => {
     // ── rfq_confirmed ──────────────────────────────────────────
     if (type === 'rfq_confirmed') {
       const { projectName, name: clientName, confirmedPrice, bankRef } = body;
-      const priceFmt = `$${Number(confirmedPrice || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+      const priceFmt = `${Number(confirmedPrice || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
       toEmailAddr = [email, 'info@atlasdt.com'];
       subject = `Quote Accepted — ${projectName || bankRef}`;
       htmlContent = `
-        <div style="font-family:'Inter',sans-serif;max-width:620px;margin:0 auto;padding:32px 24px;color:#0f172a;">
+        <div style="font-family:'Inter',sans-serif;max-width:620px;margin:0 auto;padding:32px 24px;color:#0f172a;background-color:#ffffff;">
           <div style="text-align:center;margin-bottom:32px;">
-            <img src="${logoUrl}" alt="AtlasDT" style="height:36px;" />
+            <img src="${logoUrl}" alt="AtlasDT" width="180" style="width:180px; max-width:100%; display:block; margin:0 auto; height:auto;" />
           </div>
-          <div style="background:linear-gradient(135deg,#1d4ed8,#1e40af);border-radius:16px;padding:32px;text-align:center;margin-bottom:32px;">
-            <div style="font-size:48px;margin-bottom:12px;">🎉</div>
-            <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;">Your Quote Has Been Accepted</h1>
-            <div style="color:#bfdbfe;font-size:14px;margin-top:8px;">Payment is now awaiting to confirm your order</div>
-          </div>
-          <p style="font-size:15px;line-height:1.7;color:#334155;margin-bottom:24px;">
+          
+          <table width="100%" border="0" cellspacing="0" cellpadding="32" style="background-color:#1d4ed8; background:linear-gradient(135deg,#1d4ed8,#1e40af); border-radius:16px; margin-bottom:32px;">
+            <tr>
+              <td align="center" style="text-align:center;">
+                <div style="font-size:48px; margin-bottom:12px; color:#ffffff;">🎉</div>
+                <h1 style="margin:0; color:#ffffff; font-size:22px; font-weight:700; font-family:sans-serif;">Your Quote Has Been Accepted</h1>
+                <p style="color:#bfdbfe; font-size:14px; margin-top:8px; margin-bottom:0; font-family:sans-serif;">Payment is now awaiting to confirm your order</p>
+              </td>
+            </tr>
+          </table>
+          
+          <p style="font-size:15px;line-height:1.7;color:#334155;margin-bottom:24px; font-family:sans-serif;">
             Dear ${clientName || 'Valued Customer'},<br/><br/>
             We're pleased to inform you that we have reviewed and <strong>accepted your quotation request</strong> for the project listed below.
             Your order is now confirmed at the price indicated — please proceed with payment to move your project into production.
           </p>
-          <table style="width:100%;border-collapse:collapse;background:#f8fafc;border-radius:12px;overflow:hidden;margin-bottom:28px;">
-            <tr style="border-bottom:1px solid #e2e8f0;">
-              <td style="padding:14px 16px;font-weight:600;color:#64748b;font-size:13px;">Project</td>
-              <td style="padding:14px 16px;font-weight:700;color:#0f172a;font-size:13px;">${projectName || '—'}</td>
-            </tr>
-            <tr style="border-bottom:1px solid #e2e8f0;">
-              <td style="padding:14px 16px;font-weight:600;color:#64748b;font-size:13px;">Reference</td>
-              <td style="padding:14px 16px;font-weight:700;color:#0f172a;font-size:13px;font-family:monospace;letter-spacing:0.5px;">${bankRef || '—'}</td>
+          
+          <table width="100%" border="0" cellspacing="0" cellpadding="14" style="background-color:#f8fafc; border-radius:12px; margin-bottom:28px; border-collapse:collapse;">
+            <tr>
+              <td style="font-weight:600; color:#64748b; font-size:13px; font-family:sans-serif; border-bottom:1px solid #e2e8f0; width:30%;">Project</td>
+              <td style="font-weight:700; color:#0f172a; font-size:13px; font-family:sans-serif; border-bottom:1px solid #e2e8f0;">${projectName || '—'}</td>
             </tr>
             <tr>
-              <td style="padding:14px 16px;font-weight:600;color:#64748b;font-size:13px;">Confirmed Total</td>
-              <td style="padding:14px 16px;font-weight:800;color:#1d4ed8;font-size:15px;">${priceFmt} AUD</td>
+              <td style="font-weight:600; color:#64748b; font-size:13px; font-family:sans-serif; border-bottom:1px solid #e2e8f0;">Reference</td>
+              <td style="font-weight:700; color:#0f172a; font-size:13px; font-family:monospace; letter-spacing:0.5px; border-bottom:1px solid #e2e8f0;">${bankRef || '—'}</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600; color:#64748b; font-size:13px; font-family:sans-serif;">Confirmed Total</td>
+              <td style="font-weight:800; color:#1d4ed8; font-size:15px; font-family:sans-serif;">US$${priceFmt}</td>
             </tr>
           </table>
-          <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px;margin-bottom:28px;font-size:13px;color:#1d4ed8;line-height:1.6;">
-            <strong>Next Step — Payment</strong><br/>
-            Please log in to your AtlasDT workspace to choose your preferred payment method (Stripe or Bank Transfer).
-            Use reference <strong>${bankRef}</strong> if paying by bank transfer.
-          </div>
-          <div style="text-align:center;margin-bottom:28px;">
-            <a href="https://www.atlasdt.com/workspace.html?tab=rfqs" style="display:inline-block;background:#1d4ed8;color:#fff;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;font-size:14px;">View &amp; Pay Now</a>
-          </div>
-          <p style="font-size:14px;line-height:1.7;color:#64748b;margin-bottom:8px;">
+          
+          <table width="100%" border="0" cellspacing="0" cellpadding="16" style="background-color:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; margin-bottom:28px;">
+            <tr>
+              <td style="font-size:13px; color:#1d4ed8; line-height:1.6; font-family:sans-serif;">
+                <strong style="font-family:sans-serif;">Next Step — Payment</strong><br/>
+                Please log in to your AtlasDT workspace to choose your preferred payment method (Stripe or Bank Transfer).
+                Use reference <strong>${bankRef}</strong> if paying by bank transfer.
+              </td>
+            </tr>
+          </table>
+          
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:28px;">
+            <tr>
+              <td align="center">
+                <table border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td align="center" bgcolor="#1d4ed8" style="border-radius:10px;">
+                      <a href="https://www.atlasdt.com/workspace.html?tab=rfqs" target="_blank" style="font-size:14px; font-weight:700; font-family:sans-serif; color:#ffffff; text-decoration:none; padding:12px 28px; border:1px solid #1d4ed8; border-radius:10px; display:inline-block;">View &amp; Pay Now</a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+          
+          <p style="font-size:14px;line-height:1.7;color:#64748b;margin-bottom:8px; font-family:sans-serif;">
             Questions about your quote? Reply to this email or contact us at
             <a href="mailto:info@atlasdt.com" style="color:#1d4ed8;">info@atlasdt.com</a> quoting reference <strong>${bankRef}</strong>.
           </p>
-          <p style="font-size:14px;color:#64748b;">We look forward to manufacturing your project!<br/>— The AtlasDT Team</p>
+          <p style="font-size:14px;color:#64748b; font-family:sans-serif;">We look forward to manufacturing your project!<br/>— The AtlasDT Team</p>
+          
           <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;"/>
-          <p style="text-align:center;font-size:11px;color:#94a3b8;">AtlasDT Manufacturing Hub &bull; <a href="https://www.atlasdt.com" style="color:#0ea5e9;">atlasdt.com</a></p>
+          <p style="text-align:center;font-size:11px;color:#94a3b8; font-family:sans-serif;">AtlasDT Manufacturing Hub &bull; <a href="https://www.atlasdt.com" style="color:#0ea5e9;">atlasdt.com</a></p>
         </div>
       `;
     }
