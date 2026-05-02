@@ -325,7 +325,7 @@ exports.handler = async (event, context) => {
 
     // ── rfq_confirmed ──────────────────────────────────────────
     if (type === 'rfq_confirmed') {
-      const { projectName, name: clientName, confirmedPrice, bankRef } = body;
+      const { projectName, name: clientName, confirmedPrice, bankRef, rfqId } = body;
       const priceFmt = `${Number(confirmedPrice || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
       toEmailAddr = [email, 'info@atlasdt.com'];
       subject = `Quote Accepted — ${projectName || bankRef}`;
@@ -382,7 +382,7 @@ exports.handler = async (event, context) => {
                 <table border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td align="center" bgcolor="#1d4ed8" style="border-radius:10px;">
-                      <a href="https://www.atlasdt.com/workspace.html?tab=rfqs" target="_blank" style="font-size:14px; font-weight:700; font-family:sans-serif; color:#ffffff; text-decoration:none; padding:12px 28px; border:1px solid #1d4ed8; border-radius:10px; display:inline-block;">View &amp; Pay Now</a>
+                      <a href="https://www.atlasdt.com/workspace.html?tab=rfqs${rfqId ? '&rfq=' + rfqId : ''}" target="_blank" style="font-size:14px; font-weight:700; font-family:sans-serif; color:#ffffff; text-decoration:none; padding:12px 28px; border:1px solid #1d4ed8; border-radius:10px; display:inline-block;">View &amp; Pay Now</a>
                     </td>
                   </tr>
                 </table>

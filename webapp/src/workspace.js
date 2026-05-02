@@ -49,7 +49,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   const urlParams = new URLSearchParams(window.location.search);
   const initialTab = urlParams.get('tab') || 'shortlists';
-  switchTab(initialTab);
+  await switchTab(initialTab);
+
+  // Auto-open RFQ detail modal if rfq param is present (from email link)
+  const autoRfqId = urlParams.get('rfq');
+  if (autoRfqId && initialTab === 'rfqs') {
+    try {
+      const { data: freshRow, error } = await supabase
+        .from('rfq_history')
+        .select('*')
+        .eq('id', autoRfqId)
+        .single();
+      if (!error && freshRow) {
+        openRFQPreviewModal(freshRow);
+      }
+    } catch (e) {
+      console.warn('Failed to auto-open RFQ modal:', e);
+    }
+  }
 });
 
 // ── Theme State ──────────────────────────────────────────
@@ -577,7 +594,7 @@ function openRFQPreviewModal(rfq) {
         }
         .rfq-status-tooltip:hover::after, .rfq-status-tooltip:hover::before { opacity: 1; }
       </style>
-      <div style="background:#fff;border-radius:16px;width:1100px;max-width:95vw;height:700px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
+      <div style="background:#fff;border-radius:16px;width:1100px;max-width:95vw;height:85vh;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
         
         <!-- Top Summary Bar -->
         <div style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc; flex-shrink:0;">

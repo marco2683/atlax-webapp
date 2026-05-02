@@ -3203,6 +3203,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             projectName,
             confirmedPrice,
             bankRef,
+            rfqId,
           })
         }).catch(e => console.warn('Confirmation email skipped:', e));
 
