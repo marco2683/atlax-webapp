@@ -316,7 +316,7 @@ export function openProposalWizard() {
   }
 
   function parseMarkdownToDocxParagraphs(text) {
-    const lines = text.split('\\n');
+    const lines = text.split('\n');
     return lines.map(line => {
       let isBullet = false;
       let textContent = line;
@@ -327,7 +327,7 @@ export function openProposalWizard() {
 
       // Very simple bold parsing for **text**
       const runs = [];
-      const parts = textContent.split(/\\*\\*(.*?)\\*\\*/g);
+      const parts = textContent.split(/\*\*(.*?)\*\*/g);
       parts.forEach((p, i) => {
         if (i % 2 === 1) runs.push(new docx.TextRun({ text: p, bold: true, font: "Arial" }));
         else if (p) runs.push(new docx.TextRun({ text: p, font: "Arial" }));
@@ -367,14 +367,14 @@ export function openProposalWizard() {
       }),
       new docx.Paragraph({
         children: [
-          new docx.TextRun({ text: \`Date: \${state.date}\`, size: 24, font: "Arial" }),
+          new docx.TextRun({ text: `Date: ${state.date}`, size: 24, font: "Arial" }),
         ],
         alignment: docx.AlignmentType.CENTER,
         spacing: { after: 200 }
       }),
       new docx.Paragraph({
         children: [
-          new docx.TextRun({ text: \`Reference: \${state.docRef}\`, size: 24, font: "Arial" }),
+          new docx.TextRun({ text: `Reference: ${state.docRef}`, size: 24, font: "Arial" }),
         ],
         alignment: docx.AlignmentType.CENTER,
         spacing: { after: 600 }
@@ -397,7 +397,7 @@ export function openProposalWizard() {
       if (c.name || c.email) {
         docSections.push(new docx.Paragraph({
           children: [
-            new docx.TextRun({ text: \`\${c.name} \${c.email ? '(' + c.email + ')' : ''}\`, size: 24, font: "Arial" }),
+            new docx.TextRun({ text: `${c.name} ${c.email ? '(' + c.email + ')' : ''}`, size: 24, font: "Arial" }),
           ],
           spacing: { after: 100 }
         }));
@@ -454,7 +454,7 @@ export function openProposalWizard() {
       new docx.TableRow({
         children: [
           new docx.TableCell({ children: [new docx.Paragraph({ children: [new docx.TextRun({ text: "Total Project Cost", bold: true, font: "Arial" })] })], columnSpan: 2, shading: { fill: "e2e8f0" }, margins: { top: 100, bottom: 100, left: 100, right: 100 } }),
-          new docx.TableCell({ children: [new docx.Paragraph({ children: [new docx.TextRun({ text: \`US$\${fmt(totalAmount)}\`, bold: true, font: "Arial" })] })], shading: { fill: "e2e8f0" }, margins: { top: 100, bottom: 100, left: 100, right: 100 } }),
+          new docx.TableCell({ children: [new docx.Paragraph({ children: [new docx.TextRun({ text: `US$${fmt(totalAmount)}`, bold: true, font: "Arial" })] })], shading: { fill: "e2e8f0" }, margins: { top: 100, bottom: 100, left: 100, right: 100 } }),
         ]
       })
     );
@@ -473,7 +473,7 @@ export function openProposalWizard() {
         spacing: { before: 400, after: 200 }
       }),
       new docx.Paragraph({
-        children: [new docx.TextRun({ text: \`Estimated Timeline: \${state.timeline}\`, font: "Arial", bold: true })],
+        children: [new docx.TextRun({ text: `Estimated Timeline: ${state.timeline}`, font: "Arial", bold: true })],
         spacing: { after: 200 }
       })
     );
@@ -495,8 +495,8 @@ export function openProposalWizard() {
         rows: [
           new docx.TableRow({
             children: [
-              new docx.TableCell({ children: [new docx.Paragraph({ children: [new docx.TextRun({ text: "Atlas Design & Technology", bold: true, font: "Arial" })] }), new docx.Paragraph({ text: "\\n\\n_______________________\\nSignature" }), new docx.Paragraph({ text: "\\n_______________________\\nName / Title" }), new docx.Paragraph({ text: "\\n_______________________\\nDate" })] }),
-              new docx.TableCell({ children: [new docx.Paragraph({ children: [new docx.TextRun({ text: state.customer.company || "Client", bold: true, font: "Arial" })] }), new docx.Paragraph({ text: "\\n\\n_______________________\\nSignature" }), new docx.Paragraph({ text: "\\n_______________________\\nName / Title" }), new docx.Paragraph({ text: "\\n_______________________\\nDate" })] })
+              new docx.TableCell({ children: [new docx.Paragraph({ children: [new docx.TextRun({ text: "Atlas Design & Technology", bold: true, font: "Arial" })] }), new docx.Paragraph({ text: "\n\n_______________________\nSignature" }), new docx.Paragraph({ text: "\n_______________________\nName / Title" }), new docx.Paragraph({ text: "\n_______________________\nDate" })] }),
+              new docx.TableCell({ children: [new docx.Paragraph({ children: [new docx.TextRun({ text: state.customer.company || "Client", bold: true, font: "Arial" })] }), new docx.Paragraph({ text: "\n\n_______________________\nSignature" }), new docx.Paragraph({ text: "\n_______________________\nName / Title" }), new docx.Paragraph({ text: "\n_______________________\nDate" })] })
             ]
           })
         ]
@@ -512,7 +512,7 @@ export function openProposalWizard() {
 
     const b64string = await docx.Packer.toBase64String(doc);
 
-    const fileName = \`AtlasDT_Proposal_\${state.docRef}.docx\`;
+    const fileName = `AtlasDT_Proposal_${state.docRef}.docx`;
 
     if (action === 'download') {
       // Browser download base64
