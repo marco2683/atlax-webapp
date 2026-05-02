@@ -173,12 +173,6 @@ function renderCurrentCard() {
   };
 
   const renderServiceButton = (label, type) => {
-    if (!currentUser) {
-       return `<button onclick="document.getElementById('auth-modal').classList.remove('hidden');" style="padding: 8px 12px; font-size: 11px; font-weight: 700; color: #047857; background: rgba(255,255,255,0.8); border: 1px solid rgba(52,211,153,0.4); border-radius: 6px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#ffffff'; this.style.borderColor='#10b981'" onmouseout="this.style.background='rgba(255,255,255,0.8)'; this.style.borderColor='rgba(52,211,153,0.4)'">
-         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:-2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-         ${label}
-       </button>`;
-    }
     return `<button onclick="window.openServiceInquiry('${type}', '${s.name.replace(/'/g, "\\'")}')" style="padding: 8px 12px; font-size: 11px; font-weight: 700; color: #fff; background: #10b981; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(16,185,129,0.2);" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 6px rgba(16,185,129,0.3)'" onmouseout="this.style.background='#10b981'; this.style.transform=''; this.style.boxShadow='0 2px 4px rgba(16,185,129,0.2)'">
       ${label}
     </button>`;
