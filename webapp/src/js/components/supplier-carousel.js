@@ -158,16 +158,16 @@ function renderCurrentCard() {
   // Doc download card builder — narrow icons
   const docDownloadCard = (available, url, label, iconSvg, accentColor) => {
     if (!currentUser) {
-       return `<div onclick="document.getElementById('auth-modal').classList.remove('hidden');" title="Sign in to download ${label}" style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1px dashed #cbd5e1; background:#f8fafc; cursor:pointer; color:#94a3b8; transition:all 0.2s;" onmouseover="this.style.background='#e2e8f0'; this.style.color='${accentColor}'; this.style.borderColor='${accentColor}60'">
+       return `<div onclick="document.getElementById('auth-modal').classList.remove('hidden');" title="Sign in to download ${label}" style="width:58px; height:58px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1px dashed #cbd5e1; background:#f8fafc; cursor:pointer; color:#94a3b8; transition:all 0.2s;" onmouseover="this.style.background='#e2e8f0'; this.style.color='${accentColor}'; this.style.borderColor='${accentColor}60'">
          ${iconSvg}
        </div>`;
     }
     if (available && url) {
-      return `<a href="${url}" target="_blank" download title="Download ${label}" style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1px solid ${accentColor}30; background:${accentColor}08; text-decoration:none; cursor:pointer; color:${accentColor}; transition:all 0.2s;" onmouseover="this.style.background='${accentColor}18'; this.style.borderColor='${accentColor}60'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px ${accentColor}15'" onmouseout="this.style.background='${accentColor}08'; this.style.borderColor='${accentColor}30'; this.style.transform=''; this.style.boxShadow=''">
+      return `<a href="${url}" target="_blank" download title="Download ${label}" style="width:58px; height:58px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1px solid ${accentColor}30; background:${accentColor}08; text-decoration:none; cursor:pointer; color:${accentColor}; transition:all 0.2s;" onmouseover="this.style.background='${accentColor}18'; this.style.borderColor='${accentColor}60'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px ${accentColor}15'" onmouseout="this.style.background='${accentColor}08'; this.style.borderColor='${accentColor}30'; this.style.transform=''; this.style.boxShadow=''">
         ${iconSvg}
       </a>`;
     }
-    return `<div title="${label} — Not available" style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1px dashed #e2e8f0; background:#fafafa; cursor:not-allowed; color:#cbd5e1;">
+    return `<div title="${label} — Not available" style="width:58px; height:58px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1px dashed #e2e8f0; background:#fafafa; cursor:not-allowed; color:#cbd5e1;">
       ${iconSvg}
     </div>`;
   };
@@ -186,8 +186,8 @@ function renderCurrentCard() {
 
   // More representative SVG icons
   const rfiIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>`;
-  const pptIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><polygon points="10,7 10,13 15,10" fill="currentColor" stroke="none"/></svg>`;
-  const certsIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>`;
+  const pptIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><polygon points="10,7 10,13 15,10" fill="currentColor" stroke="none"/></svg>`;
+  const certsIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>`;
 
   // Certifications list
   const certsList = (s.certifications || []).concat(s.otherCertifications || []).filter(Boolean);
