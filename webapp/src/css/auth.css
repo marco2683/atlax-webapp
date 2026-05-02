@@ -120,7 +120,7 @@
   margin-left: 2px;
 }
 
-.auth-input-group input {
+.auth-input-group input:not([type="checkbox"]) {
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
@@ -129,9 +129,10 @@
   font-family: inherit;
   font-size: 15px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
 }
 
-.auth-input-group input:focus {
+.auth-input-group input:not([type="checkbox"]):focus {
   outline: none;
   border-color: var(--color-electric);
   box-shadow: 0 0 0 2px rgba(0, 153, 255, 0.15);

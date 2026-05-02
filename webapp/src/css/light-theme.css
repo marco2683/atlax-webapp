@@ -607,7 +607,7 @@ body.theme-light .supplier-modal__body {
   box-shadow: var(--shadow-xl);
 }
 
-body.theme-light .auth-input-group input {
+body.theme-light .auth-input-group input:not([type="checkbox"]) {
   background: #ffffff;
   border: 1px solid #d1d5db;
   color: #111827;

@@ -1998,7 +1998,7 @@
     margin-bottom: 16px !important;
   }
 
-  .auth-modal-glass .auth-input-group input {
+  .auth-modal-glass .auth-input-group input:not([type="checkbox"]) {
     padding: 11px 14px !important;
     font-size: 14px !important;
   }
