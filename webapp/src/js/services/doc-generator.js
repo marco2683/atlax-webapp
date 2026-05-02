@@ -594,6 +594,8 @@ SWIFT / BIC: NATAAU3303</textarea>
     const cleanFileName = `${docData.title.replace(/\s+/g,'_')}_${docData.docRef}_${today()}.pdf`;
     const storagePath = `documents/${docData.rfqRef}/${fileName}`;
     
+    console.log('[DocGen] Uploading PDF to Supabase...', { storagePath, bucket: 'rfq-docs' });
+    
     // Use Netlify function to bypass RLS
     const uploadRes = await fetch('/.netlify/functions/storage-upload', {
       method: 'POST',
@@ -603,17 +605,18 @@ SWIFT / BIC: NATAAU3303</textarea>
         fileName: fileName,
         filePath: storagePath,
         contentType: 'application/pdf',
-        bucket: 'product_assets'
+        bucket: 'rfq-docs'
       })
     });
 
     if (!uploadRes.ok) {
       const errTxt = await uploadRes.text();
-      console.error('Netlify upload error:', errTxt);
+      console.error('[DocGen] Supabase upload HTTP error:', uploadRes.status, errTxt);
       throw new Error(`Storage upload failed: ${uploadRes.statusText}`);
     }
 
     const uploadData = await uploadRes.json();
+    console.log('[DocGen] Supabase upload response:', uploadData);
     if (!uploadData.success) {
       throw new Error(`Storage upload failed: ${uploadData.error || 'Unknown error'}`);
     }
@@ -622,16 +625,20 @@ SWIFT / BIC: NATAAU3303</textarea>
       // Sync to OneDrive via webhook
       const folderIdentifier = docData.customer.company || docData.customer.name;
       const companySuffix = folderIdentifier ? ` - ${folderIdentifier.replace(/[\/\\?%*:|"<>]/g, '')}` : '';
+      const webhookPayload = {
+        file_name: cleanFileName,
+        file_url: uploadData.publicUrl,
+        folder_path: `RFQs/${docData.rfqRef}${companySuffix}`,
+        metadata: { rfqRef: docData.rfqRef, type: docData.type }
+      };
+      console.log('[DocGen] Sending to SharePoint webhook:', webhookPayload);
       const spRes = await fetch('/.netlify/functions/webhook-sharepoint', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          file_name: cleanFileName,
-          file_url: uploadData.publicUrl,
-          folder_path: `RFQs/${docData.rfqRef}${companySuffix}`,
-          metadata: { rfqRef: docData.rfqRef, type: docData.type }
-        })
+        body: JSON.stringify(webhookPayload)
       });
+      const spBody = await spRes.json().catch(() => ({}));
+      console.log('[DocGen] SharePoint webhook response:', spRes.status, spBody);
       if (!spRes.ok) {
         throw new Error('SharePoint webhook failed: ' + spRes.statusText);
       }
@@ -665,12 +672,17 @@ SWIFT / BIC: NATAAU3303</textarea>
   }
 
   // ── Download PDF ──
-  overlay.querySelector('#doc-download-btn').addEventListener('click', () => {
+  overlay.querySelector('#doc-download-btn').addEventListener('click', async () => {
     const docData = collectDocData();
     const pdf = generatePDF(docData);
     const fileName = `AtlasDT_${docData.title.replace(/\s+/g,'_')}_${docData.docRef}_${docData.projectName.replace(/[^a-zA-Z0-9]/g,'_')}.pdf`;
     pdf.save(fileName);
-    uploadAndSyncDoc(pdf.output('datauristring').split(',')[1], docData);
+    try {
+      await uploadAndSyncDoc(pdf.output('datauristring').split(',')[1], docData);
+      console.log('[DocGen] ✅ PDF uploaded and synced to SharePoint successfully');
+    } catch (err) {
+      console.error('[DocGen] ❌ Upload/sync failed:', err);
+    }
   });
 
   // ── Save Draft ──
