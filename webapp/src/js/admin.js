@@ -2920,7 +2920,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // Re-render modal to unlock fields
         modal.remove();
-        openAdminDetailModal(rfq);
+        openRFQDetailModal(rfq, profileMap, rfqs);
       } catch(err) {
         alert('Failed to unlock quote: ' + err.message);
         btn.disabled = false;
