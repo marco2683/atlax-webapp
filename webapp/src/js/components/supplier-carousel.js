@@ -235,6 +235,7 @@ function renderCurrentCard() {
            ${renderServiceButton('Verify Legal & Licenses', 'Verify Legal & Licenses')}
            ${renderServiceButton('Manage My Project', 'Manage My Project')}
            ${renderServiceButton('Get Competitive Quote', 'Get Competitive Quote')}
+           ${renderServiceButton('Draft NDA / NNN Agreement', 'Draft NDA / NNN Agreement')}
         </div>
       </div>
     </div>
@@ -316,9 +317,13 @@ function renderCurrentCard() {
            <span style="font-size: 12px; color: #64748b; font-weight: 500;">Established</span>
            <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${s.yearEstablished || '—'}</span>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
            <span style="font-size: 12px; color: #64748b; font-weight: 500;">Employees</span>
            <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${s.employees || '—'}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Annual Rev.</span>
+           <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${s.revenue || s.annualTurnover || s.turnover || '—'}</span>
         </div>
       </div>
 
@@ -361,7 +366,14 @@ function renderCurrentCard() {
       </button>
 
       <!-- Address Section -->
-      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px;">
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; position:relative; overflow:hidden;">
+        ${!currentUser ? `
+        <div style="position:absolute; inset:0; background:rgba(248,250,252,0.65); backdrop-filter:blur(5px); z-index:10; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <div style="font-size:11px; font-weight:700; color:#334155; text-align:center; padding:0 10px;">Sign in to view exact address</div>
+          <button onclick="document.getElementById('auth-modal').classList.remove('hidden');" style="padding:6px 16px; background:#0f172a; color:#fff; border:none; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">Sign In</button>
+        </div>
+        ` : ''}
         <h4 style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 10px 0;">Address</h4>
         ${addressEN ? `
         <a href="${googleMapUrl}" target="_blank" style="display: flex; align-items: flex-start; gap: 8px; text-decoration: none; color: #334155; font-size: 13px; line-height: 1.5; font-weight: 500; margin-bottom: 6px;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#334155'">
@@ -377,26 +389,33 @@ function renderCurrentCard() {
       </div>
 
       <!-- Map Embed -->
-      ${addressEN ? `
-      <div style="border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; height: 180px;">
-        <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(addressEN)}&t=&z=13&ie=UTF8&iwloc=&output=embed" style="width: 100%; height: 100%; border: none;" loading="lazy" allowfullscreen></iframe>
-      </div>` : ''}
-      ${addressCN ? `
-      <a href="${baiduMapUrl}" target="_blank" style="display:block; border-radius:10px; overflow:hidden; border:1px solid #bfdbfe; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.borderColor='#60a5fa'; this.style.boxShadow='0 4px 12px rgba(59,130,246,0.12)'" onmouseout="this.style.borderColor='#bfdbfe'; this.style.boxShadow=''">
-        <div style="height:120px; position:relative;">
-          <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(addressCN)}&t=&z=14&ie=UTF8&iwloc=&output=embed" style="width:100%; height:100%; border:none; pointer-events:none;" loading="lazy"></iframe>
-          <div style="position:absolute; inset:0; background:linear-gradient(180deg, transparent 60%, rgba(239,246,255,0.9) 100%);"></div>
+      <div style="position:relative; border-radius:10px; overflow:hidden;">
+        ${!currentUser && (addressEN || addressCN) ? `
+        <div style="position:absolute; inset:0; background:rgba(255,255,255,0.3); backdrop-filter:blur(8px); z-index:10; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <button onclick="document.getElementById('auth-modal').classList.remove('hidden');" style="padding:8px 20px; background:#0f172a; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15);">Sign in to unlock Map</button>
         </div>
-        <div style="display:flex; align-items:center; gap:10px; padding:10px 14px; background:#eff6ff;">
-          <div style="width:30px; height:30px; background:#3b82f6; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        ` : ''}
+        ${addressEN ? `
+        <div style="overflow: hidden; border: 1px solid #e2e8f0; height: 180px; border-radius:10px; margin-bottom: 8px;">
+          <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(addressEN)}&t=&z=13&ie=UTF8&iwloc=&output=embed" style="width: 100%; height: 100%; border: none;" loading="lazy" allowfullscreen></iframe>
+        </div>` : ''}
+        ${addressCN ? `
+        <a href="${!currentUser ? '#' : baiduMapUrl}" target="${!currentUser ? '_self' : '_blank'}" style="display:block; border-radius:10px; overflow:hidden; border:1px solid #bfdbfe; text-decoration:none; transition:all 0.2s;" ${!currentUser ? '' : `onmouseover="this.style.borderColor='#60a5fa'; this.style.boxShadow='0 4px 12px rgba(59,130,246,0.12)'" onmouseout="this.style.borderColor='#bfdbfe'; this.style.boxShadow=''`}>
+          <div style="height:120px; position:relative;">
+            <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(addressCN)}&t=&z=14&ie=UTF8&iwloc=&output=embed" style="width:100%; height:100%; border:none; pointer-events:none;" loading="lazy"></iframe>
+            <div style="position:absolute; inset:0; background:linear-gradient(180deg, transparent 60%, rgba(239,246,255,0.9) 100%);"></div>
           </div>
-          <div style="min-width:0;">
-            <div style="font-size:11px; font-weight:700; color:#1e40af;">Open in Baidu Maps →</div>
-            <div style="font-size:10px; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${addressCN}</div>
+          <div style="display:flex; align-items:center; gap:10px; padding:10px 14px; background:#eff6ff;">
+            <div style="width:30px; height:30px; background:#3b82f6; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div style="min-width:0;">
+              <div style="font-size:11px; font-weight:700; color:#1e40af;">Open in Baidu Maps →</div>
+              <div style="font-size:10px; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${addressCN}</div>
+            </div>
           </div>
-        </div>
-      </a>` : ''}
+        </a>` : ''}
+      </div>
 
     </div>
   </div>
