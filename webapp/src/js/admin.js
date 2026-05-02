@@ -6,6 +6,7 @@ import { renderMarketplaceTaxonomy } from './admin-taxonomy.js';
 import { renderAdminProducts } from './admin-products.js';
 import { loadPricingConfig } from './utils/pricing-loader.js';
 import { initRfiImporter } from './admin-rfi.js';
+import { generateAllDocsHeadless } from './services/headless-docs.js';
 
 /* ================================================================
    Atlas DT Admin Panel — Full CRM with Add/Edit Forms
@@ -2243,8 +2244,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         { label: 'Under Review', active: stepReview },
         { label: 'Info Req.', active: stepInfo },
         { label: 'Confirmed', active: stepConfirmed },
-        { label: 'Quoted', active: stepQuote, link: oneDriveFolderUrl, linkText: quotedDoc ? quotedDoc.docRef : 'View Quote' },
-        { label: 'Paid', active: stepPaid, link: oneDriveFolderUrl, linkText: invoiceDoc ? invoiceDoc.docRef : 'View Invoice' },
+        { label: 'Quoted', active: stepQuote, link: oneDriveFolderUrl, linkText: quotedDoc ? 'OneDrive Folder' : 'View Quote' },
+        { label: 'Paid', active: stepPaid, link: oneDriveFolderUrl, linkText: invoiceDoc ? 'OneDrive Folder' : 'View Invoice' },
         { label: 'Processing', active: stepProcessing },
         { label: 'Finished', active: stepFinished }
       ];
@@ -2275,8 +2276,8 @@ document.addEventListener('DOMContentLoaded', async () => {
               ` : '<div style="height:15px; margin-top:2px;"></div>'}
               
               ${step.label === 'Confirmed' ? `
-                <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 36px; background: ${currentStatusForConfirm === 'rejected' ? '#ef4444' : '#e2e8f0'}; z-index: -1;"></div>
-                <div style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
+                <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 56px; background: ${currentStatusForConfirm === 'rejected' ? '#ef4444' : '#e2e8f0'}; z-index: -1;"></div>
+                <div style="position: absolute; top: 80px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
                   <div class="timeline-step-circle" data-step="Rejected" style="cursor: pointer; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid #fff; box-shadow: 0 0 0 1px ${currentStatusForConfirm === 'rejected' ? '#ef4444' : '#cbd5e1'}; background: ${currentStatusForConfirm === 'rejected' ? '#ef4444' : '#f8fafc'}; color: ${currentStatusForConfirm === 'rejected' ? '#fff' : '#64748b'}; transition: all 0.2s;">
                     ✕
                   </div>
@@ -2285,8 +2286,8 @@ document.addEventListener('DOMContentLoaded', async () => {
               ` : ''}
               
               ${(step.label === 'Quoted' && isQuoteLocked) ? `
-                <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 36px; background: #e2e8f0; z-index: -1;"></div>
-                <div style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
+                <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 56px; background: #e2e8f0; z-index: -1;"></div>
+                <div style="position: absolute; top: 80px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
                   <button id="admin-amend-quote-timeline-btn" style="cursor: pointer; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; background: #fef08a; color: #854d0e; border: 1px solid #fde047; transition: all 0.2s; white-space: nowrap;">
                     AMEND ORDER
                   </button>
@@ -2294,8 +2295,8 @@ document.addEventListener('DOMContentLoaded', async () => {
               ` : ''}
               
               ${(step.label === 'Paid' && statusIdx >= 3) ? `
-                <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 36px; background: #e2e8f0; z-index: -1;"></div>
-                <div style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 6px; align-items: center;">
+                <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 56px; background: #e2e8f0; z-index: -1;"></div>
+                <div style="position: absolute; top: 80px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 6px; align-items: center;">
                   <button class="admin-refund-order-btn" data-rfq-id="${rfq.id}" style="cursor: pointer; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; background: ${data.payment_status === 'refunded' ? '#dcfce7' : '#ffedd5'}; color: ${data.payment_status === 'refunded' ? '#15803d' : '#9a3412'}; border: 1px solid ${data.payment_status === 'refunded' ? '#bbf7d0' : '#fdba74'}; transition: all 0.2s; white-space: nowrap;">
                     ${data.payment_status === 'refunded' ? 'Refunded ✓' : 'Refund'}
                   </button>
@@ -2303,8 +2304,8 @@ document.addEventListener('DOMContentLoaded', async () => {
               ` : ''}
               
               ${(step.label === 'Processing') ? `
-                <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 36px; background: #e2e8f0; z-index: -1;"></div>
-                <div style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 6px; align-items: center;">
+                <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 56px; background: #e2e8f0; z-index: -1;"></div>
+                <div style="position: absolute; top: 80px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 6px; align-items: center;">
                   <button class="admin-cancel-order-btn" data-rfq-id="${rfq.id}" style="cursor: pointer; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; transition: all 0.2s; white-space: nowrap;">
                     Cancel Order
                   </button>
@@ -3107,11 +3108,29 @@ document.addEventListener('DOMContentLoaded', async () => {
       const rfqId = e.target.closest('button').dataset.rfqId || rfq.id;
       const btn = e.target.closest('button');
       btn.disabled = true;
+      btn.textContent = 'Generating Docs...';
+
+      let generatedDocs = [];
+      try {
+        generatedDocs = await generateAllDocsHeadless({ rfq, rfqData: data, profile: rfq.profiles || {} });
+      } catch (err) {
+        console.error('Failed to generate documents:', err);
+      }
+
       btn.textContent = 'Confirming…';
 
       const confirmedAtIso = new Date().toISOString();
+      
+      const docsArr = data.documents || [];
+      generatedDocs.forEach(doc => {
+        const existIdx = docsArr.findIndex(d => d.docRef === doc.docRef);
+        if (existIdx >= 0) docsArr[existIdx] = doc;
+        else docsArr.push(doc);
+      });
+
       const updatedData = {
         ...data,
+        documents: docsArr,
         confirmed_price: confirmedPrice,
         total_price: confirmedPrice,
         admin_final_price: confirmedPrice,

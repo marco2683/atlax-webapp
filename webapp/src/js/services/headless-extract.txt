@@ -1,0 +1,270 @@
+  function generatePDF(docData) {
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const pw = doc.internal.pageSize.getWidth();
+    const ph = doc.internal.pageSize.getHeight();
+    const margin = 18;
+
+    // ─── Header bar (lighter blue) ───
+    doc.setFillColor(30, 58, 95);
+    doc.rect(0, 0, pw, 32, 'F');
+
+    // Teal accent stripe
+    doc.setFillColor(20, 184, 166);
+    doc.rect(0, 32, pw, 1.2, 'F');
+
+    // Logo (embedded image)
+    if (logoDataUrl) {
+      try { doc.addImage(logoDataUrl, 'PNG', margin, 6, 34, 11); } catch (_) {}
+    }
+    doc.setTextColor(180, 200, 220);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'normal');
+    doc.text('info@atlasdt.com  ·  www.atlasdt.com', margin, 25);
+    doc.text('Shenzhen  ·  Melbourne  ·  Carlsbad, CA', margin, 29);
+
+    // Doc title — right side of header
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text(docData.title.toUpperCase(), pw - margin, 13, { align: 'right' });
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(docData.docRef, pw - margin, 20, { align: 'right' });
+    doc.setFontSize(9);
+    doc.setTextColor(180, 200, 220);
+    doc.text(`Date: ${docData.date}`, pw - margin, 26, { align: 'right' });
+
+    let y = 42;
+
+    // ─── FROM / BILL TO / SHIP TO ───
+    const colGap = 5;
+    const col3W = (pw - margin * 2 - colGap * 2) / 3;
+
+    // Helper: build address lines array
+    function addrLines(a) {
+      return [a.name, a.company, a.addr1, a.addr2, [a.city, a.state, a.postcode].filter(Boolean).join(' '), a.email, a.phone ? `Ph: ${a.phone}` : ''].filter(Boolean);
+    }
+
+    const billLines = addrLines(docData.customer);
+    const shipLines = docData.shipSameAsBill ? ['Same as billing'] : addrLines(docData.shipTo);
+    const maxLines = Math.max(6, billLines.length, shipLines.length);
+    const boxH = 10 + maxLines * 4;
+
+    // FROM
+    doc.setFillColor(248, 250, 252);
+    doc.roundedRect(margin, y, col3W, boxH, 2, 2, 'F');
+    doc.setTextColor(100, 116, 139);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    doc.text('FROM', margin + 4, y + 6);
+    doc.setTextColor(15, 23, 42);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Atlas Design & Technology', margin + 4, y + 12);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(100, 116, 139);
+    doc.text('Cnr Carrington Rd & Thurston St', margin + 4, y + 16);
+    doc.text('Suite 10/1 Main St, Box Hill', margin + 4, y + 20);
+    doc.text('VIC 3128, Australia', margin + 4, y + 24);
+    doc.text('info@atlasdt.com', margin + 4, y + 28);
+
+    // BILL TO
+    const billX = margin + col3W + colGap;
+    doc.setFillColor(240, 249, 255);
+    doc.roundedRect(billX, y, col3W, boxH, 2, 2, 'F');
+    doc.setTextColor(3, 105, 161);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    doc.text('BILL TO', billX + 4, y + 6);
+    doc.setTextColor(15, 23, 42);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text(billLines[0] || '—', billX + 4, y + 12);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(100, 116, 139);
+    billLines.slice(1).forEach((line, i) => doc.text(line, billX + 4, y + 16 + i * 4));
+
+    // SHIP TO
+    const shipX = margin + (col3W + colGap) * 2;
+    doc.setFillColor(248, 250, 252);
+    doc.roundedRect(shipX, y, col3W, boxH, 2, 2, 'F');
+    doc.setTextColor(100, 116, 139);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    doc.text('SHIP TO', shipX + 4, y + 6);
+    doc.setTextColor(15, 23, 42);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text(shipLines[0] || '—', shipX + 4, y + 12);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(100, 116, 139);
+    shipLines.slice(1).forEach((line, i) => doc.text(line, shipX + 4, y + 16 + i * 4));
+
+    y += boxH + 6;
+
+    // ─── Project ref bar ───
+    doc.setFillColor(241, 245, 249);
+    doc.roundedRect(margin, y, pw - margin * 2, 10, 2, 2, 'F');
+    doc.setTextColor(71, 85, 105);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Project: ${docData.projectName}`, margin + 5, y + 6.5);
+    doc.text(`RFQ Ref: ${docData.rfqRef}`, pw - margin - 5, y + 6.5, { align: 'right' });
+    y += 16;
+
+    // ─── Line items table ───
+    const tableBody = docData.lineItems.map(li => [
+      li.description + (li.details ? `\n${li.details}` : ''),
+      li.qty.toString(),
+      `$${fmt(li.unitPrice)}`,
+      `$${fmt(li.qty * li.unitPrice)}`,
+    ]);
+
+    autoTable(doc, {
+      startY: y,
+      margin: { left: margin, right: margin },
+      head: [['Description', 'Qty', 'Unit Price', 'Line Total']],
+      body: tableBody,
+      styles: { fontSize: 9, cellPadding: 4, font: 'helvetica', textColor: [15, 23, 42], lineColor: [226, 232, 240], lineWidth: 0.2 },
+      headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 8 },
+      columnStyles: {
+        0: { cellWidth: 'auto' },
+        1: { halign: 'center', cellWidth: 20 },
+        2: { halign: 'right', cellWidth: 32 },
+        3: { halign: 'right', cellWidth: 32, fontStyle: 'bold' },
+      },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
+    });
+
+    y = (doc.lastAutoTable?.finalY ?? doc.previousAutoTable?.finalY ?? y + 40) + 8;
+
+    // ─── Totals block (right-aligned) ───
+    const totalW = 80;
+    const tx = pw - margin - totalW;
+
+    // Subtotal
+    doc.setTextColor(100, 116, 139);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Subtotal', tx, y + 5);
+    doc.setTextColor(15, 23, 42);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`$${fmt(docData.subtotal)}`, pw - margin, y + 5, { align: 'right' });
+    y += 6;
+
+    // GST row (if applicable)
+    if (docData.includeGst) {
+      doc.setTextColor(100, 116, 139);
+      doc.setFont('helvetica', 'normal');
+      doc.text('GST (10%)', tx, y + 5);
+      doc.setTextColor(15, 23, 42);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`$${fmt(docData.gstAmount)}`, pw - margin, y + 5, { align: 'right' });
+      y += 6;
+    }
+
+    // Divider
+    doc.setDrawColor(226, 232, 240);
+    doc.line(tx, y + 2, pw - margin, y + 2);
+    y += 5;
+
+    // Grand Total
+    doc.setFillColor(240, 253, 244);
+    doc.setDrawColor(134, 239, 172);
+    doc.roundedRect(tx - 4, y, totalW + 4, 12, 2, 2, 'FD');
+    doc.setTextColor(21, 128, 61);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`GRAND TOTAL  $${fmt(docData.total)}`, pw - margin - 4, y + 8, { align: 'right' });
+    y += 22;
+
+    // ─── Notes / Terms ───
+    if (docData.notes) {
+      doc.setTextColor(100, 116, 139);
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'bold');
+      doc.text('NOTES / TERMS', margin, y);
+      y += 5;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      const noteLines = doc.splitTextToSize(docData.notes, pw - margin * 2);
+      doc.setTextColor(71, 85, 105);
+      doc.text(noteLines, margin, y);
+    }
+
+    // ─── Footer ───
+    doc.setDrawColor(226, 232, 240);
+    doc.line(margin, ph - 22, pw - margin, ph - 22);
+    // Teal mini-stripe
+    doc.setFillColor(20, 184, 166);
+    doc.rect(margin, ph - 21.5, pw - margin * 2, 0.5, 'F');
+    doc.setTextColor(148, 163, 184);
+    doc.setFontSize(6.5);
+    doc.text('PANIANI PRODUCTS PTY LTD  ·  ACN 682 684 386  ·  ABN 23 715 545 472', pw / 2, ph - 17, { align: 'center' });
+    doc.text('Level 2, 351 Burwood Highway, Forest Hill, VIC 3131, Australia  ·  atlasdt.com', pw / 2, ph - 13, { align: 'center' });
+    doc.text('This is a computer-generated document. No signature required.', pw / 2, ph - 9, { align: 'center' });
+
+    return doc;
+  }
+
+  // ── Sync Helper ──
+  const uploadAndSyncDoc = async (pdfBase64, docData) => {
+    const ts = Date.now();
+    const fileName = `${docData.title.replace(/\s+/g,'_')}_${docData.docRef}_${today()}_${ts}.pdf`;
+    const cleanFileName = `${docData.title.replace(/\s+/g,'_')}_${docData.docRef}_${today()}.pdf`;
+    const storagePath = `documents/${docData.rfqRef}/${fileName}`;
+    
+    // Use Netlify function to bypass RLS
+    const uploadRes = await fetch('/.netlify/functions/storage-upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fileBase64: pdfBase64,
+        fileName: fileName,
+        filePath: storagePath,
+        contentType: 'application/pdf',
+        bucket: 'product_assets'
+      })
+    });
+
+    if (!uploadRes.ok) {
+      const errTxt = await uploadRes.text();
+      console.error('Netlify upload error:', errTxt);
+      throw new Error(`Storage upload failed: ${uploadRes.statusText}`);
+    }
+
+    const uploadData = await uploadRes.json();
+    if (!uploadData.success) {
+      throw new Error(`Storage upload failed: ${uploadData.error || 'Unknown error'}`);
+    }
+
+    if (uploadData.publicUrl) {
+      // Sync to OneDrive via webhook
+      const folderIdentifier = docData.customer.company || docData.customer.name;
+      const companySuffix = folderIdentifier ? ` - ${folderIdentifier.replace(/[\/\\?%*:|"<>]/g, '')}` : '';
+      const spRes = await fetch('/.netlify/functions/webhook-sharepoint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          file_name: cleanFileName,
+          file_url: uploadData.publicUrl,
+          folder_path: `RFQs/${docData.rfqRef}${companySuffix}`,
+          metadata: { rfqRef: docData.rfqRef, type: docData.type }
+        })
+      });
+      if (!spRes.ok) {
+        throw new Error('SharePoint webhook failed: ' + spRes.statusText);
+      }
+    } else {
+      throw new Error('Could not get public URL for document');
+    }
+  };
+
+  // ── Sync Helper for Parts ──
+  function getSyncedParts() {
+    return lineItems.map(li => {
+      let basePart = li._origIdx !== undefined ? (data.parts || data.items || [])[li._origIdx] : {};
+      const descParts = li.description.split(' - ');
