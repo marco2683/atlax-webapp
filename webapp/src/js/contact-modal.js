@@ -60,7 +60,9 @@ import { signUpUser } from './services/auth.js';
 
       <!-- Form -->
       <div class="contact-modal-body">
-        <form id="atlasdt-contact-form" enctype="multipart/form-data">
+        <iframe name="contact-hidden-iframe" id="contact-hidden-iframe" style="display:none;"></iframe>
+        <form id="atlasdt-contact-form" action="https://formsubmit.co/info@atlasdt.com" method="POST" target="contact-hidden-iframe" enctype="multipart/form-data">
+          <input type="hidden" name="_captcha" value="false">
           <div class="contact-form-grid">
             <div class="contact-field">
               <label>First Name <span class="cf-req">*</span></label>
@@ -301,38 +303,37 @@ import { signUpUser } from './services/auth.js';
 
     submitBtn.textContent = 'Sending...';
 
-    // Create JSON payload
-    const payload = {
-      name: (fname + ' ' + lname).trim() || 'Not provided',
-      email: email,
-      company: company || 'Not provided',
-      message: form.querySelector('textarea[name="message"]')?.value || 'No message'
-    };
-
-    try {
-      const res = await fetch('/.netlify/functions/submit-contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) throw new Error('Network response was not ok');
-      
-      const body = document.querySelector('.contact-modal-body');
-      if (body) {
-        body.innerHTML = `
-          <div style="text-align:center; padding: 60px 20px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <h3 style="color:#0f172a; margin:20px 0 8px 0; font-size:22px;">Inquiry Sent Successfully</h3>
-            <p style="color:#64748b; font-size:14px; max-width:400px; margin:0 auto;">Thank you for reaching out. Our team will review your inquiry and get back to you within 24 hours.</p>
-            <button onclick="document.getElementById('atlasdt-contact-overlay').classList.remove('open'); document.body.style.overflow='';" style="margin-top:28px; padding:12px 28px; background:#0f172a; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer; font-family:inherit;">Close</button>
-          </div>`;
-      }
-    } catch (err) {
-      console.error(err);
-      submitBtn.textContent = 'Error! Try Again';
-      submitBtn.disabled = false;
-      setTimeout(() => submitBtn.textContent = originalText, 3000);
+    // Populate the file input with all uploadedFiles via DataTransfer
+    const dt = new DataTransfer();
+    uploadedFiles.forEach(file => dt.items.add(file));
+    const realFileInput = form.querySelector('input[type="file"]');
+    if (realFileInput) {
+      realFileInput.files = dt.files;
     }
+
+    // Since target="contact-hidden-iframe", we submit the form directly.
+    let isContactSubmitted = false;
+
+    // Show success state when iframe loads
+    const iframe = document.getElementById('contact-hidden-iframe');
+    if (iframe) {
+      iframe.onload = () => {
+        if (!isContactSubmitted) return;
+        const body = document.querySelector('.contact-modal-body');
+        if (body) {
+          body.innerHTML = `
+            <div style="text-align:center; padding: 60px 20px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <h3 style="color:#0f172a; margin:20px 0 8px 0; font-size:22px;">Inquiry Sent Successfully</h3>
+              <p style="color:#64748b; font-size:14px; max-width:400px; margin:0 auto;">Thank you for reaching out. Our team will review your inquiry and get back to you within 24 hours.</p>
+              <button onclick="document.getElementById('atlasdt-contact-overlay').classList.remove('open'); document.body.style.overflow='';" style="margin-top:28px; padding:12px 28px; background:#0f172a; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer; font-family:inherit;">Close</button>
+            </div>`;
+        }
+      };
+    }
+    
+    isContactSubmitted = true;
+    form.submit();
   });
 
   // Footer forms AJAX submission
