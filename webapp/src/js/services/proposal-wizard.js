@@ -346,38 +346,25 @@ export function openProposalWizard() {
 
   async function generateDocxAndAct(action) {
     const totalAmount = state.budgetLines.reduce((s, b) => s + (Number(b.amount) || 0), 0);
+    
+    const logoDataUrl = await getLogoBase64();
+    let logoBuffer = null;
+    if (logoDataUrl) {
+      try {
+        const logoBase64 = logoDataUrl.split(',')[1];
+        logoBuffer = Uint8Array.from(atob(logoBase64), c => c.charCodeAt(0)).buffer;
+      } catch(e) {}
+    }
 
     const docSections = [];
 
-    // Header Content
+    // Cover Info
     docSections.push(
       new docx.Paragraph({
         children: [
-          new docx.TextRun({ text: "ATLAS DESIGN & TECHNOLOGY", bold: true, size: 28, font: "Arial", color: "1e3a5f" }),
+          new docx.TextRun({ text: state.projectName || 'Development Agreement', bold: true, size: 36, font: "Arial", color: "0f172a" }),
         ],
-        alignment: docx.AlignmentType.CENTER,
         spacing: { after: 400 }
-      }),
-      new docx.Paragraph({
-        children: [
-          new docx.TextRun({ text: "PROJECT PROPOSAL", bold: true, size: 48, font: "Arial", color: "14b8a6" }),
-        ],
-        alignment: docx.AlignmentType.CENTER,
-        spacing: { after: 600 }
-      }),
-      new docx.Paragraph({
-        children: [
-          new docx.TextRun({ text: `Date: ${state.date}`, size: 24, font: "Arial" }),
-        ],
-        alignment: docx.AlignmentType.CENTER,
-        spacing: { after: 200 }
-      }),
-      new docx.Paragraph({
-        children: [
-          new docx.TextRun({ text: `Reference: ${state.docRef}`, size: 24, font: "Arial" }),
-        ],
-        alignment: docx.AlignmentType.CENTER,
-        spacing: { after: 600 }
       }),
       new docx.Paragraph({
         children: [
@@ -503,9 +490,67 @@ export function openProposalWizard() {
       })
     );
 
+    const headerChildren = [];
+    if (logoBuffer) {
+      headerChildren.push(new docx.Paragraph({ children: [new docx.ImageRun({ data: logoBuffer, transformation: { width: 140, height: 44 } })], alignment: docx.AlignmentType.LEFT }));
+    }
+
     const doc = new docx.Document({
       sections: [{
-        properties: {},
+        properties: {
+          page: { margin: { top: 1200, bottom: 1200, left: 1440, right: 1440 } }
+        },
+        headers: {
+          default: new docx.Header({
+            children: [
+              new docx.Table({
+                width: { size: 100, type: docx.WidthType.PERCENTAGE },
+                borders: docx.TableBorders.NONE,
+                rows: [
+                  new docx.TableRow({
+                    children: [
+                      new docx.TableCell({ children: headerChildren, shading: { fill: "1e3a5f" }, margins: { top: 200, bottom: 200, left: 200, right: 200 }, verticalAlign: docx.VerticalAlign.CENTER }),
+                      new docx.TableCell({
+                        children: [
+                          new docx.Paragraph({ children: [new docx.TextRun({ text: "PROJECT PROPOSAL", bold: true, color: "ffffff", size: 28, font: "Arial" })], alignment: docx.AlignmentType.RIGHT }),
+                          new docx.Paragraph({ children: [new docx.TextRun({ text: state.docRef, color: "ffffff", size: 18, font: "Arial" })], alignment: docx.AlignmentType.RIGHT }),
+                          new docx.Paragraph({ children: [new docx.TextRun({ text: `Date: ${state.date}`, color: "b4c8dc", size: 16, font: "Arial" })], alignment: docx.AlignmentType.RIGHT })
+                        ],
+                        shading: { fill: "1e3a5f" }, margins: { top: 200, bottom: 200, left: 200, right: 200 }, verticalAlign: docx.VerticalAlign.CENTER
+                      })
+                    ]
+                  }),
+                  new docx.TableRow({
+                    children: [
+                      new docx.TableCell({ children: [], columnSpan: 2, shading: { fill: "14b8a6" }, height: { value: 40, rule: docx.HeightRule.EXACT } })
+                    ]
+                  })
+                ]
+              }),
+              new docx.Paragraph({ spacing: { after: 400 } })
+            ]
+          })
+        },
+        footers: {
+          default: new docx.Footer({
+            children: [
+              new docx.Paragraph({ border: { top: { color: "e2e8f0", space: 1, value: docx.BorderStyle.SINGLE, size: 6 } }, spacing: { before: 200, after: 100 } }),
+              new docx.Table({
+                width: { size: 100, type: docx.WidthType.PERCENTAGE },
+                borders: docx.TableBorders.NONE,
+                rows: [
+                  new docx.TableRow({
+                    children: [
+                      new docx.TableCell({ children: [new docx.Paragraph({ children: [new docx.TextRun({ text: "Atlas Design & Technology", size: 14, color: "94a3b8", font: "Arial" })] })] }),
+                      new docx.TableCell({ children: [new docx.Paragraph({ children: [new docx.TextRun({ text: "Page ", size: 14, color: "94a3b8", font: "Arial" }), docx.PageNumber.CURRENT, new docx.TextRun({ text: " of ", size: 14, color: "94a3b8", font: "Arial" }), docx.PageNumber.TOTAL_PAGES], alignment: docx.AlignmentType.CENTER })] }),
+                      new docx.TableCell({ children: [new docx.Paragraph({ children: [new docx.TextRun({ text: "Confidential & Proprietary", size: 14, color: "94a3b8", font: "Arial" })], alignment: docx.AlignmentType.RIGHT })] })
+                    ]
+                  })
+                ]
+              })
+            ]
+          })
+        },
         children: docSections
       }]
     });
