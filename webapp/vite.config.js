@@ -271,8 +271,9 @@ function crudPlugin() {
               const env = loadEnv('development', process.cwd(), '');
               const MICROSOFT_SHAREPOINT_WEBHOOK_URL = env.MICROSOFT_SHAREPOINT_WEBHOOK_URL;
               
+              console.log('[SharePoint Local Mock] Payload received:', JSON.stringify(payload, null, 2));
               if (!MICROSOFT_SHAREPOINT_WEBHOOK_URL) {
-                console.warn('MICROSOFT_SHAREPOINT_WEBHOOK_URL is not set. Skipping SharePoint sync locally.');
+                console.warn('[SharePoint Local Mock] MICROSOFT_SHAREPOINT_WEBHOOK_URL is not set. Skipping SharePoint sync locally.');
                 res.setHeader('Content-Type', 'application/json');
                 return res.end(JSON.stringify({ success: true, message: 'SharePoint sync skipped (No Webhook URL configured)' }));
               }

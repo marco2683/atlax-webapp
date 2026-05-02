@@ -7,10 +7,10 @@ exports.handler = async (event, context) => {
     const payload = JSON.parse(event.body);
     console.log('[webhook-sharepoint] Received payload:', JSON.stringify(payload, null, 2));
 
-    const MICROSOFT_SHAREPOINT_WEBHOOK_URL = process.env.MICROSOFT_SHAREPOINT_WEBHOOK_URL;
+    const MICROSOFT_SHAREPOINT_WEBHOOK_URL = process.env.MICROSOFT_PLANNER_WEBHOOK_URL || process.env.MICROSOFT_SHAREPOINT_WEBHOOK_URL;
     
     if (!MICROSOFT_SHAREPOINT_WEBHOOK_URL) {
-      console.warn('[webhook-sharepoint] MICROSOFT_SHAREPOINT_WEBHOOK_URL is not set. Skipping SharePoint sync.');
+      console.warn('[webhook-sharepoint] No webhook URL found. Checked MICROSOFT_PLANNER_WEBHOOK_URL and MICROSOFT_SHAREPOINT_WEBHOOK_URL.');
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
