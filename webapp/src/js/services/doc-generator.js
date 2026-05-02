@@ -693,7 +693,8 @@ SWIFT / BIC: NATAAU3303</textarea>
       documents: docs,
       parts: getSyncedParts(),
       admin_final_price: docData.total,
-      total_price: docData.total
+      total_price: docData.total,
+      is_amending: false
     };
 
     try {
@@ -751,7 +752,8 @@ SWIFT / BIC: NATAAU3303</textarea>
         documents: docs,
         parts: getSyncedParts(),
         admin_final_price: docData.total,
-        total_price: docData.total
+        total_price: docData.total,
+        is_amending: false
       };
 
       // 1. Generate PDF as base64

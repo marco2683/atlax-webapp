@@ -69,14 +69,17 @@ function createPartPanelHTML(partIdx) {
     <details class="rfq-part-card-container rfq-part-card needs-tech-selection" data-part="${partIdx}" open>
       <summary>
         <div style="display: flex; gap: 12px; align-items: flex-start; width: 100%;">
-          <!-- Larger Thumbnail -->
-          <div class="rfq-part-thumb-box rfq-part-thumb-wrapper" style="flex-shrink: 0; position: relative;">
-            <div class="rfq-results-placeholder" data-part="${partIdx}" style="text-align: center; color: var(--color-steel-400, #94a3b8); width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          <!-- Larger Thumbnail & Expand Icon -->
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0;">
+            <div class="rfq-part-thumb-box rfq-part-thumb-wrapper" style="position: relative;">
+              <div class="rfq-results-placeholder" data-part="${partIdx}" style="text-align: center; color: var(--color-steel-400, #94a3b8); width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              </div>
+              <div class="rfq-results hidden" data-part="${partIdx}" style="position:absolute; top:0; left:0; width:100%; height:100%; display: flex; align-items: center; justify-content: center;">
+                <div class="rfq-results__thumbnail" data-part="${partIdx}" style="width:100%; height:100%; display: flex; align-items: center; justify-content: center;"></div>
+              </div>
             </div>
-            <div class="rfq-results hidden" data-part="${partIdx}" style="position:absolute; top:0; left:0; width:100%; height:100%; display: flex; align-items: center; justify-content: center;">
-              <div class="rfq-results__thumbnail" data-part="${partIdx}" style="width:100%; height:100%; display: flex; align-items: center; justify-content: center;"></div>
-            </div>
+            <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-steel-400, #94a3b8)" stroke-width="2" style="margin-top: 2px;"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </div>
           
           <div style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0;">
@@ -111,7 +114,6 @@ function createPartPanelHTML(partIdx) {
           </div>
 
           <div style="display: flex; align-items: flex-start; gap: 8px; margin-left: 4px; padding-top: 2px;">
-            <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
             <button class="rfq-part-remove" data-part="${partIdx}" title="Remove part" style="background: none; border: none; color: var(--color-steel-400, #94a3b8); cursor: pointer; padding: 4px; display: flex; align-items: center;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
@@ -287,10 +289,53 @@ export function initRFQController() {
   // shippingData is module-level (hoisted for calculateAndDisplayQuote access)
 
   if (calcShippingCb && shippingSection) {
-    calcShippingCb.addEventListener('change', (e) => {
+    calcShippingCb.addEventListener('change', async (e) => {
       if (e.target.checked) {
         shippingSection.classList.remove('hidden');
         if (Object.keys(shippingData).length === 0) {
+          // Pre-load shipping data from profile if available
+          try {
+            const { data: sessionData } = await supabase.auth.getSession();
+            const user = sessionData?.session?.user;
+            if (user) {
+              const { data: profile } = await supabase.from('profiles').select('first_name, last_name, company, phone, shipping_address, address').eq('id', user.id).single();
+              if (profile) {
+                let sAddr = null;
+                if (profile.shipping_address) {
+                  sAddr = typeof profile.shipping_address === 'string' ? JSON.parse(profile.shipping_address) : profile.shipping_address;
+                } else if (profile.address) {
+                  sAddr = typeof profile.address === 'string' ? JSON.parse(profile.address) : profile.address;
+                }
+                
+                if (sAddr && (sAddr.line1 || sAddr.city)) {
+                  document.getElementById('ship-modal-company').value = profile.company || '';
+                  document.getElementById('ship-modal-attention').value = `${profile.first_name || ''} ${profile.last_name || ''}`.trim();
+                  document.getElementById('ship-modal-phone').value = (sAddr.phone_prefix ? sAddr.phone_prefix + ' ' : '') + (sAddr.phone || profile.phone || '');
+                  document.getElementById('ship-modal-address1').value = sAddr.line1 || '';
+                  document.getElementById('ship-modal-address2').value = sAddr.line2 || '';
+                  document.getElementById('ship-modal-city').value = sAddr.city || '';
+                  document.getElementById('ship-modal-province').value = sAddr.state || '';
+                  document.getElementById('ship-modal-postcode').value = sAddr.postcode || '';
+                  
+                  if (sAddr.country) {
+                    const c = sAddr.country.toLowerCase();
+                    let mappedCountry = '';
+                    if (['us', 'usa', 'united states', 'canada', 'ca'].includes(c)) mappedCountry = 'north_america';
+                    else if (['au', 'australia', 'nz', 'new zealand'].includes(c)) mappedCountry = 'oceania';
+                    else if (['uk', 'united kingdom', 'gb', 'germany', 'france', 'italy', 'spain', 'europe'].includes(c)) mappedCountry = 'europe';
+                    else if (['cn', 'china', 'jp', 'japan', 'sg', 'singapore', 'asia'].includes(c)) mappedCountry = 'asia';
+                    else mappedCountry = 'rest_of_world';
+                    
+                    if (mappedCountry) {
+                      document.getElementById('ship-modal-country').value = mappedCountry;
+                    }
+                  }
+                }
+              }
+            }
+          } catch(err) {
+            console.warn('Could not load profile shipping data', err);
+          }
           if (shippingModal) shippingModal.classList.remove('hidden');
         }
       } else {
@@ -401,7 +446,35 @@ export function initRFQController() {
 
   // Wire the "clear all" button in the quote result panel
   document.getElementById('rfq-clear-all-parts')?.addEventListener('click', () => {
-    document.getElementById('rfq-dynamic-parts-container').innerHTML = '';
+    document.getElementById('rfq-dynamic-parts-container').innerHTML = `
+      <!-- Placeholder Cards (Disabled Preview) -->
+      <div class="rfq-placeholder-card" style="border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; display: flex; gap: 16px; align-items: center; opacity: 0.6; background: rgba(255,255,255,0.01); pointer-events: none; user-select: none;">
+        <div style="width: 56px; height: 56px; border-radius: 8px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+          <div style="height: 14px; width: 30%; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+          <div style="display: flex; gap: 12px;">
+            <div style="height: 10px; width: 15%; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+            <div style="height: 10px; width: 15%; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+            <div style="height: 10px; width: 25%; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="rfq-placeholder-card" style="border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; display: flex; gap: 16px; align-items: center; opacity: 0.3; background: rgba(255,255,255,0.01); pointer-events: none; user-select: none;">
+        <div style="width: 56px; height: 56px; border-radius: 8px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+          <div style="height: 14px; width: 25%; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+          <div style="display: flex; gap: 12px;">
+            <div style="height: 10px; width: 15%; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+            <div style="height: 10px; width: 15%; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+            <div style="height: 10px; width: 20%; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+          </div>
+        </div>
+      </div>
+    `;
     quotedParts.clear();
     partState.clear();
     partCount = 1;
@@ -422,6 +495,8 @@ export function initRFQController() {
     btn.disabled = true;
     btn.textContent = 'Submitting...';
 
+    showRFQProgressModal();
+
     const rfqId = window.crypto?.randomUUID?.() || Date.now().toString();
     const partsArray = Array.from(quotedParts.values());
     const projNameInput = document.getElementById('instant-rfq-project-name')?.value?.trim();
@@ -431,7 +506,11 @@ export function initRFQController() {
     partsArray.forEach(p => { grandTotal += (p.quote?.totalPrice || 0); });
 
     const uploadedParts = [];
+    let completedFiles = 0;
+    const totalFiles = partsArray.length;
+
     for (const p of partsArray) {
+      updateRFQProgress((completedFiles / totalFiles) * 100, `Uploading ${p.file ? p.file.name : 'Data'}... (${completedFiles}/${totalFiles})`);
       let storagePath = null;
       let bucket = 'rfq-uploads';
       if (p.file) {
@@ -450,7 +529,10 @@ export function initRFQController() {
         }
       }
       uploadedParts.push({ ...p, storage_path: storagePath, bucket: bucket });
+      completedFiles++;
+      updateRFQProgress((completedFiles / totalFiles) * 100, `Uploaded ${p.file ? p.file.name : 'Data'}... (${completedFiles}/${totalFiles})`);
     }
+    updateRFQProgress(100, 'Finalizing submission...');
 
     // Determine shipping info at submission time
     let submittedShipping = null;
@@ -476,16 +558,7 @@ export function initRFQController() {
       grandTotal += shippingCostVal;
     }
 
-    const rfqData = {
-      type: 'instant',
-      project_name: projName,
-      service: 'Instant Quote',
-      estimated_quantity: partsArray.reduce((acc, p) => acc + (p.config?.quantity || 1), 0),
-      total_price: grandTotal,
-      target_timeline: 'Flexible',
-      notes: 'Generated via Instant Quoting Engine',
-      shipping: submittedShipping,
-      parts: uploadedParts.map(p => {
+      const partsPayload = uploadedParts.map(p => {
         // Serialize analysis without the heavy geometry mesh data
         let serializedAnalysis = null;
         if (p.analysis) {
@@ -509,7 +582,33 @@ export function initRFQController() {
           storage_path: p.storage_path,
           bucket: p.bucket
         };
-      }),
+      });
+
+      if (submittedShipping && submittedShipping.cost > 0) {
+        partsPayload.push({
+          name: `Shipping (${submittedShipping.method})`,
+          process: 'Logistics',
+          qty: 1,
+          material: '-',
+          finish: '-',
+          price: submittedShipping.cost,
+          lead_time: submittedShipping.transit_days || '-',
+          analysis: null,
+          storage_path: null,
+          bucket: null
+        });
+      }
+
+    const rfqData = {
+      type: 'instant',
+      project_name: projName,
+      service: 'Instant Quote',
+      estimated_quantity: partsArray.reduce((acc, p) => acc + (p.config?.quantity || 1), 0),
+      total_price: grandTotal,
+      target_timeline: 'Flexible',
+      notes: 'Generated via Instant Quoting Engine',
+      shipping: submittedShipping,
+      parts: partsPayload,
       submitted_at: new Date().toISOString()
     };
 
@@ -563,6 +662,7 @@ export function initRFQController() {
       console.error('[RFQ] Instant quote error:', e);
       alert('Failed to submit quote: ' + e.message);
     } finally {
+      removeRFQProgressModal();
       btn.disabled = false;
       btn.textContent = originalText;
     }
@@ -820,6 +920,9 @@ function wirePartPanel(partIdx) {
 function processMainUpload(fileList) {
   const files = Array.from(fileList);
   const panelsContainer = document.getElementById('rfq-dynamic-parts-container');
+  
+  // Remove placeholder cards if present
+  panelsContainer.querySelectorAll('.rfq-placeholder-card').forEach(el => el.remove());
   
   files.forEach(file => {
     const ext = file.name.split('.').pop().toLowerCase();
@@ -1676,6 +1779,41 @@ export function showRFQSuccessModal(type) {
   document.getElementById('rfq-success-modal-close').addEventListener('click', (e) => {
     e.target.closest('#rfq-success-modal-overlay').remove();
   });
+}
+
+export function showRFQProgressModal() {
+  const modalHTML = `
+    <div id="rfq-progress-modal-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px); z-index:9999; display:flex; align-items:center; justify-content:center;">
+      <div style="background:#0f172a; border:1px solid rgba(255,255,255,0.1); border-radius:24px; padding:40px; max-width:440px; width:90%; text-align:center; box-shadow:0 30px 60px rgba(0,0,0,0.6); animation: rfqFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div class="rfq-spinner" style="width:48px; height:48px; border:4px solid rgba(59,130,246,0.3); border-top-color:#3b82f6; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 24px;"></div>
+        <h2 style="color:white; font-size:22px; font-weight:800; margin-bottom:14px;">Uploading Files...</h2>
+        <p style="color:#94a3b8; font-size:15px; margin-bottom:24px;">Please wait while we securely process your data.</p>
+        <div style="background:rgba(255,255,255,0.05); border-radius:8px; height:8px; overflow:hidden; width:100%;">
+          <div id="rfq-progress-bar-fill" style="background:#3b82f6; height:100%; width:0%; transition:width 0.3s;"></div>
+        </div>
+        <div id="rfq-progress-text" style="color:#94a3b8; font-size:13px; margin-top:12px; font-weight:600;">0%</div>
+      </div>
+    </div>
+    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+  `;
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = modalHTML;
+  document.body.appendChild(wrapper.firstElementChild);
+}
+
+export function updateRFQProgress(percent, text) {
+  const fill = document.getElementById('rfq-progress-bar-fill');
+  const txt = document.getElementById('rfq-progress-text');
+  if (fill) fill.style.width = percent + '%';
+  if (txt) {
+    if (text) txt.textContent = text;
+    else txt.textContent = Math.round(percent) + '%';
+  }
+}
+
+export function removeRFQProgressModal() {
+  const el = document.getElementById('rfq-progress-modal-overlay');
+  if (el) el.remove();
 }
 
 /**

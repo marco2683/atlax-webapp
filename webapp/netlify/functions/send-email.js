@@ -114,52 +114,58 @@ exports.handler = async (event, context) => {
         ).join('') || '<li style="color:#999;">No files listed</li>';
 
         htmlContent = `
-          <div style="font-family: 'Inter', sans-serif; max-width: 640px; margin: 0 auto; padding: 24px; color: #333;">
+          <div style="font-family: 'Inter', sans-serif; max-width: 640px; margin: 0 auto; padding: 32px 24px; color: #333; background-color: #f8fafc; border-radius: 12px;">
             <div style="text-align: center; margin-bottom: 30px;">
               <img src="${logoUrl}" alt="Atlas DT" style="height: 40px;" />
             </div>
-            <h2 style="color: #0ea5e9; font-size: 22px; margin-bottom: 4px;">New Project Quote Request</h2>
-            <p style="color: #6b7280; font-size: 14px; margin-top: 0;">A new RFQ has been submitted via the Project Quote engine.</p>
-
-            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-              <tr style="border-bottom: 1px solid #e5e7eb;">
-                <td style="padding: 10px 0; font-weight: 600; color: #374151; width: 140px;">Project Name</td>
-                <td style="padding: 10px 0; color: #111827;">${projectName || '—'}</td>
-              </tr>
-              <tr style="border-bottom: 1px solid #e5e7eb;">
-                <td style="padding: 10px 0; font-weight: 600; color: #374151;">Service</td>
-                <td style="padding: 10px 0; color: #111827;">${serviceLabels[service] || service || '—'}</td>
-              </tr>
-              <tr style="border-bottom: 1px solid #e5e7eb;">
-                <td style="padding: 10px 0; font-weight: 600; color: #374151;">Est. Quantity</td>
-                <td style="padding: 10px 0; color: #111827;">${quantity || '—'}</td>
-              </tr>
-              <tr style="border-bottom: 1px solid #e5e7eb;">
-                <td style="padding: 10px 0; font-weight: 600; color: #374151;">Timeline</td>
-                <td style="padding: 10px 0; color: #111827;">${timelineLabels[timeline] || timeline || '—'}</td>
-              </tr>
-              <tr style="border-bottom: 1px solid #e5e7eb;">
-                <td style="padding: 10px 0; font-weight: 600; color: #374151;">Files Uploaded</td>
-                <td style="padding: 10px 0; color: #111827;">${fileCount || 0} file(s)</td>
-              </tr>
-            </table>
-
-            <h3 style="font-size: 14px; color: #374151; margin-bottom: 8px;">Uploaded Files</h3>
-            <ul style="margin: 0; padding-left: 20px; font-size: 13px;">${fileListHtml}</ul>
-
-            <div style="background: #f3f4f6; border-radius: 8px; padding: 16px; margin-top: 24px;">
-              <h3 style="font-size: 14px; color: #374151; margin: 0 0 8px;">Requester</h3>
-              <p style="margin: 4px 0; font-size: 14px; color: #111827;"><strong>${name || '—'}</strong></p>
-              <p style="margin: 4px 0; font-size: 13px; color: #6b7280;">${email || '—'}</p>
-              ${company ? `<p style="margin: 4px 0; font-size: 13px; color: #6b7280;">${company}</p>` : ''}
+            
+            <div style="background: #ffffff; padding: 32px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);">
+              <h2 style="color: #0ea5e9; font-size: 24px; margin-top: 0; margin-bottom: 16px;">We've received your request!</h2>
+              <p style="font-size: 16px; line-height: 1.6; color: #475569; margin-bottom: 20px;">
+                Hi ${name ? name.split(' ')[0] : 'there'},<br><br>
+                This is the team from AtlasDT. We wanted to let you know that we've safely received your project quote request.
+              </p>
+              <p style="font-size: 16px; line-height: 1.6; color: #475569; margin-bottom: 24px;">
+                One of our engineers is reviewing your files right now. We will either get back to you shortly to request a bit more information, or we'll provide your full quotation within <strong>24 to 48 hours</strong>.
+              </p>
+              <div style="background: #f1f5f9; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+                <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; margin-top: 0; margin-bottom: 12px;">Project Summary</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                  <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 10px 0; font-weight: 600; color: #334155; width: 140px; font-size: 14px;">Project Name</td>
+                    <td style="padding: 10px 0; color: #0f172a; font-size: 14px;">${projectName || '—'}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 10px 0; font-weight: 600; color: #334155; font-size: 14px;">Service</td>
+                    <td style="padding: 10px 0; color: #0f172a; font-size: 14px;">${serviceLabels[service] || service || '—'}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 10px 0; font-weight: 600; color: #334155; font-size: 14px;">Est. Quantity</td>
+                    <td style="padding: 10px 0; color: #0f172a; font-size: 14px;">${quantity || '—'}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 10px 0; font-weight: 600; color: #334155; font-size: 14px;">Timeline</td>
+                    <td style="padding: 10px 0; color: #0f172a; font-size: 14px;">${timelineLabels[timeline] || timeline || '—'}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px 0; font-weight: 600; color: #334155; font-size: 14px;">Files Uploaded</td>
+                    <td style="padding: 10px 0; color: #0f172a; font-size: 14px;">${fileCount || 0} file(s)</td>
+                  </tr>
+                </table>
+              </div>
+              <h3 style="font-size: 14px; color: #334155; margin-bottom: 8px;">Uploaded Files</h3>
+              <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #475569; margin-bottom: 24px;">${fileListHtml}</ul>
+              
+              <p style="font-size: 15px; line-height: 1.6; color: #475569; margin-bottom: 0;">
+                If you need to make any changes or have questions in the meantime, just reply directly to this email. We're here to help!
+              </p>
             </div>
-
-            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0 16px;" />
-            <p style="font-size: 12px; color: #9ca3af; text-align: center;">
-              Please log in to the <a href="https://atlasdt.com/admin.html" style="color: #0ea5e9;">Admin Panel</a> to review this request.
-            </p>
-            <div style="text-align: center; margin-top: 20px;">
-              <span style="font-size: 11px; color: #999;">Copyright &copy; Atlas DT. All rights reserved.</span>
+            
+            <div style="text-align: center; margin-top: 30px;">
+              <p style="font-size: 12px; color: #94a3b8; margin-bottom: 8px;">
+                You can manage your requests in your <a href="https://atlasdt.com/workspace.html" style="color: #0ea5e9; text-decoration: none;">Workspace</a>.
+              </p>
+              <span style="font-size: 11px; color: #94a3b8;">&copy; ${new Date().getFullYear()} AtlasDT. All rights reserved.</span>
             </div>
           </div>
         `;

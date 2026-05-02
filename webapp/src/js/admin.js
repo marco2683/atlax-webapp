@@ -2097,6 +2097,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (rfq) openRFQDetailModal(rfq, profileMap, rfqs);
       });
     });
+
+    // Double-click row handler
+    contentRouting.querySelectorAll('#admin-rfq-table tbody tr[data-rfq-id]').forEach(row => {
+      row.style.userSelect = 'none'; // Prevent text selection on double click
+      row.addEventListener('dblclick', (e) => {
+        if (e.target.closest('select') || e.target.closest('button')) return;
+        const rfqId = row.dataset.rfqId;
+        const rfq = rfqs.find(r => r.id === rfqId);
+        if (rfq) openRFQDetailModal(rfq, profileMap, rfqs);
+      });
+    });
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -2204,20 +2215,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const hasBeenConfirmed = !!data.confirmed_price || !!data.confirmed_at || ['confirmed', 'processing', 'paid', 'shipped'].includes(rfq.status || data.status || 'submitted');
     const confirmedDateStr = data.confirmed_at ? new Date(data.confirmed_at).toLocaleDateString() : (hasBeenConfirmed ? new Date(rfq.created_at).toLocaleDateString() : '');
 
+    const documents = Array.isArray(data.documents) ? data.documents : [];
+    const overrides = data.timeline_overrides || {};
+    const quotedDoc = documents.slice().reverse().find(d => d.type === 'quotation');
+    const stepQuote = overrides['Quoted'] !== undefined ? overrides['Quoted'] : !!quotedDoc;
+    const isQuoteLocked = stepQuote && !data.is_amending;
+
     function getTimelineHTML() {
       const commLog = data.communication_log || [];
       const currentStatusForConfirm = rfq.status || data.status || 'submitted';
       const statusIdx = ['submitted', 'under_review', 'confirmed', 'paid', 'processing', 'shipped'].indexOf(currentStatusForConfirm);
-      const documents = Array.isArray(data.documents) ? data.documents : [];
-      const overrides = data.timeline_overrides || {};
       
       const stepSubmitted = overrides['Submitted'] !== undefined ? overrides['Submitted'] : true;
       const stepReview = overrides['Under Review'] !== undefined ? overrides['Under Review'] : (statusIdx >= 1 || currentStatusForConfirm !== 'submitted');
       const stepInfo = overrides['Info Req.'] !== undefined ? overrides['Info Req.'] : (commLog.length > 0);
       const stepConfirmed = overrides['Confirmed'] !== undefined ? overrides['Confirmed'] : (hasBeenConfirmed || statusIdx >= 2);
-      
-      const quotedDoc = documents.slice().reverse().find(d => d.type === 'quotation');
-      const stepQuote = overrides['Quoted'] !== undefined ? overrides['Quoted'] : !!quotedDoc;
       
       const invoiceDoc = documents.slice().reverse().find(d => (d.type === 'proforma' || d.type === 'invoice'));
       const stepPaid = overrides['Paid'] !== undefined ? overrides['Paid'] : (data.payment_status === 'paid' || statusIdx >= 3);
@@ -2263,12 +2275,21 @@ document.addEventListener('DOMContentLoaded', async () => {
               ` : '<div style="height:15px; margin-top:2px;"></div>'}
               
               ${step.label === 'Confirmed' ? `
-                <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 20px; background: ${currentStatusForConfirm === 'rejected' ? '#ef4444' : '#e2e8f0'}; z-index: -1;"></div>
-                <div style="position: absolute; top: 44px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
+                <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 36px; background: ${currentStatusForConfirm === 'rejected' ? '#ef4444' : '#e2e8f0'}; z-index: -1;"></div>
+                <div style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
                   <div class="timeline-step-circle" data-step="Rejected" style="cursor: pointer; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid #fff; box-shadow: 0 0 0 1px ${currentStatusForConfirm === 'rejected' ? '#ef4444' : '#cbd5e1'}; background: ${currentStatusForConfirm === 'rejected' ? '#ef4444' : '#f8fafc'}; color: ${currentStatusForConfirm === 'rejected' ? '#fff' : '#64748b'}; transition: all 0.2s;">
                     ✕
                   </div>
                   <div style="font-size: 10px; font-weight: 600; color: ${currentStatusForConfirm === 'rejected' ? '#ef4444' : '#94a3b8'}; margin-top: 6px; text-transform: uppercase;">Rejected</div>
+                </div>
+              ` : ''}
+              
+              ${(step.label === 'Quoted' && step.active && !data.is_amending) ? `
+                <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 36px; background: #e2e8f0; z-index: -1;"></div>
+                <div style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
+                  <button id="admin-amend-quote-timeline-btn" style="cursor: pointer; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; background: #fef08a; color: #854d0e; border: 1px solid #fde047; transition: all 0.2s; white-space: nowrap;">
+                    AMEND QUOTE
+                  </button>
                 </div>
               ` : ''}
             </div>
@@ -2281,14 +2302,14 @@ document.addEventListener('DOMContentLoaded', async () => {
            <button id="rfq-confirm-client-btn" data-rfq-id="${rfq.id}" disabled
              style="padding:7px 16px; background:#f1f5f9; color:#16a34a; border:1px solid #bbf7d0; border-radius:8px; font-size:12px; font-weight:700; cursor:default; font-family:inherit; display:flex; align-items:center; gap:6px;">
              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-             Confirmed
+             Confirmed to Customer
            </button>
            <div style="font-size:10px; color:#64748b; font-weight:600;">${confirmedDateStr}</div>
          </div>`
       : `<button id="rfq-confirm-client-btn" data-rfq-id="${rfq.id}"
-            style="padding:0 12px; height:32px; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; border:none; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:4px; box-shadow:0 2px 8px rgba(22,163,74,0.35); box-sizing: border-box; white-space:nowrap;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Confirm
+            style="padding:0 20px; height:40px; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(22,163,74,0.4); box-sizing: border-box; white-space:nowrap;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Confirm to Customer
           </button>`;
 
     const modal = document.createElement('div');
@@ -2349,12 +2370,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div style="display:flex; flex-direction:column; gap:4px;">
               <label style="font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Final Price (USD)</label>
               <input id="rfq-modal-final-price" type="number" step="0.01" min="0" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\\..*)\\./g, '$1'); if(this.value.includes('.')){ const parts = this.value.split('.'); if(parts[1].length > 2) this.value = parts[0] + '.' + parts[1].slice(0,2); }"
+              <input id="rfq-modal-final-price" type="number" step="0.01" min="0" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\\..*)\\./g, '$1'); if(this.value.includes('.')){ const parts = this.value.split('.'); if(parts[1].length > 2) this.value = parts[0] + '.' + parts[1].slice(0,2); }"
                 value="${data.admin_final_price || data.total_price || ''}"
                 placeholder="0.00"
-                style="padding:6px 10px; border-radius:6px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; font-family:inherit; width:90px; background:#fff; height: 32px; box-sizing: border-box;">
+                ${isQuoteLocked ? 'disabled' : ''}
+                style="padding:6px 10px; border-radius:6px; border:1px solid #e2e8f0; font-size:13px; font-weight:600; font-family:inherit; width:90px; background:${isQuoteLocked ? '#f1f5f9' : '#fff'}; height: 32px; box-sizing: border-box; color: ${isQuoteLocked ? '#94a3b8' : 'inherit'};">
             </div>
             <button id="rfq-save-price-btn" data-rfq-id="${rfq.id}"
-              style="padding:0 12px; height: 32px; background:#0f172a; color:#fff; border:none; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; box-sizing: border-box;">Update</button>
+              style="padding:0 12px; height: 32px; background:#0f172a; color:#fff; border:none; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; box-sizing: border-box; display: ${isQuoteLocked ? 'none' : 'block'};">Update</button>
           </div>
           
           <!-- Actions on the right -->
@@ -2366,11 +2389,11 @@ document.addEventListener('DOMContentLoaded', async () => {
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               Confirm Payment Received
             </button>` : ''}
-            <button id="rfq-generate-quote-btn" style="padding:6px 10px; height:32px; background:#fff; color:#0f172a; border:1px solid #e2e8f0; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px; font-family:inherit; box-sizing: border-box; white-space:nowrap;" title="Generate Formal Quotation">
+            <button id="rfq-generate-quote-btn" style="padding:6px 10px; height:32px; background:#fff; color:#0f172a; border:1px solid #e2e8f0; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; display:${isQuoteLocked ? 'none' : 'flex'}; align-items:center; gap:4px; font-family:inherit; box-sizing: border-box; white-space:nowrap;" title="Generate Formal Quotation">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
               Quote
             </button>
-            <button id="rfq-generate-invoice-btn" style="padding:6px 10px; height:32px; background:#fff; color:#0f172a; border:1px solid #e2e8f0; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px; font-family:inherit; box-sizing: border-box; white-space:nowrap;" title="Generate Proforma/Commercial Invoice">
+            <button id="rfq-generate-invoice-btn" style="padding:6px 10px; height:32px; background:#fff; color:#0f172a; border:1px solid #e2e8f0; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; display:${isQuoteLocked ? 'none' : 'flex'}; align-items:center; gap:4px; font-family:inherit; box-sizing: border-box; white-space:nowrap;" title="Generate Proforma/Commercial Invoice">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
               Invoice
             </button>
@@ -2417,6 +2440,17 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
         </div>
 
+
+        <!-- Amend Quote panel (hidden by default) -->
+        <div id="rfq-amend-panel" style="display:none; padding:12px 28px; background:#fefce8; border-bottom:2px solid #fef08a;">
+          <div style="font-size:12px; font-weight:700; color:#854d0e; margin-bottom:6px;">Reason for Amending Quote / Invoice</div>
+          <textarea id="rfq-amend-reason" rows="2" placeholder="e.g. Client requested a change in quantity, fixing a typo, etc."
+            style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #fef08a; font-size:13px; font-family:inherit; resize:vertical; background:#fff; color:#0f172a; outline:none;"></textarea>
+          <div style="display:flex; gap:8px; margin-top:8px; justify-content:flex-end;">
+            <button id="rfq-amend-cancel-btn" style="padding:7px 14px; background:#fff; border:1px solid #e2e8f0; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:#64748b;">Cancel</button>
+            <button id="rfq-amend-confirm-btn" style="padding:7px 16px; background:#ca8a04; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;">Unlock for Editing</button>
+          </div>
+        </div>
 
         <!-- ── Body (scrollable) ── -->
         <div style="flex:1; overflow-y:auto; padding:28px; display:flex; flex-direction:column; gap:24px;">
@@ -2734,6 +2768,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const circle = e.target.closest('.timeline-step-circle');
       if (!circle) return;
       const stepLabel = circle.dataset.step;
+      if (stepLabel === 'Confirmed') return; // Do not allow manual toggle of Confirmed from timeline
       const currentlyActive = circle.dataset.active === 'true';
       
       data.timeline_overrides = data.timeline_overrides || {};
@@ -2933,13 +2968,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Confirm to Client — triggers payment flow on user side
     modal.querySelector('#rfq-confirm-client-btn')?.addEventListener('click', async (e) => {
-      const rfqId = e.target.closest('button').dataset.rfqId || rfq.id;
       const confirmedPrice = parseFloat(modal.querySelector('#rfq-modal-final-price')?.value) || data.total_price || 0;
       if (!confirmedPrice || confirmedPrice <= 0) {
         alert('Please set a valid Final Price before confirming to the client.');
         return;
       }
+      
+      const isConfirmed = window.confirm(`Are you sure you want to send a confirmation to the customer for US$${confirmedPrice.toFixed(2)}? This action will notify the client and lock the price.`);
+      if (!isConfirmed) return;
 
+      const rfqId = e.target.closest('button').dataset.rfqId || rfq.id;
       const btn = e.target.closest('button');
       btn.disabled = true;
       btn.textContent = 'Confirming…';
