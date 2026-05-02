@@ -518,6 +518,7 @@ function switchView(view, globe) {
   const rfqRight = document.getElementById('rfq-engine-right');
   const projectQuoteEngine = document.getElementById('project-quote-engine');
   const designersEngine = document.getElementById('designers-engine');
+  const servicesEngine = document.getElementById('services-engine');
   const tariffEngine = document.getElementById('tariff-engine');
   const taxonomyEngine = document.getElementById('taxonomy-engine');
   const searchBar = document.getElementById('search-bar');
@@ -540,6 +541,7 @@ function switchView(view, globe) {
   rfqRight?.classList.add('hidden');
   projectQuoteEngine?.classList.add('hidden');
   designersEngine?.classList.add('hidden');
+  servicesEngine?.classList.add('hidden');
   tariffEngine?.classList.add('hidden');
   taxonomyEngine?.classList.add('hidden');
   hero?.classList.remove('hidden');
@@ -654,6 +656,11 @@ function switchView(view, globe) {
         appState._designersInitialized = true;
       });
     }
+  } else if (view === 'services') {
+    appState.searchType = 'services';
+    hero?.classList.add('hidden');
+    bottomResults?.classList.add('hidden');
+    servicesEngine?.classList.remove('hidden');
   } else if (view === 'tariff') {
     appState.searchType = 'tariff';
     hero?.classList.add('hidden');
