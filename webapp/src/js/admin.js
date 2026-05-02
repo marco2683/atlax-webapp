@@ -1994,8 +1994,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     }).join('');
 
     contentRouting.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="margin:0; font-size: 20px; color: #0f172a; font-weight: 700;">RFQ Tracker</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <h2 style="margin:0; font-size: 20px; color: #0f172a; font-weight: 700;">RFQ Tracker</h2>
+          <div style="display:flex; gap:6px;">
+            <button id="admin-manual-quote-btn" style="padding:5px 12px; background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap; display:flex; align-items:center; gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Manual Quote
+            </button>
+            <button id="admin-manual-invoice-btn" style="padding:5px 12px; background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap; display:flex; align-items:center; gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Manual Invoice
+            </button>
+            <button id="admin-proposal-btn" style="padding:5px 12px; background:#faf5ff; color:#7c3aed; border:1px solid #ddd6fe; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap; display:flex; align-items:center; gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Project Proposal
+            </button>
+          </div>
+        </div>
         <div style="display:flex; gap:16px;">
           <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: #475569; cursor: pointer;">
             <input type="checkbox" id="admin-rfq-hide-rejected" style="cursor:pointer;" checked>
@@ -2065,6 +2081,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('admin-rfq-hide-done')?.addEventListener('change', toggleDoneFilter);
     document.getElementById('admin-rfq-hide-rejected')?.addEventListener('change', toggleDoneFilter);
     toggleDoneFilter();
+
+    // Manual doc buttons
+    document.getElementById('admin-manual-quote-btn')?.addEventListener('click', async () => {
+      const { openManualDocModal } = await import('./services/manual-doc-modal.js');
+      openManualDocModal('quotation');
+    });
+    document.getElementById('admin-manual-invoice-btn')?.addEventListener('click', async () => {
+      const { openManualDocModal } = await import('./services/manual-doc-modal.js');
+      openManualDocModal('invoice');
+    });
+    document.getElementById('admin-proposal-btn')?.addEventListener('click', async () => {
+      const { openProposalWizard } = await import('./services/proposal-wizard.js');
+      openProposalWizard();
+    });
 
     // Status change handlers
     contentRouting.querySelectorAll('.admin-rfq-status-select').forEach(select => {
@@ -2335,14 +2365,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const confirmBtnHtml = hasBeenConfirmed 
-      ? `<div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
-           <button id="rfq-confirm-client-btn" data-rfq-id="${rfq.id}" disabled
-             style="padding:7px 16px; background:#f1f5f9; color:#16a34a; border:1px solid #bbf7d0; border-radius:8px; font-size:12px; font-weight:700; cursor:default; font-family:inherit; display:flex; align-items:center; gap:6px;">
+      ? `<button id="rfq-confirm-client-btn" data-rfq-id="${rfq.id}" disabled
+             style="padding:6px 12px; height:32px; background:#f1f5f9; color:#16a34a; border:1px solid #bbf7d0; border-radius:8px; font-size:11px; font-weight:700; cursor:default; font-family:inherit; display:flex; align-items:center; gap:6px; box-sizing:border-box; white-space:nowrap;">
              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-             Confirmed to Customer
-           </button>
-           <div style="font-size:10px; color:#64748b; font-weight:600;">${confirmedDateStr}</div>
-         </div>`
+             Confirmed ${confirmedDateStr ? `<span style="color:#94a3b8;font-weight:500;font-size:10px;">${confirmedDateStr}</span>` : ''}
+           </button>`
       : `<button id="rfq-confirm-client-btn" data-rfq-id="${rfq.id}"
             style="padding:0 20px; height:40px; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(22,163,74,0.4); box-sizing: border-box; white-space:nowrap;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>

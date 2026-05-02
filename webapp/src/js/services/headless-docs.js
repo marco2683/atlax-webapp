@@ -13,7 +13,7 @@ function uid4() { return Math.random().toString(36).slice(2,6).toUpperCase(); }
 function today() { return new Date().toISOString().slice(0,10); }
 
 let _logoBase64 = null;
-async function getLogoBase64() {
+export async function getLogoBase64() {
   if (_logoBase64) return _logoBase64;
   try {
     const resp = await fetch('/logos/atlasdt-logo-light.png');
