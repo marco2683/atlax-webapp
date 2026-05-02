@@ -2451,7 +2451,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
         <!-- Reject reason panel (hidden by default) -->
-        <div id="rfq-reject-panel" style="display:${rfq.status === 'rejected' ? 'block' : 'none'}; padding:12px 28px; background:#fff7ed; border-bottom:2px solid #fed7aa;">
+        <div id="rfq-reject-panel" style="display:${rfq.status === 'rejected' && !data.rejection_notified ? 'block' : 'none'}; padding:12px 28px; background:#fff7ed; border-bottom:2px solid #fed7aa;">
           <div style="font-size:12px; font-weight:700; color:#9a3412; margin-bottom:6px;">Rejection Reason(s) — will be emailed to the client as bullet points</div>
           <textarea id="rfq-reject-reason" rows="3" placeholder="e.g. Insufficient technical specification&#10;Quantity below minimum order&#10;Material not available in requested tolerance"
             style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #fed7aa; font-size:13px; font-family:inherit; resize:vertical; background:#fff; color:#0f172a; outline:none;">${data.rejected_reason || ''}</textarea>
@@ -2460,6 +2460,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             <button id="rfq-reject-confirm-btn" style="padding:7px 16px; background:#ea580c; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;">Send Rejection &amp; Notify Client</button>
           </div>
         </div>
+        ${data.rejection_notified ? `
+        <div style="padding:8px 28px; background:#fef2f2; border-bottom:1px solid #fecaca; display:flex; align-items:center; gap:8px;">
+          <span style="font-size:12px; color:#991b1b; font-weight:600;">✉️ Rejection notification sent${data.rejection_notified_at ? ' on ' + new Date(data.rejection_notified_at).toLocaleDateString() : ''}</span>
+        </div>` : ''}
 
         <!-- Request info panel (hidden by default) -->
         <div id="rfq-request-info-panel" style="display:${commLog.length > 0 ? 'block' : 'none'}; padding:12px 28px; background:#eff6ff; border-bottom:2px solid #bfdbfe;">
@@ -3344,18 +3348,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       const reasonLines = rawReason.split('\n').map(l => l.trim()).filter(Boolean);
 
       try {
-        // Update DB status to rejected
+        // Update DB status to rejected with notified flag
+        const updatedRfqData = { ...data, rejected_reason: rawReason, rejection_notified: true, rejection_notified_at: new Date().toISOString() };
         const res = await fetch('/.netlify/functions/admin-rfqs', {
           method: 'PATCH',
-          body: JSON.stringify({ id: rfq.id, updates: { status: 'rejected', rfq_data: { ...data, rejected_reason: rawReason } } })
+          body: JSON.stringify({ id: rfq.id, updates: { status: 'rejected', rfq_data: updatedRfqData } })
         });
         if (!res.ok) {
           const errData = await res.json().catch(()=>({}));
           throw new Error(errData.error || 'Failed to update RFQ data');
         }
 
-        // Send rejection email
-        await fetch('/.netlify/functions/send-email', {
+        // Send rejection email — await and check response
+        console.log('[Admin] Sending rejection email to:', requesterEmail);
+        const emailRes = await fetch('/.netlify/functions/send-email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -3366,7 +3372,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             bankRef,
             reasons: reasonLines,
           })
-        }).catch(e => console.warn('Rejection email skipped:', e));
+        });
+        const emailBody = await emailRes.json().catch(() => ({}));
+        console.log('[Admin] Rejection email response:', emailRes.status, emailBody);
+        if (!emailRes.ok) {
+          console.error('[Admin] Rejection email failed:', emailBody);
+        }
 
         rejectPanel.style.display = 'none';
         rejectSend.textContent = '✓ Rejected & Notified';
@@ -3378,11 +3389,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         const tableSelect = contentRouting.querySelector(`.admin-rfq-status-select[data-rfq-id="${rfq.id}"]`);
         if (tableSelect) tableSelect.value = 'rejected';
         
-        // Update local cache
+        // Update local cache with notified flag
+        rfq.status = 'rejected';
+        Object.assign(data, updatedRfqData);
         const rfqObj = rfqs.find(r => r.id === rfq.id);
         if (rfqObj) {
           rfqObj.status = 'rejected';
-          rfqObj.rfq_data = { ...data, rejected_reason: rawReason };
+          rfqObj.rfq_data = updatedRfqData;
         }
         
         updateNavBadges();
