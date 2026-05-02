@@ -2228,13 +2228,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const hasBeenConfirmed = !!data.confirmed_price || !!data.confirmed_at || ['confirmed', 'processing', 'paid', 'shipped'].includes(rfq.status || data.status || 'submitted');
     const confirmedDateStr = data.confirmed_at ? new Date(data.confirmed_at).toLocaleDateString() : (hasBeenConfirmed ? new Date(rfq.created_at).toLocaleDateString() : '');
 
+    const documents = Array.isArray(data.documents) ? data.documents : [];
+    const overrides = data.timeline_overrides || {};
+    const quotedDoc = documents.slice().reverse().find(d => d.type === 'quotation');
+    const stepQuote = overrides['Quoted'] !== undefined ? overrides['Quoted'] : !!quotedDoc;
+    const isQuoteLocked = (stepQuote || hasBeenConfirmed) && !data.is_amending;
+
     function getTimelineHTML() {
-      const documents = Array.isArray(data.documents) ? data.documents : [];
-      const overrides = data.timeline_overrides || {};
-      const quotedDoc = documents.slice().reverse().find(d => d.type === 'quotation');
-      const stepQuote = overrides['Quoted'] !== undefined ? overrides['Quoted'] : !!quotedDoc;
-      const isQuoteLocked = (stepQuote || hasBeenConfirmed) && !data.is_amending;
-      
       const commLog = data.communication_log || [];
       const currentStatusForConfirm = rfq.status || data.status || 'submitted';
       const statusIdx = ['submitted', 'under_review', 'confirmed', 'paid', 'processing', 'shipped'].indexOf(currentStatusForConfirm);
@@ -2821,10 +2821,10 @@ document.addEventListener('DOMContentLoaded', async () => {
           });
           const rfqObj = rfqs.find(r => r.id === rfqId);
           if (rfqObj) { rfqObj.status = 'rejected'; rfqObj.rfq_data = data; }
-          modal.querySelector('#rfq-timeline-wrapper').innerHTML = getTimelineHTML();
           
-          const statusSelect = modal.querySelector('#rfq-modal-status');
-          if (statusSelect) statusSelect.value = 'rejected';
+          modal.remove();
+          openRFQDetailModal(rfq, profileMap, rfqs);
+
           const tableSelect = contentRouting.querySelector(`.admin-rfq-status-select[data-rfq-id="${rfqId}"]`);
           if (tableSelect) tableSelect.value = 'rejected';
         } catch(err) {
@@ -2874,7 +2874,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       data.timeline_overrides[stepLabel] = !currentlyActive;
       
       // Update DOM optimistically
-      modal.querySelector('#rfq-timeline-wrapper').innerHTML = getTimelineHTML();
+      modal.remove();
+      openRFQDetailModal(rfq, profileMap, rfqs);
       
       try {
         await fetch('/.netlify/functions/admin-rfqs', {
@@ -2949,7 +2950,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
           rfq.status = newStatus;
           data.status = newStatus;
-          modal.querySelector('#rfq-timeline-wrapper').innerHTML = getTimelineHTML();
+          modal.remove();
+          openRFQDetailModal(rfq, profileMap, rfqs);
         } catch (err) {
           alert('Failed to update status: ' + err.message);
         }
