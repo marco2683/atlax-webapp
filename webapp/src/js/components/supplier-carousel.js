@@ -215,8 +215,10 @@ function renderCurrentCard() {
   <div style="display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid #e2e8f0; gap: 20px;">
     
     <!-- Left: Downloads -->
-    <div style="display: flex; flex-direction: column; gap: 8px;">
-      <h4 style="font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Downloads</h4>
+    <div style="display: flex; flex-direction: column; gap: 8px; justify-content: flex-start;">
+      <div style="display: flex; align-items: center; height: 14px; margin-bottom: 2px;">
+        <h4 style="font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Downloads</h4>
+      </div>
       <div style="display: flex; gap: 8px;">
         ${docDownloadCard(hasPPT, s.docPresentation, 'Presentation', pptIcon, '#7c3aed')}
         ${docDownloadCard(hasCerts, s.docCertifications, 'Certifications', certsIcon, '#059669')}
@@ -224,25 +226,23 @@ function renderCurrentCard() {
     </div>
 
     <!-- Center/Right: AtlasDT Services -->
-    <div style="flex: 1; border-left: 1px solid #e2e8f0; padding-left: 20px;">
-      <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1px solid #a7f3d0; border-radius: 12px; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.05);">
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-          <h4 style="font-size: 11px; font-weight: 800; color: #065f46; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">AtlasDT Premium Services</h4>
-        </div>
-        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-           ${renderServiceButton('Request Full Factory Audit', 'Full Factory Audit')}
-           ${renderServiceButton('Verify Legal & Licenses', 'Verify Legal & Licenses')}
-           ${renderServiceButton('Manage My Project', 'Manage My Project')}
-           ${renderServiceButton('Get Competitive Quote', 'Get Competitive Quote')}
-           ${renderServiceButton('Draft NDA / NNN Agreement', 'Draft NDA / NNN Agreement')}
-        </div>
+    <div style="flex: 1; border-left: 1px solid #e2e8f0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; justify-content: flex-start;">
+      <div style="display: flex; align-items: center; gap: 6px; height: 14px; margin-bottom: 2px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <h4 style="font-size: 10px; font-weight: 800; color: #065f46; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">AtlasDT Premium Services</h4>
+      </div>
+      <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1px solid #a7f3d0; border-radius: 12px; padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 8px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.05);">
+         ${renderServiceButton('Request Full Factory Audit', 'Full Factory Audit')}
+         ${renderServiceButton('Verify Legal & Licenses', 'Verify Legal & Licenses')}
+         ${renderServiceButton('Manage My Project', 'Manage My Project')}
+         ${renderServiceButton('Get Competitive Quote', 'Get Competitive Quote')}
+         ${renderServiceButton('Draft NDA / NNN Agreement', 'Draft NDA / NNN Agreement')}
       </div>
     </div>
 
     <!-- Certifications Badges (top-right) -->
-    ${certsList.length > 0 ? `<div style="display: flex; flex-direction: column; gap: 6px; justify-content: center; border-left: 1px solid #e2e8f0; padding-left: 20px;">
-      <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+    ${certsList.length > 0 ? `<div style="display: flex; flex-direction: column; gap: 8px; justify-content: flex-start; border-left: 1px solid #e2e8f0; padding-left: 20px;">
+      <div style="display: flex; align-items: center; gap: 6px; height: 14px; margin-bottom: 2px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
         <span style="font-size: 10px; font-weight: 800; color: #0f766e; text-transform: uppercase; letter-spacing: 0.05em;">Certifications</span>
       </div>
