@@ -1123,76 +1123,56 @@
             </p>
           </div>
 
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px;">
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px;">
             
             <!-- Card 1 -->
-            <div class="service-card" onclick="openServiceContact('Industrial design, UI/UX services')" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; overflow: hidden; cursor: pointer; transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.borderColor='var(--color-electric)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(186,255,41,0.1)'; this.querySelector('img').style.transform='scale(1.05)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.05)'; this.style.boxShadow='none'; this.querySelector('img').style.transform='scale(1)'">
-              <div style="height: 240px; width: 100%; position: relative; overflow: hidden;">
-                <img src="/images/service_industrial_design.png" alt="Industrial Design, UI/UX Services" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;">
-                <div style="position: absolute; inset: 0; background: linear-gradient(to top, var(--color-void), transparent);"></div>
-              </div>
-              <div style="padding: 32px;">
-                <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 12px; font-weight: 700;">Industrial Design & UI/UX</h3>
-                <p style="color: var(--color-slate-400); font-size: 1rem; line-height: 1.6; margin-bottom: 24px;">
-                  Create stunning, user-centric physical and digital experiences that resonate with your target market.
-                </p>
-                <div style="display: inline-flex; align-items: center; gap: 8px; color: var(--color-electric); font-weight: 600; font-size: 0.95rem;">
+            <div class="service-card" onclick="openServiceContact('Industrial design, UI/UX services')" style="position: relative; height: 380px; border-radius: 24px; overflow: hidden; cursor: pointer; transition: transform 0.4s ease, box-shadow 0.4s ease; border: 1px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(186,255,41,0.15)'; this.querySelector('img').style.transform='scale(1.05)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.querySelector('img').style.transform='scale(1)';">
+              <img src="/images/service_id_ui_new.png" alt="Industrial Design, UI/UX Services" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; z-index: 1;">
+              <div class="service-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 10, 15, 0.9) 0%, rgba(10, 10, 15, 0.4) 100%); z-index: 2; transition: background 0.4s ease;" onmouseover="this.style.background='linear-gradient(to top, rgba(10, 10, 15, 0.95) 0%, rgba(10, 10, 15, 0.2) 100%)'" onmouseout="this.style.background='linear-gradient(to top, rgba(10, 10, 15, 0.9) 0%, rgba(10, 10, 15, 0.4) 100%)'"></div>
+              <div style="position: relative; z-index: 3; padding: 40px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end;">
+                <h3 style="color: #fff; font-size: 2.2rem; margin-bottom: 12px; font-weight: 700; text-shadow: 0 4px 12px rgba(0,0,0,0.8);">Industrial Design & UI/UX</h3>
+                <div style="display: inline-flex; align-items: center; gap: 8px; color: var(--color-electric); font-weight: 600; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.9);">
                   Inquire Now
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </div>
               </div>
             </div>
 
             <!-- Card 2 -->
-            <div class="service-card" onclick="openServiceContact('Product Design & Engineering')" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; overflow: hidden; cursor: pointer; transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.borderColor='var(--color-electric)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(186,255,41,0.1)'; this.querySelector('img').style.transform='scale(1.05)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.05)'; this.style.boxShadow='none'; this.querySelector('img').style.transform='scale(1)'">
-              <div style="height: 240px; width: 100%; position: relative; overflow: hidden;">
-                <img src="/images/service_product_engineering.png" alt="Product Design & Engineering" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;">
-                <div style="position: absolute; inset: 0; background: linear-gradient(to top, var(--color-void), transparent);"></div>
-              </div>
-              <div style="padding: 32px;">
-                <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 12px; font-weight: 700;">Product Engineering</h3>
-                <p style="color: var(--color-slate-400); font-size: 1rem; line-height: 1.6; margin-bottom: 24px;">
-                  Robust mechanical and electronic engineering to turn concepts into fully functional prototypes.
-                </p>
-                <div style="display: inline-flex; align-items: center; gap: 8px; color: var(--color-electric); font-weight: 600; font-size: 0.95rem;">
+            <div class="service-card" onclick="openServiceContact('Product Design & Engineering')" style="position: relative; height: 380px; border-radius: 24px; overflow: hidden; cursor: pointer; transition: transform 0.4s ease, box-shadow 0.4s ease; border: 1px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(186,255,41,0.15)'; this.querySelector('img').style.transform='scale(1.05)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.querySelector('img').style.transform='scale(1)';">
+              <img src="/images/service_product_eng_new.png" alt="Product Design & Engineering" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; z-index: 1;">
+              <div class="service-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 10, 15, 0.9) 0%, rgba(10, 10, 15, 0.4) 100%); z-index: 2; transition: background 0.4s ease;" onmouseover="this.style.background='linear-gradient(to top, rgba(10, 10, 15, 0.95) 0%, rgba(10, 10, 15, 0.2) 100%)'" onmouseout="this.style.background='linear-gradient(to top, rgba(10, 10, 15, 0.9) 0%, rgba(10, 10, 15, 0.4) 100%)'"></div>
+              <div style="position: relative; z-index: 3; padding: 40px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end;">
+                <h3 style="color: #fff; font-size: 2.2rem; margin-bottom: 12px; font-weight: 700; text-shadow: 0 4px 12px rgba(0,0,0,0.8);">Product Engineering</h3>
+                <div style="display: inline-flex; align-items: center; gap: 8px; color: var(--color-electric); font-weight: 600; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.9);">
                   Inquire Now
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </div>
               </div>
             </div>
 
             <!-- Card 3 -->
-            <div class="service-card" onclick="openServiceContact('Industrial/Factory automation')" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; overflow: hidden; cursor: pointer; transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.borderColor='var(--color-electric)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(186,255,41,0.1)'; this.querySelector('img').style.transform='scale(1.05)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.05)'; this.style.boxShadow='none'; this.querySelector('img').style.transform='scale(1)'">
-              <div style="height: 240px; width: 100%; position: relative; overflow: hidden;">
-                <img src="/images/service_factory_automation.png" alt="Industrial/Factory automation" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;">
-                <div style="position: absolute; inset: 0; background: linear-gradient(to top, var(--color-void), transparent);"></div>
-              </div>
-              <div style="padding: 32px;">
-                <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 12px; font-weight: 700;">Factory Automation</h3>
-                <p style="color: var(--color-slate-400); font-size: 1rem; line-height: 1.6; margin-bottom: 24px;">
-                  Advanced robotics and automated assembly solutions to scale your production efficiently.
-                </p>
-                <div style="display: inline-flex; align-items: center; gap: 8px; color: var(--color-electric); font-weight: 600; font-size: 0.95rem;">
+            <div class="service-card" onclick="openServiceContact('Industrial/Factory automation')" style="position: relative; height: 380px; border-radius: 24px; overflow: hidden; cursor: pointer; transition: transform 0.4s ease, box-shadow 0.4s ease; border: 1px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(186,255,41,0.15)'; this.querySelector('img').style.transform='scale(1.05)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.querySelector('img').style.transform='scale(1)';">
+              <img src="/images/service_factory_auto_new.png" alt="Industrial/Factory automation" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; z-index: 1;">
+              <div class="service-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 10, 15, 0.9) 0%, rgba(10, 10, 15, 0.4) 100%); z-index: 2; transition: background 0.4s ease;" onmouseover="this.style.background='linear-gradient(to top, rgba(10, 10, 15, 0.95) 0%, rgba(10, 10, 15, 0.2) 100%)'" onmouseout="this.style.background='linear-gradient(to top, rgba(10, 10, 15, 0.9) 0%, rgba(10, 10, 15, 0.4) 100%)'"></div>
+              <div style="position: relative; z-index: 3; padding: 40px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end;">
+                <h3 style="color: #fff; font-size: 2.2rem; margin-bottom: 12px; font-weight: 700; text-shadow: 0 4px 12px rgba(0,0,0,0.8);">Factory Automation</h3>
+                <div style="display: inline-flex; align-items: center; gap: 8px; color: var(--color-electric); font-weight: 600; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.9);">
                   Inquire Now
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </div>
               </div>
             </div>
 
             <!-- Card 4 -->
-            <div class="service-card" onclick="openServiceContact('Design for Manufacturing')" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; overflow: hidden; cursor: pointer; transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.borderColor='var(--color-electric)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(186,255,41,0.1)'; this.querySelector('img').style.transform='scale(1.05)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.05)'; this.style.boxShadow='none'; this.querySelector('img').style.transform='scale(1)'">
-              <div style="height: 240px; width: 100%; position: relative; overflow: hidden;">
-                <img src="/images/service_dfm.png" alt="Design for Manufacturing" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;">
-                <div style="position: absolute; inset: 0; background: linear-gradient(to top, var(--color-void), transparent);"></div>
-              </div>
-              <div style="padding: 32px;">
-                <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 12px; font-weight: 700;">Design for Manufacturing</h3>
-                <p style="color: var(--color-slate-400); font-size: 1rem; line-height: 1.6; margin-bottom: 24px;">
-                  Optimize designs to reduce costs, minimize defects, and streamline the manufacturing process.
-                </p>
-                <div style="display: inline-flex; align-items: center; gap: 8px; color: var(--color-electric); font-weight: 600; font-size: 0.95rem;">
+            <div class="service-card" onclick="openServiceContact('Design for Manufacturing')" style="position: relative; height: 380px; border-radius: 24px; overflow: hidden; cursor: pointer; transition: transform 0.4s ease, box-shadow 0.4s ease; border: 1px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(186,255,41,0.15)'; this.querySelector('img').style.transform='scale(1.05)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.querySelector('img').style.transform='scale(1)';">
+              <img src="/images/service_dfm_new.png" alt="Design for Manufacturing" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; z-index: 1;">
+              <div class="service-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 10, 15, 0.9) 0%, rgba(10, 10, 15, 0.4) 100%); z-index: 2; transition: background 0.4s ease;" onmouseover="this.style.background='linear-gradient(to top, rgba(10, 10, 15, 0.95) 0%, rgba(10, 10, 15, 0.2) 100%)'" onmouseout="this.style.background='linear-gradient(to top, rgba(10, 10, 15, 0.9) 0%, rgba(10, 10, 15, 0.4) 100%)'"></div>
+              <div style="position: relative; z-index: 3; padding: 40px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end;">
+                <h3 style="color: #fff; font-size: 2.2rem; margin-bottom: 12px; font-weight: 700; text-shadow: 0 4px 12px rgba(0,0,0,0.8);">Design for Manufacturing</h3>
+                <div style="display: inline-flex; align-items: center; gap: 8px; color: var(--color-electric); font-weight: 600; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.9);">
                   Inquire Now
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </div>
               </div>
             </div>
