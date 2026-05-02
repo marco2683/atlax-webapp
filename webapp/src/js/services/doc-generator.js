@@ -210,7 +210,7 @@ SWIFT / BIC: NATAAU3303</textarea>
       <!-- Footer -->
       <div style="padding:14px 24px;border-top:1px solid #e2e8f0;display:flex;justify-content:flex-end;gap:10px;flex-shrink:0;background:#f8fafc;">
         <button id="doc-download-btn" style="padding:8px 18px;background:#fff;color:#0f172a;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">⬇ Download PDF</button>
-        <button id="doc-save-draft-btn" style="padding:8px 18px;background:#0f172a;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Save Draft</button>
+        <button id="doc-save-draft-btn" style="padding:8px 18px;background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Save to OneDrive</button>
         <button id="doc-send-btn" style="padding:8px 18px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(37,99,235,.3);">Send to Customer</button>
       </div>
     </div>`;
@@ -589,62 +589,55 @@ SWIFT / BIC: NATAAU3303</textarea>
 
   // ── Sync Helper ──
   const uploadAndSyncDoc = async (pdfBase64, docData) => {
-    const ts = Date.now();
-    const fileName = `${docData.title.replace(/\s+/g,'_')}_${docData.docRef}_${today()}_${ts}.pdf`;
     const cleanFileName = `${docData.title.replace(/\s+/g,'_')}_${docData.docRef}_${today()}.pdf`;
-    const storagePath = `documents/${docData.rfqRef}/${fileName}`;
+    const storagePath = `${docData.rfqRef}/${cleanFileName}`;
     
-    console.log('[DocGen] Uploading PDF to Supabase...', { storagePath, bucket: 'rfq-docs' });
+    console.log('[DocGen] Uploading PDF to Supabase...', { storagePath, bucket: 'product_assets' });
     
-    // Use Netlify function to bypass RLS
-    const uploadRes = await fetch('/.netlify/functions/storage-upload', {
+    // Convert base64 to binary Uint8Array for direct Supabase upload
+    const binStr = atob(pdfBase64);
+    const bytes = new Uint8Array(binStr.length);
+    for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i);
+
+    // Upload directly via supabase client (avoids Netlify function body size limit)
+    const { data: uploadData, error: uploadErr } = await supabase.storage
+      .from('product_assets')
+      .upload(storagePath, bytes, { contentType: 'application/pdf', upsert: true });
+
+    if (uploadErr) {
+      console.error('[DocGen] Supabase upload error:', uploadErr);
+      throw new Error('Storage upload failed: ' + uploadErr.message);
+    }
+    console.log('[DocGen] Supabase upload success:', uploadData);
+
+    const { data: publicUrlData } = supabase.storage.from('product_assets').getPublicUrl(storagePath);
+    const publicUrl = publicUrlData?.publicUrl;
+    console.log('[DocGen] Public URL:', publicUrl);
+
+    if (!publicUrl) throw new Error('Could not get public URL for document');
+
+    // Sync to OneDrive via webhook
+    const folderIdentifier = docData.customer?.company || docData.customer?.name || '';
+    const companySuffix = folderIdentifier ? ` - ${folderIdentifier.replace(/[\/\\?%*:|"<>]/g, '')}` : '';
+    const webhookPayload = {
+      file_name: cleanFileName,
+      file_url: publicUrl,
+      folder_path: `RFQs/${docData.rfqRef}${companySuffix}`,
+      metadata: { rfqRef: docData.rfqRef, type: docData.type }
+    };
+    console.log('[DocGen] Sending to SharePoint webhook:', webhookPayload);
+    const spRes = await fetch('/.netlify/functions/webhook-sharepoint', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        fileBase64: pdfBase64,
-        fileName: fileName,
-        filePath: storagePath,
-        contentType: 'application/pdf',
-        bucket: 'rfq-docs'
-      })
+      body: JSON.stringify(webhookPayload)
     });
-
-    if (!uploadRes.ok) {
-      const errTxt = await uploadRes.text();
-      console.error('[DocGen] Supabase upload HTTP error:', uploadRes.status, errTxt);
-      throw new Error(`Storage upload failed: ${uploadRes.statusText}`);
+    const spBody = await spRes.json().catch(() => ({}));
+    console.log('[DocGen] SharePoint webhook response:', spRes.status, spBody);
+    if (!spRes.ok) {
+      throw new Error('SharePoint webhook failed: ' + (spBody.error || spRes.statusText));
     }
 
-    const uploadData = await uploadRes.json();
-    console.log('[DocGen] Supabase upload response:', uploadData);
-    if (!uploadData.success) {
-      throw new Error(`Storage upload failed: ${uploadData.error || 'Unknown error'}`);
-    }
-
-    if (uploadData.publicUrl) {
-      // Sync to OneDrive via webhook
-      const folderIdentifier = docData.customer.company || docData.customer.name;
-      const companySuffix = folderIdentifier ? ` - ${folderIdentifier.replace(/[\/\\?%*:|"<>]/g, '')}` : '';
-      const webhookPayload = {
-        file_name: cleanFileName,
-        file_url: uploadData.publicUrl,
-        folder_path: `RFQs/${docData.rfqRef}${companySuffix}`,
-        metadata: { rfqRef: docData.rfqRef, type: docData.type }
-      };
-      console.log('[DocGen] Sending to SharePoint webhook:', webhookPayload);
-      const spRes = await fetch('/.netlify/functions/webhook-sharepoint', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(webhookPayload)
-      });
-      const spBody = await spRes.json().catch(() => ({}));
-      console.log('[DocGen] SharePoint webhook response:', spRes.status, spBody);
-      if (!spRes.ok) {
-        throw new Error('SharePoint webhook failed: ' + spRes.statusText);
-      }
-    } else {
-      throw new Error('Could not get public URL for document');
-    }
+    return publicUrl;
   };
 
   // ── Sync Helper for Parts ──
@@ -685,11 +678,11 @@ SWIFT / BIC: NATAAU3303</textarea>
     }
   });
 
-  // ── Save Draft ──
+  // ── Save to OneDrive ──
   overlay.querySelector('#doc-save-draft-btn').addEventListener('click', async () => {
     const btn = overlay.querySelector('#doc-save-draft-btn');
     btn.disabled = true;
-    btn.textContent = 'Saving…';
+    btn.innerHTML = '⏳ Saving…';
 
     const docData = collectDocData();
     docData.status = 'draft';
@@ -710,6 +703,7 @@ SWIFT / BIC: NATAAU3303</textarea>
     };
 
     try {
+      // 1. Save to database
       const res = await fetch('/.netlify/functions/admin-rfqs', {
         method: 'PATCH',
         body: JSON.stringify({ id: rfq.id, updates: { rfq_data: updatedData } }),
@@ -717,24 +711,31 @@ SWIFT / BIC: NATAAU3303</textarea>
       if (!res.ok) throw new Error('Failed to save');
 
       // Update local cache
-      Object.assign(data, updatedData); // Keep internal reference up to date!
+      Object.assign(data, updatedData);
       rfq.rfq_data = updatedData;
       if (rfqs) {
         const obj = rfqs.find(r => r.id === rfq.id);
         if (obj) obj.rfq_data = updatedData;
       }
-      
+
+      // 2. Generate PDF and upload to Supabase + sync to OneDrive
+      btn.innerHTML = '⏳ Uploading to OneDrive…';
+      const pdf = generatePDF(docData);
+      const pdfBase64 = pdf.output('datauristring').split(',')[1];
+      await uploadAndSyncDoc(pdfBase64, docData);
+
       // If we are in admin view, refresh the modal to show synced data
       if (window.renderRfqDetailModal) {
         document.getElementById('admin-rfq-detail-modal')?.remove();
         window.renderRfqDetailModal(rfq);
       }
 
-      btn.textContent = 'Saved ✓';
-      setTimeout(() => { btn.textContent = 'Save Draft'; btn.disabled = false; }, 2000);
+      btn.innerHTML = '✅ Saved to OneDrive';
+      setTimeout(() => { btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Save to OneDrive'; btn.disabled = false; }, 2000);
     } catch (err) {
-      alert('Error saving draft: ' + err.message);
-      btn.textContent = 'Save Draft';
+      console.error('[DocGen] Save to OneDrive failed:', err);
+      alert('Error saving to OneDrive: ' + err.message);
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Save to OneDrive';
       btn.disabled = false;
     }
   });
