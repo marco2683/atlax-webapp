@@ -592,28 +592,30 @@ SWIFT / BIC: NATAAU3303</textarea>
     const cleanFileName = `${docData.title.replace(/\s+/g,'_')}_${docData.docRef}_${today()}.pdf`;
     const storagePath = `${docData.rfqRef}/${cleanFileName}`;
     
-    console.log('[DocGen] Uploading PDF to Supabase...', { storagePath, bucket: 'product_assets' });
+    console.log('[DocGen] Uploading PDF via Netlify function...', { storagePath, bucket: 'rfq-docs' });
     
-    // Convert base64 to binary Uint8Array for direct Supabase upload
-    const binStr = atob(pdfBase64);
-    const bytes = new Uint8Array(binStr.length);
-    for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i);
+    // Upload via Netlify function (service role key bypasses RLS)
+    const uploadRes = await fetch('/.netlify/functions/storage-upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fileBase64: pdfBase64,
+        fileName: cleanFileName,
+        filePath: storagePath,
+        contentType: 'application/pdf',
+        bucket: 'rfq-docs'
+      })
+    });
 
-    // Upload directly via supabase client (avoids Netlify function body size limit)
-    const { data: uploadData, error: uploadErr } = await supabase.storage
-      .from('product_assets')
-      .upload(storagePath, bytes, { contentType: 'application/pdf', upsert: true });
+    const uploadBody = await uploadRes.json().catch(() => ({ error: uploadRes.statusText }));
+    console.log('[DocGen] Upload response:', uploadRes.status, uploadBody);
 
-    if (uploadErr) {
-      console.error('[DocGen] Supabase upload error:', uploadErr);
-      throw new Error('Storage upload failed: ' + uploadErr.message);
+    if (!uploadRes.ok || !uploadBody.success) {
+      throw new Error('Storage upload failed: ' + (uploadBody.error || uploadRes.statusText));
     }
-    console.log('[DocGen] Supabase upload success:', uploadData);
 
-    const { data: publicUrlData } = supabase.storage.from('product_assets').getPublicUrl(storagePath);
-    const publicUrl = publicUrlData?.publicUrl;
+    const publicUrl = uploadBody.publicUrl;
     console.log('[DocGen] Public URL:', publicUrl);
-
     if (!publicUrl) throw new Error('Could not get public URL for document');
 
     // Sync to OneDrive via webhook
