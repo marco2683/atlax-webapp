@@ -397,6 +397,7 @@ export function openProposalWizard() {
     state.chapters.forEach(ch => {
       docSections.push(
         new docx.Paragraph({
+          heading: docx.HeadingLevel.HEADING_1,
           children: [new docx.TextRun({ text: ch.title, bold: true, size: 32, font: "Arial", color: "1e3a5f" })],
           spacing: { before: 400, after: 200 }
         })
