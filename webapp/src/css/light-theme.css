@@ -1437,3 +1437,6 @@ body.theme-light .stacked-group__add-btn:hover {
   color: #ffffff !important;
   border-color: transparent !important;
 }
+
+/* DESIGN SERVICES */
+body.theme-light .services-engine { background: rgba(245, 245, 247, 0.95) !important; }
