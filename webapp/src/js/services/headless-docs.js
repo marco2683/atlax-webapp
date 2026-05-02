@@ -245,27 +245,44 @@ export function generatePDF(docData, logoDataUrl) {
 
 export async function uploadAndSyncDoc(pdfBase64, docData) {
   const fileName = `AtlasDT_${docData.title.replace(/\s+/g,'_')}_${docData.docRef}_${docData.projectName.replace(/[^a-zA-Z0-9]/g,'_')}.pdf`;
-  const storagePath = `${docData.rfqId}/${fileName}`;
-  const { data: uploadData, error: uploadErr } = await supabase.storage.from('rfq-docs').upload(storagePath, decodeBase64(pdfBase64), { contentType: 'application/pdf', upsert: true });
+  const storagePath = `${docData.rfqRef}/${fileName}`;
 
-  if (uploadErr) {
-    console.error('Upload Error:', uploadErr);
-    throw new Error('Failed to upload PDF');
+  console.log('[HeadlessDocs] Uploading PDF via Netlify function...', { storagePath, bucket: 'rfq-docs' });
+
+  // Upload via Netlify function (service role key bypasses RLS)
+  const uploadRes = await fetch('/.netlify/functions/storage-upload', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      fileBase64: pdfBase64,
+      fileName: fileName,
+      filePath: storagePath,
+      contentType: 'application/pdf',
+      bucket: 'rfq-docs'
+    })
+  });
+
+  const uploadBody = await uploadRes.json().catch(() => ({ error: uploadRes.statusText }));
+  console.log('[HeadlessDocs] Upload response:', uploadRes.status, uploadBody);
+
+  if (!uploadRes.ok || !uploadBody.success) {
+    throw new Error('Storage upload failed: ' + (uploadBody.error || uploadRes.statusText));
   }
 
-  const { data: publicUrlData } = supabase.storage.from('rfq-docs').getPublicUrl(storagePath);
-  const publicUrl = publicUrlData.publicUrl;
+  const publicUrl = uploadBody.publicUrl;
+  console.log('[HeadlessDocs] Public URL:', publicUrl);
+  if (!publicUrl) throw new Error('Could not get public URL for document');
 
+  // Sync to OneDrive via webhook
   const folderIdentifier = docData.customer?.company || docData.customer?.name || '';
   const companySuffix = folderIdentifier ? ` - ${folderIdentifier.replace(/[\/\\?%*:|"<>]/g, '')}` : '';
-
   const webhookPayload = {
     file_name: fileName,
     file_url: publicUrl,
     folder_path: `RFQs/${docData.rfqRef}${companySuffix}`,
     metadata: { rfqRef: docData.rfqRef, type: docData.type }
   };
-  console.log('[SharePoint Sync] Sending webhook payload:', webhookPayload);
+  console.log('[HeadlessDocs] Sending to SharePoint webhook:', webhookPayload);
 
   try {
     const spRes = await fetch('/.netlify/functions/webhook-sharepoint', {
@@ -274,23 +291,13 @@ export async function uploadAndSyncDoc(pdfBase64, docData) {
       body: JSON.stringify(webhookPayload),
     });
     const spBody = await spRes.json().catch(() => ({}));
-    console.log('[SharePoint Sync] Response:', spRes.status, spBody);
-    if (!spRes.ok) console.error('[SharePoint Sync] Webhook returned error:', spRes.status, spBody);
+    console.log('[HeadlessDocs] SharePoint webhook response:', spRes.status, spBody);
+    if (!spRes.ok) console.error('[HeadlessDocs] Webhook returned error:', spRes.status, spBody);
   } catch (err) {
-    console.error('[SharePoint Sync] Fetch failed:', err);
+    console.error('[HeadlessDocs] Webhook fetch failed:', err);
   }
 
   return publicUrl;
-}
-
-function decodeBase64(b64) {
-  const binStr = window.atob(b64);
-  const len = binStr.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binStr.charCodeAt(i);
-  }
-  return bytes;
 }
 
 export async function generateAllDocsHeadless({ rfq, rfqData, profile, includeGst = false }) {
@@ -340,7 +347,7 @@ export async function generateAllDocsHeadless({ rfq, rfqData, profile, includeGs
   
   const notes = 'Payment due within 14 days of issue date.\\nPrices quoted in USD. All prices are EXW unless otherwise specified.\\n\\nBank Transfer Details:\\nBank: NAB — National Australia Bank\\nAccount Name: Paniani Products Pty Ltd\\nBSB: 083-004  |  Account No: 978 360 554\\nSWIFT / BIC: NATAAU3303';
 
-  const typesToGen = ['quotation', 'proforma', 'invoice'];
+  const typesToGen = ['quotation', 'proforma'];
   const results = [];
 
   for (const docType of typesToGen) {

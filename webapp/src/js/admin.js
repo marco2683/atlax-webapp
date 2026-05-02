@@ -3128,9 +3128,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       let generatedDocs = [];
       try {
-        generatedDocs = await generateAllDocsHeadless({ rfq, rfqData: data, profile: rfq.profiles || {} });
+        console.log('[Admin] Generating Quotation + Proforma for confirm...');
+        generatedDocs = await generateAllDocsHeadless({ rfq, rfqData: data, profile: profileMap[rfq.user_id] || {} });
+        console.log('[Admin] Generated docs:', generatedDocs.length, generatedDocs.map(d => d.title));
       } catch (err) {
-        console.error('Failed to generate documents:', err);
+        console.error('[Admin] Failed to generate documents:', err);
       }
 
       btn.textContent = 'Confirming…';
