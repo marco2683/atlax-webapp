@@ -14,7 +14,7 @@ body {
 }
 
 .navbar {
-  height: 56px;
+  height: 64px;
   padding: 0 var(--space-6);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
