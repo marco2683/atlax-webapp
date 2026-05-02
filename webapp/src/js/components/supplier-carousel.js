@@ -310,6 +310,13 @@ function renderCurrentCard() {
     <!-- ═══ Right Column ═══ -->
     <div style="display: flex; flex-direction: column; gap: 14px;">
 
+      <!-- Add to Shortlist -->
+      <button id="modal-add-to-shortlist" style="width:100%; padding:12px 16px; border-radius:10px; font-weight:700; font-size:13px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom: 8px; transition:all 0.2s; ${isShortlisted ? 'background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; pointer-events:none;' : 'background:#0f172a; color:#fff;'}">
+        ${isShortlisted 
+          ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg><span>Shortlisted</span>' 
+          : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Add to Shortlist</span>'}
+      </button>
+
       <!-- At a Glance -->
       <h4 style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin: 0; font-family: 'Inter', sans-serif;">At a Glance</h4>
       <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px;">
@@ -326,13 +333,6 @@ function renderCurrentCard() {
            <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${s.revenue || s.annualTurnover || s.turnover || '—'}</span>
         </div>
       </div>
-
-      <!-- Add to Shortlist -->
-      <button id="modal-add-to-shortlist" style="width:100%; padding:12px 16px; border-radius:10px; font-weight:700; font-size:13px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; margin-top: 16px; margin-bottom: 24px; transition:all 0.2s; ${isShortlisted ? 'background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; pointer-events:none;' : 'background:#0f172a; color:#fff;'}">
-        ${isShortlisted 
-          ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg><span>Shortlisted</span>' 
-          : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Add to Shortlist</span>'}
-      </button>
 
       <!-- Combined Private Details Card (Contacts, Address, Map) -->
       <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; position:relative; overflow:hidden;">
