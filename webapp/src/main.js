@@ -611,7 +611,6 @@ function switchView(view, globe) {
 
   if (view === 'project-quote') {
     appState.searchType = 'project-quote';
-    hero?.classList.add('hidden');
     bottomResults?.classList.add('hidden');
     projectQuoteEngine?.classList.remove('hidden');
 
@@ -646,7 +645,6 @@ function switchView(view, globe) {
     ctaBulk?.classList.add('hidden');
   } else if (view === 'designers') {
     appState.searchType = 'designers';
-    hero?.classList.add('hidden');
     bottomResults?.classList.add('hidden');
     designersEngine?.classList.remove('hidden');
 
@@ -658,7 +656,6 @@ function switchView(view, globe) {
     }
   } else if (view === 'services') {
     appState.searchType = 'services';
-    hero?.classList.add('hidden');
     bottomResults?.classList.add('hidden');
     servicesEngine?.classList.remove('hidden');
   } else if (view === 'tariff') {
