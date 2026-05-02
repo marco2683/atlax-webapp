@@ -78,28 +78,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Failed to load suppliers:', err);
   }
   
-  // 0. Auth Guard — protect the engine
+  // 0. Auth Guard removed — application is now open-by-default
   const user = await getCurrentUser();
-  if (!user) {
-    console.warn('[PRD] Unauthenticated — showing login modal.');
-    const authModal = document.getElementById('auth-modal');
-    if (authModal) {
-      authModal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-
-      // If closed without logging in → bounce to homepage
-      const redirectHome = () => { window.location.href = '/index.html'; };
-      const closeBtn = document.getElementById('close-auth-modal');
-      if (closeBtn) {
-        closeBtn.addEventListener('click', redirectHome);
-      }
-      // Also catch backdrop clicks
-      authModal.addEventListener('click', (e) => {
-        if (e.target === authModal) redirectHome();
-      });
-    }
-    return;
-  }
   if (user) console.log('[PRD] Authenticated as:', user.email);
 
   window.scrollTo(0, 0); // Enforce top scroll on load
