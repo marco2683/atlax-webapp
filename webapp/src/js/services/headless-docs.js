@@ -256,20 +256,17 @@ export async function uploadAndSyncDoc(pdfBase64, docData) {
   const { data: publicUrlData } = supabase.storage.from('rfq-docs').getPublicUrl(storagePath);
   const publicUrl = publicUrlData.publicUrl;
 
-  const odBaseUrl = 'https://panianiproducts-my.sharepoint.com/personal/sebastian_atlasdt_com/Documents/AtlasDT';
+  const folderIdentifier = docData.customer?.company || docData.customer?.name || '';
+  const companySuffix = folderIdentifier ? ` - ${folderIdentifier.replace(/[\/\\?%*:|"<>]/g, '')}` : '';
+
   await fetch('/.netlify/functions/webhook-sharepoint', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      action: 'sync-doc',
-      rfqRef: docData.rfqRef,
-      projectName: docData.projectName,
-      docType: docData.type,
-      docTitle: docData.title,
-      docRef: docData.docRef,
-      fileName,
-      publicUrl,
-      base64Data: pdfBase64
+      file_name: fileName,
+      file_url: publicUrl,
+      folder_path: `RFQs/${docData.rfqRef}${companySuffix}`,
+      metadata: { rfqRef: docData.rfqRef, type: docData.type }
     }),
   }).catch(err => console.error('SharePoint sync failed:', err));
 
