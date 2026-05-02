@@ -24,7 +24,7 @@ export function initDesignersController() {
   container.innerHTML = `
     <div class="de-header m-fade-up">
       <h1>Find Designers &amp; Engineers or Post Your Job</h1>
-      <p id="de-header-desc" style="color: var(--color-steel-300); font-size: 1.1rem; margin-top: 12px; margin-bottom: 24px; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.5;"></p>
+      <p id="de-header-desc" style="color: var(--color-steel-300); font-size: 1.1rem; margin-top: 12px; margin-bottom: 24px; max-width: 1200px; margin-left: auto; margin-right: auto; line-height: 1.5;"></p>
       <div class="de-toggle-group" id="de-main-toggle">
         <button class="de-toggle-btn active" data-mode="hire">Hire Talent</button>
         <button class="de-toggle-btn" data-mode="work">Find Work</button>
@@ -54,10 +54,10 @@ export function initDesignersController() {
 
   function setMode(mode) {
     toggleBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.mode === mode));
-    
+
     const desc = document.getElementById('de-header-desc');
     if (mode === 'hire') {
-      if (desc) desc.innerHTML = 'Browse our curated network of highly vetted Industrial Designers, Mechanical Engineers, and UI/UX specialists ready to bring your vision to life.';
+      if (desc) desc.innerHTML = 'Browse our network of highly skilled Industrial Designers, Mechanical & Electronics Engineers, and UI/UX specialists.';
       renderHireView(workspace);
     } else {
       if (desc) desc.innerHTML = 'Submit your project details and allow top-tier hardware professionals to submit proposals and bids directly to your workspace.';
@@ -215,10 +215,10 @@ function updateSidebar() {
       if (!state.active || shortlist.length === 0) return sum;
       let phaseRate = 0;
       shortlist.forEach(member => {
-         if (!state.offWorkers.includes(member.name)) {
-            const val = parseFloat(member.rate.replace(/[^0-9.]/g, ''));
-            phaseRate += (isNaN(val) ? 0 : val);
-         }
+        if (!state.offWorkers.includes(member.name)) {
+          const val = parseFloat(member.rate.replace(/[^0-9.]/g, ''));
+          phaseRate += (isNaN(val) ? 0 : val);
+        }
       });
       return sum + (ph.hours * (phaseRate * state.alloc));
     }, 0);
