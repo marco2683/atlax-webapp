@@ -327,94 +327,88 @@ function renderCurrentCard() {
         </div>
       </div>
 
-      <!-- Contacts (Blurred if !currentUser) -->
-      <h4 style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin: 0; font-family: 'Inter', sans-serif;">Contacts</h4>
-      <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; position:relative; overflow:hidden;">
-        ${!currentUser ? `
-        <div style="position:absolute; inset:0; background:rgba(255,255,255,0.65); backdrop-filter:blur(5px); z-index:10; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <div style="font-size:11px; font-weight:700; color:#334155; text-align:center; padding:0 10px;">Sign in to view direct contact info</div>
-          <button onclick="document.getElementById('auth-modal').classList.remove('hidden');" style="padding:6px 16px; background:#0f172a; color:#fff; border:none; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">Sign In</button>
-        </div>
-        ` : ''}
-        ${s.contactName ? `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Primary Contact</span>
-           <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${s.contactName}</span>
-        </div>` : ''}
-        ${email ? `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Email</span>
-           <a href="mailto:${email}" style="font-size: 13px; color: #2563eb; font-weight: 600; text-decoration: none;">${email}</a>
-        </div>` : ''}
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Phone</span>
-           <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${phone || '—'}</span>
-        </div>
-        ${websiteUrl ? `<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f1f5f9;">
-           <span style="font-size: 12px; color: #64748b; font-weight: 500;">Website</span>
-           <a href="${websiteUrl.startsWith('http') ? websiteUrl : 'https://' + websiteUrl}" target="_blank" style="font-size: 13px; color: #2563eb; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 4px;">
-             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-             Visit
-           </a>
-        </div>` : ''}
-      </div>
-      
       <!-- Add to Shortlist -->
-      <button id="modal-add-to-shortlist" style="width:100%; padding:12px 16px; border-radius:10px; font-weight:700; font-size:13px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; ${isShortlisted ? 'background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; pointer-events:none;' : 'background:#0f172a; color:#fff;'}">
+      <button id="modal-add-to-shortlist" style="width:100%; padding:12px 16px; border-radius:10px; font-weight:700; font-size:13px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; margin-top: 16px; margin-bottom: 24px; transition:all 0.2s; ${isShortlisted ? 'background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; pointer-events:none;' : 'background:#0f172a; color:#fff;'}">
         ${isShortlisted 
           ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg><span>Shortlisted</span>' 
           : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Add to Shortlist</span>'}
       </button>
 
-      <!-- Address Section -->
-      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; position:relative; overflow:hidden;">
+      <!-- Combined Private Details Card (Contacts, Address, Map) -->
+      <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; position:relative; overflow:hidden;">
         ${!currentUser ? `
-        <div style="position:absolute; inset:0; background:rgba(248,250,252,0.65); backdrop-filter:blur(5px); z-index:10; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <div style="font-size:11px; font-weight:700; color:#334155; text-align:center; padding:0 10px;">Sign in to view exact address</div>
-          <button onclick="document.getElementById('auth-modal').classList.remove('hidden');" style="padding:6px 16px; background:#0f172a; color:#fff; border:none; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">Sign In</button>
+        <div style="position:absolute; inset:0; background:rgba(255,255,255,0.7); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <div style="font-size:13px; font-weight:700; color:#1e293b; text-align:center; padding:0 16px;">Sign in to unlock supplier details</div>
+          <button onclick="document.getElementById('auth-modal').classList.remove('hidden');" style="padding:10px 24px; background:#0f172a; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15);">Sign In</button>
         </div>
         ` : ''}
-        <h4 style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 10px 0;">Address</h4>
-        ${addressEN ? `
-        <a href="${googleMapUrl}" target="_blank" style="display: flex; align-items: flex-start; gap: 8px; text-decoration: none; color: #334155; font-size: 13px; line-height: 1.5; font-weight: 500; margin-bottom: 6px;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#334155'">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <span>${addressEN}</span>
-        </a>` : ''}
-        ${addressCN ? `
-        <a href="${baiduMapUrl}" target="_blank" style="display: flex; align-items: flex-start; gap: 8px; text-decoration: none; color: #64748b; font-size: 13px; line-height: 1.5; font-weight: 500;" onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#64748b'">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <span>${addressCN}</span>
-        </a>` : ''}
-        ${!addressEN && !addressCN ? '<div style="font-size:12px; color:#94a3b8; font-style:italic;">No address on file</div>' : ''}
-      </div>
 
-      <!-- Map Embed -->
-      <div style="position:relative; border-radius:10px; overflow:hidden;">
-        ${!currentUser && (addressEN || addressCN) ? `
-        <div style="position:absolute; inset:0; background:rgba(255,255,255,0.3); backdrop-filter:blur(8px); z-index:10; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-          <button onclick="document.getElementById('auth-modal').classList.remove('hidden');" style="padding:8px 20px; background:#0f172a; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15);">Sign in to unlock Map</button>
+        <!-- Contacts Section -->
+        <div style="padding: 16px 18px; border-bottom: 1px solid #f1f5f9;">
+          <h4 style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 12px 0; font-family: 'Inter', sans-serif;">Contacts</h4>
+          ${s.contactName ? `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+             <span style="font-size: 12px; color: #64748b; font-weight: 500;">Primary Contact</span>
+             <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${s.contactName}</span>
+          </div>` : ''}
+          ${email ? `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+             <span style="font-size: 12px; color: #64748b; font-weight: 500;">Email</span>
+             <a href="mailto:${email}" style="font-size: 13px; color: #2563eb; font-weight: 600; text-decoration: none;">${email}</a>
+          </div>` : ''}
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+             <span style="font-size: 12px; color: #64748b; font-weight: 500;">Phone</span>
+             <span style="font-size: 13px; color: #0f172a; font-weight: 600;">${phone || '—'}</span>
+          </div>
+          ${websiteUrl ? `<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #e2e8f0;">
+             <span style="font-size: 12px; color: #64748b; font-weight: 500;">Website</span>
+             <a href="${websiteUrl.startsWith('http') ? websiteUrl : 'https://' + websiteUrl}" target="_blank" style="font-size: 13px; color: #2563eb; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 4px;">
+               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+               Visit
+             </a>
+          </div>` : ''}
         </div>
-        ` : ''}
-        ${addressEN ? `
-        <div style="overflow: hidden; border: 1px solid #e2e8f0; height: 180px; border-radius:10px; margin-bottom: 8px;">
-          <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(addressEN)}&t=&z=13&ie=UTF8&iwloc=&output=embed" style="width: 100%; height: 100%; border: none;" loading="lazy" allowfullscreen></iframe>
-        </div>` : ''}
-        ${addressCN ? `
-        <a href="${!currentUser ? '#' : baiduMapUrl}" target="${!currentUser ? '_self' : '_blank'}" style="display:block; border-radius:10px; overflow:hidden; border:1px solid #bfdbfe; text-decoration:none; transition:all 0.2s;" ${!currentUser ? '' : `onmouseover="this.style.borderColor='#60a5fa'; this.style.boxShadow='0 4px 12px rgba(59,130,246,0.12)'" onmouseout="this.style.borderColor='#bfdbfe'; this.style.boxShadow=''`}>
-          <div style="height:120px; position:relative;">
-            <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(addressCN)}&t=&z=14&ie=UTF8&iwloc=&output=embed" style="width:100%; height:100%; border:none; pointer-events:none;" loading="lazy"></iframe>
-            <div style="position:absolute; inset:0; background:linear-gradient(180deg, transparent 60%, rgba(239,246,255,0.9) 100%);"></div>
+
+        <!-- Address & Map Section -->
+        <div style="padding: 16px 18px; background: #f8fafc;">
+          <h4 style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 10px 0;">Address</h4>
+          ${addressEN ? `
+          <a href="${googleMapUrl}" target="_blank" style="display: flex; align-items: flex-start; gap: 8px; text-decoration: none; color: #334155; font-size: 13px; line-height: 1.5; font-weight: 500; margin-bottom: 6px;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#334155'">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>${addressEN}</span>
+          </a>` : ''}
+          ${addressCN ? `
+          <a href="${baiduMapUrl}" target="_blank" style="display: flex; align-items: flex-start; gap: 8px; text-decoration: none; color: #64748b; font-size: 13px; line-height: 1.5; font-weight: 500;" onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#64748b'">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>${addressCN}</span>
+          </a>` : ''}
+          ${!addressEN && !addressCN ? '<div style="font-size:12px; color:#94a3b8; font-style:italic;">No address on file</div>' : ''}
+          
+          <!-- Map Embed Inner -->
+          ${(addressEN || addressCN) ? `
+          <div style="margin-top: 12px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+            ${addressEN ? `
+            <div style="height: 160px;">
+              <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(addressEN)}&t=&z=13&ie=UTF8&iwloc=&output=embed" style="width: 100%; height: 100%; border: none;" loading="lazy" allowfullscreen></iframe>
+            </div>` : ''}
+            ${addressCN && !addressEN ? `
+            <a href="${!currentUser ? '#' : baiduMapUrl}" target="${!currentUser ? '_self' : '_blank'}" style="display:block; text-decoration:none;">
+              <div style="height:120px; position:relative;">
+                <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(addressCN)}&t=&z=14&ie=UTF8&iwloc=&output=embed" style="width:100%; height:100%; border:none; pointer-events:none;" loading="lazy"></iframe>
+                <div style="position:absolute; inset:0; background:linear-gradient(180deg, transparent 60%, rgba(239,246,255,0.9) 100%);"></div>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px; padding:10px 14px; background:#eff6ff; border-top: 1px solid #bfdbfe;">
+                <div style="width:30px; height:30px; background:#3b82f6; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div style="min-width:0;">
+                  <div style="font-size:11px; font-weight:700; color:#1e40af;">Open in Baidu Maps →</div>
+                  <div style="font-size:10px; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${addressCN}</div>
+                </div>
+              </div>
+            </a>` : ''}
           </div>
-          <div style="display:flex; align-items:center; gap:10px; padding:10px 14px; background:#eff6ff;">
-            <div style="width:30px; height:30px; background:#3b82f6; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            </div>
-            <div style="min-width:0;">
-              <div style="font-size:11px; font-weight:700; color:#1e40af;">Open in Baidu Maps →</div>
-              <div style="font-size:10px; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${addressCN}</div>
-            </div>
-          </div>
-        </a>` : ''}
+          ` : ''}
+        </div>
       </div>
 
     </div>
