@@ -432,15 +432,17 @@ a.nav-link.nav-contact-trigger:hover {
   color: rgba(255, 255, 255, 0.6);
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 6px 14px;
+  padding: 6px 12px;
+  font-size: 12px;
   border-radius: 8px;
   font-family: inherit;
+  margin-right: 4px;
 }
 
 .navbar__actions .nav-contact-trigger:hover {
   color: #fff;
-  border-color: rgba(59, 130, 246, 0.4);
-  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* ─── Responsive ─── */

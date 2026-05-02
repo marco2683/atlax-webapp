@@ -142,8 +142,11 @@ import { signUpUser } from './services/auth.js';
     contactBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Contact Us`;
 
     // Insert before the user avatar/dropdown (matches app order: Contact Us → Avatar)
+    const loginBtn = navActions.querySelector('#nav-login-btn');
     const userMenu = navActions.querySelector('#nav-user-menu');
-    if (userMenu) {
+    if (loginBtn) {
+      navActions.insertBefore(contactBtn, loginBtn);
+    } else if (userMenu) {
       navActions.insertBefore(contactBtn, userMenu);
     } else {
       navActions.appendChild(contactBtn);
@@ -157,9 +160,12 @@ import { signUpUser } from './services/auth.js';
     contactBtn.className = 'nav-contact-trigger';
     contactBtn.id = 'atlasdt-contact-nav-trigger-app';
     contactBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Contact Us`;
-    // Insert before the avatar/login
+    // Insert before the login button (so order is Workspace -> Contact Us -> Log In / Avatar)
+    const loginBtn = navbarActions.querySelector('#nav-login-btn');
     const userMenu = navbarActions.querySelector('#nav-user-menu');
-    if (userMenu) {
+    if (loginBtn) {
+      navbarActions.insertBefore(contactBtn, loginBtn);
+    } else if (userMenu) {
       navbarActions.insertBefore(contactBtn, userMenu);
     } else {
       navbarActions.appendChild(contactBtn);
