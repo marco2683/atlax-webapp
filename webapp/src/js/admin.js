@@ -2228,6 +2228,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const hasBeenConfirmed = !!data.confirmed_price || !!data.confirmed_at || ['confirmed', 'processing', 'paid', 'shipped'].includes(rfq.status || data.status || 'submitted');
     const confirmedDateStr = data.confirmed_at ? new Date(data.confirmed_at).toLocaleDateString() : (hasBeenConfirmed ? new Date(rfq.created_at).toLocaleDateString() : '');
 
+    // OneDrive folder URL
+    const bankRefClean = `ADT-${(rfq.id||'').slice(0,8).toUpperCase()}`;
+    const folderIdentifier = profile.company || [profile.first_name, profile.last_name].filter(Boolean).join(' ') || data.client_name || '';
+    const companySuffix = folderIdentifier ? ` - ${folderIdentifier.replace(/[\/\\?%*:|"<>]/g, '')}` : '';
+    const odName = `${bankRefClean}${companySuffix}`;
+    const odBaseUrl = data.onedrive_folder_url || `https://atlasdt-my.sharepoint.com/personal/marco_atlasdt_onmicrosoft_com/Documents/AtlasDT/RFQs/${encodeURIComponent(odName)}`;
+    const supaUrl = import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co';
+
     const documents = Array.isArray(data.documents) ? data.documents : [];
     const overrides = data.timeline_overrides || {};
     const quotedDoc = documents.slice().reverse().find(d => d.type === 'quotation');
@@ -2249,15 +2257,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       const stepProcessing = overrides['Processing'] !== undefined ? overrides['Processing'] : (statusIdx >= 4);
       const stepFinished = overrides['Finished'] !== undefined ? overrides['Finished'] : (statusIdx >= 5);
 
-      const oneDriveFolderUrl = 'https://atlasdt-my.sharepoint.com/:f:/p/marco/IgA2BW4xyeGPQr0vPyDUAYLZAU-o-wqXaNquagRu-EK1exA?e=Qpb0sV';
-
       const timelineSteps = [
         { label: 'Submitted', active: stepSubmitted },
         { label: 'Under Review', active: stepReview },
         { label: 'Info Req.', active: stepInfo },
         { label: 'Confirmed', active: stepConfirmed },
-        { label: 'Quoted', active: stepQuote, link: oneDriveFolderUrl, linkText: quotedDoc ? 'OneDrive Folder' : 'View Quote' },
-        { label: 'Paid', active: stepPaid, link: oneDriveFolderUrl, linkText: invoiceDoc ? 'OneDrive Folder' : 'View Invoice' },
+        { label: 'Quoted', active: stepQuote, link: odBaseUrl, linkText: quotedDoc ? 'OneDrive Folder' : 'View Quote' },
+        { label: 'Paid', active: stepPaid, link: odBaseUrl, linkText: invoiceDoc ? 'OneDrive Folder' : 'View Invoice' },
         { label: 'Processing', active: stepProcessing },
         { label: 'Finished', active: stepFinished }
       ];
@@ -2622,12 +2628,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       data.total_price = total;
       data.estimated_quantity = totalQty;
     }
-
-    // OneDrive folder URL
-    const bankRefClean = `ADT-${(rfq.id||'').slice(0,8).toUpperCase()}`;
-    const odName = `${bankRefClean}_${requesterName}`.replace(/[<>:"\/\\|?*]/g, '_');
-    const odBaseUrl = data.onedrive_folder_url || `https://atlasdt-my.sharepoint.com/personal/marco_atlasdt_onmicrosoft_com/Documents/AtlasDT/RFQs/${encodeURIComponent(odName)}`;
-    const supaUrl = import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co';
 
     function renderAdminPartsTable() {
        if (!partsTbody) return;
