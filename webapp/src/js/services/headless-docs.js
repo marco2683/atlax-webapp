@@ -259,16 +259,26 @@ export async function uploadAndSyncDoc(pdfBase64, docData) {
   const folderIdentifier = docData.customer?.company || docData.customer?.name || '';
   const companySuffix = folderIdentifier ? ` - ${folderIdentifier.replace(/[\/\\?%*:|"<>]/g, '')}` : '';
 
-  await fetch('/.netlify/functions/webhook-sharepoint', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      file_name: fileName,
-      file_url: publicUrl,
-      folder_path: `RFQs/${docData.rfqRef}${companySuffix}`,
-      metadata: { rfqRef: docData.rfqRef, type: docData.type }
-    }),
-  }).catch(err => console.error('SharePoint sync failed:', err));
+  const webhookPayload = {
+    file_name: fileName,
+    file_url: publicUrl,
+    folder_path: `RFQs/${docData.rfqRef}${companySuffix}`,
+    metadata: { rfqRef: docData.rfqRef, type: docData.type }
+  };
+  console.log('[SharePoint Sync] Sending webhook payload:', webhookPayload);
+
+  try {
+    const spRes = await fetch('/.netlify/functions/webhook-sharepoint', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(webhookPayload),
+    });
+    const spBody = await spRes.json().catch(() => ({}));
+    console.log('[SharePoint Sync] Response:', spRes.status, spBody);
+    if (!spRes.ok) console.error('[SharePoint Sync] Webhook returned error:', spRes.status, spBody);
+  } catch (err) {
+    console.error('[SharePoint Sync] Fetch failed:', err);
+  }
 
   return publicUrl;
 }

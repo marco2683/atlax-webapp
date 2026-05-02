@@ -2233,7 +2233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const folderIdentifier = profile.company || [profile.first_name, profile.last_name].filter(Boolean).join(' ') || data.client_name || '';
     const companySuffix = folderIdentifier ? ` - ${folderIdentifier.replace(/[\/\\?%*:|"<>]/g, '')}` : '';
     const odName = `${bankRefClean}${companySuffix}`;
-    const odBaseUrl = data.onedrive_folder_url || `https://atlasdt-my.sharepoint.com/personal/marco_atlasdt_onmicrosoft_com/Documents/AtlasDT/RFQs/${encodeURIComponent(odName)}`;
+    const odBaseUrl = data.onedrive_folder_url || `https://atlasdt-my.sharepoint.com/personal/marco_atlasdt_com/Documents/AtlasDT/RFQs/${encodeURIComponent(odName)}`;
     const supaUrl = import.meta.env.VITE_SUPABASE_URL || 'https://qvxrwbcmyrugjevgvujb.supabase.co';
 
     const documents = Array.isArray(data.documents) ? data.documents : [];
