@@ -2219,7 +2219,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const overrides = data.timeline_overrides || {};
     const quotedDoc = documents.slice().reverse().find(d => d.type === 'quotation');
     const stepQuote = overrides['Quoted'] !== undefined ? overrides['Quoted'] : !!quotedDoc;
-    const isQuoteLocked = stepQuote && !data.is_amending;
+    const isQuoteLocked = (stepQuote || hasBeenConfirmed) && !data.is_amending;
 
     function getTimelineHTML() {
       const commLog = data.communication_log || [];
@@ -2284,23 +2284,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
               ` : ''}
               
-              ${(step.label === 'Quoted' && step.active && !data.is_amending) ? `
+              ${(step.label === 'Quoted' && isQuoteLocked) ? `
                 <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 36px; background: #e2e8f0; z-index: -1;"></div>
                 <div style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
                   <button id="admin-amend-quote-timeline-btn" style="cursor: pointer; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; background: #fef08a; color: #854d0e; border: 1px solid #fde047; transition: all 0.2s; white-space: nowrap;">
-                    AMEND QUOTE
+                    AMEND ORDER
                   </button>
                 </div>
               ` : ''}
               
-              ${(step.label === 'Processing' && step.active) ? `
+              ${(step.label === 'Paid' && statusIdx >= 3) ? `
+                <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 36px; background: #e2e8f0; z-index: -1;"></div>
+                <div style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 6px; align-items: center;">
+                  <button class="admin-refund-order-btn" data-rfq-id="${rfq.id}" style="cursor: pointer; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; background: ${data.payment_status === 'refunded' ? '#dcfce7' : '#ffedd5'}; color: ${data.payment_status === 'refunded' ? '#15803d' : '#9a3412'}; border: 1px solid ${data.payment_status === 'refunded' ? '#bbf7d0' : '#fdba74'}; transition: all 0.2s; white-space: nowrap;">
+                    ${data.payment_status === 'refunded' ? 'Refunded ✓' : 'Refund'}
+                  </button>
+                </div>
+              ` : ''}
+              
+              ${(step.label === 'Processing') ? `
                 <div style="position: absolute; top: 24px; left: 50%; width: 2px; height: 36px; background: #e2e8f0; z-index: -1;"></div>
                 <div style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 6px; align-items: center;">
                   <button class="admin-cancel-order-btn" data-rfq-id="${rfq.id}" style="cursor: pointer; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; transition: all 0.2s; white-space: nowrap;">
                     Cancel Order
-                  </button>
-                  <button class="admin-refund-order-btn" data-rfq-id="${rfq.id}" style="cursor: pointer; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; background: ${data.payment_status === 'refunded' ? '#dcfce7' : '#ffedd5'}; color: ${data.payment_status === 'refunded' ? '#15803d' : '#9a3412'}; border: 1px solid ${data.payment_status === 'refunded' ? '#bbf7d0' : '#fdba74'}; transition: all 0.2s; white-space: nowrap;">
-                    ${data.payment_status === 'refunded' ? 'Refunded ✓' : 'Refund'}
                   </button>
                 </div>
               ` : ''}
