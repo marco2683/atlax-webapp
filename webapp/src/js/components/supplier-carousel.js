@@ -246,8 +246,8 @@ function renderCurrentCard() {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
         <span style="font-size: 10px; font-weight: 800; color: #0f766e; text-transform: uppercase; letter-spacing: 0.05em;">Certifications</span>
       </div>
-      <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-        ${certsList.map(c => `<span style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; background:rgba(13,148,136,0.08); border:1px solid rgba(13,148,136,0.25); border-radius:6px; font-size:11px; font-weight:700; color:#0f766e;">
+      <div style="display: grid; grid-template-columns: auto auto; gap: 6px;">
+        ${certsList.map(c => `<span style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; background:rgba(13,148,136,0.08); border:1px solid rgba(13,148,136,0.25); border-radius:6px; font-size:11px; font-weight:700; color:#0f766e; white-space: nowrap;">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           ${c}
         </span>`).join('')}
