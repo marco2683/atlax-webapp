@@ -101,7 +101,7 @@ function createPartPanelHTML(partIdx) {
               <div style="font-size: 11px; color: var(--color-steel-400, #94a3b8); display: flex; gap: 10px; align-items: center;">
                 <span>Tech: <span class="summary-tech" data-part="${partIdx}" style="color: #f59e0b; font-weight: 600;">Required</span></span>
                 <span>Mat: <span class="summary-mat" data-part="${partIdx}" style="color: #f59e0b; font-weight: 600;">Required</span></span>
-                <span>Qty: <span class="summary-qty" data-part="${partIdx}" style="font-weight: 600;">1</span></span>
+                <span>Qty: <span class="summary-qty" data-part="${partIdx}" style="color: #f59e0b; font-weight: 600;">Required</span></span>
                 <span class="rfq-part-status-msg" data-part="${partIdx}" style="color: #f59e0b; display: flex; align-items: center; gap: 4px;">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                   Missing minimum info
@@ -143,7 +143,7 @@ function createPartPanelHTML(partIdx) {
               </div>
               <div class="rfq-field">
                 <label>Quantity</label>
-                <input type="number" class="rfq-quantity" data-part="${partIdx}" value="1" min="1" style="font-size: 14px; font-weight: 600; padding: 10px 12px;" />
+                <input type="number" class="rfq-quantity" data-part="${partIdx}" placeholder="Enter qty" min="1" style="font-size: 14px; font-weight: 600; padding: 10px 12px;" />
               </div>
               <div class="rfq-field">
                 <label>Lead Time</label>
@@ -675,6 +675,42 @@ export function initRFQController() {
 
 
 /**
+ * Toggle mandatory-pulse / filled indicators on Technology, Material, Quantity
+ * Called after file analysis completes and on every recalculation.
+ */
+function updateMandatoryFields(partIdx) {
+  const panel = document.querySelector(`.rfq-part-card[data-part="${partIdx}"]`);
+  if (!panel) return;
+  const state = getPartState(partIdx);
+  const hasFile = !!(state && state.analysis);
+
+  // Identify the three mandatory field wrappers
+  const techField = panel.querySelector('.rfq-process')?.closest('.rfq-field');
+  const matField  = panel.querySelector('.rfq-material')?.closest('.rfq-field');
+  const qtyField  = panel.querySelector('.rfq-quantity')?.closest('.rfq-field');
+
+  const fields = [
+    { el: techField, value: panel.querySelector('.rfq-process')?.value },
+    { el: matField,  value: panel.querySelector('.rfq-material')?.value },
+    { el: qtyField,  value: panel.querySelector('.rfq-quantity')?.value },
+  ];
+
+  fields.forEach(({ el, value }) => {
+    if (!el) return;
+    const isFilled = value && value.trim() !== '' && parseInt(value) !== 0;
+    if (hasFile && !isFilled) {
+      el.classList.add('rfq-field--mandatory');
+      el.classList.remove('rfq-field--filled');
+    } else if (hasFile && isFilled) {
+      el.classList.remove('rfq-field--mandatory');
+      el.classList.add('rfq-field--filled');
+    } else {
+      el.classList.remove('rfq-field--mandatory', 'rfq-field--filled');
+    }
+  });
+}
+
+/**
  * Enable/disable the Calculate Instant Quote button
  * based on whether any part has a valid file analysis and all required fields are filled.
  */
@@ -758,6 +794,7 @@ function wirePartPanel(partIdx) {
       }
       updateSubmitButtonState();
     }
+    updateMandatoryFields(partIdx);
   });
 
   const updateToolingStatus = () => {
@@ -829,6 +866,7 @@ function wirePartPanel(partIdx) {
   toolingTypeSelect?.addEventListener('change', updateToolingStatus);
   toolingCavitiesSelect?.addEventListener('change', updateToolingStatus);
   qtyInput?.addEventListener('input', updateToolingStatus);
+  qtyInput?.addEventListener('input', () => updateMandatoryFields(partIdx));
 
   selectBtn?.addEventListener('click', (e) => { 
     console.log('[DEBUG] selectBtn clicked!', e.target);
@@ -1107,6 +1145,9 @@ async function handleFiles(fileList, partIdx) {
       if (statusEl) { statusEl.textContent = '✓ Complete'; statusEl.classList.add('done'); }
       if (progressBar) progressBar.classList.add('hidden');
 
+      // Mark mandatory fields as needing attention
+      updateMandatoryFields(partIdx);
+
       // Enable the Calculate button now that we have valid geometry
       updateSubmitButtonState();
 
@@ -1157,7 +1198,7 @@ function calculateAndDisplayQuote(isSubmitClick = false) {
       finish:    getField(panel, '.rfq-finish'),
       tolerance: getField(panel, '.rfq-tolerance'),
       leadTime:  getField(panel, '.rfq-lead-time'),
-      quantity:  parseInt(getField(panel, '.rfq-quantity')) || 1,
+      quantity:  parseInt(getField(panel, '.rfq-quantity')) || 0,
       dfm:       panel.querySelector('.rfq-dfm-check')?.checked || false,
       color:     getField(panel, '.rfq-color'),
       threads:   getField(panel, '.rfq-threads'),
@@ -1185,7 +1226,13 @@ function calculateAndDisplayQuote(isSubmitClick = false) {
        summaryMatEl.style.color = config.material ? 'var(--color-text, inherit)' : '#f59e0b';
     }
     const summaryQtyEl = panel.querySelector('.summary-qty');
-    if (summaryQtyEl) summaryQtyEl.textContent = config.quantity;
+    if (summaryQtyEl) {
+      summaryQtyEl.textContent = config.quantity > 0 ? config.quantity : 'Required';
+      summaryQtyEl.style.color = config.quantity > 0 ? 'var(--color-text, inherit)' : '#f59e0b';
+    }
+    
+    // Update mandatory field visual state
+    updateMandatoryFields(partIdx);
     
     const statusMsgEl = panel.querySelector('.rfq-part-status-msg');
     const isComplete = config.process && config.material && config.quantity > 0;
