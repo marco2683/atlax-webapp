@@ -46,9 +46,10 @@ function populateMaterialDropdown(partIdx, techKey) {
   if (!select) return;
 
   const materials = getMaterialsForTech(techKey);
-  select.innerHTML = materials.map(m =>
-    `<option value="${m.key}">${m.label}</option>`
-  ).join('');
+  select.innerHTML = '<option value="" disabled selected>Select Material...</option>' +
+    materials.map(m =>
+      `<option value="${m.key}">${m.label}</option>`
+    ).join('');
 }
 
 function populateFinishDropdown(partIdx, techKey) {
@@ -157,7 +158,7 @@ function createPartPanelHTML(partIdx) {
             </div>
 
             <!-- Row 2: Material, Color, Surface Finish -->
-            <div class="rfq-fields-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 0;">
+            <div class="rfq-fields-grid" style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 0;">
               <div class="rfq-field">
                 <label>Material</label>
                 <select class="rfq-material" data-part="${partIdx}">
