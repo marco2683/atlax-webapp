@@ -59,70 +59,148 @@ function showSupplierAuthScreen() {
   const onboardingUi = document.getElementById('supplier-onboarding');
   const appUi        = document.getElementById('supplier-app');
 
+  // ── i18n dictionary for seller auth ──
+  let _authLang = 'en';
+  const _authI18n = {
+    // Header
+    subtitle:         { en: 'Seller Platform · 卖家平台', zh: '卖家平台 · Seller Platform' },
+    langBtn:          { en: '中文',                       zh: 'English' },
+    // Tabs
+    tabLogin:         { en: 'Sign In',                    zh: '登录' },
+    tabRegister:      { en: 'Create Account',             zh: '创建账号' },
+    // Login form
+    loginTitle:       { en: 'Welcome back',               zh: '欢迎回来' },
+    loginSubtitle:    { en: 'Sign in to access your seller dashboard.', zh: '登录以访问您的卖家控制面板。' },
+    loginEmailLabel:  { en: 'Email address',              zh: '电子邮箱' },
+    loginEmailPh:     { en: 'you@company.com',            zh: '你的邮箱@company.com' },
+    loginPwdLabel:    { en: 'Password',                   zh: '密码' },
+    loginPwdPh:       { en: '••••••••',                   zh: '••••••••' },
+    loginBtn:         { en: 'Sign In to Seller Central',  zh: '登录卖家中心' },
+    loginNoAccount:   { en: "Don't have an account?",     zh: '还没有账号？' },
+    loginRegLink:     { en: 'Register here',              zh: '点此注册' },
+    // Register form
+    regTitle:         { en: 'Create your seller account',                  zh: '创建您的卖家账号' },
+    regSubtitle:      { en: 'Join the AtlasDT B2B marketplace as a verified supplier.', zh: '加入AtlasDT B2B平台，成为认证供应商。' },
+    regNameLabel:     { en: 'Full name',                  zh: '姓名' },
+    regNamePh:        { en: 'Zhang Wei',                  zh: '张伟' },
+    regEmailLabel:    { en: 'Work email',                 zh: '工作邮箱' },
+    regEmailPh:       { en: 'you@factory.com',            zh: '你的邮箱@factory.com' },
+    regPwdLabel:      { en: 'Password',                   zh: '密码' },
+    regPwdHint:       { en: '(min. 8 characters)',        zh: '（至少8个字符）' },
+    regPwdPh:         { en: '••••••••',                   zh: '••••••••' },
+    regCompanyLabel:  { en: 'Company name',               zh: '公司名称' },
+    regCompanyPh:     { en: 'Shenzhen Precision Manufacturing Ltd.', zh: '深圳精密制造有限公司' },
+    regBtn:           { en: 'Create Account & Continue',  zh: '创建账号并继续' },
+    regHasAccount:    { en: 'Already registered?',        zh: '已有账号？' },
+    regSignInLink:    { en: 'Sign in',                    zh: '立即登录' },
+    // Footer
+    tosFooter:        { en: 'By continuing you agree to the AtlasDT Platform Terms of Service.', zh: '继续即表示您同意AtlasDT平台服务条款。' },
+  };
+
+  function _t(key) { return _authI18n[key]?.[_authLang] || _authI18n[key]?.en || key; }
+
   // Replace the onboarding panel with the auth screen
   document.body.innerHTML = `
     <div style="min-height:100vh; background:linear-gradient(135deg,#0c1a2e 0%,#0e2640 50%,#0a1628 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Open Sans',sans-serif;">
 
       <!-- Logo -->
       <div style="margin-bottom:40px; text-align:center;">
-        <img src="/logos/atlax-logo-original.png" alt="AtlasDT" style="height:36px; filter:brightness(0) invert(1); margin-bottom:12px;">
-        <div style="color:rgba(255,255,255,0.6); font-size:13px; letter-spacing:2px; text-transform:uppercase;">Seller Platform · 卖家平台</div>
+        <img src="/logos/atlasdt-logo-light.png" alt="AtlasDT" style="height:44px; margin-bottom:12px;">
+        <div id="sp-auth-subtitle" style="color:rgba(255,255,255,0.6); font-size:13px; letter-spacing:2px; text-transform:uppercase;">Seller Platform · 卖家平台</div>
       </div>
+
+      <!-- Language Toggle -->
+      <button id="sp-auth-lang-toggle" style="position:absolute; top:24px; right:32px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.8); padding:6px 16px; border-radius:20px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; backdrop-filter:blur(8px); transition:all 0.2s ease; letter-spacing:0.5px; display:flex; align-items:center; gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span id="sp-lang-label">中文</span>
+      </button>
 
       <!-- Card -->
       <div style="background:#fff; border-radius:8px; box-shadow:0 24px 64px rgba(0,0,0,0.4); width:100%; max-width:440px; overflow:hidden;">
 
         <!-- Tab switcher -->
         <div id="auth-tabs" style="display:flex; border-bottom:1px solid #e2e8f0;">
-          <button id="tab-login" onclick="window._authTab('login')" style="flex:1; padding:16px; background:#fff; border:none; font-weight:700; font-size:14px; color:#007185; cursor:pointer; border-bottom:3px solid #007185; font-family:inherit;">Sign In</button>
-          <button id="tab-register" onclick="window._authTab('register')" style="flex:1; padding:16px; background:#f8fafc; border:none; font-weight:600; font-size:14px; color:#64748b; cursor:pointer; border-bottom:3px solid transparent; font-family:inherit;">Create Account</button>
+          <button id="tab-login" onclick="window._authTab('login')" style="flex:1; padding:16px; background:#fff; border:none; font-weight:700; font-size:14px; color:#007185; cursor:pointer; border-bottom:3px solid #007185; font-family:inherit;" data-sp-i18n="tabLogin">Sign In</button>
+          <button id="tab-register" onclick="window._authTab('register')" style="flex:1; padding:16px; background:#f8fafc; border:none; font-weight:600; font-size:14px; color:#64748b; cursor:pointer; border-bottom:3px solid transparent; font-family:inherit;" data-sp-i18n="tabRegister">Create Account</button>
         </div>
 
         <div id="auth-body" style="padding:32px;">
 
           <!-- Login Form -->
           <div id="auth-login">
-            <h2 style="margin:0 0 4px 0; font-size:20px; font-weight:700; color:#0f172a;">Welcome back</h2>
-            <p style="margin:0 0 24px 0; font-size:13px; color:#64748b;">Sign in to access your seller dashboard.</p>
+            <h2 style="margin:0 0 4px 0; font-size:20px; font-weight:700; color:#0f172a;" data-sp-i18n="loginTitle">Welcome back</h2>
+            <p style="margin:0 0 24px 0; font-size:13px; color:#64748b;" data-sp-i18n="loginSubtitle">Sign in to access your seller dashboard.</p>
             <div id="auth-login-err" style="display:none; background:#fef2f2; border:1px solid #fecaca; border-radius:4px; padding:10px 14px; font-size:13px; color:#dc2626; margin-bottom:16px;"></div>
-            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;">Email address</label>
-            <input type="email" id="login-email" placeholder="you@company.com" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:16px; box-sizing:border-box; font-family:inherit;">
-            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;">Password</label>
-            <input type="password" id="login-password" placeholder="••••••••" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:24px; box-sizing:border-box; font-family:inherit;">
-            <button id="btn-login" onclick="window._doLogin()" style="width:100%; padding:12px; background:#007185; color:#fff; border:none; border-radius:4px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;">Sign In to Seller Central</button>
+            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;" data-sp-i18n="loginEmailLabel">Email address</label>
+            <input type="email" id="login-email" placeholder="you@company.com" data-sp-i18n-ph="loginEmailPh" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:16px; box-sizing:border-box; font-family:inherit;">
+            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;" data-sp-i18n="loginPwdLabel">Password</label>
+            <input type="password" id="login-password" placeholder="••••••••" data-sp-i18n-ph="loginPwdPh" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:24px; box-sizing:border-box; font-family:inherit;">
+            <button id="btn-login" onclick="window._doLogin()" style="width:100%; padding:12px; background:#007185; color:#fff; border:none; border-radius:4px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;" data-sp-i18n="loginBtn">Sign In to Seller Central</button>
             <p style="text-align:center; margin:16px 0 0 0; font-size:12px; color:#64748b;">
-              Don't have an account? <a href="#" onclick="window._authTab('register'); return false;" style="color:#007185; font-weight:700;">Register here</a>
+              <span data-sp-i18n="loginNoAccount">Don't have an account?</span> <a href="#" onclick="window._authTab('register'); return false;" style="color:#007185; font-weight:700;" data-sp-i18n="loginRegLink">Register here</a>
             </p>
           </div>
 
           <!-- Register Form -->
           <div id="auth-register" style="display:none;">
-            <h2 style="margin:0 0 4px 0; font-size:20px; font-weight:700; color:#0f172a;">Create your seller account</h2>
-            <p style="margin:0 0 24px 0; font-size:13px; color:#64748b;">Join the AtlasDT B2B marketplace as a verified supplier.</p>
+            <h2 style="margin:0 0 4px 0; font-size:20px; font-weight:700; color:#0f172a;" data-sp-i18n="regTitle">Create your seller account</h2>
+            <p style="margin:0 0 24px 0; font-size:13px; color:#64748b;" data-sp-i18n="regSubtitle">Join the AtlasDT B2B marketplace as a verified supplier.</p>
             <div id="auth-reg-err" style="display:none; background:#fef2f2; border:1px solid #fecaca; border-radius:4px; padding:10px 14px; font-size:13px; color:#dc2626; margin-bottom:16px;"></div>
             <div id="auth-reg-ok"  style="display:none; background:#f0fdf4; border:1px solid #86efac; border-radius:4px; padding:10px 14px; font-size:13px; color:#16a34a; margin-bottom:16px;"></div>
-            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;">Full name</label>
-            <input type="text" id="reg-name" placeholder="Zhang Wei" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:16px; box-sizing:border-box; font-family:inherit;">
-            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;">Work email</label>
-            <input type="email" id="reg-email" placeholder="you@factory.com" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:16px; box-sizing:border-box; font-family:inherit;">
-            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;">Password <span style="color:#9ca3af; font-weight:400;">(min. 8 characters)</span></label>
-            <input type="password" id="reg-password" placeholder="••••••••" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:16px; box-sizing:border-box; font-family:inherit;">
-            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;">Company name</label>
-            <input type="text" id="reg-company" placeholder="Shenzhen Precision Manufacturing Ltd." style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:24px; box-sizing:border-box; font-family:inherit;">
-            <button id="btn-register" onclick="window._doRegister()" style="width:100%; padding:12px; background:#f59e0b; color:#fff; border:none; border-radius:4px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;">Create Account & Continue</button>
+            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;" data-sp-i18n="regNameLabel">Full name</label>
+            <input type="text" id="reg-name" placeholder="Zhang Wei" data-sp-i18n-ph="regNamePh" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:16px; box-sizing:border-box; font-family:inherit;">
+            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;" data-sp-i18n="regEmailLabel">Work email</label>
+            <input type="email" id="reg-email" placeholder="you@factory.com" data-sp-i18n-ph="regEmailPh" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:16px; box-sizing:border-box; font-family:inherit;">
+            <label id="reg-pwd-label" style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;">Password <span style="color:#9ca3af; font-weight:400;" data-sp-i18n="regPwdHint">(min. 8 characters)</span></label>
+            <input type="password" id="reg-password" placeholder="••••••••" data-sp-i18n-ph="regPwdPh" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:16px; box-sizing:border-box; font-family:inherit;">
+            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151;" data-sp-i18n="regCompanyLabel">Company name</label>
+            <input type="text" id="reg-company" placeholder="Shenzhen Precision Manufacturing Ltd." data-sp-i18n-ph="regCompanyPh" style="width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; margin-bottom:24px; box-sizing:border-box; font-family:inherit;">
+            <button id="btn-register" onclick="window._doRegister()" style="width:100%; padding:12px; background:#f59e0b; color:#fff; border:none; border-radius:4px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;" data-sp-i18n="regBtn">Create Account & Continue</button>
             <p style="text-align:center; margin:16px 0 0 0; font-size:12px; color:#64748b;">
-              Already registered? <a href="#" onclick="window._authTab('login'); return false;" style="color:#007185; font-weight:700;">Sign in</a>
+              <span data-sp-i18n="regHasAccount">Already registered?</span> <a href="#" onclick="window._authTab('login'); return false;" style="color:#007185; font-weight:700;" data-sp-i18n="regSignInLink">Sign in</a>
             </p>
           </div>
 
         </div>
       </div>
 
-      <p style="margin-top:24px; font-size:12px; color:rgba(255,255,255,0.4);">
+      <p style="margin-top:24px; font-size:12px; color:rgba(255,255,255,0.4);" data-sp-i18n="tosFooter">
         By continuing you agree to the AtlasDT Platform Terms of Service.
       </p>
     </div>
   `;
+
+  // ── i18n DOM updater ──
+  function _applyAuthLang() {
+    // Text content
+    document.querySelectorAll('[data-sp-i18n]').forEach(el => {
+      const key = el.dataset.spI18n;
+      if (_authI18n[key]?.[_authLang]) el.textContent = _authI18n[key][_authLang];
+    });
+    // Placeholders
+    document.querySelectorAll('[data-sp-i18n-ph]').forEach(el => {
+      const key = el.dataset.spI18nPh;
+      if (_authI18n[key]?.[_authLang]) el.placeholder = _authI18n[key][_authLang];
+    });
+    // Special: password label with inner span
+    const pwdLabel = document.getElementById('reg-pwd-label');
+    if (pwdLabel) {
+      const hintSpan = pwdLabel.querySelector('[data-sp-i18n="regPwdHint"]');
+      pwdLabel.childNodes[0].textContent = _t('regPwdLabel') + ' ';
+      if (hintSpan) hintSpan.textContent = _t('regPwdHint');
+    }
+    // Subtitle & toggle label
+    const subtitle = document.getElementById('sp-auth-subtitle');
+    if (subtitle) subtitle.textContent = _t('subtitle');
+    const langLabel = document.getElementById('sp-lang-label');
+    if (langLabel) langLabel.textContent = _t('langBtn');
+  }
+
+  // ── Language toggle handler ──
+  document.getElementById('sp-auth-lang-toggle')?.addEventListener('click', () => {
+    _authLang = _authLang === 'en' ? 'zh' : 'en';
+    _applyAuthLang();
+  });
 
   // ── Tab switcher ────────────────────────────────────────────────────────────
   window._authTab = function(tab) {
@@ -146,17 +224,17 @@ function showSupplierAuthScreen() {
     const email = document.getElementById('login-email').value.trim();
     const pass  = document.getElementById('login-password').value;
 
-    if (!email || !pass) { errEl.textContent = 'Please enter your email and password.'; errEl.style.display=''; return; }
+    if (!email || !pass) { errEl.textContent = _authLang === 'zh' ? '请输入邮箱和密码。' : 'Please enter your email and password.'; errEl.style.display=''; return; }
 
-    btn.textContent = 'Signing in...';
+    btn.textContent = _authLang === 'zh' ? '正在登录...' : 'Signing in...';
     btn.disabled = true;
     errEl.style.display = 'none';
 
     const { data, error } = await loginUser(email, pass);
     if (error) {
-      errEl.textContent = error.message || 'Login failed. Check your credentials.';
+      errEl.textContent = error.message || (_authLang === 'zh' ? '登录失败，请检查您的凭据。' : 'Login failed. Check your credentials.');
       errEl.style.display = '';
-      btn.textContent = 'Sign In to Seller Central';
+      btn.textContent = _t('loginBtn');
       btn.disabled = false;
     } else {
       // Reload the page — DOMContentLoaded will re-run with the session now set
@@ -178,31 +256,30 @@ function showSupplierAuthScreen() {
     okEl.style.display  = 'none';
 
     if (!name || !email || !pass || !company) {
-      errEl.textContent = 'Please fill in all fields.'; errEl.style.display=''; return;
+      errEl.textContent = _authLang === 'zh' ? '请填写所有字段。' : 'Please fill in all fields.'; errEl.style.display=''; return;
     }
     if (pass.length < 8) {
-      errEl.textContent = 'Password must be at least 8 characters.'; errEl.style.display=''; return;
+      errEl.textContent = _authLang === 'zh' ? '密码至少需要8个字符。' : 'Password must be at least 8 characters.'; errEl.style.display=''; return;
     }
 
-    btn.textContent = 'Creating account...';
+    btn.textContent = _authLang === 'zh' ? '正在创建账号...' : 'Creating account...';
     btn.disabled = true;
 
     const { data, error } = await signUpUser(email, pass, { full_name: name, company });
     if (error) {
-      errEl.textContent = error.message || 'Registration failed. Please try again.';
+      errEl.textContent = error.message || (_authLang === 'zh' ? '注册失败，请重试。' : 'Registration failed. Please try again.');
       errEl.style.display = '';
-      btn.textContent = 'Create Account & Continue';
+      btn.textContent = _t('regBtn');
       btn.disabled = false;
     } else {
       // Supabase may require email confirmation depending on project settings
       const needsConfirm = !data?.session;
       if (needsConfirm) {
-        okEl.innerHTML = `
-          <strong>✅ Account created!</strong><br>
-          Please check <strong>${email}</strong> for a confirmation email, then return here and sign in.
-        `;
+        okEl.innerHTML = _authLang === 'zh'
+          ? `<strong>✅ 账号已创建！</strong><br>请查看 <strong>${email}</strong> 的确认邮件，然后返回此处登录。`
+          : `<strong>✅ Account created!</strong><br>Please check <strong>${email}</strong> for a confirmation email, then return here and sign in.`;
         okEl.style.display = '';
-        btn.textContent = 'Account Created — Check your email';
+        btn.textContent = _authLang === 'zh' ? '账号已创建 — 请查看邮箱' : 'Account Created — Check your email';
         btn.disabled = true;
       } else {
         // Auto-confirmed (email confirm disabled in Supabase) — reload with session
