@@ -1,0 +1,244 @@
+/* ============================================================
+   Google Places Autofill — Custom UI Styles
+   ============================================================ */
+
+/* ── Search Wrapper ─────────────────────────────────────────── */
+.gpa-search-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+/* ── Label row (icon + text) ────────────────────────────────── */
+.gpa-search-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.5);
+}
+.gpa-search-label svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* ── Search input ───────────────────────────────────────────── */
+.gpa-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.gpa-search-input:focus {
+  outline: none;
+}
+
+/* ── Dropdown (suggestions list) ────────────────────────────── */
+.gpa-dropdown {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 9999;
+  max-height: 260px;
+  overflow-y: auto;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  background: #1a1f2e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: none;
+}
+
+.gpa-dropdown-item {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  line-height: 1.4;
+}
+.gpa-dropdown-item:last-child {
+  border-bottom: none;
+}
+.gpa-dropdown-item:hover {
+  background: rgba(31, 111, 235, 0.15);
+  color: #fff;
+}
+.gpa-dropdown-item strong {
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────── */
+.gpa-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+.gpa-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+.gpa-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+/* ============================================================
+   CONTEXT: Profile Page (dark theme default)
+   ============================================================ */
+.gpa-search-wrapper .gpa-search-input.profile-input {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 14px 16px;
+  border-radius: 10px;
+}
+.gpa-search-wrapper .gpa-search-input.profile-input:focus {
+  border-color: var(--color-electric, #1f6feb);
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.15);
+}
+
+/* ============================================================
+   CONTEXT: Shipping Modal (light card)
+   ============================================================ */
+.gpa-search-wrapper .gpa-search-input.ship-input {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+.gpa-search-wrapper .gpa-search-input.ship-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+/* Shipping modal context: dropdown should be light */
+.ship-modal-body .gpa-dropdown,
+.ship-modal-card .gpa-dropdown {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+.ship-modal-body .gpa-dropdown-item,
+.ship-modal-card .gpa-dropdown-item {
+  color: #334155;
+  border-bottom-color: #f1f5f9;
+}
+.ship-modal-body .gpa-dropdown-item:hover,
+.ship-modal-card .gpa-dropdown-item:hover {
+  background: rgba(59, 130, 246, 0.08);
+  color: #1e40af;
+}
+.ship-modal-body .gpa-dropdown-item strong,
+.ship-modal-card .gpa-dropdown-item strong {
+  color: #0f172a;
+}
+
+/* Shipping modal context: label should be light */
+.ship-modal-body .gpa-search-label,
+.ship-modal-card .gpa-search-label {
+  color: #475569;
+}
+
+/* ============================================================
+   CONTEXT: Checkout (light card within dark page)
+   ============================================================ */
+#rfq-engine .gpa-dropdown,
+.chk-section .gpa-dropdown {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+#rfq-engine .gpa-dropdown-item,
+.chk-section .gpa-dropdown-item {
+  color: #334155;
+  border-bottom-color: #f1f5f9;
+}
+#rfq-engine .gpa-dropdown-item:hover,
+.chk-section .gpa-dropdown-item:hover {
+  background: rgba(59, 130, 246, 0.08);
+  color: #1e40af;
+}
+#rfq-engine .gpa-dropdown-item strong,
+.chk-section .gpa-dropdown-item strong {
+  color: #0f172a;
+}
+#rfq-engine .gpa-search-label,
+.chk-section .gpa-search-label {
+  color: #555;
+}
+
+/* ============================================================
+   LIGHT THEME OVERRIDES
+   ============================================================ */
+body.theme-light .gpa-search-label {
+  color: #4b5563;
+}
+
+body.theme-light .gpa-dropdown {
+  background: #ffffff;
+  border-color: #d1d5db;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+}
+body.theme-light .gpa-dropdown-item {
+  color: #374151;
+  border-bottom-color: #f3f4f6;
+}
+body.theme-light .gpa-dropdown-item:hover {
+  background: rgba(31, 111, 235, 0.08);
+  color: #1e40af;
+}
+body.theme-light .gpa-dropdown-item strong {
+  color: #111827;
+}
+
+body.theme-light .gpa-search-wrapper .gpa-search-input.profile-input {
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  color: #111827;
+}
+body.theme-light .gpa-search-wrapper .gpa-search-input.profile-input:focus {
+  border-color: var(--color-electric, #1f6feb);
+  background: #ffffff;
+}
+
+/* ============================================================
+   Powered-by attribution (Google requirement)
+   ============================================================ */
+.gpa-dropdown::after {
+  content: '';
+  display: block;
+  height: 18px;
+  background: url('https://maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-white3_hdpi.png') no-repeat center;
+  background-size: auto 14px;
+  padding: 6px 0 4px;
+  opacity: 0.5;
+}
+body:not(.theme-light) .gpa-dropdown::after {
+  filter: invert(1);
+}
+.ship-modal-body .gpa-dropdown::after,
+.ship-modal-card .gpa-dropdown::after,
+#rfq-engine .gpa-dropdown::after,
+.chk-section .gpa-dropdown::after {
+  filter: none;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 768px) {
+  .gpa-search-wrapper {
+    margin-bottom: 16px;
+  }
+  .gpa-dropdown {
+    max-height: 200px;
+  }
+}
