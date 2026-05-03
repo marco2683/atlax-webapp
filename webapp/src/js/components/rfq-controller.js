@@ -127,7 +127,7 @@ function createPartPanelHTML(partIdx) {
           <!-- Middle Section: Configurations -->
           <div class="rfq-fields-col" style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
             <!-- Row 1: Technology, Quantity & Lead Time -->
-            <div class="rfq-fields-grid" style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 0; padding: 12px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-lg);">
+            <div class="rfq-fields-grid" style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 0;">
               <div class="rfq-field rfq-field--accent">
                 <label style="color: var(--color-electric); font-size: 11px;">Primary Technology</label>
                 <select class="rfq-process" data-part="${partIdx}" style="font-size: 14px; font-weight: 600; padding: 10px 12px; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.05);">
