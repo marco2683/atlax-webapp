@@ -453,7 +453,8 @@
 }
 
 .pb-stage-card {
-  background: #111 !important;
+  background: rgba(17, 17, 17, 0.6) !important;
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.06) !important;
   border-radius: 16px;
   display: flex;

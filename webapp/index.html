@@ -417,8 +417,14 @@
     <!-- 100vh Top Section -->
     <div class="hero-top-section"
       style="min-height: 100vh; min-height: 100dvh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; z-index: 2; padding-top: 28vh; box-sizing: border-box;">
+
+      <span class="hero-prompt__text"
+        style="position: absolute; top: 60px; left: 0; right: 0; margin: 0 auto; width: 100%; text-align: center; display: block; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; font-size: 13px; letter-spacing: 2px; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; line-height: 1.6; max-width: 850px; white-space: normal; padding: 0 20px; box-sizing: border-box; animation: hero-logo-reveal 4s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both; z-index: 20;">We
+        help hardware companies turn ideas and designs into production-ready products, then connect them to the right
+        Asian manufacturing ecosystem.</span>
+
       <div class="m-hero__content"
-        style="text-align: center; align-items: center; justify-content: center; display: flex; max-width: 900px; width: 100%; min-height: 200px; margin: 0 auto; box-sizing: border-box;">
+        style="text-align: center; align-items: center; justify-content: center; display: flex; flex-direction: column; max-width: 900px; width: 100%; min-height: 200px; margin: 0 auto; box-sizing: border-box;">
 
         <style>
           @keyframes hero-logo-reveal {
@@ -444,14 +450,12 @@
             }
           }
         </style>
+
         <div
           style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 12px; margin-left: auto; margin-right: auto; padding: 0 10px; width: 100%; box-sizing: border-box; animation: hero-logo-reveal 4s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;">
           <img src="/logos/atlasdt-logo-light.png" alt="AtlasDT — Design & Technology"
             style="width: 100%; max-width: 750px; max-height: 220px; object-fit: contain; padding: 0 15px; box-sizing: border-box;">
         </div>
-
-        <!--<span class="hero-prompt__text" style="font-size: 16px; display: block; padding: 0 20px;">From concept to factory
-          floor &mdash; faster, leaner, and more competitive than you thought possible.</span>-->
       </div>
 
       <!-- Discover More Arrow -->
@@ -1736,13 +1740,17 @@
   </style>
   <section id="locations" class="m-locations-map-section"
     style="position: relative; background-color: #f9fafb; padding: 60px 0; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 80vh;">
-    
-    <div style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); text-align: center; width: 100%; z-index: 10; pointer-events: none;">
+
+    <div
+      style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); text-align: center; width: 100%; z-index: 10; pointer-events: none;">
       <h2 class="m-section-title" style="color: var(--color-void); margin: 0; display: inline-block;">Locations</h2>
     </div>
 
-    <div style="position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); text-align: center; width: 100%; max-width: 800px; padding: 0 20px; z-index: 10; pointer-events: none;">
-      <p class="m-section-desc" style="color: #444; margin: 0; text-shadow: 0 2px 10px rgba(255,255,255,0.9), 0 -2px 10px rgba(255,255,255,0.9); line-height: 1.5;">From our innovation HQ in
+    <div
+      style="position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); text-align: center; width: 100%; max-width: 800px; padding: 0 20px; z-index: 10; pointer-events: none;">
+      <p class="m-section-desc"
+        style="color: #444; margin: 0; text-shadow: 0 2px 10px rgba(255,255,255,0.9), 0 -2px 10px rgba(255,255,255,0.9); line-height: 1.5;">
+        From our innovation HQ in
         Melbourne, to the massive manufacturing floors in Shenzhen, supported by our growing presence in California
         and Italy.</p>
     </div>

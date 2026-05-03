@@ -489,7 +489,7 @@ function updateStackedResultsOnly(globe) {
 function switchView(view, globe) {
   // ZERO-TRUST AUTHORIZATION GUARD
   const sysTier = sessionStorage.getItem('atlasdt_tier') || 'basic';
-  const restrictedViews = ['suppliers', 'tariff', 'taxonomy'];
+  const restrictedViews = ['tariff', 'taxonomy'];
   if (sysTier === 'basic' && restrictedViews.includes(view)) {
     console.warn(`[Auth] Blocked restricted view attempt: ${view} on ${sysTier} tier.`);
     return;
@@ -576,11 +576,6 @@ function switchView(view, globe) {
     // Globe interaction is managed by supplier-engine.js (tabular vs globe toggle)
     // Re-enable here as a default; tabular will disable it if needed
     globe.enableInteraction();
-    
-    // Auth guard for Basic Tier: Hide search components if they aren't supposed to see suppliers
-    if (sysTier === 'basic') {
-       heroTitleContainer?.classList.add('hidden');
-    }
   } else {
     heroTitleContainer?.classList.add('hidden');
     // Hide scroll hint on non-supplier views (RFQ, designers, etc.)
@@ -690,6 +685,18 @@ function switchView(view, globe) {
     appState.searchType = 'suppliers';
     selectionScreen?.classList.add('hidden');
     
+    const isTabularActive = document.querySelector('.view-toggle-btn[data-view="table"]')?.classList.contains('active');
+    if (isTabularActive) {
+      tabularEngine?.classList.remove('hidden');
+      if (globeContainer) globeContainer.style.opacity = '0.3';
+      heroTitleContainer?.classList.add('hidden');
+      const scrollHint = document.getElementById('scroll-hint');
+      if (scrollHint) scrollHint.style.display = 'none';
+      globe.disableInteraction();
+    } else {
+      if (globeContainer) globeContainer.style.opacity = '1';
+    }
+
     if (appState.hasSearched) {
       bottomResults?.classList.remove('hidden');
       updateStackedResultsOnly(globe);

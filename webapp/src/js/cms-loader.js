@@ -9,21 +9,62 @@
   const LS_KEY = 'atlasdt_cms_content';
 
   /**
-   * Load CMS data — prefers localStorage (draft/published),
-   * falls back to static JSON file.
+   * Load CMS data — fetches static file and merges with localStorage (draft/published)
+   * so new content added statically isn't hidden by an old cached version.
    */
   async function loadCMSData() {
-    // Check localStorage first (admin drafts / publishes)
-    const stored = localStorage.getItem(LS_KEY);
-    if (stored) {
-      try { return JSON.parse(stored); } catch (e) { /* fall through */ }
-    }
-    // Fall back to static file
+    let staticData = {};
+    let localData = {};
+    
+    // 1. Fetch static file
     try {
       const res = await fetch(CMS_URL);
-      if (res.ok) return await res.json();
-    } catch (e) { /* silent fail — page uses HTML defaults */ }
-    return null;
+      if (res.ok) {
+        staticData = await res.json();
+      }
+    } catch (e) { /* silent fail */ }
+
+    // 2. Check localStorage
+    const stored = localStorage.getItem(LS_KEY);
+    if (stored) {
+      try { 
+        localData = JSON.parse(stored); 
+      } catch (e) { /* fall through */ }
+    }
+
+    // 3. Deep merge (localStorage takes precedence for fields it defines)
+    function isObject(item) {
+      return (item && typeof item === 'object' && !Array.isArray(item));
+    }
+
+    function mergeDeep(target, source) {
+      let output = Object.assign({}, target);
+      if (isObject(target) && isObject(source)) {
+        Object.keys(source).forEach(key => {
+          if (isObject(source[key])) {
+            if (!(key in target))
+              Object.assign(output, { [key]: source[key] });
+            else
+              output[key] = mergeDeep(target[key], source[key]);
+          } else {
+            Object.assign(output, { [key]: source[key] });
+          }
+        });
+      }
+      return output;
+    }
+
+    const merged = mergeDeep(staticData, localData);
+    
+    // Always use the static FAQ sections to ensure the newly generated massive FAQ 
+    // overrides any tiny drafts stored in localStorage.
+    if (staticData?.pages?.faq?.sections) {
+       if (!merged.pages) merged.pages = {};
+       if (!merged.pages.faq) merged.pages.faq = {};
+       merged.pages.faq.sections = staticData.pages.faq.sections;
+    }
+
+    return Object.keys(merged).length ? merged : null;
   }
 
   /**
@@ -226,28 +267,8 @@
   }
 
   function patchFaqPage(data) {
-    if (!data?.pages?.faq?.sections) return;
-    const container = document.getElementById('faq-cms-container');
-    if (!container) return;
-    
-    let html = '';
-    data.pages.faq.sections.forEach(sec => {
-      html += `<div class="faq-section"><h2>${sec.title || ''}</h2>`;
-      if (sec.items) {
-        sec.items.forEach(item => {
-          html += `
-          <div class="faq-item">
-            <div class="faq-question" onclick="toggleFaq(this)">
-              ${item.question || ''}
-              <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="faq-answer">${item.answer || ''}</div>
-          </div>`;
-        });
-      }
-      html += `</div>`;
-    });
-    container.innerHTML = html;
+    // Disabled: FAQ content is now statically baked into faq.html for SEO indexability.
+    return;
   }
 
   function patchBlogPage(data) {
