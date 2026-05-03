@@ -9,6 +9,74 @@
   <link rel="stylesheet" href="/src/css/responsive.css">
   <link rel="stylesheet" href="/src/css/light-theme.css">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Google Places Address Autofill styling -->
+  <style>
+    .gpa-search-wrapper {
+      width: 100%;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .gpa-search-label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .gpa-search-input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .gpa-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+      background: #1a1a2e;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      max-height: 260px;
+      overflow-y: auto;
+      margin-top: 4px;
+    }
+    .gpa-dropdown-item {
+      padding: 12px 16px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.85);
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.4;
+    }
+    .gpa-dropdown-item:last-child { border-bottom: none; }
+    .gpa-dropdown-item:hover {
+      background: rgba(31,111,235,0.15);
+    }
+    .gpa-dropdown-item strong {
+      color: #fff;
+      font-weight: 600;
+    }
+    /* Light theme */
+    body.theme-light .gpa-search-label { color: #4b5563; }
+    body.theme-light .gpa-dropdown {
+      background: #fff;
+      border-color: #d1d5db;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    body.theme-light .gpa-dropdown-item {
+      color: #333;
+      border-bottom-color: #f0f0f0;
+    }
+    body.theme-light .gpa-dropdown-item:hover { background: #f0fdfa; }
+    body.theme-light .gpa-dropdown-item strong { color: #111; }
+  </style>
   <style>
     body {
       background: var(--color-void);
@@ -943,6 +1011,15 @@
     </div>
   </div>
 
+
+  <!-- Google Maps Bootstrap Loader (modern approach) -->
+  <script>
+    (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once."):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+      key: "AIzaSyAKMizEjhbtZaCC2qc4angR7nRVj1viykE",
+      v: "weekly"
+    });
+  </script>
+  <script src="/src/js/google-places-autofill.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module" src="/src/js/profile-app.js"></script>

@@ -318,17 +318,13 @@ export function initRFQController() {
                   document.getElementById('ship-modal-postcode').value = sAddr.postcode || '';
                   
                   if (sAddr.country) {
-                    const c = sAddr.country.toLowerCase();
-                    let mappedCountry = '';
-                    if (['us', 'usa', 'united states', 'canada', 'ca'].includes(c)) mappedCountry = 'north_america';
-                    else if (['au', 'australia', 'nz', 'new zealand'].includes(c)) mappedCountry = 'oceania';
-                    else if (['uk', 'united kingdom', 'gb', 'germany', 'france', 'italy', 'spain', 'europe'].includes(c)) mappedCountry = 'europe';
-                    else if (['cn', 'china', 'jp', 'japan', 'sg', 'singapore', 'asia'].includes(c)) mappedCountry = 'asia';
-                    else mappedCountry = 'rest_of_world';
-                    
-                    if (mappedCountry) {
-                      document.getElementById('ship-modal-country').value = mappedCountry;
-                    }
+                    const countryEl = document.getElementById('ship-modal-country');
+                    const c = sAddr.country.toUpperCase();
+                    // Try setting by country code first (AU, US, etc.)
+                    const opts = Array.from(countryEl.options);
+                    const match = opts.find(o => o.value.toUpperCase() === c) ||
+                      opts.find(o => o.text.toLowerCase().includes(sAddr.country.toLowerCase()));
+                    if (match) countryEl.value = match.value;
                   }
                 }
               }
@@ -372,29 +368,26 @@ export function initRFQController() {
       const city = document.getElementById('ship-modal-city')?.value.trim() || '';
       const prov = document.getElementById('ship-modal-province')?.value.trim() || '';
       const zip = document.getElementById('ship-modal-postcode')?.value.trim() || '';
-      const country = document.getElementById('ship-modal-country')?.value.trim() || '';
+      const countryEl = document.getElementById('ship-modal-country');
+      const country = countryEl?.value.trim() || '';
+      // Derive the shipping region from the selected option's data-region attribute
+      const selectedOpt = countryEl?.options[countryEl.selectedIndex];
+      const shippingRegion = selectedOpt?.dataset?.region || 'rest_of_world';
+      const displayCountry = selectedOpt?.text || country;
 
       if (!address1 || !city || !country) {
         alert('Please fill out at least Address Line 1, City, and Country.');
         return;
       }
 
-      shippingData = { company, attention, phone, address1, address2, city, prov, zip, country };
+      // Store region as 'country' key so shipping calculator still works
+      shippingData = { company, attention, phone, address1, address2, city, prov, zip, country: shippingRegion, countryCode: country, countryName: displayCountry };
       
       let summaryHtml = '';
       if (attention) summaryHtml += `<strong style="color:var(--color-white);">${attention}</strong>`;
       if (company) summaryHtml += (attention ? ' <span style="color:var(--color-steel-400);">•</span> ' : '') + `<strong style="color:var(--color-white);">${company}</strong>`;
       if (summaryHtml) summaryHtml += '<br>';
       summaryHtml += `<span style="color:var(--color-steel-300);">${address1}${address2 ? ', ' + address2 : ''}</span><br>`;
-      
-      const regionMap = {
-        'north_america': 'North America',
-        'europe': 'Europe',
-        'oceania': 'Oceania / Australia',
-        'asia': 'Asia',
-        'rest_of_world': 'Rest of World'
-      };
-      const displayCountry = regionMap[country] || country;
       
       summaryHtml += `<span style="color:var(--color-steel-300);">${city}, ${prov} ${zip} <span style="color:var(--color-steel-500);">•</span> ${displayCountry}</span>`;
 

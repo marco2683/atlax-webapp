@@ -60,6 +60,54 @@
   <link rel="stylesheet" href="/src/css/product-builder.css">
   <link rel="stylesheet" href="/src/css/global-nav.css">
   <link rel="stylesheet" href="/src/css/responsive.css">
+  <!-- Google Places Address Autofill styling -->
+  <style>
+    .gpa-search-wrapper {
+      width: 100%;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .gpa-search-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .gpa-search-input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .gpa-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+      background: #fff;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      max-height: 260px;
+      overflow-y: auto;
+      margin-top: 4px;
+    }
+    .gpa-dropdown-item {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #333;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f0f0;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.4;
+    }
+    .gpa-dropdown-item:last-child { border-bottom: none; }
+    .gpa-dropdown-item:hover { background: #f0fdfa; }
+    .gpa-dropdown-item strong { color: #111; font-weight: 600; }
+  </style>
   <script type="module" src="/src/js/contact-modal.js"></script>
   <script type="module" src="/src/js/mobile-menu.js"></script>
   <link rel="stylesheet" href="/src/css/auth.css">
@@ -3920,13 +3968,98 @@
             <input type="text" id="ship-modal-postcode" class="ship-input" placeholder="ZIP Code">
           </div>
           <div class="ship-field">
-            <label class="ship-label">Destination Region</label>
+            <label class="ship-label">Country</label>
             <select id="ship-modal-country" class="ship-input">
-              <option value="north_america">North America</option>
-              <option value="europe">Europe</option>
-              <option value="oceania">Oceania / Australia</option>
-              <option value="asia">Asia</option>
-              <option value="rest_of_world">Rest of World</option>
+              <option value="" disabled selected>Select Country…</option>
+              <optgroup label="Oceania / Australia">
+                <option value="AU" data-region="oceania">Australia</option>
+                <option value="NZ" data-region="oceania">New Zealand</option>
+                <option value="FJ" data-region="oceania">Fiji</option>
+                <option value="PG" data-region="oceania">Papua New Guinea</option>
+              </optgroup>
+              <optgroup label="North America">
+                <option value="US" data-region="north_america">United States</option>
+                <option value="CA" data-region="north_america">Canada</option>
+                <option value="MX" data-region="north_america">Mexico</option>
+              </optgroup>
+              <optgroup label="Europe">
+                <option value="GB" data-region="europe">United Kingdom</option>
+                <option value="DE" data-region="europe">Germany</option>
+                <option value="FR" data-region="europe">France</option>
+                <option value="IT" data-region="europe">Italy</option>
+                <option value="ES" data-region="europe">Spain</option>
+                <option value="NL" data-region="europe">Netherlands</option>
+                <option value="BE" data-region="europe">Belgium</option>
+                <option value="AT" data-region="europe">Austria</option>
+                <option value="CH" data-region="europe">Switzerland</option>
+                <option value="SE" data-region="europe">Sweden</option>
+                <option value="NO" data-region="europe">Norway</option>
+                <option value="DK" data-region="europe">Denmark</option>
+                <option value="FI" data-region="europe">Finland</option>
+                <option value="IE" data-region="europe">Ireland</option>
+                <option value="PT" data-region="europe">Portugal</option>
+                <option value="PL" data-region="europe">Poland</option>
+                <option value="CZ" data-region="europe">Czech Republic</option>
+                <option value="RO" data-region="europe">Romania</option>
+                <option value="HU" data-region="europe">Hungary</option>
+                <option value="GR" data-region="europe">Greece</option>
+                <option value="HR" data-region="europe">Croatia</option>
+                <option value="SK" data-region="europe">Slovakia</option>
+                <option value="SI" data-region="europe">Slovenia</option>
+                <option value="BG" data-region="europe">Bulgaria</option>
+                <option value="LT" data-region="europe">Lithuania</option>
+                <option value="LV" data-region="europe">Latvia</option>
+                <option value="EE" data-region="europe">Estonia</option>
+              </optgroup>
+              <optgroup label="Asia">
+                <option value="CN" data-region="asia">China</option>
+                <option value="JP" data-region="asia">Japan</option>
+                <option value="KR" data-region="asia">South Korea</option>
+                <option value="SG" data-region="asia">Singapore</option>
+                <option value="HK" data-region="asia">Hong Kong</option>
+                <option value="TW" data-region="asia">Taiwan</option>
+                <option value="IN" data-region="asia">India</option>
+                <option value="MY" data-region="asia">Malaysia</option>
+                <option value="TH" data-region="asia">Thailand</option>
+                <option value="VN" data-region="asia">Vietnam</option>
+                <option value="ID" data-region="asia">Indonesia</option>
+                <option value="PH" data-region="asia">Philippines</option>
+                <option value="BD" data-region="asia">Bangladesh</option>
+                <option value="PK" data-region="asia">Pakistan</option>
+                <option value="LK" data-region="asia">Sri Lanka</option>
+                <option value="MM" data-region="asia">Myanmar</option>
+                <option value="KH" data-region="asia">Cambodia</option>
+              </optgroup>
+              <optgroup label="Middle East">
+                <option value="AE" data-region="rest_of_world">United Arab Emirates</option>
+                <option value="SA" data-region="rest_of_world">Saudi Arabia</option>
+                <option value="QA" data-region="rest_of_world">Qatar</option>
+                <option value="KW" data-region="rest_of_world">Kuwait</option>
+                <option value="BH" data-region="rest_of_world">Bahrain</option>
+                <option value="OM" data-region="rest_of_world">Oman</option>
+                <option value="IL" data-region="rest_of_world">Israel</option>
+                <option value="TR" data-region="rest_of_world">Turkey</option>
+                <option value="JO" data-region="rest_of_world">Jordan</option>
+              </optgroup>
+              <optgroup label="South America">
+                <option value="BR" data-region="rest_of_world">Brazil</option>
+                <option value="AR" data-region="rest_of_world">Argentina</option>
+                <option value="CL" data-region="rest_of_world">Chile</option>
+                <option value="CO" data-region="rest_of_world">Colombia</option>
+                <option value="PE" data-region="rest_of_world">Peru</option>
+                <option value="EC" data-region="rest_of_world">Ecuador</option>
+                <option value="UY" data-region="rest_of_world">Uruguay</option>
+              </optgroup>
+              <optgroup label="Africa">
+                <option value="ZA" data-region="rest_of_world">South Africa</option>
+                <option value="NG" data-region="rest_of_world">Nigeria</option>
+                <option value="KE" data-region="rest_of_world">Kenya</option>
+                <option value="EG" data-region="rest_of_world">Egypt</option>
+                <option value="MA" data-region="rest_of_world">Morocco</option>
+                <option value="GH" data-region="rest_of_world">Ghana</option>
+                <option value="TN" data-region="rest_of_world">Tunisia</option>
+                <option value="ET" data-region="rest_of_world">Ethiopia</option>
+              </optgroup>
             </select>
           </div>
         </div>
@@ -4122,6 +4255,15 @@
       color: #e2e8f0;
     }
   </style>
+
+  <!-- Google Maps Bootstrap Loader (modern approach) -->
+  <script>
+    (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once."):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+      key: "AIzaSyAKMizEjhbtZaCC2qc4angR7nRVj1viykE",
+      v: "weekly"
+    });
+  </script>
+  <script src="/src/js/google-places-autofill.js"></script>
 
 </body>
 
