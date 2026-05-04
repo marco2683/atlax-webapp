@@ -3895,8 +3895,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
 
       row.addEventListener('dragover', (e) => {
-        e.preventDefault();
         if (!_draggedImgRow || _draggedImgRow === row) return;
+        e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
         // Determine if we insert above or below
         const rect = row.getBoundingClientRect();
@@ -3914,8 +3914,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
 
       row.addEventListener('drop', (e) => {
-        e.preventDefault();
         if (!_draggedImgRow || _draggedImgRow === row) return;
+        e.preventDefault();
         const rect = row.getBoundingClientRect();
         const midY = rect.top + rect.height / 2;
         const list = row.closest('.admin-image-url-list');
@@ -3994,10 +3994,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cats = container.querySelectorAll('.admin-category-draggable');
     cats.forEach(cat => {
       cat.addEventListener('dragstart', (e) => {
-        if (!e.target.closest('.admin-cat-drag-handle')) {
-          e.preventDefault();
-          return;
-        }
+        // If the drag is originating from an image row (or anything else), ignore it here
+        if (e.target !== cat) return;
+        
         _draggedCategory = cat;
         cat.classList.add('dragging-cat');
         e.dataTransfer.effectAllowed = 'move';
