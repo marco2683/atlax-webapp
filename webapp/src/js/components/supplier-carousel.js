@@ -26,9 +26,9 @@ function safeImgUrl(url) {
   }
 
   // Already secure or relative — pass through
-  if (url.startsWith('https://') || url.startsWith('/') || url.startsWith('data:')) return url;
-  // HTTP URL — proxy through weserv
-  if (url.startsWith('http://')) {
+  if ((url.startsWith('https://') && !url.includes('thefastimg.com') && !url.includes('1688.com')) || url.startsWith('/') || url.startsWith('data:')) return url;
+  // HTTP URL or problematic HTTPS domains — proxy through weserv
+  if (url.startsWith('http://') || url.includes('thefastimg.com') || url.includes('1688.com')) {
     return `https://images.weserv.nl/?url=${encodeURIComponent(url)}`;
   }
   return url;
@@ -134,11 +134,11 @@ function renderCurrentCard() {
   const supplierId = s.id || s.name;
   const isShortlisted = !!document.querySelector(`.shortlist-item[data-id="${supplierId}"]`);
   
-  let productImgs = s.images?.product || [];
-  let facilityImgs = s.images?.facility || [];
-  let equipmentImgs = s.images?.equipment || [];
-  let certImgs = s.certificates || [];
-  let factoryImgs = s.images?.factory || [];
+  let productImgs = s.images?.product || s.imagesProducts || [];
+  let facilityImgs = s.images?.facility || s.imagesFacility || [];
+  let equipmentImgs = s.images?.equipment || s.imagesEquipment || [];
+  let certImgs = s.certificates || s.imagesCertificates || [];
+  let factoryImgs = s.images?.factory || s.imagesFactory || [];
   
   let websiteUrl = s.url || s.website;
 
@@ -192,7 +192,7 @@ function renderCurrentCard() {
     return `
     <div style="margin-bottom:24px;">
       <h4 style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.06em; margin:0 0 12px 0; font-family:'Inter',sans-serif;">${catTitle}</h4>
-      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
+      <div class="sup-dossier-gallery" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
         ${imgs.map(img => `
           <div style="aspect-ratio:1; border-radius:10px; overflow:hidden; border:1px solid #e2e8f0; cursor:pointer; transition:transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.03)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.1)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">
             <img src="${safeImgUrl(img)}" alt="${catTitle}" referrerpolicy="no-referrer" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
@@ -206,16 +206,23 @@ function renderCurrentCard() {
 <div class="sup-dossier-simple" style="padding: 32px; background: #fff; height:100%; overflow-y: auto; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
   
   <!-- Top Bar: Download Cards + Contact Buttons -->
-  <div style="display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid #e2e8f0; gap: 20px;">
+  <div class="sup-dossier-topbar" style="display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid #e2e8f0; gap: 20px;">
     
-    <!-- Left: Downloads -->
+    <!-- Left: Downloads & Actions -->
     <div style="display: flex; flex-direction: column; gap: 8px; justify-content: flex-start;">
       <div style="display: flex; align-items: center; height: 14px; margin-bottom: 2px;">
-        <h4 style="font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Downloads</h4>
+        <h4 style="font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Downloads & Actions</h4>
       </div>
-      <div style="display: flex; gap: 8px;">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
         ${docDownloadCard(hasPPT, s.docPresentation, 'Presentation', pptIcon, '#7c3aed')}
         ${docDownloadCard(hasCerts, s.docCertifications, 'Certifications', certsIcon, '#059669')}
+        
+        <!-- Add to Shortlist (Mobile Only) -->
+        <button class="modal-add-to-shortlist-btn sup-dossier-shortlist-mobile" style="height: 58px; padding:0 20px; border-radius:10px; font-weight:700; font-size:13px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; ${isShortlisted ? 'background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; pointer-events:none;' : 'background:#0f172a; color:#fff;'}">
+          ${isShortlisted 
+            ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg><span>Shortlisted</span>' 
+            : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Add to Shortlist</span>'}
+        </button>
       </div>
     </div>
 
@@ -231,6 +238,12 @@ function renderCurrentCard() {
          ${renderServiceButton('Manage My Project', 'Manage My Project')}
          ${renderServiceButton('Get Competitive Quote', 'Get Competitive Quote')}
          ${renderServiceButton('Draft NDA / NNN Agreement', 'Draft NDA / NNN Agreement')}
+         <!-- Add to Shortlist (Desktop Only) -->
+         <button class="modal-add-to-shortlist-btn sup-dossier-shortlist-desktop" style="margin-left: auto; height: 38px; padding:0 16px; border-radius:8px; font-weight:700; font-size:12px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s; ${isShortlisted ? 'background:#d1fae5; color:#059669; border:1px solid #a7f3d0; pointer-events:none;' : 'background:#0f172a; color:#fff;'}">
+           ${isShortlisted 
+             ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg><span>Shortlisted</span>' 
+             : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Add to Shortlist</span>'}
+         </button>
       </div>
     </div>
 
@@ -249,7 +262,7 @@ function renderCurrentCard() {
     </div>` : ''}
   </div>
 
-  <div style="display: grid; grid-template-columns: 1fr 300px; gap: 32px;">
+  <div class="sup-dossier-main-grid" style="display: grid; grid-template-columns: 1fr 300px; gap: 32px;">
     
     <!-- ═══ Left Column ═══ -->
     <div style="display: flex; flex-direction: column; gap: 24px;">
@@ -265,7 +278,7 @@ function renderCurrentCard() {
 
 
       <!-- Best For + Internal Capabilities (50/50) -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div class="sup-dossier-bestfor-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
         <!-- Best For -->
         <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 10px; padding: 18px 20px;">
           <h3 style="font-size: 12px; font-weight: 800; color: #1e3a8a; text-transform: uppercase; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px; letter-spacing: 0.05em;">
@@ -304,12 +317,7 @@ function renderCurrentCard() {
     <!-- ═══ Right Column ═══ -->
     <div style="display: flex; flex-direction: column; gap: 14px;">
 
-      <!-- Add to Shortlist -->
-      <button id="modal-add-to-shortlist" style="width:100%; padding:12px 16px; border-radius:10px; font-weight:700; font-size:13px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom: 8px; transition:all 0.2s; ${isShortlisted ? 'background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; pointer-events:none;' : 'background:#0f172a; color:#fff;'}">
-        ${isShortlisted 
-          ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg><span>Shortlisted</span>' 
-          : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Add to Shortlist</span>'}
-      </button>
+
 
       <!-- At a Glance -->
       <h4 style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin: 0; font-family: 'Inter', sans-serif;">At a Glance</h4>
@@ -413,17 +421,23 @@ function renderCurrentCard() {
 
   // Attach shortlist event listener
   if (!isShortlisted) {
-    body.querySelector('#modal-add-to-shortlist')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const btn = e.currentTarget;
-      window.dispatchEvent(new CustomEvent('prd-add-to-shortlist', { 
-        detail: { supplier: s, techName: document.getElementById('supplier-modal-title').textContent.replace(' Suppliers', '') } 
-      }));
-      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> <span>Shortlisted</span>`;
-      btn.style.background = '#ecfdf5';
-      btn.style.border = '1px solid #a7f3d0';
-      btn.style.color = '#059669';
-      btn.style.pointerEvents = 'none';
+    body.querySelectorAll('.modal-add-to-shortlist-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const clickedBtn = e.currentTarget;
+        window.dispatchEvent(new CustomEvent('prd-add-to-shortlist', { 
+          detail: { supplier: s, techName: document.getElementById('supplier-modal-title').textContent.replace(' Suppliers', '') } 
+        }));
+        
+        // Update all shortlist buttons on screen
+        body.querySelectorAll('.modal-add-to-shortlist-btn').forEach(b => {
+          b.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> <span>Shortlisted</span>`;
+          b.style.background = b.classList.contains('sup-dossier-shortlist-desktop') ? '#d1fae5' : '#ecfdf5';
+          b.style.border = '1px solid #a7f3d0';
+          b.style.color = '#059669';
+          b.style.pointerEvents = 'none';
+        });
+      });
     });
   }
 

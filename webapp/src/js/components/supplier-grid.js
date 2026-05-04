@@ -11,8 +11,8 @@ import { openSupplierCarousel } from './supplier-carousel.js';
  */
 function safeImgUrl(url) {
   if (!url) return '';
-  if (url.startsWith('https://') || url.startsWith('/') || url.startsWith('data:')) return url;
-  if (url.startsWith('http://')) {
+  if ((url.startsWith('https://') && !url.includes('thefastimg.com') && !url.includes('1688.com')) || url.startsWith('/') || url.startsWith('data:')) return url;
+  if (url.startsWith('http://') || url.includes('thefastimg.com') || url.includes('1688.com')) {
     return `https://images.weserv.nl/?url=${encodeURIComponent(url)}`;
   }
   return url;

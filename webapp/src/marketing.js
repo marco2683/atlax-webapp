@@ -28,91 +28,117 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Mobile Cards: USP Sentences + Bouncy Scroll Arrows ───
   // On mobile, after each phase gate card, show the inspiring sentence
   // + a bouncy down-arrow. Each card takes ~100vh.
-  function initMobileCardFlow() {
-    if (window.innerWidth > 768) return;
+  let mobileFlowInitialized = false;
+  let uspObserver = null;
 
+  function handleCardFlow() {
     const grid = document.querySelector('.pb-stages-grid');
     if (!grid) return;
-    const cards = Array.from(grid.querySelectorAll('.pb-stage-card'));
-    if (cards.length === 0) return;
 
-    // Don't re-init
-    if (grid.dataset.mobileFlowInit) return;
-    grid.dataset.mobileFlowInit = '1';
+    if (window.innerWidth <= 768) {
+      if (mobileFlowInitialized) return;
+      mobileFlowInitialized = true;
 
-    // USP sentences matching the desktop hover USPs
-    const usps = [
-      "We\u2019re here to help you turn that spark into something real. We\u2019ll sit down with you, look at the big picture, and figure out the smartest path to bring your idea to life.",
-      "Our team loves diving into designs to catch the tricky details early and remove the hardest challenges first, so when you\u2019re ready to build, you can be completely confident.",
-      "We\u2019re local to you and on the ground in Asia. We\u2019ll introduce you to factory partners we trust personally, so you get the quality you expect without the headaches.",
-      "We know margins matter. We\u2019ll roll up our sleeves and look for creative engineering and sourcing solutions to thoughtfully lower your costs without cutting corners."
-    ];
+      const cards = Array.from(grid.querySelectorAll('.pb-stage-card'));
+      if (cards.length === 0) return;
 
-    // Build wrappers: card + USP sentence + bouncy arrow
-    const wrappers = [];
-    cards.forEach((card, i) => {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'mobile-card-wrapper';
-      wrapper.appendChild(card);
+      const usps = [
+        "We\u2019re here to help you turn that spark into something real. We\u2019ll sit down with you, look at the big picture, and figure out the smartest path to bring your idea to life.",
+        "Our team loves diving into designs to catch the tricky details early and remove the hardest challenges first, so when you\u2019re ready to build, you can be completely confident.",
+        "We\u2019re local to you and on the ground in Asia. We\u2019ll introduce you to factory partners we trust personally, so you get the quality you expect without the headaches.",
+        "We know margins matter. We\u2019ll roll up our sleeves and look for creative engineering and sourcing solutions to thoughtfully lower your costs without cutting corners."
+      ];
 
-      // USP text — let CSS handle styling
-      const usp = document.createElement('p');
-      usp.className = 'mobile-card-usp';
-      usp.textContent = usps[i] || '';
-      wrapper.appendChild(usp);
+      const wrappers = [];
+      cards.forEach((card, i) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mobile-card-wrapper';
+        wrapper.appendChild(card);
 
-      // Bouncy down-arrow
-      const arrow = document.createElement('div');
-      arrow.className = 'mobile-card-arrow';
-      arrow.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
-      wrapper.appendChild(arrow);
+        const usp = document.createElement('p');
+        usp.className = 'mobile-card-usp';
+        usp.textContent = usps[i] || '';
+        wrapper.appendChild(usp);
 
-      wrappers.push({ wrapper, usp, arrow, card });
-    });
+        const arrow = document.createElement('div');
+        arrow.className = 'mobile-card-arrow';
+        arrow.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+        wrapper.appendChild(arrow);
 
-    // Insert wrappers into the DOM in order, after the grid
-    let insertAfter = grid;
-    wrappers.forEach(({ wrapper }) => {
-      insertAfter.after(wrapper);
-      insertAfter = wrapper;
-    });
+        wrappers.push({ wrapper, usp, arrow, card });
+      });
 
-    // Hide the now-empty grid
-    grid.style.display = 'none';
-    console.log('[PRD] Mobile card flow: inserted', wrappers.length, 'full-screen card wrappers');
+      let insertAfter = grid;
+      wrappers.forEach(({ wrapper }) => {
+        insertAfter.after(wrapper);
+        insertAfter = wrapper;
+      });
 
-    // Wire up click handlers (elements now in DOM)
-    wrappers.forEach(({ wrapper, usp, arrow, card }, i) => {
-      // Arrow click → scroll to next card or "Who We Are"
-      arrow.addEventListener('click', () => {
-        let target;
-        if (i < wrappers.length - 1) {
-          target = wrappers[i + 1].wrapper;
-        } else {
-          // Last card → "Who We Are" section
-          target = document.querySelector('.m-who-section')
-            || document.querySelector('[id*="who-we-are"]')
-            || document.querySelector('.m-who');
-          if (!target) {
-            const headings = document.querySelectorAll('h2, .m-section-label');
-            for (const h of headings) {
-              if (h.textContent.trim().toUpperCase().includes('WHO WE ARE')) {
-                target = h.closest('section') || h;
-                break;
+      grid.style.display = 'none';
+
+      wrappers.forEach(({ wrapper, usp, arrow, card }, i) => {
+        arrow.addEventListener('click', () => {
+          let target;
+          if (i < wrappers.length - 1) {
+            target = wrappers[i + 1].wrapper;
+          } else {
+            target = document.querySelector('.m-who-section') || document.querySelector('[id*="who-we-are"]') || document.querySelector('.m-who');
+            if (!target) {
+              const headings = document.querySelectorAll('h2, .m-section-label');
+              for (const h of headings) {
+                if (h.textContent.trim().toUpperCase().includes('WHO WE ARE')) {
+                  target = h.closest('section') || h;
+                  break;
+                }
               }
             }
           }
-        }
-        if (target) {
-          const offset = 80;
-          const y = target.getBoundingClientRect().top + window.scrollY - offset;
-          window.scrollTo({ top: y, behavior: 'smooth' });
-        }
+          if (target) {
+            const offset = 80;
+            const y = target.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+          }
+        });
       });
-    });
+
+      uspObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const usp = entry.target.querySelector('.mobile-card-usp');
+          if (!usp) return;
+          if (entry.isIntersecting) {
+            usp.classList.remove('usp-visible');
+            void usp.offsetWidth;
+            usp.classList.add('usp-visible');
+          } else {
+            usp.classList.remove('usp-visible');
+          }
+        });
+      }, { threshold: 0.15 });
+
+      wrappers.forEach(({ wrapper }) => uspObserver.observe(wrapper));
+
+    } else {
+      if (!mobileFlowInitialized) return;
+      mobileFlowInitialized = false;
+
+      const wrappers = document.querySelectorAll('.mobile-card-wrapper');
+      wrappers.forEach(wrapper => {
+        const card = wrapper.querySelector('.pb-stage-card');
+        if (card) grid.appendChild(card);
+        if (uspObserver) uspObserver.unobserve(wrapper);
+        wrapper.remove();
+      });
+
+      grid.style.display = '';
+      if (uspObserver) {
+        uspObserver.disconnect();
+        uspObserver = null;
+      }
+    }
   }
 
-  initMobileCardFlow();
+  handleCardFlow();
+  window.addEventListener('resize', handleCardFlow);
 
   // ── Show Workspace link on mobile for logged-in users ──
   const wsLink = document.getElementById('nav-workspace-mobile');

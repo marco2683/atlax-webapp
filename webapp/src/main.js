@@ -189,9 +189,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Attach search event
   document.getElementById('search-submit')?.addEventListener('click', () => handleSearch(globe));
-  document.getElementById('search-input')?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') handleSearch(globe);
-  });
+  const mainSearchInput = document.getElementById('search-input');
+  if (mainSearchInput) {
+    mainSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleSearch(globe);
+    });
+    mainSearchInput.addEventListener('focus', () => {
+      const quoteEl = document.getElementById('supplier-discovery-quote');
+      if (quoteEl) {
+        quoteEl.style.animation = 'quote-fade-out 0.5s forwards';
+      }
+    });
+    mainSearchInput.addEventListener('blur', () => {
+      const quoteEl = document.getElementById('supplier-discovery-quote');
+      if (quoteEl && mainSearchInput.value.trim().length === 0) {
+        quoteEl.style.animation = 'quote-fade-in 0.5s forwards';
+      }
+    });
+  }
 
   // 7. Supplier Carousel & Grid
   initSupplierCarousel();
@@ -573,6 +588,8 @@ function switchView(view, globe) {
     if (globeContainer) globeContainer.style.opacity = '1';
     if (heroOverlay) heroOverlay.style.opacity = '1';
     if (scrollHint) scrollHint.style.display = '';
+    const quoteEl = document.getElementById('supplier-discovery-quote');
+    if (quoteEl) quoteEl.style.display = 'flex';
     // Globe interaction is managed by supplier-engine.js (tabular vs globe toggle)
     // Re-enable here as a default; tabular will disable it if needed
     globe.enableInteraction();
@@ -580,6 +597,8 @@ function switchView(view, globe) {
     heroTitleContainer?.classList.add('hidden');
     // Hide scroll hint on non-supplier views (RFQ, designers, etc.)
     if (scrollHint) scrollHint.style.display = 'none';
+    const quoteEl = document.getElementById('supplier-discovery-quote');
+    if (quoteEl) quoteEl.style.display = 'none';
     // Disable globe interaction so scroll/zoom don't interfere with page scrolling
     globe.disableInteraction();
   }

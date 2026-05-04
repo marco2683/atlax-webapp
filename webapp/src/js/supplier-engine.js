@@ -514,8 +514,17 @@ function rebuildTechGroupFilter() {
 function applyFilters() {
   const query = searchInput.value.toLowerCase().trim();
   const techGroup = techGroupFilter?.value;
-  const tagQuery = tagInput?.value.toLowerCase().trim();
+  const tagQuery = tagInput?.value?.toLowerCase().trim() || '';
   const country = countryFilter?.value;
+
+  const quoteEl = document.getElementById('supplier-discovery-quote');
+  if (quoteEl) {
+    if (query.length > 0) {
+      quoteEl.style.animation = 'quote-fade-out 0.5s forwards';
+    } else {
+      quoteEl.style.animation = 'quote-fade-in 0.5s forwards';
+    }
+  }
 
   const activeSegments = Array.from(document.querySelectorAll('#tabular-segment-pills .segment-pill.active')).map(p => p.dataset.segment);
   const showAllSegments = activeSegments.includes('ALL');

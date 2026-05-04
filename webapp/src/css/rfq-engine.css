@@ -1533,21 +1533,23 @@
     z-index: 350 !important;
   }
 
-  /* Make RFQ engine a normal relative block to restore native page scrolling */
+  /* Make RFQ engine a full-height absolute overlay with internal scrolling (matching services-engine) */
   .rfq-engine {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
     bottom: auto !important;
     width: 100% !important;
     max-width: 100% !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    box-sizing: border-box !important;
     transform: none !important;
     z-index: 300 !important;
-    background: transparent !important;
-    overflow: visible !important;
-    max-height: none !important;
-    padding: 20px 16px 40px 16px !important;
+    background: rgba(10, 10, 15, 0.3) !important;
+    overflow-y: auto !important;
+    padding: 100px 16px 40px 16px !important;
     flex-direction: column !important;
     gap: var(--space-4) !important;
     align-items: stretch !important;
@@ -1614,9 +1616,10 @@
     flex-shrink: 0;
   }
 
-  /* Stack the Top Row (Upload + Fields) */
-  .rfq-top-row {
-    grid-template-columns: 1fr;
+  /* Stack the Top Row (Upload + Fields) and Initial Layout */
+  .rfq-top-row,
+  .rfq-initial-layout {
+    grid-template-columns: 1fr !important;
     gap: var(--space-4);
   }
 

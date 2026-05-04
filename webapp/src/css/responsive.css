@@ -14,7 +14,9 @@
   cursor: pointer;
   padding: 4px 10px;
   line-height: 1;
-  transition: background 0.2s, transform 0.2s;
+  transition:
+    background 0.2s,
+    transform 0.2s;
   order: 3;
   z-index: 101;
 }
@@ -34,11 +36,31 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
+/* ── Hero top section base height ─────────────────────── */
+.hero-top-section {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* ── Mobile USP fade-in keyframes (outside media query for compatibility) ── */
+@keyframes mobile-usp-fadein {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+    filter: blur(4px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
 /* ══════════════════════════════════════════════════════════
    MOBILE  (< 768px)
    ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-
   /* ── Global mobile overflow fix ────────────────────────── */
   html,
   body,
@@ -91,7 +113,7 @@
   }
 
   /* The navbar wrapper becomes a row that wraps */
-  .navbar>div {
+  .navbar > div {
     flex-wrap: wrap !important;
     position: relative;
     max-width: 100% !important;
@@ -287,7 +309,7 @@
   }
 
   /* ── Hide homepage tagline on mobile ────────────────── */
-  .is-homepage .m-hero__content>.hero-prompt__text {
+  .is-homepage .m-hero__content > .hero-prompt__text {
     display: none !important;
   }
 
@@ -558,7 +580,8 @@
   body.app-page .designers-grid {
     width: 100% !important;
     max-width: 100% !important;
-    padding: 0 !important; /* Remove 16px padding because parent container already has 16px padding */
+    padding: 0 !important;
+    /* Remove 16px padding because parent container already has 16px padding */
     margin: 0 !important;
     box-sizing: border-box !important;
   }
@@ -653,7 +676,8 @@
   }
 
   body.app-page .dk-sidebar {
-    display: none !important; /* Hide sidebar filters on mobile */
+    display: none !important;
+    /* Hide sidebar filters on mobile */
   }
 
   body.app-page .dk-main {
@@ -680,12 +704,12 @@
   }
 
   body.app-page .dk-table tr {
-    background: #FFF !important;
-    border: 1px solid #E2E8F0 !important;
+    background: #fff !important;
+    border: 1px solid #e2e8f0 !important;
     border-radius: 8px !important;
     margin-bottom: 16px !important;
     padding: 16px !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
   }
 
   body.app-page .dk-table td {
@@ -730,7 +754,7 @@
     padding: 16px !important;
     box-sizing: border-box !important;
   }
-  
+
   body.app-page .supplier-card {
     padding: 32px 20px !important;
   }
@@ -819,10 +843,10 @@
     overflow: visible !important;
   }
 
-  /* The 100vh wrapper inside homepage hero — keep full height on mobile */
-  .m-hero > div[style*="min-height: 100vh"] {
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
+  /* The hero top section wrapper — 95vh height on mobile */
+  .hero-top-section {
+    min-height: 95vh !important;
+    min-height: 95dvh !important;
     padding-bottom: 8vh !important;
     justify-content: flex-start !important;
     padding-top: 22vh !important;
@@ -834,7 +858,7 @@
     word-wrap: break-word !important;
     overflow-wrap: break-word !important;
     max-width: 100% !important;
-    padding: 0 8px !important;
+    padding: 0 16px !important;
     white-space: normal !important;
   }
 
@@ -941,21 +965,21 @@
      ══════════════════════════════════════════════════════════ */
 
   /* About Hero — inline-styled header */
-  body.marketing-page>header {
+  body.marketing-page > header {
     padding: 120px 20px 40px 20px !important;
   }
 
-  body.marketing-page>header h1 {
+  body.marketing-page > header h1 {
     font-size: 2.2rem !important;
     line-height: 1.1 !important;
     letter-spacing: -1px !important;
   }
 
-  body.marketing-page>header p {
+  body.marketing-page > header p {
     display: none !important;
   }
 
-  body.marketing-page>header .m-hero__chip {
+  body.marketing-page > header .m-hero__chip {
     display: none !important;
   }
 
@@ -966,32 +990,32 @@
   }
 
   /* Video placeholder */
-  [data-cms-id="about-media"]>div:first-child {
+  [data-cms-id="about-media"] > div:first-child {
     min-height: 200px !important;
     aspect-ratio: 16/9 !important;
     border-radius: 16px !important;
   }
 
   /* Side images column: stack horizontally on mobile */
-  [data-cms-id="about-media"]>div:last-child {
+  [data-cms-id="about-media"] > div:last-child {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 12px !important;
     flex-direction: row !important;
   }
 
-  [data-cms-id="about-media"]>div:last-child>div {
+  [data-cms-id="about-media"] > div:last-child > div {
     min-height: 140px !important;
     border-radius: 16px !important;
   }
 
   /* Reduce section bottom margin */
-  body.marketing-page>section:first-of-type {
+  body.marketing-page > section:first-of-type {
     margin-bottom: 60px !important;
   }
 
   /* About Section: reduce padding */
-  body.marketing-page>section {
+  body.marketing-page > section {
     padding-left: 20px !important;
     padding-right: 20px !important;
   }
@@ -1001,15 +1025,15 @@
     padding: 60px 20px !important;
   }
 
-  #team>div:first-child h2 {
+  #team > div:first-child h2 {
     font-size: 2rem !important;
   }
 
-  #team>div:first-child p {
+  #team > div:first-child p {
     display: none !important;
   }
 
-  #team>div:last-child {
+  #team > div:last-child {
     grid-template-columns: 1fr !important;
     gap: 20px !important;
   }
@@ -1112,7 +1136,9 @@
     justify-content: center;
     gap: 16px;
     cursor: pointer;
-    transition: border-color 0.3s, background 0.3s;
+    transition:
+      border-color 0.3s,
+      background 0.3s;
   }
 
   .matrix-constellation .node:hover,
@@ -1366,6 +1392,7 @@
     padding: 16px 16px 0;
     justify-content: flex-start;
     position: relative;
+    background: #080a0f !important;
   }
 
   /* "Who We Are" scroll arrow at bottom of hero cards — hide (JS handles it) */
@@ -1379,6 +1406,9 @@
     flex: 0 0 auto !important;
     border-radius: 16px !important;
     overflow: hidden !important;
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
   }
 
   .pb-stage-title {
@@ -1407,9 +1437,8 @@
 
   /* ── Mobile Card USP Text ──────────────────────────────── */
   .mobile-card-usp {
-    display: block !important;
     color: rgba(255, 255, 255, 0.7) !important;
-    font-family: 'Outfit', sans-serif !important;
+    font-family: "Outfit", sans-serif !important;
     font-size: 14px !important;
     font-weight: 300 !important;
     font-style: italic !important;
@@ -1421,13 +1450,32 @@
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    opacity: 0;
+    transform: scale(0.95);
+    filter: blur(4px);
+  }
+
+  .mobile-card-usp.usp-visible {
+    animation: usp-cycle 12s ease-in-out infinite forwards !important;
   }
 
   /* ── Mobile Card Bouncy Down-Arrow ────────────────────── */
   @keyframes mobile-bounce-arrow {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-8px); }
-    60% { transform: translateY(-4px); }
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+      transform: translateY(0);
+    }
+
+    40% {
+      transform: translateY(-8px);
+    }
+
+    60% {
+      transform: translateY(-4px);
+    }
   }
 
   .mobile-card-arrow {
@@ -1453,7 +1501,9 @@
   .is-homepage .navbar .navbar__brand {
     opacity: 0;
     transform: translateY(-8px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
     pointer-events: none;
   }
 
@@ -1489,8 +1539,11 @@
     text-decoration: none !important;
     font-weight: 600 !important;
     background: rgba(255, 255, 255, 0.04) !important;
-    transition: background 0.2s, border-color 0.2s !important;
+    transition:
+      background 0.2s,
+      border-color 0.2s !important;
   }
+
   .nav-workspace-link-mobile:hover {
     background: rgba(255, 255, 255, 0.08) !important;
     border-color: rgba(255, 255, 255, 0.25) !important;
@@ -1550,6 +1603,60 @@
 
   .prd-platform-header {
     margin-bottom: 40px !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     DESIGN SERVICES ENGINE (Mobile)
+     ══════════════════════════════════════════════════════════ */
+  .services-engine {
+    padding: 100px 20px 40px !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    box-sizing: border-box !important;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .services-grid .service-card {
+    height: 300px !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SUPPLIER DOSSIER (Mobile)
+     ══════════════════════════════════════════════════════════ */
+  .sup-dossier-simple {
+    padding: 20px 16px !important;
+  }
+
+  .sup-dossier-topbar {
+    flex-direction: column !important;
+    gap: 20px !important;
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 24px !important;
+  }
+
+  .sup-dossier-topbar > div {
+    border-left: none !important;
+    padding-left: 0 !important;
+  }
+
+  .sup-dossier-main-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    display: flex !important;
+    flex-direction: column-reverse !important; /* Put at-a-glance/contacts on top */
+  }
+
+  .sup-dossier-bestfor-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .sup-dossier-gallery {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 
   .prd-platform-title {
@@ -1888,7 +1995,7 @@
   }
 
   /* Center the intro text for manufacturing engine section */
-  .service-block>div[style*="text-align: center"] p {
+  .service-block > div[style*="text-align: center"] p {
     display: none !important;
   }
 
@@ -1913,23 +2020,23 @@
      FOOTER — Mobile Overrides
      ══════════════════════════════════════════════════════════ */
 
-  footer>div:first-child {
+  footer > div:first-child {
     grid-template-columns: 1fr !important;
     gap: 32px !important;
     text-align: center !important;
   }
 
-  footer>div:first-child>div {
+  footer > div:first-child > div {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  footer>div:first-child>div ul {
+  footer > div:first-child > div ul {
     align-items: center !important;
   }
 
-  footer>div:first-child>div p {
+  footer > div:first-child > div p {
     text-align: center !important;
   }
 
@@ -1954,7 +2061,7 @@
   }
 
   /* Footer brand description — hide on mobile */
-  footer .navbar__brand+p {
+  footer .navbar__brand + p {
     display: none !important;
   }
 
@@ -2021,7 +2128,7 @@
     padding: 20px !important;
   }
 
-  #product-modal>div>div:nth-child(4) {
+  #product-modal > div > div:nth-child(4) {
     grid-template-columns: 1fr !important;
   }
 
@@ -2595,7 +2702,7 @@
   }
 
   /* ── Contact Modal — full width on mobile ─────────── */
-  body.app-page #contact-modal>div {
+  body.app-page #contact-modal > div {
     width: 100% !important;
     max-width: 100% !important;
     max-height: 100vh !important;
@@ -2636,7 +2743,7 @@
     grid-template-columns: 1fr 1fr !important;
   }
 
-  footer>div:first-child {
+  footer > div:first-child {
     grid-template-columns: 1fr 1fr !important;
   }
 
@@ -2699,4 +2806,12 @@
   .matrix-constellation .tech-node {
     display: none !important;
   }
+}
+
+/* ── Supplier Dossier Shortlist Button Placement ───────────────── */
+@media (min-width: 993px) {
+  .sup-dossier-shortlist-mobile { display: none !important; }
+}
+@media (max-width: 992px) {
+  .sup-dossier-shortlist-desktop { display: none !important; }
 }

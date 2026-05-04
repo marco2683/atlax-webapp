@@ -11,18 +11,25 @@ export function initAutocomplete(suppliersData = []) {
   searchBar.appendChild(dropdown);
 
   const tier1Categories = [
+    "3D Printing",
+    "Adhesives / Tapes / Foams / Seals / Bonding / Lamination",
     "CNC Machining",
-    "Injection Moulding",
-    "Sheet Metal & Fabrication",
-    "PCBA & Electronics",
+    "Cables / Harness / Looms / Wiring",
+    "Casting & Forging",
+    "Compression Moulding",
     "Die Casting",
-    "Advanced Assembly",
+    "Die-Cut",
+    "HMI Membranes / Overlays / Keypads / Screens",
+    "Injection Molding",
+    "Laser Cutting",
+    "Liquid Silicone Rubber Moulding",
+    "Metal Extrusions",
     "Metal Stamping",
-    "Tooling Fabrication",
-    "Surface Treatment",
-    "3D Printing & Additive",
-    "Extrusion",
-    "Casting & Forging"
+    "Optics",
+    "PCB PCBA Electronics",
+    "Packaging",
+    "RIM (Reaction Injection Moulding)",
+    "Rapid Prototyping"
   ];
 
   function showDropdown(val = "") {
@@ -40,7 +47,7 @@ export function initAutocomplete(suppliersData = []) {
           const regex = new RegExp(`(${val})`, 'gi');
           displayHtml = m.replace(regex, '<span style="color:var(--color-primary);font-weight:bold;">$1</span>');
         }
-        item.innerHTML = `<strong>${displayHtml}</strong>`;
+        item.innerHTML = `<span>${displayHtml}</span>`;
         
         item.addEventListener('mousedown', (e) => {
           e.preventDefault(); // Prevent input on blur before click registers
