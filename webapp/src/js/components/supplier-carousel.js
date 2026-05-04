@@ -307,10 +307,24 @@ function renderCurrentCard() {
       </div>
 
       <!-- Image Gallery (categorized, vertical scroll, left-aligned) -->
-      ${renderImageCategory('Product Images', productImgs)}
-      ${renderImageCategory('Facility', facilityImgs.length > 0 ? facilityImgs : factoryImgs)}
-      ${renderImageCategory('Equipment', equipmentImgs)}
-      ${renderImageCategory('Certifications', certImgs)}
+      ${(() => {
+        const defaultCatOrder = ['img_product', 'img_facility', 'img_equipment', 'img_certificate'];
+        const savedCatOrder = s.imageCategoryOrder || [];
+        const catOrder = [...savedCatOrder];
+        defaultCatOrder.forEach(k => { if (!catOrder.includes(k)) catOrder.push(k); });
+
+        const catDataMap = {
+          'img_product': { title: 'Product Images', imgs: productImgs },
+          'img_facility': { title: 'Facility / Factory Floor', imgs: facilityImgs.length > 0 ? facilityImgs : factoryImgs },
+          'img_equipment': { title: 'Equipment', imgs: equipmentImgs },
+          'img_certificate': { title: 'Certifications', imgs: certImgs }
+        };
+
+        return catOrder.map(k => {
+           const catData = catDataMap[k];
+           return catData ? renderImageCategory(catData.title, catData.imgs) : '';
+        }).join('');
+      })()}
 
     </div>
 
