@@ -2870,21 +2870,25 @@
                           style="color:#fbbc05;">o</span><span style="color:#4285f4;">g</span><span
                           style="color:#34a853;">l</span><span style="color:#ea4335;">e</span> Pay</div>
                     </label>
-                    <!-- NET30 Corporate -->
-                    <label
-                      style="display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid #e2e8f0; border-radius:4px; cursor:pointer;"
+                    <!-- NET30 Corporate (hidden unless approved) -->
+                    <label id="chk-net30-option"
+                      style="display:none; align-items:center; gap:14px; padding:14px 16px; border:1px solid #e2e8f0; border-radius:4px; cursor:pointer;"
                       onclick="this.parentElement.querySelectorAll('label').forEach(l=>l.style.borderColor='#e2e8f0');this.parentElement.querySelectorAll('label').forEach(l=>l.style.background='#fff');this.style.borderColor='#007185';this.style.background='#f8fdfd';">
                       <input type="radio" name="chk-payment-method" value="net30"
                         style="width:16px; height:16px; accent-color:#007185; flex-shrink:0;">
                       <div style="flex:1;">
                         <div style="font-size:14px; font-weight:600; color:#111;">Corporate Account · Net 30</div>
-                        <div style="font-size:12px; color:#666; margin-top:2px;">Invoiced post-supplier approval per
-                          procurement policy</div>
+                        <div style="font-size:12px; color:#666; margin-top:2px;">Invoiced — approved corporate accounts only</div>
                       </div>
                       <div
                         style="background:#eaf9fb; border:1px solid #007185; padding:4px 10px; border-radius:4px; font-size:11px; font-weight:700; color:#007185;">
                         NET30</div>
                     </label>
+                  </div>
+                  <!-- NET30 Application Link -->
+                  <div id="chk-net30-apply-link" style="margin-top:12px; padding:10px 14px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:6px; font-size:13px; color:#475569; display:flex; align-items:center; gap:8px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h0"/></svg>
+                    Need NET30 terms? <a href="#" onclick="event.preventDefault();window.openNet30RequestModal()" style="color:#007185; font-weight:700; text-decoration:none;">Apply for a Corporate Account →</a>
                   </div>
                 </div>
               </div>
@@ -3371,7 +3375,7 @@
            ═══════════════════════════════════════════════════════════ -->
     <div id="mkt-resources-layout" class="hidden"
       style="display:flex; flex-direction:column; flex:1; min-height:0; overflow-y:auto; background:#f4f6f8;">
-      <div style="max-width:1280px; margin:0 auto; padding:32px 24px;">
+      <div style="max-width:1280px; margin:0 auto; padding:32px 24px; width:100%; box-sizing:border-box;">
         <div style="margin-bottom:32px;">
           <h1 style="font-size:28px; font-weight:700; color:#111; margin:0 0 8px 0;">Engineering Resources</h1>
           <p style="font-size:14px; color:#666; margin:0;">Technical tools, reference data, and design resources for
@@ -3384,28 +3388,28 @@
             style="font-size:16px; font-weight:700; color:#0e7490; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:0.5px;">
             Design Tools</h2>
           <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;">
-            <div class="mkt-resource-card">
+            <div class="mkt-resource-card" data-resource-id="unit-converter">
               <div class="mkt-resource-icon" style="background:#e0f2fe; color:#0284c7;">⚡</div>
               <div class="mkt-resource-body">
                 <h3>Unit Converter</h3>
                 <p>Convert between metric and imperial units for length, weight, temperature, pressure, and more.</p>
               </div>
             </div>
-            <div class="mkt-resource-card">
+            <div class="mkt-resource-card" data-resource-id="resistor-calc">
               <div class="mkt-resource-icon" style="background:#fef3c7; color:#d97706;">🎨</div>
               <div class="mkt-resource-body">
                 <h3>Resistor Colour Code Calculator</h3>
                 <p>Decode 4, 5, or 6-band resistor colour codes to find resistance values and tolerances.</p>
               </div>
             </div>
-            <div class="mkt-resource-card">
+            <div class="mkt-resource-card" data-resource-id="pcb-trace-calc">
               <div class="mkt-resource-icon" style="background:#dcfce7; color:#16a34a;">📐</div>
               <div class="mkt-resource-body">
                 <h3>PCB Trace Width Calculator</h3>
                 <p>Calculate optimal trace widths based on current, copper weight, and temperature rise (IPC-2221).</p>
               </div>
             </div>
-            <div class="mkt-resource-card">
+            <div class="mkt-resource-card" data-resource-id="tolerance-calc">
               <div class="mkt-resource-icon" style="background:#f3e8ff; color:#9333ea;">🔧</div>
               <div class="mkt-resource-body">
                 <h3>Tolerance Stack-Up Analyser</h3>
@@ -3421,28 +3425,28 @@
             style="font-size:16px; font-weight:700; color:#0e7490; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:0.5px;">
             Reference Data</h2>
           <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;">
-            <div class="mkt-resource-card">
+            <div class="mkt-resource-card" data-resource-id="material-selector">
               <div class="mkt-resource-icon" style="background:#e0f2fe; color:#0369a1;">🧪</div>
               <div class="mkt-resource-body">
                 <h3>Material Selector</h3>
                 <p>Compare mechanical properties, costs, and machinability of metals, polymers, and composites.</p>
               </div>
             </div>
-            <div class="mkt-resource-card">
+            <div class="mkt-resource-card" data-resource-id="surface-finish">
               <div class="mkt-resource-icon" style="background:#fef3c7; color:#b45309;">✨</div>
               <div class="mkt-resource-body">
                 <h3>Surface Finish Guide</h3>
                 <p>Ra/Rz surface roughness standards, finish symbols, and common manufacturing process capabilities.</p>
               </div>
             </div>
-            <div class="mkt-resource-card">
+            <div class="mkt-resource-card" data-resource-id="thread-reference">
               <div class="mkt-resource-icon" style="background:#dcfce7; color:#15803d;">🔩</div>
               <div class="mkt-resource-body">
                 <h3>Thread Size Reference</h3>
                 <p>Metric, UNC, UNF thread dimensions, tap drill sizes, and common fastener specifications.</p>
               </div>
             </div>
-            <div class="mkt-resource-card">
+            <div class="mkt-resource-card" data-resource-id="fits-tolerances">
               <div class="mkt-resource-icon" style="background:#fee2e2; color:#dc2626;">📏</div>
               <div class="mkt-resource-body">
                 <h3>Standard Fits &amp; Tolerances (ISO 286)</h3>
@@ -3458,28 +3462,28 @@
             style="font-size:16px; font-weight:700; color:#0e7490; margin:0 0 16px 0; text-transform:uppercase; letter-spacing:0.5px;">
             Templates &amp; Downloads</h2>
           <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;">
-            <div class="mkt-resource-card">
+            <div class="mkt-resource-card" data-resource-id="rfq-template">
               <div class="mkt-resource-icon" style="background:#e0e7ff; color:#4338ca;">📄</div>
               <div class="mkt-resource-body">
                 <h3>RFQ Template</h3>
                 <p>Standardised request-for-quotation template for custom manufacturing projects.</p>
               </div>
             </div>
-            <div class="mkt-resource-card">
+            <div class="mkt-resource-card" data-resource-id="bom-template">
               <div class="mkt-resource-icon" style="background:#fef3c7; color:#d97706;">📋</div>
               <div class="mkt-resource-body">
                 <h3>Bill of Materials (BOM) Template</h3>
                 <p>Excel/CSV BOM template with columns for MPN, quantity, supplier, and cost roll-up.</p>
               </div>
             </div>
-            <div class="mkt-resource-card">
+            <div class="mkt-resource-card" data-resource-id="quality-checklist">
               <div class="mkt-resource-icon" style="background:#dcfce7; color:#16a34a;">✅</div>
               <div class="mkt-resource-body">
                 <h3>Quality Inspection Checklist</h3>
                 <p>Pre-shipment and incoming quality inspection checklists for manufactured components.</p>
               </div>
             </div>
-            <div class="mkt-resource-card">
+            <div class="mkt-resource-card" data-resource-id="dfm-guidelines">
               <div class="mkt-resource-icon" style="background:#f3e8ff; color:#7c3aed;">📐</div>
               <div class="mkt-resource-body">
                 <h3>DFM Guidelines</h3>
@@ -3487,6 +3491,14 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Resource Modal Overlay -->
+      <div id="mkt-resource-modal" class="hidden"
+        style="position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; display:flex; align-items:center; justify-content:center; font-family:var(--dk-font);">
+        <div id="mkt-resource-modal-content"
+          style="background:#fff; border-radius:12px; width:800px; max-width:92vw; max-height:85vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3); position:relative;">
         </div>
       </div>
     </div>
@@ -4287,7 +4299,7 @@
   <!-- Google Maps Bootstrap Loader (modern approach) -->
   <script>
     (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once."):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
-      key: "AIzaSyAKMizEjhbtZaCC2qc4angR7nRVj1viykE",
+      key: "%VITE_GOOGLE_MAPS_KEY%",
       v: "weekly"
     });
   </script>
