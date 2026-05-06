@@ -8,12 +8,18 @@ import { supabase } from '../utils/supabaseClient.js';
  */
 export async function signUpUser(email, password, metadata = {}) {
     try {
+        // Allow caller to specify a custom redirect (e.g. supplier portal)
+        const redirectTo = metadata._redirectTo || `${window.location.origin}/index.html?login=true`;
+        // Remove internal key so it doesn't persist in user_metadata
+        const cleanMeta = { ...metadata };
+        delete cleanMeta._redirectTo;
+
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: {
-                data: metadata,
-                emailRedirectTo: `${window.location.origin}/index.html?login=true`
+                data: cleanMeta,
+                emailRedirectTo: redirectTo
             }
         });
         if (error) throw error;

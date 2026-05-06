@@ -59,7 +59,205 @@ export async function initMarketplaceCatalog() {
   if (typeof window.updateCartBadge === 'function') {
       window.updateCartBadge();
   }
+
+  // 6. Handle Stripe payment return
+  handleStripeReturn(user);
+
+  // 7. Check NET30 approval status and show/hide option
+  checkNet30Approval(user);
 }
+
+// ── Stripe Success Return Handler ────────────────────────────────────────
+async function handleStripeReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const mktCheckout = params.get('mkt_checkout');
+  if (mktCheckout !== 'success') return;
+
+  const pendingRaw = localStorage.getItem('marketplace_pending_order');
+  if (!pendingRaw) return;
+
+  const pending = JSON.parse(pendingRaw);
+  localStorage.removeItem('marketplace_pending_order');
+
+  // Clean URL
+  const url = new URL(window.location);
+  url.searchParams.delete('mkt_checkout');
+  url.searchParams.delete('ref');
+  window.history.replaceState({}, '', url);
+
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const orderedItems = pending.items || [];
+  const shippingSnap = pending.shippingAddress || {};
+  const orderRef = pending.orderRef || params.get('ref') || 'ATL-PAID';
+  const pretax = orderedItems.reduce((s,i) => s + (i.price||0) * (i.quantity||1), 0);
+  const gst = pretax * 0.1;
+  const grandTotal = pretax + gst;
+
+  // Insert into rfq_history
+  for (const item of orderedItems) {
+    const payload = { ...item, shipping_address: shippingSnap, billing_same: pending.billingSame };
+    await supabase.from('rfq_history').insert({
+      id: crypto.randomUUID?.() || null,
+      user_id: user.id,
+      rfq_data: payload,
+      status: 'submitted'
+    });
+  }
+
+  // Insert marketplace_orders record
+  try {
+    await supabase.from('marketplace_orders').insert({
+      order_ref: orderRef,
+      user_id: user.id,
+      user_email: user.email,
+      items: orderedItems,
+      shipping_address: shippingSnap,
+      subtotal: pretax,
+      gst: gst,
+      grand_total: grandTotal,
+      status: 'paid',
+      payment_method: pending.paymentMethod || 'card'
+    });
+  } catch(e) { console.warn('Order DB insert failed:', e); }
+
+  // Send emails
+  fetch('/.netlify/functions/send-email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'marketplace_order', email: user.email, name: shippingSnap.name || user.email?.split('@')[0], orderRef, items: orderedItems, shippingAddress: shippingSnap, pretax, gst, grandTotal })
+  }).catch(e => console.warn('Order email err:', e));
+
+  // Notify suppliers
+  const groups = {};
+  orderedItems.forEach(i => { const n = i.supplier_name||'Unknown'; if(!groups[n]) groups[n]=[]; groups[n].push(i); });
+  Object.entries(groups).forEach(([name, items]) => {
+    fetch('/.netlify/functions/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'marketplace_supplier_notify', email: items[0]?.supplier_email || 'info@atlasdt.com', supplierName: name, orderRef, items, buyerEmail: user.email })
+    }).catch(e => console.warn('Supplier email err:', e));
+  });
+
+  // Clear cart
+  shoppingCart = [];
+  localStorage.setItem('marketplace_cart', JSON.stringify([]));
+  if (typeof window.updateCartBadge === 'function') window.updateCartBadge();
+
+  // Show thank you
+  const fmt = v => '$' + v.toLocaleString(undefined, {minimumFractionDigits:2});
+  const setT = (id,v) => { const el=document.getElementById(id); if(el)el.textContent=v; };
+  const setH = (id,v) => { const el=document.getElementById(id); if(el)el.innerHTML=v; };
+  setT('ty-order-ref', orderRef);
+  setT('ty-user-email', user.email);
+  setT('ty-item-count', orderedItems.length.toString());
+  setT('ty-goods-total', fmt(pretax));
+  setT('ty-gst', fmt(gst));
+  setT('ty-grand-total', fmt(grandTotal));
+  const addrHtml = [shippingSnap.name,shippingSnap.address1,shippingSnap.address2,[shippingSnap.city,shippingSnap.state,shippingSnap.zip].filter(Boolean).join(', ')].filter(Boolean).join('<br>');
+  setH('ty-delivery-addr', addrHtml);
+  setH('ty-invoice-addr', addrHtml);
+
+  // Navigate to thank-you
+  setTimeout(() => {
+    ['catalog-layout','catalog-pdp','cart-page-layout','checkout-page-layout','mkt-manufacturers-layout','mkt-resources-layout','mkt-rfq-layout'].forEach(id => document.getElementById(id)?.classList.add('hidden'));
+    document.getElementById('thank-you-layout')?.classList.remove('hidden');
+  }, 500);
+}
+
+// ── NET30 Approval Check ──────────────────────────────────────────────────
+async function checkNet30Approval(user) {
+  if (!user) return;
+  try {
+    const { data } = await supabase.from('profiles').select('net30_approved').eq('id', user.id).single();
+    if (data?.net30_approved) {
+      const opt = document.getElementById('chk-net30-option');
+      if (opt) opt.style.display = 'flex';
+      const link = document.getElementById('chk-net30-apply-link');
+      if (link) link.style.display = 'none';
+    }
+  } catch(e) { /* not approved */ }
+}
+
+// ── NET30 Application Modal ───────────────────────────────────────────────
+window.openNet30RequestModal = function() {
+  let modal = document.getElementById('net30-request-modal');
+  if (modal) { modal.classList.remove('hidden'); return; }
+
+  modal = document.createElement('div');
+  modal.id = 'net30-request-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:inherit;';
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:12px;width:520px;max-width:92vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);position:relative;">
+      <div style="background:linear-gradient(135deg,#0e7490,#0369a1);padding:28px 32px;border-radius:12px 12px 0 0;color:#fff;">
+        <h2 style="margin:0;font-size:20px;font-weight:700;">Apply for NET30 Corporate Account</h2>
+        <p style="margin:8px 0 0;font-size:13px;opacity:0.85;">Approved accounts can checkout with 30-day invoicing terms.</p>
+      </div>
+      <button onclick="document.getElementById('net30-request-modal').classList.add('hidden')" style="position:absolute;top:16px;right:16px;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;font-weight:700;">&times;</button>
+      <form id="net30-request-form" style="padding:28px 32px;display:flex;flex-direction:column;gap:16px;">
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:4px;">Company Name *</label>
+          <input type="text" id="net30-company" required style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:4px;font-size:14px;box-sizing:border-box;font-family:inherit;">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:4px;">ABN / Tax ID *</label>
+            <input type="text" id="net30-abn" required style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:4px;font-size:14px;box-sizing:border-box;font-family:inherit;">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:4px;">Annual Procurement Budget</label>
+            <select id="net30-budget" style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:4px;font-size:14px;box-sizing:border-box;font-family:inherit;background:#fff;">
+              <option value="">— Select —</option>
+              <option>Under US$50,000</option>
+              <option>US$50,000 – US$200,000</option>
+              <option>US$200,000 – US$1M</option>
+              <option>Over US$1M</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:4px;">Accounts Payable Email *</label>
+          <input type="email" id="net30-ap-email" required style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:4px;font-size:14px;box-sizing:border-box;font-family:inherit;">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:4px;">Additional Notes</label>
+          <textarea id="net30-notes" rows="3" placeholder="Trade references, existing supplier relationships, etc." style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:4px;font-size:14px;box-sizing:border-box;font-family:inherit;resize:vertical;"></textarea>
+        </div>
+        <button type="submit" style="background:#007185;color:#fff;border:none;border-radius:6px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Submit Application</button>
+        <p style="font-size:11px;color:#94a3b8;text-align:center;margin:0;">Applications are typically reviewed within 2 business days.</p>
+      </form>
+    </div>`;
+  document.body.appendChild(modal);
+
+  document.getElementById('net30-request-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const user = await getCurrentUser();
+    const payload = {
+      user_id: user?.id,
+      user_email: user?.email,
+      company_name: document.getElementById('net30-company').value,
+      abn: document.getElementById('net30-abn').value,
+      budget: document.getElementById('net30-budget').value,
+      ap_email: document.getElementById('net30-ap-email').value,
+      notes: document.getElementById('net30-notes').value,
+      status: 'pending'
+    };
+    try {
+      await supabase.from('net30_applications').insert(payload);
+      // Notify admin
+      fetch('/.netlify/functions/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'marketplace_supplier_notify', email: 'info@atlasdt.com', supplierName: 'AtlasDT Admin', orderRef: 'NET30-APPLICATION', items: [{ mpn: payload.company_name, quantity: 1, price: 0, name: 'NET30 Application — ' + payload.company_name }], buyerEmail: user?.email })
+      }).catch(() => {});
+      modal.innerHTML = '<div style="padding:60px 32px;text-align:center;"><div style="font-size:48px;margin-bottom:16px;">✅</div><h3 style="font-size:20px;font-weight:700;color:#111;margin:0 0 8px;">Application Submitted</h3><p style="font-size:14px;color:#666;">We\'ll review your NET30 application and email you within 2 business days.</p><button onclick="document.getElementById(\'net30-request-modal\').classList.add(\'hidden\')" style="margin-top:20px;background:#007185;color:#fff;border:none;border-radius:6px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;">Close</button></div>';
+    } catch(err) {
+      alert('Failed to submit application. Please try again.');
+      console.error('NET30 application error:', err);
+    }
+  });
+};
 
 /**
  * Injects a beautiful "Coming Soon" card over the main catalog content area.
@@ -154,7 +352,7 @@ function renderTaxonomyTree() {
     const hasSubs = subs.length > 0;
     const depthClass = `dk-tree-depth-${depth}`;
 
-    let html = `<div class="${depthClass}">`;
+    let html = `<div class="${depthClass}" data-tree-name="${cat.name.toLowerCase()}">`;
     html += `<div class="dk-tree-node" data-id="${cat.id}" data-name="${cat.name}">`;
 
     html += `<span class="dk-tree-label" style="flex:1; text-align:left;">${cat.name}</span>`;
@@ -173,9 +371,57 @@ function renderTaxonomyTree() {
     return html;
   }
 
-  let html = '';
+  // ── Search box ──
+  let html = `
+    <div class="dk-tree-search-wrap">
+      <input type="text" id="dk-tree-search" placeholder="Search categories…">
+    </div>
+    <div class="dk-tree-toggle-bar">
+      <button class="dk-tree-toggle-btn" id="dk-tree-expand-all">Expand All</button>
+      <button class="dk-tree-toggle-btn" id="dk-tree-collapse-all">Collapse All</button>
+    </div>`;
+
   rootCats.forEach(rc => { html += buildNode(rc, 0); });
   container.innerHTML = html;
+
+  // ── Wire Expand / Collapse All ──
+  document.getElementById('dk-tree-expand-all')?.addEventListener('click', () => {
+    container.querySelectorAll('.dk-tree-children').forEach(c => c.classList.add('open'));
+    container.querySelectorAll('.dk-tree-arrow').forEach(a => a.classList.add('expanded'));
+  });
+  document.getElementById('dk-tree-collapse-all')?.addEventListener('click', () => {
+    container.querySelectorAll('.dk-tree-children').forEach(c => c.classList.remove('open'));
+    container.querySelectorAll('.dk-tree-arrow').forEach(a => a.classList.remove('expanded'));
+  });
+
+  // ── Wire Category Search ──
+  document.getElementById('dk-tree-search')?.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    if (!query) {
+      // Show all nodes
+      container.querySelectorAll('[data-tree-name]').forEach(el => el.style.display = '');
+      return;
+    }
+    // Hide nodes that don't match, show and auto-expand those that do
+    container.querySelectorAll('[data-tree-name]').forEach(el => {
+      const name = el.dataset.treeName;
+      const matches = name.includes(query);
+      el.style.display = matches ? '' : 'none';
+      if (matches) {
+        // Auto-expand parent chain
+        let parent = el.parentElement;
+        while (parent && parent !== container) {
+          if (parent.classList.contains('dk-tree-children')) {
+            parent.classList.add('open');
+            const arrow = parent.previousElementSibling?.querySelector('.dk-tree-arrow');
+            if (arrow) arrow.classList.add('expanded');
+          }
+          if (parent.dataset?.treeName) parent.style.display = '';
+          parent = parent.parentElement;
+        }
+      }
+    });
+  });
 
   // Wire click handlers
   container.querySelectorAll('.dk-tree-node').forEach(node => {
@@ -423,7 +669,7 @@ async function fetchAndRenderProducts(searchQuery = '') {
   }
 
   // Build query
-  let queryBuilder = supabase.from('products').select('*, suppliers(name)');
+  let queryBuilder = supabase.from('products').select('*, oem_sellers(name)');
 
   if (activeCategoryId) {
     // Include child categories
@@ -1519,6 +1765,15 @@ window.checkoutCart = async function() {
   const user = await getCurrentUser();
   if (!user) { alert('You must be logged in to checkout.'); return; }
 
+  // ── T&C Checkbox Validation ───────────────────────────────────────────
+  const tcCheckbox = document.getElementById('chk-agree-terms');
+  if (tcCheckbox && !tcCheckbox.checked) {
+    alert('Please accept the Terms & Conditions before placing your order.');
+    tcCheckbox.closest('label')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    tcCheckbox.focus();
+    return;
+  }
+
   // Extract address info
   const shippingInfo = {
     name: document.getElementById('chk-name').value,
@@ -1538,12 +1793,54 @@ window.checkoutCart = async function() {
   chkBtn.disabled = true;
   chkBtn.innerHTML = 'Processing...';
 
+  // Determine payment method
+  const paymentMethod = document.querySelector('input[name="chk-payment-method"]:checked')?.value || 'card';
+  const orderRef = 'ATL-' + Date.now().toString(36).toUpperCase();
+
   try {
+    // ── CARD PAYMENTS → Stripe Checkout ──────────────────────────────────
+    if (paymentMethod !== 'net30') {
+      // Save pending order to localStorage so we can complete on Stripe success redirect
+      const pendingOrder = {
+        orderRef,
+        userId: user.id,
+        userEmail: user.email,
+        items: [...shoppingCart],
+        shippingAddress: shippingInfo,
+        billingSame: document.getElementById('chk-billing-same')?.checked,
+        paymentMethod
+      };
+      localStorage.setItem('marketplace_pending_order', JSON.stringify(pendingOrder));
+
+      // Call Stripe checkout function
+      const resp = await fetch('/.netlify/functions/marketplace-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          userEmail: user.email,
+          items: shoppingCart,
+          shippingAddress: shippingInfo,
+          orderRef: orderRef
+        })
+      });
+
+      const data = await resp.json();
+      if (!resp.ok || !data.url) {
+        throw new Error(data.error || 'Could not create payment session');
+      }
+
+      // Redirect to Stripe
+      chkBtn.innerHTML = 'Redirecting to payment...';
+      window.location.href = data.url;
+      return; // Page will navigate away
+    }
+
+    // ── NET30 → Direct order (approved accounts only) ────────────────────
     const promises = shoppingCart.map(item => {
-      // Create a cloned rfq_data payload
       const orderPayload = { ...item };
       orderPayload.shipping_address = shippingInfo;
-      orderPayload.billing_same = document.getElementById('chk-billing-same').checked;
+      orderPayload.billing_same = document.getElementById('chk-billing-same')?.checked;
 
       return supabase.from('rfq_history').insert({
          id: window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : null,
@@ -1565,18 +1862,86 @@ window.checkoutCart = async function() {
     }
 
     // Success!
-    // Capture order data before clearing cart
     const orderedItems  = [...shoppingCart];
     const shippingSnap  = { ...shippingInfo };
-    const orderRef      = 'ATL-' + Date.now().toString(36).toUpperCase();
     const pretax        = orderedItems.reduce((s,i) => s+(i.price||0)*i.quantity, 0);
     const gst           = pretax * 0.1;
     const grandTotal    = pretax + gst;
     const fmt           = v => '$' + v.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
 
+    // ── Insert marketplace order into Supabase for supplier portal ────────
+    try {
+      await supabase.from('marketplace_orders').insert({
+        order_ref: orderRef,
+        user_id: user.id,
+        user_email: user.email,
+        items: orderedItems,
+        shipping_address: shippingSnap,
+        subtotal: pretax,
+        gst: gst,
+        grand_total: grandTotal,
+        status: 'confirmed',
+        payment_method: 'NET30'
+      });
+      console.log('[Marketplace] Order saved to marketplace_orders:', orderRef);
+    } catch (dbErr) {
+      console.warn('[Marketplace] Could not save order to DB:', dbErr);
+    }
+
     shoppingCart = [];
     localStorage.setItem('marketplace_cart', JSON.stringify(shoppingCart));
     updateCartBadge();
+
+    // ── Clear cart abandonment timer ──────────────────────────────────────
+    clearCartAbandonmentTimer();
+
+    // ── Send order confirmation email to customer (async, non-blocking) ──
+    try {
+      fetch('/.netlify/functions/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'marketplace_order',
+          email: user.email,
+          name: shippingSnap.name || user.email?.split('@')[0],
+          orderRef: orderRef,
+          items: orderedItems,
+          shippingAddress: shippingSnap,
+          pretax: pretax,
+          gst: gst,
+          grandTotal: grandTotal
+        })
+      }).then(r => console.log('[Marketplace] Order email sent:', r.status))
+        .catch(e => console.warn('[Marketplace] Order email failed:', e));
+    } catch(emailErr) { console.warn('[Marketplace] Email dispatch skipped:', emailErr); }
+
+    // ── Notify each unique supplier (async, non-blocking) ────────────────
+    try {
+      const supplierGroups = {};
+      orderedItems.forEach(item => {
+        const supName = item.supplier_name || 'Unknown';
+        if (!supplierGroups[supName]) supplierGroups[supName] = [];
+        supplierGroups[supName].push(item);
+      });
+
+      Object.entries(supplierGroups).forEach(([supName, items]) => {
+        // Attempt to find supplier email from the product data; fallback to admin
+        const supEmail = items[0]?.supplier_email || 'info@atlasdt.com';
+        fetch('/.netlify/functions/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'marketplace_supplier_notify',
+            email: supEmail,
+            supplierName: supName,
+            orderRef: orderRef,
+            items: items,
+            buyerEmail: user.email
+          })
+        }).then(r => console.log(`[Marketplace] Supplier ${supName} notified:`, r.status))
+          .catch(e => console.warn(`[Marketplace] Supplier ${supName} email failed:`, e));
+      });
+    } catch(supErr) { console.warn('[Marketplace] Supplier notify skipped:', supErr); }
 
     // ── Populate Thank You page ───────────────────────────────────────────
     const setT = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
@@ -1662,3 +2027,93 @@ window.checkoutCart = async function() {
   }
 }
 const checkoutCart = window.checkoutCart;
+
+// ═══════════════════════════════════════════════════════════════
+// CART ABANDONMENT TRACKING (24-hour reminder)
+// ═══════════════════════════════════════════════════════════════
+
+let cartAbandonmentTimer = null;
+
+/**
+ * Start or reset the 24-hour cart abandonment timer.
+ * When a user adds items to their cart, we set a timestamp.
+ * If the cart is still non-empty after 24 hours, send a reminder email.
+ */
+function startCartAbandonmentTimer() {
+  // Record when items were first added
+  const existing = localStorage.getItem('marketplace_cart_added_at');
+  if (!existing) {
+    localStorage.setItem('marketplace_cart_added_at', new Date().toISOString());
+  }
+}
+
+function clearCartAbandonmentTimer() {
+  localStorage.removeItem('marketplace_cart_added_at');
+  if (cartAbandonmentTimer) {
+    clearTimeout(cartAbandonmentTimer);
+    cartAbandonmentTimer = null;
+  }
+}
+
+/**
+ * On page load, check if an abandoned cart reminder should be sent.
+ * If the cart was created > 24 hours ago and still has items, fire the email.
+ */
+async function checkCartAbandonment() {
+  const cart = JSON.parse(localStorage.getItem('marketplace_cart') || '[]');
+  const addedAt = localStorage.getItem('marketplace_cart_added_at');
+  const reminderSent = localStorage.getItem('marketplace_cart_reminder_sent');
+
+  if (cart.length === 0 || !addedAt || reminderSent) return;
+
+  const hoursElapsed = (Date.now() - new Date(addedAt).getTime()) / (1000 * 60 * 60);
+  if (hoursElapsed < 24) return; // Not yet 24 hours
+
+  // Get the current user
+  const user = await getCurrentUser();
+  if (!user?.email) return;
+
+  // Calculate cart total
+  const cartTotal = cart.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
+
+  // Send the abandoned cart reminder
+  try {
+    const resp = await fetch('/.netlify/functions/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'marketplace_cart_reminder',
+        email: user.email,
+        name: user.email?.split('@')[0],
+        items: cart,
+        cartTotal: cartTotal
+      })
+    });
+    console.log('[Marketplace] Cart abandonment reminder sent:', resp.status);
+    // Mark as sent so we don't spam
+    localStorage.setItem('marketplace_cart_reminder_sent', new Date().toISOString());
+  } catch (err) {
+    console.warn('[Marketplace] Cart abandonment email failed:', err);
+  }
+}
+
+// Hook into add-to-cart to start the timer
+const originalPush = Array.prototype.push;
+const _origSetCart = localStorage.setItem.bind(localStorage);
+
+// Check cart abandonment on init (non-blocking)
+setTimeout(() => checkCartAbandonment(), 5000);
+
+// Override the updateCartBadge to also track abandonment timing
+const _originalUpdateCartBadge = window.updateCartBadge;
+window.updateCartBadge = function() {
+  _originalUpdateCartBadge();
+  const cart = JSON.parse(localStorage.getItem('marketplace_cart') || '[]');
+  if (cart.length > 0) {
+    startCartAbandonmentTimer();
+    // Clear reminder-sent flag when cart changes (user may have added new items)
+    localStorage.removeItem('marketplace_cart_reminder_sent');
+  } else {
+    clearCartAbandonmentTimer();
+  }
+};

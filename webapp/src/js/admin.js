@@ -244,6 +244,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       })
       .subscribe();
     renderOverview();
+
+    // ── Collapsible OEM Nav Group ──────────────────────────
+    const oemGroup = document.getElementById('oem-nav-group');
+    const oemToggle = document.getElementById('oem-group-toggle');
+    if (oemGroup && oemToggle) {
+      oemGroup.classList.add('collapsed'); // start collapsed
+      oemToggle.addEventListener('click', () => {
+        oemGroup.classList.toggle('collapsed');
+        oemGroup.classList.toggle('expanded');
+      });
+    }
+
     navItems.forEach(tab => {
       // Clone to remove old listeners
       const fresh = tab.cloneNode(true);
@@ -252,14 +264,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelectorAll('.admin-nav-item').forEach(t => t.classList.remove('active'));
         e.currentTarget.classList.add('active');
         const t = e.currentTarget.dataset.tab;
+
+        // Auto-expand OEM group if an OEM child tab is clicked
+        const oemTabs = ['marketplace-taxonomy', 'products', 'oem-sellers'];
+        if (oemTabs.includes(t) && oemGroup) {
+          oemGroup.classList.remove('collapsed');
+          oemGroup.classList.add('expanded');
+        }
+
         if (t === 'overview')  { pageTitle.textContent = 'Platform Overview';        renderOverview(); }
         if (t === 'suppliers') { pageTitle.textContent = 'Suppliers CRM Directory';  renderSuppliersTable(); }
         if (t === 'customers') { pageTitle.textContent = 'Customers Data CRM';       renderCustomersTable(); }
         if (t === 'rfqs')      { pageTitle.textContent = 'RFQ \u0026 Project Tracker';    renderRFQs(); }
         if (t === 'pricing') { pageTitle.textContent = 'Pricing Engine Configurator'; renderPricingConfigurator(contentRouting); }
 
-        if (t === 'marketplace-taxonomy') { pageTitle.textContent = 'Marketplace Admin'; renderMarketplaceTaxonomy(contentRouting); }
-        if (t === 'products') { pageTitle.textContent = 'Products Catalog'; renderAdminProducts(contentRouting); }
+        if (t === 'marketplace-taxonomy') { pageTitle.textContent = 'OEM — Categories'; renderMarketplaceTaxonomy(contentRouting); }
+        if (t === 'products') { pageTitle.textContent = 'OEM — Products Catalog'; renderAdminProducts(contentRouting); }
+        if (t === 'oem-sellers') { pageTitle.textContent = 'OEM — Sellers Directory'; renderOEMSellers(); }
         if (t === 'designers') { pageTitle.textContent = 'Designer Applications Hub'; renderDesignersHub(); }
         if (t === 'staff')     { pageTitle.textContent = 'Staff Directory';  renderStaffTable(); }
       });
@@ -638,6 +659,513 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
       }
     }, 50);
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  O E M   S E L L E R S   T A B
+  // ═══════════════════════════════════════════════════════════
+  let oemSellersData = [];
+  let oemSellersSearch = '';
+
+  async function renderOEMSellers() {
+    contentRouting.innerHTML = `<div style="text-align:center; padding:40px; color:var(--color-steel-400);">Loading OEM sellers...</div>`;
+
+    // Fetch marketplace-type suppliers
+    const { data, error } = await supabase.from('oem_sellers').select('*').order('name');
+    if (error) {
+      contentRouting.innerHTML = `<div style="color:#ef4444; padding:40px; text-align:center;">Error loading sellers: ${error.message}</div>`;
+      return;
+    }
+    oemSellersData = (data || []).map(row => ({
+      ...row,
+      ...(row.data || {}),
+      id: row.id,
+      name: row.name || row.data?.name || '—',
+    }));
+
+    // Count products per seller
+    const { data: prodCounts } = await supabase.from('products').select('supplier_id');
+    const prodCountMap = {};
+    (prodCounts || []).forEach(p => {
+      if (p.supplier_id) prodCountMap[p.supplier_id] = (prodCountMap[p.supplier_id] || 0) + 1;
+    });
+
+    renderOEMSellersTable(prodCountMap);
+  }
+
+  function renderOEMSellersTable(prodCountMap = {}) {
+    let filtered = oemSellersData;
+    if (oemSellersSearch) {
+      const q = oemSellersSearch.toLowerCase();
+      filtered = oemSellersData.filter(s =>
+        (s.name || '').toLowerCase().includes(q) ||
+        (s.country || '').toLowerCase().includes(q) ||
+        (s.industry || '').toLowerCase().includes(q) ||
+        (s.id || '').toLowerCase().includes(q)
+      );
+    }
+
+    const rows = filtered.map(s => {
+      const contact = (s.legal_representatives || [])[0] || {};
+      const prodCount = prodCountMap[s.id] || 0;
+      const isOnboarded = s.onboarding_completed === true;
+      const created = s.created_at ? new Date(s.created_at).toLocaleDateString() : '—';
+
+      return `
+      <tr>
+        <td>
+          <strong>${s.name}</strong><br>
+          <span style="font-size:11px; color:var(--color-steel-400);">${s.trading_name || ''}</span>
+        </td>
+        <td>${s.country || '—'}</td>
+        <td>${s.industry || '—'}</td>
+        <td>${contact.name || '—'}<br><span style="font-size:11px; color:var(--color-steel-400);">${contact.email || ''}</span></td>
+        <td style="text-align:center; font-weight:600; ${prodCount > 0 ? 'color:#22c55e;' : 'color:var(--color-steel-400);'}">${prodCount}</td>
+        <td>
+          <span class="admin-badge ${isOnboarded ? 'active' : 'pending'}">${isOnboarded ? 'Active' : 'Onboarding'}</span>
+        </td>
+        <td style="font-size:12px; color:var(--color-steel-400);">${created}</td>
+        <td class="admin-table-actions"><div class="admin-table-actions-wrapper">
+          <button class="admin-action-btn admin-oem-toggle" data-id="${s.id}" data-active="${s.isActive !== false}" style="font-size:11px;">${s.isActive !== false ? 'Disable' : 'Enable'}</button>
+          <button class="admin-action-btn admin-oem-delete" data-id="${s.id}" style="color:#ef4444;border-color:rgba(239,68,68,.2);">Delete</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+
+    contentRouting.innerHTML = `
+      <div style="margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <input type="text" id="oem-seller-search" class="admin-input-filter" placeholder="Search sellers..." value="${oemSellersSearch}" style="min-width:280px;">
+          <span style="font-size:13px; color:var(--color-steel-400);">${filtered.length} seller${filtered.length !== 1 ? 's' : ''}</span>
+        </div>
+      </div>
+
+      <div class="admin-table-container">
+        <table class="admin-table">
+          <thead><tr>
+            <th style="min-width:200px;">Company</th>
+            <th>Country</th>
+            <th>Industry</th>
+            <th>Primary Contact</th>
+            <th style="text-align:center;">Products</th>
+            <th>Status</th>
+            <th>Joined</th>
+            <th style="width:160px;">Actions</th>
+          </tr></thead>
+          <tbody>${rows || '<tr><td colspan="8" style="text-align:center; padding:40px; color:var(--color-steel-400);">No OEM sellers found.</td></tr>'}</tbody>
+        </table>
+      </div>`;
+
+    // Bind events
+    document.getElementById('oem-seller-search')?.addEventListener('input', (e) => {
+      oemSellersSearch = e.target.value.trim().toLowerCase();
+      renderOEMSellersTable(prodCountMap);
+    });
+
+    contentRouting.querySelectorAll('.admin-oem-toggle').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        const isCurrentlyActive = btn.dataset.active === 'true';
+        btn.textContent = '...';
+        btn.style.pointerEvents = 'none';
+        const { error } = await supabase.from('oem_sellers').update({ isActive: !isCurrentlyActive }).eq('id', id);
+        if (error) { alert('Error: ' + error.message); btn.textContent = isCurrentlyActive ? 'Disable' : 'Enable'; btn.style.pointerEvents = ''; return; }
+        const seller = oemSellersData.find(s => s.id === id);
+        if (seller) seller.isActive = !isCurrentlyActive;
+        renderOEMSellersTable(prodCountMap);
+      });
+    });
+
+    contentRouting.querySelectorAll('.admin-oem-delete').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Permanently delete this seller and all their products? This cannot be undone.')) return;
+        const id = btn.dataset.id;
+        btn.textContent = '...';
+        btn.style.pointerEvents = 'none';
+        // Delete products first, then supplier
+        await supabase.from('products').delete().eq('supplier_id', id);
+        const { error } = await supabase.from('oem_sellers').delete().eq('id', id);
+        if (error) { alert('Error: ' + error.message); btn.textContent = 'Delete'; btn.style.pointerEvents = ''; return; }
+        oemSellersData = oemSellersData.filter(s => s.id !== id);
+        renderOEMSellersTable(prodCountMap);
+      });
+    });
+
+    // Double-click to open seller detail
+    contentRouting.querySelectorAll('tbody tr').forEach(row => {
+      row.style.cursor = 'pointer';
+      row.addEventListener('dblclick', () => {
+        const id = row.querySelector('.admin-oem-toggle')?.dataset.id;
+        if (id) renderOEMSellerDetail(id);
+      });
+    });
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  O E M   S E L L E R   D E T A I L   P A G E
+  // ═══════════════════════════════════════════════════════════
+  async function renderOEMSellerDetail(sellerId) {
+    const pageTitle = document.querySelector('.admin-header h2');
+    contentRouting.innerHTML = `<div style="text-align:center; padding:40px; color:var(--color-steel-400);">Loading seller profile...</div>`;
+
+    // Fetch all data in parallel
+    const [sellerRes, productsRes, ordersRes, teamRes] = await Promise.all([
+      supabase.from('oem_sellers').select('*').eq('id', sellerId).single(),
+      supabase.from('products').select('*').eq('supplier_id', sellerId).order('created_at', { ascending: false }),
+      supabase.from('marketplace_orders').select('*').order('created_at', { ascending: false }),
+      supabase.from('supplier_team_members').select('*').eq('supplier_id', sellerId).order('invited_at', { ascending: false })
+    ]);
+
+    if (sellerRes.error || !sellerRes.data) {
+      contentRouting.innerHTML = `<div style="color:#ef4444; padding:40px; text-align:center;">Error: ${sellerRes.error?.message || 'Seller not found'}</div>`;
+      return;
+    }
+
+    const s = { ...sellerRes.data, ...(sellerRes.data.data || {}) };
+    const products = productsRes.data || [];
+    const team = teamRes.data || [];
+
+    // Filter orders that contain this seller's products
+    const allOrders = ordersRes.data || [];
+    const sellerProductIds = new Set(products.map(p => p.id));
+    const sellerOrders = allOrders.filter(o => {
+      const items = o.items || [];
+      return items.some(item => sellerProductIds.has(item.id) || item.supplier_id === sellerId);
+    });
+
+    // Stats
+    const totalRevenue = sellerOrders.reduce((sum, o) => sum + Number(o.grand_total || 0), 0);
+    const totalOrders = sellerOrders.length;
+    const totalProducts = products.length;
+    const activeProducts = products.filter(p => p.stock_quantity > 0).length;
+
+    if (pageTitle) pageTitle.textContent = `OEM — ${s.name || 'Seller Detail'}`;
+
+    // Helpers
+    const esc = v => (v || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const fmtDate = d => d ? new Date(d).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+    const fmtCurrency = v => '$' + Number(v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const addr = a => {
+      if (!a || typeof a !== 'object') return '—';
+      return [a.line1, a.line2, a.city, a.state, a.postal_code, a.country].filter(Boolean).join(', ') || '—';
+    };
+
+    const contact = (s.legal_representatives || [])[0] || {};
+    const salesContact = (s.key_contacts || [])[0] || {};
+    const banking = s.banking_info || {};
+    const certs = s.certifications || [];
+    const regAddr = s.registered_address || {};
+    const facAddr = s.factory_address || {};
+    const whAddr = s.warehouse_address || {};
+
+    // Badge helper
+    const statusBadge = (isActive, isOnboarded) => {
+      if (!isOnboarded) return '<span class="admin-badge pending">Onboarding</span>';
+      return isActive !== false ? '<span class="admin-badge active">Active</span>' : '<span class="admin-badge" style="background:rgba(239,68,68,0.1);color:#ef4444;">Disabled</span>';
+    };
+
+    // Sections
+    const infoField = (label, value) => `
+      <div class="oem-detail-field">
+        <div class="oem-detail-label">${label}</div>
+        <div class="oem-detail-value">${esc(value) || '<span style="opacity:0.3;">—</span>'}</div>
+      </div>`;
+
+    // Products rows
+    const productRows = products.map(p => {
+      const stock = p.stock_quantity || 0;
+      const stockClass = stock === 0 ? 'color:#ef4444;font-weight:700;' : 'color:#22c55e;font-weight:700;';
+      const price = p.base_price ? fmtCurrency(p.base_price) : '—';
+      return `<tr>
+        <td><div style="display:flex;align-items:center;gap:10px;">
+          <img src="${p.image_url || '/placeholder.png'}" style="width:36px;height:36px;object-fit:cover;border-radius:4px;border:1px solid rgba(255,255,255,0.08);" onerror="this.src='https://via.placeholder.com/64x64.png?text=—'">
+          <div><div style="font-weight:600;font-size:13px;">${esc(p.description || p.mpn)}</div><div style="font-size:11px;color:var(--color-steel-400);">${esc(p.mpn)}</div></div>
+        </div></td>
+        <td style="${stockClass}">${stock.toLocaleString()}</td>
+        <td style="font-weight:600;">${price}</td>
+        <td style="font-size:12px;color:var(--color-steel-400);">${fmtDate(p.created_at)}</td>
+        <td class="admin-table-actions"><div class="admin-table-actions-wrapper">
+          <button class="admin-action-btn oem-detail-delete-product" data-id="${p.id}" style="color:#ef4444;border-color:rgba(239,68,68,.2);font-size:11px;">Delete</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+
+    // Orders rows
+    const orderRows = sellerOrders.slice(0, 20).map(o => {
+      const statusMap = { paid: 'active', confirmed: 'active', pending: 'pending', cancelled: 'pending' };
+      return `<tr>
+        <td style="font-family:monospace;font-size:12px;">${esc(o.order_ref || o.id?.substring(0, 8))}</td>
+        <td>${esc(o.user_email || '—')}</td>
+        <td style="font-weight:600;">${fmtCurrency(o.grand_total)}</td>
+        <td><span class="admin-badge ${statusMap[o.status] || 'pending'}">${o.status || '—'}</span></td>
+        <td style="font-size:12px;color:var(--color-steel-400);">${fmtDate(o.created_at)}</td>
+      </tr>`;
+    }).join('');
+
+    // Team rows
+    const teamRows = team.map(m => {
+      const roleColors = { admin: '#3b82f6', sales: '#22c55e', operations: '#f59e0b', viewer: '#94a3b8' };
+      return `<tr>
+        <td>${esc(m.full_name || '—')}</td>
+        <td style="font-size:13px;color:var(--color-steel-300);">${esc(m.email)}</td>
+        <td><span style="background:rgba(59,130,246,0.1);color:${roleColors[m.role] || '#94a3b8'};padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;text-transform:uppercase;">${m.role}</span></td>
+        <td style="font-size:12px;text-transform:capitalize;color:${m.status === 'active' ? '#22c55e' : '#f59e0b'};">● ${m.status}</td>
+      </tr>`;
+    }).join('');
+
+    // Certifications
+    const certsList = certs.length > 0 ? certs.map(c => `
+      <div style="display:flex;gap:10px;align-items:center;padding:8px 12px;background:var(--color-void);border:1px solid var(--color-slate-800);border-radius:var(--radius-sm);">
+        <span style="font-weight:600;font-size:13px;color:var(--color-cloud);">${esc(c.type || c.cert_type || c)}</span>
+        ${c.number ? `<span style="font-size:11px;color:var(--color-steel-400);">#${esc(c.number)}</span>` : ''}
+        ${c.expiry ? `<span style="font-size:11px;color:var(--color-steel-400);">Exp: ${c.expiry}</span>` : ''}
+      </div>`).join('') : '<span style="color:var(--color-steel-500);font-size:13px;">No certifications on file</span>';
+
+    contentRouting.innerHTML = `
+      <div class="admin-form-page" style="padding-bottom:60px;">
+        <button class="admin-back-btn" id="oem-detail-back">← Back to Sellers</button>
+
+        <!-- KPI Metrics -->
+        <div class="admin-metrics-grid" style="grid-template-columns:repeat(4,1fr); margin-bottom:28px;">
+          <div class="admin-metric-card">
+            <div class="admin-metric-value" style="color:#3b82f6;">${totalProducts}</div>
+            <div class="admin-metric-label">Total Products</div>
+          </div>
+          <div class="admin-metric-card">
+            <div class="admin-metric-value" style="color:#22c55e;">${activeProducts}</div>
+            <div class="admin-metric-label">In Stock</div>
+          </div>
+          <div class="admin-metric-card">
+            <div class="admin-metric-value" style="color:#f59e0b;">${totalOrders}</div>
+            <div class="admin-metric-label">Orders</div>
+          </div>
+          <div class="admin-metric-card">
+            <div class="admin-metric-value" style="color:#10b981;">${fmtCurrency(totalRevenue)}</div>
+            <div class="admin-metric-label">Total Revenue</div>
+          </div>
+        </div>
+
+        <!-- Two-column layout for sections -->
+        <div class="admin-form" style="gap:20px;">
+
+          <!-- LEFT: Company Info -->
+          <div class="admin-form-section">
+            <div class="admin-form-section-title">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9h1"/><path d="M9 13h1"/><path d="M9 17h1"/></svg>
+                Company Information
+              </div>
+              ${statusBadge(s.isActive, s.onboarding_completed)}
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              ${infoField('Legal Name', s.name)}
+              ${infoField('Trading Name', s.trading_name)}
+              ${infoField('Registration No.', s.registration_number)}
+              ${infoField('Tax ID', s.tax_id)}
+              ${infoField('Country', s.country)}
+              ${infoField('Industry', s.industry)}
+              ${infoField('Business Focus', s.segment)}
+              ${infoField('Year Established', s.year_established)}
+              ${infoField('Employee Count', s.employee_count)}
+              ${infoField('Website', s.website)}
+            </div>
+            <div style="margin-top:8px;">
+              ${infoField('Description', s.description)}
+            </div>
+            <div style="margin-top:12px;">
+              <div class="oem-detail-label">Agreement</div>
+              <div style="font-size:12px;color:var(--color-steel-300);">
+                ${s.agreement_signed ? `✅ Signed by <strong>${esc(s.agreement_signed_by)}</strong> on ${fmtDate(s.agreement_signed_at)} (${esc(s.agreement_version)})` : '⏳ Not yet signed'}
+              </div>
+            </div>
+            <div style="margin-top:8px;font-size:11px;color:var(--color-steel-500);">
+              Owner User ID: <span style="font-family:monospace;">${s.owner_user_id || '—'}</span> &nbsp;·&nbsp; Created: ${fmtDate(s.created_at)}
+            </div>
+          </div>
+
+          <!-- RIGHT: Contacts & Addresses -->
+          <div style="display:flex; flex-direction:column; gap:20px;">
+            <!-- Contacts -->
+            <div class="admin-form-section">
+              <div class="admin-form-section-title">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  Key Contacts
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div>
+                  <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--color-steel-500);margin-bottom:6px;">Legal Representative</div>
+                  <div style="font-size:14px;font-weight:600;color:var(--color-cloud);">${esc(contact.name) || '—'}</div>
+                  <div style="font-size:12px;color:var(--color-steel-300);">${esc(contact.title) || ''}</div>
+                  <div style="font-size:12px;color:var(--color-steel-400);margin-top:4px;">${esc(contact.email) || ''}</div>
+                  <div style="font-size:12px;color:var(--color-steel-400);">${esc(contact.phone) || ''}</div>
+                </div>
+                <div>
+                  <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--color-steel-500);margin-bottom:6px;">Sales Contact</div>
+                  <div style="font-size:14px;font-weight:600;color:var(--color-cloud);">${esc(salesContact.name) || '—'}</div>
+                  <div style="font-size:12px;color:var(--color-steel-300);">${esc(salesContact.title) || ''}</div>
+                  <div style="font-size:12px;color:var(--color-steel-400);margin-top:4px;">${esc(salesContact.email) || ''}</div>
+                  <div style="font-size:12px;color:var(--color-steel-400);">${esc(salesContact.phone) || ''}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Addresses -->
+            <div class="admin-form-section">
+              <div class="admin-form-section-title">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  Addresses
+                </div>
+              </div>
+              <div style="display:grid;gap:10px;">
+                ${infoField('Registered Address', addr(regAddr))}
+                ${infoField('Factory Address', addr(facAddr))}
+                ${infoField('Warehouse Address', addr(whAddr))}
+              </div>
+            </div>
+          </div>
+
+          <!-- Banking (full width) -->
+          <div class="admin-form-section" style="grid-column:1/-1;">
+            <div class="admin-form-section-title">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><line x1="4" y1="10" x2="4" y2="21"/><line x1="20" y1="10" x2="20" y2="21"/><line x1="8" y1="14" x2="8" y2="17"/><line x1="12" y1="14" x2="12" y2="17"/><line x1="16" y1="14" x2="16" y2="17"/></svg>
+                Banking Information
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+              ${infoField('Bank Name', banking.bank_name)}
+              ${infoField('Branch', banking.branch_name)}
+              ${infoField('Account Name', banking.account_name)}
+              ${infoField('Account Number', banking.account_number)}
+              ${infoField('SWIFT/BIC', banking.swift_bic)}
+              ${infoField('Currency', banking.currency)}
+              ${infoField('Bank Country', banking.bank_country)}
+              ${infoField('CNAPS Code', banking.cnaps_code)}
+              ${infoField('IBAN', banking.iban)}
+              ${infoField('Beneficiary Address', banking.beneficiary_address)}
+              ${infoField('Bank Address', banking.bank_address)}
+              ${infoField('Routing No.', banking.routing_number)}
+            </div>
+          </div>
+
+          <!-- Certifications (full width) -->
+          <div class="admin-form-section" style="grid-column:1/-1;">
+            <div class="admin-form-section-title">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Certifications
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              ${certsList}
+            </div>
+          </div>
+
+          <!-- Team Members (full width) -->
+          <div class="admin-form-section" style="grid-column:1/-1;">
+            <div class="admin-form-section-title">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Team Members
+              </div>
+              <span style="font-size:12px;color:var(--color-steel-400);font-weight:400;">${team.length} member${team.length !== 1 ? 's' : ''}</span>
+            </div>
+            ${team.length > 0 ? `
+            <div class="admin-table-container" style="box-shadow:none;">
+              <table class="admin-table">
+                <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th></tr></thead>
+                <tbody>${teamRows}</tbody>
+              </table>
+            </div>` : '<div style="text-align:center;padding:20px;color:var(--color-steel-500);font-size:13px;">No team members registered</div>'}
+          </div>
+
+          <!-- Products (full width) -->
+          <div class="admin-form-section" style="grid-column:1/-1;">
+            <div class="admin-form-section-title">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                Products Catalog
+              </div>
+              <span style="font-size:12px;color:var(--color-steel-400);font-weight:400;">${totalProducts} product${totalProducts !== 1 ? 's' : ''}</span>
+            </div>
+            ${products.length > 0 ? `
+            <div class="admin-table-container" style="box-shadow:none;">
+              <table class="admin-table">
+                <thead><tr><th style="min-width:250px;">Product</th><th>Stock</th><th>Price</th><th>Created</th><th style="width:80px;">Actions</th></tr></thead>
+                <tbody>${productRows}</tbody>
+              </table>
+            </div>` : '<div style="text-align:center;padding:20px;color:var(--color-steel-500);font-size:13px;">No products listed</div>'}
+          </div>
+
+          <!-- Orders (full width) -->
+          <div class="admin-form-section" style="grid-column:1/-1;">
+            <div class="admin-form-section-title">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Orders History
+              </div>
+              <span style="font-size:12px;color:var(--color-steel-400);font-weight:400;">${sellerOrders.length} order${sellerOrders.length !== 1 ? 's' : ''}</span>
+            </div>
+            ${sellerOrders.length > 0 ? `
+            <div class="admin-table-container" style="box-shadow:none;">
+              <table class="admin-table">
+                <thead><tr><th>Order Ref</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+                <tbody>${orderRows}</tbody>
+              </table>
+            </div>` : '<div style="text-align:center;padding:20px;color:var(--color-steel-500);font-size:13px;">No orders yet</div>'}
+          </div>
+
+        </div>
+
+        <!-- Admin Actions Bar -->
+        <div style="margin-top:24px; display:flex; gap:12px; justify-content:flex-end; padding:20px 0; border-top:1px solid var(--color-slate-800);">
+          <button class="admin-action-btn" id="oem-detail-toggle" data-id="${s.id}" data-active="${s.isActive !== false}" style="padding:10px 20px; font-size:13px;">
+            ${s.isActive !== false ? '⏸ Disable Seller' : '▶ Enable Seller'}
+          </button>
+          <button class="admin-action-btn" id="oem-detail-delete" data-id="${s.id}" style="padding:10px 20px; font-size:13px; color:#ef4444; border-color:rgba(239,68,68,0.3);">
+            🗑 Delete Seller
+          </button>
+        </div>
+      </div>`;
+
+    // Bind events
+    document.getElementById('oem-detail-back')?.addEventListener('click', () => {
+      if (pageTitle) pageTitle.textContent = 'OEM — Sellers Directory';
+      renderOEMSellers();
+    });
+
+    document.getElementById('oem-detail-toggle')?.addEventListener('click', async function() {
+      const isCurrentlyActive = this.dataset.active === 'true';
+      this.textContent = '...';
+      this.style.pointerEvents = 'none';
+      const { error } = await supabase.from('oem_sellers').update({ isActive: !isCurrentlyActive }).eq('id', this.dataset.id);
+      if (error) { alert('Error: ' + error.message); return; }
+      renderOEMSellerDetail(sellerId);
+    });
+
+    document.getElementById('oem-detail-delete')?.addEventListener('click', async function() {
+      if (!confirm('Permanently delete this seller and all their products?')) return;
+      this.textContent = '...';
+      this.style.pointerEvents = 'none';
+      await supabase.from('products').delete().eq('supplier_id', this.dataset.id);
+      const { error } = await supabase.from('oem_sellers').delete().eq('id', this.dataset.id);
+      if (error) { alert('Error: ' + error.message); return; }
+      if (pageTitle) pageTitle.textContent = 'OEM — Sellers Directory';
+      renderOEMSellers();
+    });
+
+    contentRouting.querySelectorAll('.oem-detail-delete-product').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Delete this product?')) return;
+        btn.textContent = '...';
+        const { error } = await supabase.from('products').delete().eq('id', btn.dataset.id);
+        if (error) { alert('Error: ' + error.message); return; }
+        renderOEMSellerDetail(sellerId);
+      });
+    });
   }
 
   // ═══════════════════════════════════════════════════════════

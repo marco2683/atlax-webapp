@@ -9,7 +9,7 @@ exports.handler = async (event, context) => {
     const body = JSON.parse(event.body);
     const { email, userId, type, cover_letter, name } = body;
 
-    const validTypes = ['designer_application', 'designer_approved', 'designer_rejected', 'project_rfq', 'rfq_removed', 'rfq_payment', 'rfq_confirmed', 'rfq_rejected', 'rfq_request_info', 'rfq_document'];
+    const validTypes = ['designer_application', 'designer_approved', 'designer_rejected', 'project_rfq', 'rfq_removed', 'rfq_payment', 'rfq_confirmed', 'rfq_rejected', 'rfq_request_info', 'rfq_document', 'marketplace_order', 'marketplace_supplier_notify', 'marketplace_cart_reminder'];
     if (!validTypes.includes(type)) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Invalid application type' }) };
     }
@@ -507,6 +507,189 @@ exports.handler = async (event, context) => {
       `;
     }
 
+    // ── marketplace_order — Customer Order Confirmation ──────────
+    if (type === 'marketplace_order') {
+      const { orderRef, items, shippingAddress, grandTotal, pretax, gst } = body;
+      const totalFmt = `$${Number(grandTotal || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+      const pretaxFmt = `$${Number(pretax || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+      const gstFmt = `$${Number(gst || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+      const itemCount = (items || []).length;
+      const addrLines = shippingAddress
+        ? [shippingAddress.name, shippingAddress.address1, shippingAddress.address2, [shippingAddress.city, shippingAddress.state, shippingAddress.zip].filter(Boolean).join(', ')].filter(Boolean).join('<br>')
+        : '—';
+
+      const itemRows = (items || []).map(i => `
+        <tr style="border-bottom:1px solid #f1f5f9;">
+          <td style="padding:12px 8px;font-size:13px;color:#0f172a;font-weight:600;">${i.mpn || i.name || '—'}</td>
+          <td style="padding:12px 8px;font-size:13px;color:#475569;text-align:center;">${i.quantity || 1}</td>
+          <td style="padding:12px 8px;font-size:13px;color:#475569;text-align:center;">${i.supplier_name || '—'}</td>
+          <td style="padding:12px 8px;font-size:13px;color:#15803d;font-weight:700;text-align:right;">$${Number((i.price||0)*i.quantity).toLocaleString(undefined,{minimumFractionDigits:2})}</td>
+        </tr>
+      `).join('');
+
+      toEmailAddr = [email, 'info@atlasdt.com'];
+      subject = `Order Confirmation — ${orderRef}`;
+      htmlContent = `
+        <div style="font-family:'Inter',sans-serif;max-width:640px;margin:0 auto;padding:32px 24px;color:#0f172a;">
+          <div style="text-align:center;margin-bottom:32px;">
+            <img src="${logoUrl}" alt="AtlasDT" style="height:36px;" />
+          </div>
+          <div style="background:linear-gradient(135deg,#0e7490,#0369a1);border-radius:16px;padding:32px;text-align:center;margin-bottom:32px;">
+            <div style="font-size:48px;margin-bottom:12px;">🛒</div>
+            <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;">Order Confirmed</h1>
+            <div style="color:#a5f3fc;font-size:14px;margin-top:8px;">Reference: ${orderRef}</div>
+          </div>
+          <p style="font-size:15px;line-height:1.7;color:#334155;margin-bottom:24px;">
+            Hi ${name || email?.split('@')[0] || 'there'},<br><br>
+            Thank you for your order! We've received your marketplace purchase and it is now being prepared for fulfillment.<br><br>
+            <strong>What happens next?</strong> You will receive a separate email with your <strong>tracking number</strong> and shipping details once your items have been dispatched. Most orders ship within 2–5 business days.
+          </p>
+          <table style="width:100%;border-collapse:collapse;margin-bottom:24px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+            <thead>
+              <tr style="background:#f8fafc;">
+                <th style="padding:10px 8px;text-align:left;font-size:11px;color:#64748b;text-transform:uppercase;font-weight:700;">Item</th>
+                <th style="padding:10px 8px;text-align:center;font-size:11px;color:#64748b;text-transform:uppercase;font-weight:700;">Qty</th>
+                <th style="padding:10px 8px;text-align:center;font-size:11px;color:#64748b;text-transform:uppercase;font-weight:700;">Supplier</th>
+                <th style="padding:10px 8px;text-align:right;font-size:11px;color:#64748b;text-transform:uppercase;font-weight:700;">Total</th>
+              </tr>
+            </thead>
+            <tbody>${itemRows}</tbody>
+            <tfoot>
+              <tr style="border-top:2px solid #e2e8f0;">
+                <td colspan="3" style="padding:10px 8px;text-align:right;font-size:13px;color:#64748b;font-weight:600;">Subtotal</td>
+                <td style="padding:10px 8px;text-align:right;font-size:13px;font-weight:700;color:#0f172a;">${pretaxFmt}</td>
+              </tr>
+              <tr>
+                <td colspan="3" style="padding:6px 8px;text-align:right;font-size:13px;color:#64748b;">GST (10%)</td>
+                <td style="padding:6px 8px;text-align:right;font-size:13px;color:#475569;">${gstFmt}</td>
+              </tr>
+              <tr style="background:#f0fdf4;">
+                <td colspan="3" style="padding:12px 8px;text-align:right;font-size:14px;font-weight:800;color:#0f172a;">Grand Total</td>
+                <td style="padding:12px 8px;text-align:right;font-size:16px;font-weight:800;color:#15803d;">${totalFmt}</td>
+              </tr>
+            </tfoot>
+          </table>
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:24px;">
+            <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:8px;">Delivery Address</div>
+            <div style="font-size:13px;color:#0f172a;line-height:1.6;">${addrLines}</div>
+          </div>
+          <div style="text-align:center;margin-bottom:28px;">
+            <a href="https://www.atlasdt.com/workspace.html?tab=rfqs" style="display:inline-block;background:#0f172a;color:#fff;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;font-size:14px;">Track Your Order</a>
+          </div>
+          <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;"/>
+          <p style="text-align:center;font-size:11px;color:#94a3b8;">AtlasDT Marketplace &bull; <a href="mailto:info@atlasdt.com" style="color:#0ea5e9;">info@atlasdt.com</a></p>
+        </div>
+      `;
+    }
+
+    // ── marketplace_supplier_notify — Supplier Fulfillment Alert ──
+    if (type === 'marketplace_supplier_notify') {
+      const { supplierName, orderRef, items, buyerEmail } = body;
+      const itemRows = (items || []).map(i => `
+        <tr style="border-bottom:1px solid #f1f5f9;">
+          <td style="padding:10px 8px;font-size:13px;font-weight:600;">${i.mpn || i.name || '—'}</td>
+          <td style="padding:10px 8px;font-size:13px;text-align:center;">${i.quantity || 1}</td>
+          <td style="padding:10px 8px;font-size:13px;text-align:right;">$${Number(i.price||0).toLocaleString(undefined,{minimumFractionDigits:2})}</td>
+        </tr>
+      `).join('');
+
+      toEmailAddr = [email, 'info@atlasdt.com'];
+      subject = `⚡ New Marketplace Order — ${orderRef}`;
+      htmlContent = `
+        <div style="font-family:'Inter',sans-serif;max-width:640px;margin:0 auto;padding:32px 24px;color:#0f172a;">
+          <div style="text-align:center;margin-bottom:32px;">
+            <img src="${logoUrl}" alt="AtlasDT" style="height:36px;" />
+          </div>
+          <div style="background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:16px;padding:32px;text-align:center;margin-bottom:32px;">
+            <div style="font-size:48px;margin-bottom:12px;">📦</div>
+            <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;">New Order Received</h1>
+            <div style="color:#fef3c7;font-size:14px;margin-top:8px;">Order: ${orderRef}</div>
+          </div>
+          <p style="font-size:15px;line-height:1.7;color:#334155;margin-bottom:24px;">
+            Hi ${supplierName || 'Supplier'},<br><br>
+            A new order has been placed through the AtlasDT Marketplace for your products. Please prepare the following items for fulfillment.
+          </p>
+          <table style="width:100%;border-collapse:collapse;margin-bottom:24px;border:1px solid #e2e8f0;">
+            <thead>
+              <tr style="background:#fffbeb;">
+                <th style="padding:10px 8px;text-align:left;font-size:11px;color:#92400e;text-transform:uppercase;font-weight:700;">Part Number</th>
+                <th style="padding:10px 8px;text-align:center;font-size:11px;color:#92400e;text-transform:uppercase;font-weight:700;">Quantity</th>
+                <th style="padding:10px 8px;text-align:right;font-size:11px;color:#92400e;text-transform:uppercase;font-weight:700;">Unit Price</th>
+              </tr>
+            </thead>
+            <tbody>${itemRows}</tbody>
+          </table>
+          <p style="font-size:14px;color:#475569;line-height:1.6;margin-bottom:20px;">
+            <strong>Buyer contact:</strong> ${buyerEmail || '—'}<br>
+            Please fulfil and ship within the agreed lead time. Contact <a href="mailto:info@atlasdt.com" style="color:#0ea5e9;">info@atlasdt.com</a> if you have questions.
+          </p>
+          <div style="text-align:center;margin-bottom:28px;">
+            <a href="https://www.atlasdt.com/seller/" style="display:inline-block;background:#0f172a;color:#fff;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;font-size:14px;">Open Seller Dashboard</a>
+          </div>
+          <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;"/>
+          <p style="text-align:center;font-size:11px;color:#94a3b8;">AtlasDT Marketplace &bull; Supplier Notifications</p>
+        </div>
+      `;
+    }
+
+    // ── marketplace_cart_reminder — 24-hour Cart Abandonment ──────
+    if (type === 'marketplace_cart_reminder') {
+      const { items, cartTotal } = body;
+      const totalFmt = `$${Number(cartTotal || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+      const itemRows = (items || []).slice(0, 5).map(i => `
+        <tr style="border-bottom:1px solid #f1f5f9;">
+          <td style="padding:12px 8px;">
+            <div style="font-size:13px;font-weight:600;color:#0f172a;">${i.mpn || i.name || '—'}</div>
+            <div style="font-size:11px;color:#64748b;">${i.supplier_name || ''}</div>
+          </td>
+          <td style="padding:12px 8px;text-align:center;font-size:13px;color:#475569;">${i.quantity || 1}</td>
+          <td style="padding:12px 8px;text-align:right;font-size:13px;font-weight:700;color:#0f172a;">$${Number((i.price||0)*i.quantity).toLocaleString(undefined,{minimumFractionDigits:2})}</td>
+        </tr>
+      `).join('');
+
+      toEmailAddr = [email];
+      subject = `You left items in your cart — Complete your order`;
+      htmlContent = `
+        <div style="font-family:'Inter',sans-serif;max-width:640px;margin:0 auto;padding:32px 24px;color:#0f172a;">
+          <div style="text-align:center;margin-bottom:32px;">
+            <img src="${logoUrl}" alt="AtlasDT" style="height:36px;" />
+          </div>
+          <div style="background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:16px;padding:32px;text-align:center;margin-bottom:32px;">
+            <div style="font-size:48px;margin-bottom:12px;">🛒</div>
+            <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;">Your cart is waiting!</h1>
+            <div style="color:#c4b5fd;font-size:14px;margin-top:8px;">Don't miss out on these components</div>
+          </div>
+          <p style="font-size:15px;line-height:1.7;color:#334155;margin-bottom:24px;">
+            Hi ${name || 'there'},<br><br>
+            You added items to your AtlasDT cart but haven't completed checkout yet. Your selected components are still available — complete your order before stock runs out.
+          </p>
+          <table style="width:100%;border-collapse:collapse;margin-bottom:24px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+            <thead>
+              <tr style="background:#f8fafc;">
+                <th style="padding:10px 8px;text-align:left;font-size:11px;color:#64748b;text-transform:uppercase;font-weight:700;">Item</th>
+                <th style="padding:10px 8px;text-align:center;font-size:11px;color:#64748b;text-transform:uppercase;font-weight:700;">Qty</th>
+                <th style="padding:10px 8px;text-align:right;font-size:11px;color:#64748b;text-transform:uppercase;font-weight:700;">Price</th>
+              </tr>
+            </thead>
+            <tbody>${itemRows}</tbody>
+          </table>
+          ${(items||[]).length > 5 ? '<p style="font-size:12px;color:#94a3b8;text-align:center;margin-bottom:16px;">+ ' + ((items||[]).length - 5) + ' more items in your cart</p>' : ''}
+          <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:16px;text-align:center;margin-bottom:24px;">
+            <div style="font-size:12px;color:#166534;text-transform:uppercase;font-weight:700;margin-bottom:4px;">Cart Total</div>
+            <div style="font-size:24px;font-weight:800;color:#15803d;">${totalFmt}</div>
+          </div>
+          <div style="text-align:center;margin-bottom:28px;">
+            <a href="https://www.atlasdt.com/app.html" style="display:inline-block;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;text-decoration:none;padding:14px 32px;border-radius:10px;font-weight:700;font-size:15px;box-shadow:0 4px 12px rgba(124,58,237,0.3);">Complete Your Order →</a>
+          </div>
+          <p style="font-size:13px;color:#64748b;text-align:center;line-height:1.6;">
+            Need help? Contact our sourcing team at <a href="mailto:info@atlasdt.com" style="color:#0ea5e9;">info@atlasdt.com</a>
+          </p>
+          <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;"/>
+          <p style="text-align:center;font-size:11px;color:#94a3b8;">AtlasDT Marketplace &bull; <a href="https://www.atlasdt.com" style="color:#0ea5e9;">atlasdt.com</a></p>
+        </div>
+      `;
+    }
+
     const resend = new Resend(RESEND_API_KEY);
 
     let fromAddress = 'AtlasDT System <system@atlasdt.com>';
@@ -515,6 +698,12 @@ exports.handler = async (event, context) => {
     if (type === 'rfq_request_info' && body.staffEmail) {
        fromAddress = `AtlasDT - ${body.staffName || 'Engineering'} <system@atlasdt.com>`;
        replyToAddress = body.staffEmail;
+    }
+
+    // Marketplace emails use a branded from address
+    if (type.startsWith('marketplace_')) {
+       fromAddress = 'AtlasDT Marketplace <system@atlasdt.com>';
+       replyToAddress = 'info@atlasdt.com';
     }
 
     const emailPayload = {

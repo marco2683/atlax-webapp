@@ -241,6 +241,67 @@ function crudPlugin() {
               res.end(JSON.stringify({ error: e.message }));
             }
           });
+        } else if (req.url.startsWith('/.netlify/functions/marketplace-checkout') && req.method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk.toString(); });
+          req.on('end', async () => {
+            try {
+              const { loadEnv } = await import('vite');
+              const env = loadEnv('development', process.cwd(), '');
+              const stripeKey = env.STRIPE_SECRET_KEY;
+              if (!stripeKey) {
+                res.statusCode = 500;
+                res.setHeader('Content-Type', 'application/json');
+                return res.end(JSON.stringify({ error: 'Missing STRIPE_SECRET_KEY' }));
+              }
+              const Stripe = (await import('stripe')).default;
+              const stripe = new Stripe(stripeKey);
+              const payload = JSON.parse(body);
+              const { userId, userEmail, items, shippingAddress, orderRef } = payload;
+
+              const line_items = (items || []).map(item => ({
+                price_data: {
+                  currency: 'usd',
+                  product_data: {
+                    name: item.name || item.mpn || 'Marketplace Item',
+                    description: item.supplier_name ? `Supplier: ${item.supplier_name}` : undefined,
+                  },
+                  unit_amount: Math.round((item.price || 0) * 100),
+                },
+                quantity: item.quantity || 1,
+              }));
+
+              const subtotal = (items||[]).reduce((s, i) => s + (i.price||0) * (i.quantity||1), 0);
+              const gst = Math.round(subtotal * 0.1 * 100);
+              if (gst > 0) {
+                line_items.push({
+                  price_data: { currency: 'usd', product_data: { name: 'GST (10%)' }, unit_amount: gst },
+                  quantity: 1,
+                });
+              }
+
+              const origin = 'http://localhost:5173';
+              const session = await stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items,
+                mode: 'payment',
+                client_reference_id: userId,
+                customer_email: userEmail || undefined,
+                metadata: { orderRef: orderRef || '', userId },
+                success_url: `${origin}/app.html?mkt_checkout=success&ref=${orderRef || ''}`,
+                cancel_url: `${origin}/app.html?mkt_checkout=canceled`,
+              });
+
+              console.log(`\n[Stripe Marketplace] Session ${session.id} for ${userEmail}\n`);
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ url: session.url, sessionId: session.id }));
+            } catch (e) {
+              console.error('Marketplace checkout proxy error:', e);
+              res.statusCode = 500;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: e.message }));
+            }
+          });
         } else if (req.url.startsWith('/.netlify/functions/send-email') && req.method === 'POST') {
           let body = '';
           req.on('data', chunk => { body += chunk.toString(); });

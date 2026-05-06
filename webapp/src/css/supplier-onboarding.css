@@ -1,0 +1,354 @@
+/* ============================================================
+   AtlasDT Supplier Onboarding Wizard Styles
+   ============================================================ */
+
+.ob-wizard {
+  display: flex;
+  min-height: 100vh;
+  background: #0B0F19;
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: #F1F5F9;
+}
+
+/* ── Sidebar ─────────────────────────────────────── */
+.ob-sidebar {
+  width: 300px;
+  background: linear-gradient(180deg, #111827 0%, #0B0F19 100%);
+  border-right: 1px solid rgba(148,163,184,0.1);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.ob-logo { margin-bottom: 40px; text-align: center; }
+.ob-logo img { margin-bottom: 10px; }
+.ob-logo-sub {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #64748B;
+  font-weight: 600;
+}
+
+.ob-steps { flex: 1; }
+
+.ob-step-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.ob-step-item:hover { background: rgba(59,130,246,0.06); }
+.ob-step-item.active {
+  background: rgba(59,130,246,0.12);
+  border: 1px solid rgba(59,130,246,0.25);
+}
+.ob-step-item.done .ob-step-num {
+  background: #10B981;
+  color: #fff;
+}
+
+.ob-step-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #1E293B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.ob-step-item.active .ob-step-num { background: #3B82F6; }
+
+.ob-step-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #94A3B8;
+}
+.ob-step-item.active .ob-step-label { color: #F1F5F9; font-weight: 600; }
+.ob-step-item.done .ob-step-label { color: #10B981; }
+
+.ob-sidebar-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(148,163,184,0.1); }
+
+/* ── Main Content ────────────────────────────────── */
+.ob-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 0 40px;
+  width: 100%;
+  min-height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.ob-progress-bar {
+  height: 3px;
+  background: #1E293B;
+  border-radius: 2px;
+  margin: 24px 0;
+  overflow: hidden;
+}
+.ob-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3B82F6, #8B5CF6);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.ob-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 24px;
+}
+
+.ob-step-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 28px 0;
+  letter-spacing: -0.3px;
+}
+
+.ob-sub-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #94A3B8;
+  margin: 0 0 16px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(148,163,184,0.1);
+}
+
+.ob-hint {
+  font-size: 13px;
+  color: #64748B;
+  margin: 0 0 20px 0;
+  line-height: 1.6;
+}
+
+/* ── Form Grid ───────────────────────────────────── */
+.ob-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.ob-field.ob-full { grid-column: 1 / -1; }
+
+.ob-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #94A3B8;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.ob-req { color: #EF4444; }
+
+.ob-field input,
+.ob-field select,
+.ob-field textarea {
+  width: 100%;
+  padding: 10px 14px;
+  background: #1E293B;
+  border: 1px solid rgba(148,163,184,0.15);
+  border-radius: 8px;
+  color: #F1F5F9;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+.ob-field input:focus,
+.ob-field select:focus,
+.ob-field textarea:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+  outline: none;
+}
+.ob-field input::placeholder,
+.ob-field textarea::placeholder { color: #475569; }
+
+.ob-field select { cursor: pointer; }
+.ob-field select option { background: #1E293B; color: #F1F5F9; }
+
+/* ── Upload Zones ────────────────────────────────── */
+.ob-upload-zone {
+  border: 2px dashed rgba(148,163,184,0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.ob-upload-zone:hover { border-color: #3B82F6; }
+.ob-upload-inner {
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+}
+.ob-upload-icon { font-size: 32px; margin-bottom: 8px; }
+.ob-upload-text { font-size: 14px; color: #94A3B8; font-weight: 500; }
+.ob-upload-hint { font-size: 12px; color: #475569; margin-top: 4px; }
+
+/* ── Cert Rows ───────────────────────────────────── */
+.ob-cert-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.ob-cert-row select,
+.ob-cert-row input {
+  padding: 8px 12px;
+  background: #1E293B;
+  border: 1px solid rgba(148,163,184,0.15);
+  border-radius: 6px;
+  color: #F1F5F9;
+  font-size: 13px;
+  font-family: inherit;
+  flex: 1;
+}
+.ob-cert-row select option { background: #1E293B; }
+.ob-btn-remove {
+  background: none;
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #EF4444;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.ob-btn-remove:hover { background: rgba(239,68,68,0.12); }
+
+.ob-add-cert {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+/* ── Address Blocks ──────────────────────────────── */
+.ob-address-block {
+  background: rgba(30,41,59,0.4);
+  border: 1px solid rgba(148,163,184,0.08);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+/* ── Checkbox ────────────────────────────────────── */
+.ob-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #94A3B8;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+.ob-checkbox input { width: 18px; height: 18px; accent-color: #3B82F6; cursor: pointer; }
+
+/* ── Agreement ───────────────────────────────────── */
+.ob-agreement-box { background: #111827; border: 1px solid rgba(148,163,184,0.12); border-radius: 12px; padding: 24px; }
+.ob-agreement-box h3 { font-size: 16px; margin: 0 0 16px; color: #F1F5F9; }
+.ob-agreement-scroll {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 20px;
+  background: #0B0F19;
+  border-radius: 8px;
+  border: 1px solid rgba(148,163,184,0.08);
+  font-size: 13px;
+  line-height: 1.7;
+  color: #94A3B8;
+}
+.ob-agreement-scroll p { margin: 0 0 16px; }
+.ob-agreement-scroll strong { color: #F1F5F9; }
+
+.ob-signature-input {
+  font-family: 'Brush Script MT', 'Segoe Script', cursive, sans-serif !important;
+  font-size: 22px !important;
+  letter-spacing: 1px;
+  color: #3B82F6 !important;
+  border-bottom: 2px solid #3B82F6 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  text-align: center;
+}
+
+/* ── Action Bar ──────────────────────────────────── */
+.ob-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 0;
+  border-top: 1px solid rgba(148,163,184,0.1);
+  margin-top: auto;
+}
+
+.ob-btn-primary {
+  background: linear-gradient(135deg, #3B82F6, #2563EB);
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(59,130,246,0.25);
+}
+.ob-btn-primary:hover { box-shadow: 0 6px 20px rgba(59,130,246,0.4); transform: translateY(-1px); }
+.ob-btn-primary:disabled { opacity: 0.5; cursor: default; transform: none; box-shadow: none; }
+
+.ob-btn-secondary {
+  background: transparent;
+  color: #94A3B8;
+  border: 1px solid rgba(148,163,184,0.2);
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.ob-btn-secondary:hover { border-color: #3B82F6; color: #3B82F6; }
+
+.ob-btn-ghost {
+  background: transparent;
+  color: #64748B;
+  border: 1px solid rgba(148,163,184,0.15);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
+  transition: all 0.2s;
+}
+.ob-btn-ghost:hover { border-color: #94A3B8; color: #F1F5F9; }
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 768px) {
+  .ob-wizard { flex-direction: column; }
+  .ob-sidebar { width: 100%; flex-direction: row; align-items: center; padding: 16px; gap: 12px; overflow-x: auto; }
+  .ob-sidebar .ob-logo { margin-bottom: 0; display: none; }
+  .ob-steps { display: flex; gap: 4px; flex: 1; }
+  .ob-step-item { padding: 8px 12px; }
+  .ob-step-label { display: none; }
+  .ob-sidebar-footer { display: none; }
+  .ob-main { padding: 0 16px; }
+  .ob-form-grid { grid-template-columns: 1fr; }
+}

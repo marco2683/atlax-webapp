@@ -15,10 +15,10 @@ export async function renderAdminProducts(container) {
   container.innerHTML = `<div style="text-align:center; padding:40px; color:var(--color-steel-400);">Loading products...</div>`;
   
   const [prodRes, catRes, paramRes, supRes] = await Promise.all([
-    supabase.from('products').select('*, suppliers(name)').order('created_at', { ascending: false }),
+    supabase.from('products').select('*, oem_sellers(name)').order('created_at', { ascending: false }),
     supabase.from('component_categories').select('*').order('name'),
     supabase.from('category_parameters').select('*').order('parameter_name'),
-    supabase.from('suppliers').select('id, name').order('name')
+    supabase.from('oem_sellers').select('id, name').order('name')
   ]);
 
   allProducts = prodRes.data || [];
@@ -36,7 +36,7 @@ function renderProductsTable(container, search = '') {
     filtered = allProducts.filter(p =>
       (p.mpn || '').toLowerCase().includes(q) ||
       (p.description || '').toLowerCase().includes(q) ||
-      (p.suppliers?.name || '').toLowerCase().includes(q) ||
+      (p.oem_sellers?.name || '').toLowerCase().includes(q) ||
       (p.id || '').toLowerCase().includes(q)
     );
   }
@@ -53,7 +53,7 @@ function renderProductsTable(container, search = '') {
     const stock = p.stock_quantity || 0;
     const price = p.base_price ? Number(p.base_price).toFixed(2) : '—';
     const catName = catLookup[p.category_id] || '—';
-    const supplierName = p.suppliers?.name || '—';
+    const supplierName = p.oem_sellers?.name || '—';
     const stockClass = stock === 0 ? 'color:#ef4444;font-weight:700;' : 'color:#22c55e;font-weight:700;';
 
     return `

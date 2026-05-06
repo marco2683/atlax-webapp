@@ -55,8 +55,18 @@
         <button class="admin-nav-item" data-tab="rfqs">RFQ Tracker</button>
         <button class="admin-nav-item" data-tab="pricing">Pricing Engine</button>
 
-        <button class="admin-nav-item" data-tab="marketplace-taxonomy">Marketplace Admin</button>
-        <button class="admin-nav-item" data-tab="products">Products</button>
+        <div class="admin-nav-group" id="oem-nav-group">
+          <button class="admin-nav-group-toggle" id="oem-group-toggle">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            OEM Marketplace
+          </button>
+          <div class="admin-nav-group-items" id="oem-group-items">
+            <button class="admin-nav-item admin-nav-sub-item" data-tab="marketplace-taxonomy">Categories</button>
+            <button class="admin-nav-item admin-nav-sub-item" data-tab="products">Products</button>
+            <button class="admin-nav-item admin-nav-sub-item" data-tab="oem-sellers">Sellers</button>
+          </div>
+        </div>
+
         <button class="admin-nav-item" data-tab="designers">Designer Hub</button>
         <button class="admin-nav-item" data-tab="staff">Staff Accounts</button>
       </nav>

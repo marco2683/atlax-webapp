@@ -273,13 +273,77 @@ body:has(.catalog-engine:not(.hidden)) .hero__globe-container {
   display: block;
 }
 
-.dk-tree-depth-0 .dk-tree-node { 
+.dk-tree-depth-0 > .dk-tree-node { 
   color: var(--dk-accent); 
   font-weight: 700;
 }
-.dk-tree-depth-1 .dk-tree-node { padding-left: 28px; font-size: 13px; }
-.dk-tree-depth-2 .dk-tree-node { padding-left: 40px; font-size: 13px; }
-.dk-tree-depth-3 .dk-tree-node { padding-left: 52px; font-size: 12px; }
+.dk-tree-depth-1 > .dk-tree-node { 
+  padding-left: 28px; 
+  font-size: 13px; 
+  font-weight: 400;
+  color: #333;
+}
+.dk-tree-depth-2 > .dk-tree-node { 
+  padding-left: 40px; 
+  font-size: 13px; 
+  font-weight: 400;
+  color: #666;
+}
+.dk-tree-depth-3 > .dk-tree-node { 
+  padding-left: 52px; 
+  font-size: 12px; 
+  font-weight: 400;
+  color: #888;
+}
+
+/* ── Category Search Box ──────────────────────────────────── */
+.dk-tree-search-wrap {
+  padding: 8px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #fafafa;
+}
+.dk-tree-search-wrap input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 10px 6px 28px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 12px;
+  outline: none;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 8px center;
+  transition: border-color 0.15s;
+}
+.dk-tree-search-wrap input:focus {
+  border-color: var(--dk-accent);
+}
+.dk-tree-search-wrap input::placeholder {
+  color: #94a3b8;
+  font-style: normal;
+}
+
+/* ── Expand/Collapse All Toggle ───────────────────────────── */
+.dk-tree-toggle-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 4px 12px 6px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #fafafa;
+}
+.dk-tree-toggle-btn {
+  background: none;
+  border: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dk-accent);
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 3px;
+  transition: background 0.15s;
+}
+.dk-tree-toggle-btn:hover {
+  background: rgba(14, 116, 144, 0.08);
+}
 
 /* ── Main Content ───────────────────────────────────────────── */
 .dk-main {

@@ -1,5 +1,6 @@
 import { supabase } from './supabase.js';
 import { getCurrentUser, logoutUser, loginUser, signUpUser } from './services/auth.js';
+import { launchOnboardingWizard } from './supplier-onboarding.js';
 
 let currentUser = null;
 let factoryRecord = null;
@@ -39,16 +40,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  const { data: factories, error } = await supabase.from('suppliers').select('*').eq('owner_user_id', currentUser.id);
+  const { data: factories, error } = await supabase.from('oem_sellers').select('*').eq('owner_user_id', currentUser.id);
   
   if (error || !factories || factories.length === 0) {
+    // No supplier record — launch full onboarding wizard
     loadingUi.style.display = 'none';
-    onboardingUi.style.display = 'flex';
-    bindOnboarding();
-  } else {
-    factoryRecord = factories[0];
-    bootApp();
+    launchOnboardingWizard(currentUser, null);
+    return;
   }
+
+  factoryRecord = factories[0];
+
+  // All suppliers with a record proceed to the dashboard.
+  // Incomplete onboarding shows a warning banner inside the dashboard.
+  bootApp();
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -265,26 +270,28 @@ function showSupplierAuthScreen() {
     btn.textContent = _authLang === 'zh' ? '正在创建账号...' : 'Creating account...';
     btn.disabled = true;
 
-    const { data, error } = await signUpUser(email, pass, { full_name: name, company });
-    if (error) {
-      errEl.textContent = error.message || (_authLang === 'zh' ? '注册失败，请重试。' : 'Registration failed. Please try again.');
+    try {
+      const { data, error } = await signUpUser(email, pass, { full_name: name, company, _redirectTo: `${window.location.origin}/supplier-dashboard.html` });
+      if (error) {
+        errEl.textContent = error.message || (_authLang === 'zh' ? '注册失败，请重试。' : 'Registration failed. Please try again.');
+        errEl.style.display = '';
+        btn.textContent = _t('regBtn');
+        btn.disabled = false;
+      } else {
+        // Email confirmation is enabled — always show "check your email"
+        okEl.innerHTML = _authLang === 'zh'
+          ? `<strong>✅ 账号已创建！</strong><br>请查看 <strong>${email}</strong> 的确认邮件，点击链接后即可登录。`
+          : `<strong>✅ Account created!</strong><br>Please check <strong>${email}</strong> for a confirmation email. Click the link to verify, then return here and sign in.`;
+        okEl.style.display = '';
+        btn.textContent = _authLang === 'zh' ? '✅ 账号已创建 — 请查看邮箱' : '✅ Account Created — Check your email';
+        btn.disabled = true;
+      }
+    } catch(e) {
+      console.error('Signup handler error:', e);
+      errEl.textContent = e.message || 'An unexpected error occurred.';
       errEl.style.display = '';
       btn.textContent = _t('regBtn');
       btn.disabled = false;
-    } else {
-      // Supabase may require email confirmation depending on project settings
-      const needsConfirm = !data?.session;
-      if (needsConfirm) {
-        okEl.innerHTML = _authLang === 'zh'
-          ? `<strong>✅ 账号已创建！</strong><br>请查看 <strong>${email}</strong> 的确认邮件，然后返回此处登录。`
-          : `<strong>✅ Account created!</strong><br>Please check <strong>${email}</strong> for a confirmation email, then return here and sign in.`;
-        okEl.style.display = '';
-        btn.textContent = _authLang === 'zh' ? '账号已创建 — 请查看邮箱' : 'Account Created — Check your email';
-        btn.disabled = true;
-      } else {
-        // Auto-confirmed (email confirm disabled in Supabase) — reload with session
-        window.location.reload();
-      }
     }
   };
 
@@ -299,34 +306,7 @@ function showSupplierAuthScreen() {
   }, 100);
 }
 
-function bindOnboarding() {
-  document.getElementById('onboarding-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = e.target.querySelector('button');
-    btn.textContent = "Processing...";
-    btn.disabled = true;
-
-    const name = document.getElementById('onboard-factory-name').value;
-    const segment = document.getElementById('onboard-factory-focus').value;
-
-    const { data, error } = await supabase.from('suppliers').insert({
-      id: crypto.randomUUID(),
-      owner_user_id: currentUser.id,
-      name: name,
-      segment: segment
-    }).select('*');
-
-    if (error) {
-      alert("Error linking profile: " + error.message);
-      btn.textContent = "Agree and Create Profile";
-      btn.disabled = false;
-    } else {
-      factoryRecord = data[0];
-      document.getElementById('supplier-onboarding').style.display = 'none';
-      bootApp();
-    }
-  });
-}
+// bindOnboarding — replaced by supplier-onboarding.js wizard module
 
 async function bootApp() {
   document.getElementById('supplier-loading').style.display = 'none';
@@ -352,6 +332,22 @@ async function bootApp() {
   categories = catRes.data || [];
   categoryParameters = paramRes.data || [];
 
+  // ── Incomplete onboarding warning banner ──
+  if (!factoryRecord.onboarding_completed) {
+    const banner = document.createElement('div');
+    banner.id = 'onboarding-warning-banner';
+    banner.style.cssText = 'background:linear-gradient(90deg,#f59e0b,#d97706);color:#1a1a2e;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;z-index:100;flex-shrink:0;';
+    banner.innerHTML = `
+      <span>⚠️ Your company profile is incomplete. You cannot publish products on the marketplace until onboarding is finished.</span>
+      <button id="banner-complete-btn" style="background:#1a1a2e;color:#f59e0b;border:none;padding:8px 18px;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px;white-space:nowrap;margin-left:16px;">Complete Profile →</button>
+    `;
+    const appEl = document.getElementById('supplier-app');
+    appEl.insertBefore(banner, appEl.firstChild);
+    banner.querySelector('#banner-complete-btn').addEventListener('click', () => {
+      launchOnboardingWizard(currentUser, factoryRecord);
+    });
+  }
+
   // Nav link helpers
   const navLinks = document.querySelectorAll('.sp-nav-link');
   function setActiveNav(id) {
@@ -376,10 +372,165 @@ async function bootApp() {
   document.getElementById('nav-dashboard')?.addEventListener('click', () => { setActiveNav('nav-dashboard'); loadDashboardTab(); });
   document.getElementById('nav-inventory')?.addEventListener('click', () => { setActiveNav('nav-inventory'); loadCatalogTab(); });
   document.getElementById('nav-orders')?.addEventListener('click', () => { setActiveNav('nav-orders'); loadOrdersTab(); });
-  document.getElementById('nav-publish')?.addEventListener('click', () => { setActiveNav('nav-publish'); renderCreateProductForm(); });
+  document.getElementById('nav-publish')?.addEventListener('click', () => {
+    if (!factoryRecord.onboarding_completed) {
+      alert('Please complete your company profile before publishing products.');
+      return;
+    }
+    setActiveNav('nav-publish'); renderCreateProductForm();
+  });
+  document.getElementById('nav-profile')?.addEventListener('click', () => {
+    launchOnboardingWizard(currentUser, factoryRecord);
+  });
+  document.getElementById('nav-team')?.addEventListener('click', () => { setActiveNav('nav-team'); loadTeamTab(); });
 
   // Default: Dashboard
   loadDashboardTab();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB: TEAM MANAGEMENT
+// ─────────────────────────────────────────────────────────────────────────────
+async function loadTeamTab() {
+  const routing = document.getElementById('supplier-content-routing');
+
+  // Load existing team members
+  const { data: members, error } = await supabase
+    .from('supplier_team_members')
+    .select('*')
+    .eq('supplier_id', factoryRecord.id)
+    .order('invited_at', { ascending: false });
+
+  const teamData = members || [];
+  const roleLabels = { admin: 'Admin', sales: 'Sales', operations: 'Operations', viewer: 'Viewer' };
+  const statusColors = { pending: '#f59e0b', active: '#10b981', suspended: '#ef4444' };
+
+  routing.innerHTML = `
+    <div style="max-width:900px;margin:0 auto;padding:32px 24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;">
+        <div>
+          <h1 class="sp-page-title" style="margin:0;">Team Members</h1>
+          <p style="color:#94A3B8;font-size:14px;margin:4px 0 0;">Manage access for your team. Members will receive an email invitation.</p>
+        </div>
+        <button id="btn-add-member" style="background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Invite Member
+        </button>
+      </div>
+
+      <!-- Add member form (hidden by default) -->
+      <div id="team-add-form" style="display:none;background:var(--sp-bg-raised,#111827);border:1px solid rgba(148,163,184,0.12);border-radius:12px;padding:24px;margin-bottom:24px;">
+        <h3 style="color:#F1F5F9;font-size:16px;margin:0 0 16px;">Invite New Team Member</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Full Name</label>
+            <input type="text" id="tm-name" class="amz-form-input" placeholder="John Doe">
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Email Address *</label>
+            <input type="email" id="tm-email" class="amz-form-input" placeholder="john@company.com">
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Role</label>
+            <select id="tm-role" class="amz-form-input">
+              <option value="admin">Admin — Full access</option>
+              <option value="sales">Sales — Products & orders</option>
+              <option value="operations">Operations — Logistics & inventory</option>
+              <option value="viewer" selected>Viewer — Read only</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button id="btn-send-invite" style="background:#3B82F6;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-size:13px;">Send Invitation</button>
+          <button id="btn-cancel-invite" style="background:transparent;color:#94A3B8;border:1px solid rgba(148,163,184,0.2);padding:10px 20px;border-radius:8px;cursor:pointer;font-size:13px;">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Team members table -->
+      <div style="background:var(--sp-bg-raised,#111827);border:1px solid rgba(148,163,184,0.12);border-radius:12px;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="background:rgba(148,163,184,0.06);">
+              <th style="text-align:left;padding:14px 20px;font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:0.5px;">Name</th>
+              <th style="text-align:left;padding:14px 16px;font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;">Email</th>
+              <th style="text-align:left;padding:14px 16px;font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;">Role</th>
+              <th style="text-align:left;padding:14px 16px;font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;">Status</th>
+              <th style="text-align:center;padding:14px 16px;font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="team-table-body">
+            ${teamData.length === 0 ? `
+              <tr><td colspan="5" style="text-align:center;padding:48px 20px;color:#64748B;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.5" style="margin-bottom:12px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <p style="font-size:14px;margin:0 0 4px;">No team members yet</p>
+                <p style="font-size:12px;color:#475569;">Click "Invite Member" to add your first team member.</p>
+              </td></tr>
+            ` : teamData.map(m => `
+              <tr style="border-top:1px solid rgba(148,163,184,0.08);">
+                <td style="padding:14px 20px;color:#F1F5F9;font-weight:500;">${m.full_name || '—'}</td>
+                <td style="padding:14px 16px;color:#CBD5E1;font-size:13px;">${m.email}</td>
+                <td style="padding:14px 16px;"><span style="background:rgba(59,130,246,0.15);color:#60A5FA;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;text-transform:uppercase;">${roleLabels[m.role] || m.role}</span></td>
+                <td style="padding:14px 16px;"><span style="color:${statusColors[m.status] || '#94A3B8'};font-size:12px;font-weight:600;text-transform:capitalize;">● ${m.status}</span></td>
+                <td style="padding:14px 16px;text-align:center;">
+                  <button class="btn-remove-member" data-id="${m.id}" style="background:transparent;border:1px solid rgba(239,68,68,0.3);color:#ef4444;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600;">Remove</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Owner info -->
+      <div style="margin-top:20px;padding:16px 20px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:8px;display:flex;align-items:center;gap:10px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span style="color:#94A3B8;font-size:13px;">You are the <strong style="color:#60A5FA;">Owner</strong> of this account. Team members you invite will be linked to <strong style="color:#F1F5F9;">${factoryRecord.name}</strong>.</span>
+      </div>
+    </div>
+  `;
+
+  // Toggle add form
+  document.getElementById('btn-add-member')?.addEventListener('click', () => {
+    document.getElementById('team-add-form').style.display = 'block';
+  });
+  document.getElementById('btn-cancel-invite')?.addEventListener('click', () => {
+    document.getElementById('team-add-form').style.display = 'none';
+  });
+
+  // Send invite
+  document.getElementById('btn-send-invite')?.addEventListener('click', async () => {
+    const email = document.getElementById('tm-email')?.value?.trim();
+    const name = document.getElementById('tm-name')?.value?.trim();
+    const role = document.getElementById('tm-role')?.value || 'viewer';
+
+    if (!email) { alert('Please enter an email address.'); return; }
+
+    const { error: insertErr } = await supabase.from('supplier_team_members').upsert({
+      supplier_id: factoryRecord.id,
+      email,
+      full_name: name,
+      role,
+      invited_by: currentUser.id,
+      status: 'pending'
+    }, { onConflict: 'supplier_id,email' });
+
+    if (insertErr) {
+      alert('Failed to add team member: ' + insertErr.message);
+      return;
+    }
+
+    // TODO: Send actual invite email via Resend/send-email function
+    loadTeamTab(); // Refresh
+  });
+
+  // Remove handlers
+  document.querySelectorAll('.btn-remove-member').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Remove this team member?')) return;
+      const id = btn.dataset.id;
+      await supabase.from('supplier_team_members').delete().eq('id', id);
+      loadTeamTab();
+    });
+  });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -389,7 +540,7 @@ async function loadDashboardTab() {
   const routing = document.getElementById('supplier-content-routing');
 
   // Load products + orders in parallel
-  await supabase.from('products').update({ supplier_id: factoryRecord.id }).ilike('mpn', '%OPTO%');
+
   const [prodRes, orderRes] = await Promise.all([
     supabase.from('products').select('*').eq('supplier_id', factoryRecord.id),
     supabase.from('rfq_history').select('*').order('created_at', { ascending: false })
@@ -474,7 +625,7 @@ async function loadCatalogTab() {
 
   document.getElementById('btn-create-product').addEventListener('click', () => renderCreateProductForm());
 
-  await supabase.from('products').update({ supplier_id: factoryRecord.id }).ilike('mpn', '%OPTO%');
+
   const { data } = await supabase.from('products').select('*').eq('supplier_id', factoryRecord.id);
   myProducts = data || [];
 
@@ -1050,38 +1201,210 @@ function renderCreateProductForm(editProdId = null) {
        dpc.innerHTML = `<div style="grid-column: span 2; text-align:center; padding:32px; color:#565959; font-size:13px;">Attributes will populate based on category selection.</div>`;
        return;
     }
-    const paramsForCat = categoryParameters.filter(p => p.category_id === catId);
-    if(paramsForCat.length === 0) {
-      dpc.innerHTML = `<div style="grid-column: span 2; text-align:center; padding:32px; color:#565959; font-size:13px;">No specific attributes required for this category.</div>`;
+
+    // ── Collect params from THIS category AND its parent (common_parameters) ──
+    const selectedCat = categories.find(c => c.id === catId);
+    const parentId = selectedCat?.parent_id;
+    const relevantCatIds = [catId];
+    if (parentId) relevantCatIds.push(parentId);
+
+    const paramsForCat = categoryParameters.filter(p => relevantCatIds.includes(p.category_id));
+    const seenNames = new Set();
+    const deduped = [];
+    // Prefer child params over parent for same name
+    const childParams = paramsForCat.filter(p => p.category_id === catId);
+    const parentParams = paramsForCat.filter(p => p.category_id !== catId);
+    [...childParams, ...parentParams].forEach(p => {
+      if (!seenNames.has(p.parameter_name)) {
+        seenNames.add(p.parameter_name);
+        deduped.push(p);
+      }
+    });
+
+    if(deduped.length === 0) {
+      dpc.innerHTML = `
+        <div style="grid-column: span 2; text-align:center; padding:32px; color:#565959; font-size:13px;">
+          No specific attributes defined for this category yet.
+        </div>
+        <div style="grid-column: span 2; text-align:center; padding:8px 0 16px;">
+          <button type="button" id="btn-add-custom-param" style="background:#007185; border:none; color:#fff; padding:8px 18px; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer;">+ Add Custom Parameter</button>
+        </div>`;
+      document.getElementById('btn-add-custom-param')?.addEventListener('click', () => showAddCustomParamModal(catId));
       return;
     }
 
     const priorityOrder = { required: 0, recommended: 1, optional: 2 };
-    const sorted = [...paramsForCat].sort((a, b) => (priorityOrder[a.priority] ?? 2) - (priorityOrder[b.priority] ?? 2));
+    const sorted = [...deduped].sort((a, b) => (priorityOrder[a.priority] ?? 2) - (priorityOrder[b.priority] ?? 2));
 
+    const reqCount = sorted.filter(p => (p.priority || 'optional') === 'required').length;
     let html = '';
-    sorted.forEach(p => {
+
+    // ── Prompt banner for required fields ──
+    if (reqCount > 0) {
+      html += `
+        <div style="grid-column: span 2; background:#fffbeb; border:1px solid #fde68a; border-radius:6px; padding:10px 16px; margin-bottom:12px; display:flex; align-items:center; gap:10px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span style="font-size:12px; color:#92400e; font-weight:600;">${reqCount} required specification${reqCount > 1 ? 's' : ''} must be completed before saving. Fields marked with <span style="color:#e00;">*</span> are mandatory.</span>
+        </div>`;
+    }
+
+    // ── Group by source: Category-specific first, then inherited ──
+    const catSpecific = sorted.filter(p => p.category_id === catId);
+    const inherited = sorted.filter(p => p.category_id !== catId);
+
+    function renderParamRow(p) {
       const prio = p.priority || 'optional';
       const isRequired = prio === 'required';
+      const prioTag = isRequired
+        ? '<span style="display:inline-block; font-size:9px; background:#fef2f2; color:#dc2626; padding:1px 6px; border-radius:3px; font-weight:700; margin-left:6px; text-transform:uppercase;">Required</span>'
+        : (prio === 'recommended'
+          ? '<span style="display:inline-block; font-size:9px; background:#eff6ff; color:#2563eb; padding:1px 6px; border-radius:3px; font-weight:700; margin-left:6px; text-transform:uppercase;">Recommended</span>'
+          : '');
       let inputHtml = '';
       if(p.data_type === 'boolean') {
-        inputHtml = `<select ${isRequired ? 'required' : ''} id="spec-${p.id}" style="width:100%; border:1px solid #ccc; padding:6px 10px; border-radius:3px; background:#fff;"><option value="true">Yes</option><option value="false">No</option></select>`;
+        inputHtml = `<select ${isRequired ? 'required' : ''} id="spec-${p.id}" style="width:100%; border:1px solid #ccc; padding:6px 10px; border-radius:3px; background:#fff;"><option value="">— Select —</option><option value="true">Yes</option><option value="false">No</option></select>`;
       } else if (p.data_type === 'number') {
-        inputHtml = `<input ${isRequired ? 'required' : ''} type="number" step="any" id="spec-${p.id}" style="width:100%; border:1px solid #ccc; padding:6px 10px; border-radius:3px; box-shadow:inset 0 1px 2px rgba(0,0,0,0.03);">`;
+        inputHtml = `<input ${isRequired ? 'required' : ''} type="number" step="any" id="spec-${p.id}" placeholder="${p.unit ? 'e.g. value in ' + p.unit : ''}" style="width:100%; border:1px solid ${isRequired ? '#fca5a5' : '#ccc'}; padding:6px 10px; border-radius:3px; box-shadow:inset 0 1px 2px rgba(0,0,0,0.03);">`;
       } else {
-        inputHtml = `<input ${isRequired ? 'required' : ''} type="text" id="spec-${p.id}" style="width:100%; border:1px solid #ccc; padding:6px 10px; border-radius:3px; box-shadow:inset 0 1px 2px rgba(0,0,0,0.03);">`;
+        inputHtml = `<input ${isRequired ? 'required' : ''} type="text" id="spec-${p.id}" placeholder="${p.unit ? 'e.g. value in ' + p.unit : ''}" style="width:100%; border:1px solid ${isRequired ? '#fca5a5' : '#ccc'}; padding:6px 10px; border-radius:3px; box-shadow:inset 0 1px 2px rgba(0,0,0,0.03);">`;
       }
-
-      html += `
+      return `
         <div class="amz-dynamic-param" style="display:flex; border-bottom:1px solid #f0f0f0; padding-bottom:8px; align-items:center;">
-          <div style="width:40%; font-size:13px; color:#666;">${isRequired ? '<span style="color:#e00;">*</span> ' : ''}${p.parameter_name} ${p.unit ? `[${p.unit}]` : ''}</div>
+          <div style="width:40%; font-size:13px; color:#666;">${isRequired ? '<span style="color:#e00;">*</span> ' : ''}${p.parameter_name} ${p.unit ? `[${p.unit}]` : ''}${prioTag}</div>
           <div style="width:60%;">
             ${inputHtml}
           </div>
-        </div>
-      `;
-    });
+        </div>`;
+    }
+
+    if (catSpecific.length > 0) {
+      html += `<div style="grid-column: span 2; font-size:11px; font-weight:700; color:#007185; text-transform:uppercase; letter-spacing:0.5px; padding:8px 0 4px; border-bottom:1px solid #e0e0e0; margin-bottom:8px;">${selectedCat?.name || 'Category'} Parameters</div>`;
+      catSpecific.forEach(p => { html += renderParamRow(p); });
+    }
+
+    if (inherited.length > 0) {
+      const parentCat = categories.find(c => c.id === parentId);
+      html += `<div style="grid-column: span 2; font-size:11px; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:0.5px; padding:12px 0 4px; border-bottom:1px solid #e0e0e0; margin-bottom:8px;">Common Parameters (${parentCat?.name || 'Parent Category'})</div>`;
+      inherited.forEach(p => { html += renderParamRow(p); });
+    }
+
+    // ── Add Custom Parameter button ──
+    html += `
+      <div style="grid-column: span 2; text-align:center; padding:16px 0 8px; border-top:1px dashed #e0e0e0; margin-top:12px;">
+        <button type="button" id="btn-add-custom-param" style="background:#fff; border:1px solid #007185; color:#007185; padding:8px 18px; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer; transition:all 0.2s;">+ Add Custom Parameter</button>
+      </div>`;
+
     dpc.innerHTML = html;
+
+    // Wire custom param button
+    document.getElementById('btn-add-custom-param')?.addEventListener('click', () => showAddCustomParamModal(catId));
+  }
+
+  // ── Add Custom Parameter Modal ──────────────────────────────────────────
+  async function showAddCustomParamModal(catId) {
+    // Remove existing modal if any
+    document.getElementById('custom-param-modal')?.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'custom-param-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:inherit;';
+    modal.innerHTML = `
+      <div style="background:#fff; border-radius:12px; padding:32px; width:460px; max-width:90vw; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <h3 style="margin:0 0 4px 0; font-size:18px; color:#111; font-weight:700;">Add Custom Parameter</h3>
+        <p style="margin:0 0 20px 0; font-size:13px; color:#666;">This parameter will be permanently added to this category for all suppliers.</p>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div>
+            <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:4px; text-transform:uppercase;">Parameter Name *</label>
+            <input type="text" id="cp-name" placeholder="e.g. Operating Voltage" style="width:100%; padding:8px 12px; border:1px solid #d1d5db; border-radius:4px; font-size:13px; box-sizing:border-box;">
+          </div>
+          <div style="display:flex; gap:12px;">
+            <div style="flex:1;">
+              <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:4px; text-transform:uppercase;">Data Type</label>
+              <select id="cp-type" style="width:100%; padding:8px 12px; border:1px solid #d1d5db; border-radius:4px; font-size:13px;">
+                <option value="text">Text</option>
+                <option value="number">Number</option>
+                <option value="boolean">Boolean (Yes/No)</option>
+                <option value="enum">Enum (Dropdown)</option>
+              </select>
+            </div>
+            <div style="flex:1;">
+              <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:4px; text-transform:uppercase;">Unit (optional)</label>
+              <input type="text" id="cp-unit" placeholder="e.g. mm, V, kg" style="width:100%; padding:8px 12px; border:1px solid #d1d5db; border-radius:4px; font-size:13px; box-sizing:border-box;">
+            </div>
+          </div>
+          <div>
+            <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:4px; text-transform:uppercase;">Priority</label>
+            <select id="cp-priority" style="width:100%; padding:8px 12px; border:1px solid #d1d5db; border-radius:4px; font-size:13px;">
+              <option value="optional">Optional</option>
+              <option value="recommended">Recommended</option>
+              <option value="required">Required</option>
+            </select>
+          </div>
+          <div id="cp-error" style="display:none; background:#fef2f2; border:1px solid #fecaca; border-radius:4px; padding:8px 12px; font-size:12px; color:#dc2626;"></div>
+          <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:8px;">
+            <button type="button" id="cp-cancel" style="background:#f1f5f9; border:1px solid #e2e8f0; color:#475569; padding:8px 20px; border-radius:4px; font-size:13px; font-weight:600; cursor:pointer;">Cancel</button>
+            <button type="button" id="cp-save" style="background:#007185; border:none; color:#fff; padding:8px 20px; border-radius:4px; font-size:13px; font-weight:700; cursor:pointer;">Save Parameter</button>
+          </div>
+        </div>
+      </div>`;
+
+    document.body.appendChild(modal);
+
+    document.getElementById('cp-cancel').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+
+    document.getElementById('cp-save').addEventListener('click', async () => {
+      const name = document.getElementById('cp-name').value.trim();
+      const dataType = document.getElementById('cp-type').value;
+      const unit = document.getElementById('cp-unit').value.trim();
+      const priority = document.getElementById('cp-priority').value;
+      const errEl = document.getElementById('cp-error');
+
+      if (!name) {
+        errEl.textContent = 'Parameter name is required.';
+        errEl.style.display = '';
+        return;
+      }
+
+      // Check for duplicates
+      const exists = categoryParameters.some(p => p.category_id === catId && p.parameter_name.toLowerCase() === name.toLowerCase());
+      if (exists) {
+        errEl.textContent = 'A parameter with this name already exists for this category.';
+        errEl.style.display = '';
+        return;
+      }
+
+      const saveBtn = document.getElementById('cp-save');
+      saveBtn.textContent = 'Saving…';
+      saveBtn.disabled = true;
+
+      const paramSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+
+      const { data, error } = await supabase.from('category_parameters').insert({
+        category_id: catId,
+        parameter_name: name,
+        parameter_slug: paramSlug,
+        data_type: dataType,
+        unit: unit || null,
+        priority: priority,
+        filter_ui: dataType === 'boolean' ? 'toggle' : (dataType === 'number' ? 'min_max' : 'multi_select'),
+        is_facetable: true
+      }).select();
+
+      if (error) {
+        errEl.textContent = 'Failed to save: ' + error.message;
+        errEl.style.display = '';
+        saveBtn.textContent = 'Save Parameter';
+        saveBtn.disabled = false;
+        return;
+      }
+
+      // Add to local cache
+      if (data && data[0]) categoryParameters.push(data[0]);
+
+      modal.remove();
+      renderDynamicParams(catId);
+    });
   }
 
   catSelect.addEventListener('change', (e) => {
@@ -1089,6 +1412,16 @@ function renderCreateProductForm(editProdId = null) {
     const opt = document.querySelector(`#category-datalist option[value="${val}"]`);
     const catId = opt ? opt.dataset.id : null;
     renderDynamicParams(catId);
+  });
+
+  // Also fire on 'input' event for datalist auto-complete to trigger immediately
+  catSelect.addEventListener('input', (e) => {
+    const val = e.target.value;
+    const opt = document.querySelector(`#category-datalist option[value="${val}"]`);
+    if (opt) {
+      const catId = opt.dataset.id;
+      renderDynamicParams(catId);
+    }
   });
 
 
@@ -1277,7 +1610,13 @@ function renderCreateProductForm(editProdId = null) {
     if (matchedOpt) finalCatId = matchedOpt.dataset.id;
     else if (prod) finalCatId = prod.category_id; // Default back if invalid text
 
-    const paramsForCat = categoryParameters.filter(p => p.category_id === finalCatId);
+    const paramsForCatSelf = categoryParameters.filter(p => p.category_id === finalCatId);
+    const resolvedCat = categories.find(c => c.id === finalCatId);
+    const parentCatId = resolvedCat?.parent_id;
+    const paramsFromParent = parentCatId ? categoryParameters.filter(p => p.category_id === parentCatId) : [];
+    // Deduplicate: child overrides parent
+    const seenParamNames = new Set(paramsForCatSelf.map(p => p.parameter_name));
+    const paramsForCat = [...paramsForCatSelf, ...paramsFromParent.filter(p => !seenParamNames.has(p.parameter_name))];
     
     let specsPayload = prod?.specs ? JSON.parse(JSON.stringify(prod.specs)) : {};
     paramsForCat.forEach(p => {
@@ -1366,6 +1705,8 @@ function renderCreateProductForm(editProdId = null) {
      * Upload a single file to the product_assets Supabase Storage bucket,
      * register the row in product_assets table, and (for images) patch specs.images.
      * Returns the public URL on success, null on failure.
+     *
+     * Uses direct Supabase Storage upload (supports files up to 5GB).
      */
     async function uploadAsset(file, assetType) {
       if (!file) return null;
@@ -1376,31 +1717,41 @@ function renderCreateProductForm(editProdId = null) {
 
       let publicUrl = null;
       try {
-        // Convert file to base64
-        const fileBase64 = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result.split(',')[1]);
-          reader.onerror = error => reject(error);
-          reader.readAsDataURL(file);
-        });
-
-        const res = await fetch('/.netlify/functions/storage-upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            fileBase64,
-            fileName,
-            filePath,
+        // Direct upload to Supabase Storage (no size limit from Netlify proxy)
+        const { data, error: uploadErr } = await supabase.storage
+          .from('product_assets')
+          .upload(filePath, file, {
+            upsert: true,
             contentType: file.type || 'application/octet-stream',
-            bucket: 'product_assets'
-          })
-        });
+            cacheControl: '3600'
+          });
 
-        const result = await res.json();
-        if (!res.ok || !result.success) {
-          throw new Error(result.error || 'Server upload proxy failed');
+        if (uploadErr) {
+          // If direct upload fails due to RLS, fall back to Netlify proxy for small files
+          if (file.size < 5 * 1024 * 1024) {
+            console.warn(`[Upload] Direct upload failed (${uploadErr.message}), trying proxy...`);
+            const fileBase64 = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result.split(',')[1]);
+              reader.onerror = error => reject(error);
+              reader.readAsDataURL(file);
+            });
+            const res = await fetch('/.netlify/functions/storage-upload', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ fileBase64, fileName, filePath, contentType: file.type || 'application/octet-stream', bucket: 'product_assets' })
+            });
+            const result = await res.json();
+            if (!res.ok || !result.success) throw new Error(result.error || 'Proxy upload failed');
+            publicUrl = result.publicUrl;
+          } else {
+            throw new Error(`File too large for proxy upload. Direct upload error: ${uploadErr.message}`);
+          }
+        } else {
+          // Success — get public URL
+          const { data: publicData } = supabase.storage.from('product_assets').getPublicUrl(filePath);
+          publicUrl = publicData.publicUrl;
         }
-        publicUrl = result.publicUrl;
       } catch (uploadError) {
         console.error(`[Upload FAIL] [${assetType}] File: ${file.name}`);
         console.error(`  → Message: `, uploadError.message);
