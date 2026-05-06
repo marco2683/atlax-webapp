@@ -13,19 +13,23 @@ import { dirname, join } from 'path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // ── Config ────────────────────────────────────────────────────────────────────
-// Read from .env if present, fall back to hardcoded values for convenience
-let SUPABASE_URL = 'https://qvxrwbcmyrugjevgvujb.supabase.co';
-let SERVICE_ROLE_KEY = 'sb_secret_QwAOOiRap1J4bxj2PErckw_3blffr40';
+// Read from .env — no hardcoded fallbacks (secrets must never be in source)
+let SUPABASE_URL, SERVICE_ROLE_KEY;
 
 try {
-  const env = readFileSync(join(__dirname, '../.env'), 'utf-8');
-  for (const line of env.split('\n')) {
+  const envFile = readFileSync(join(__dirname, '../.env'), 'utf-8');
+  for (const line of envFile.split('\n')) {
     const [k, ...vs] = line.split('=');
     const v = vs.join('=').trim().replace(/^["']|["']$/g, '');
     if (k?.trim() === 'VITE_SUPABASE_URL') SUPABASE_URL = v;
     if (k?.trim() === 'SUPABASE_SERVICE_ROLE_KEY') SERVICE_ROLE_KEY = v;
   }
 } catch {}
+
+if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
+  console.error('❌ Missing VITE_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env');
+  process.exit(1);
+}
 
 const SQL_FILE = join(__dirname, '005_storage_policies.sql');
 const sql = readFileSync(SQL_FILE, 'utf-8');

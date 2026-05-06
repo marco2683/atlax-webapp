@@ -8,10 +8,25 @@
  * Run: node webapp/supabase_migrations/check_storage.mjs
  */
 import { createClient } from '@supabase/supabase-js';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-const SUPABASE_URL = 'https://qvxrwbcmyrugjevgvujb.supabase.co';
-const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2eHJ3YmNteXJ1Z2pldmd2dWpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwMjM0MDAsImV4cCI6MjA1OTU5OTQwMH0.9BRa36pBaQ7n5kkKHC21n2v_-4T_AcQobcGBtWq3EkY';
-const SERVICE_KEY = 'sb_secret_QwAOOiRap1J4bxj2PErckw_3blffr40';
+const __dir = dirname(fileURLToPath(import.meta.url));
+const env = Object.fromEntries(
+  readFileSync(join(__dir, '../.env'), 'utf-8')
+    .split('\n').filter(l => l.includes('=') && !l.startsWith('#'))
+    .map(l => { const [k, ...vs] = l.split('='); return [k.trim(), vs.join('=').trim()]; })
+);
+
+const SUPABASE_URL = env.VITE_SUPABASE_URL;
+const ANON_KEY = env.VITE_SUPABASE_ANON_KEY;
+const SERVICE_KEY = env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_URL || !ANON_KEY) {
+  console.error('❌ Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY in .env');
+  process.exit(1);
+}
 
 const sb_anon = createClient(SUPABASE_URL, ANON_KEY);
 // For service-role tests we'd need the actual service_role JWT, not the secret

@@ -2,9 +2,24 @@
  * One-time migration script to create the taxonomy_images table in Supabase.
  * Run: node webapp/supabase_migrations/run_migration.mjs
  */
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-const SUPABASE_URL = 'https://qvxrwbcmyrugjevgvujb.supabase.co';
-const SERVICE_ROLE_KEY = 'sb_secret_QwAOOiRap1J4bxj2PErckw_3blffr40';
+const __dir = dirname(fileURLToPath(import.meta.url));
+const env = Object.fromEntries(
+  readFileSync(join(__dir, '../.env'), 'utf-8')
+    .split('\n').filter(l => l.includes('=') && !l.startsWith('#'))
+    .map(l => { const [k, ...vs] = l.split('='); return [k.trim(), vs.join('=').trim()]; })
+);
+
+const SUPABASE_URL = env.VITE_SUPABASE_URL;
+const SERVICE_ROLE_KEY = env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
+  console.error('❌ Missing VITE_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env');
+  process.exit(1);
+}
 
 async function runMigration() {
   // Use the Supabase Management API / SQL endpoint
