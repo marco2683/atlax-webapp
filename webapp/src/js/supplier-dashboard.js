@@ -1783,31 +1783,12 @@ function renderCreateProductForm(editProdId = null) {
           });
 
         if (uploadErr) {
-          // If direct upload fails due to RLS, fall back to Netlify proxy for small files
-          if (file.size < 5 * 1024 * 1024) {
-            console.warn(`[Upload] Direct upload failed (${uploadErr.message}), trying proxy...`);
-            const fileBase64 = await new Promise((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve(reader.result.split(',')[1]);
-              reader.onerror = error => reject(error);
-              reader.readAsDataURL(file);
-            });
-            const res = await fetch('/.netlify/functions/storage-upload', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ fileBase64, fileName, filePath, contentType: file.type || 'application/octet-stream', bucket: 'product_assets' })
-            });
-            const result = await res.json();
-            if (!res.ok || !result.success) throw new Error(result.error || 'Proxy upload failed');
-            publicUrl = result.publicUrl;
-          } else {
-            throw new Error(`File too large for proxy upload. Direct upload error: ${uploadErr.message}`);
-          }
-        } else {
-          // Success — get public URL
-          const { data: publicData } = supabase.storage.from('product_assets').getPublicUrl(filePath);
-          publicUrl = publicData.publicUrl;
+          throw new Error(`Direct upload failed: ${uploadErr.message}`);
         }
+        
+        // Success — get public URL
+        const { data: publicData } = supabase.storage.from('product_assets').getPublicUrl(filePath);
+        publicUrl = publicData.publicUrl;
       } catch (uploadError) {
         console.error(`[Upload FAIL] [${assetType}] File: ${file.name}`);
         console.error(`  → Message: `, uploadError.message);
