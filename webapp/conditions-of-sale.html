@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -13,51 +14,234 @@
   <script type="module" src="/src/js/contact-modal.js"></script>
   <script defer src="/src/js/cms-loader.js"></script>
   <style>
-    .faq-container { max-width: 800px; margin: 0 auto; padding: 100px 5%; }
-    .faq-section { margin-bottom: 40px; }
-    .faq-section h2 { color: white; margin-bottom: 20px; font-size: 24px; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-    .faq-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
-    .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500; font-size: 16px; color: white; transition: background 0.2s; }
-    .faq-question:hover { background: rgba(255,255,255,0.05); }
-    .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out; color: var(--color-steel-300); line-height: 1.6; }
-    .faq-item.active .faq-answer { padding: 0 20px 20px 20px; max-height: 1000px; }
-    .faq-icon { transition: transform 0.3s; }
-    .faq-item.active .faq-icon { transform: rotate(180deg); }
+    .faq-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 100px 5%;
+    }
+
+    .faq-section {
+      margin-bottom: 40px;
+    }
+
+    .faq-section h2 {
+      color: white;
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+    }
+
+    .faq-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      padding: 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 500;
+      font-size: 16px;
+      color: white;
+      transition: background 0.2s;
+    }
+
+    .faq-question:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .faq-answer {
+      padding: 0 20px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+      color: var(--color-steel-300);
+      line-height: 1.6;
+    }
+
+    .faq-item.active .faq-answer {
+      padding: 0 20px 20px 20px;
+      max-height: 1000px;
+    }
+
+    .faq-icon {
+      transition: transform 0.3s;
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(180deg);
+    }
   </style>
 
   <style>
-    .legal-framework-container { max-width: 1400px; margin: 0 auto; padding: 120px 5% 100px 5%; display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; }
-    @media (max-width: 900px) { .legal-framework-container { grid-template-columns: 1fr; } }
-    .legal-sidebar { position: sticky; top: 100px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-    .legal-sidebar-menu { list-style: none; padding: 0; margin: 20px 0 0; }
-    .legal-sidebar-menu li { margin-bottom: 8px; }
-    .legal-sidebar-menu a { display: block; padding: 10px 14px; border-radius: 8px; color: var(--color-steel-300); text-decoration: none; font-size: 14px; transition: all 0.2s; }
-    .legal-sidebar-menu a:hover, .legal-sidebar-menu a.active { background: rgba(91,124,255,0.1); color: var(--color-electric); }
-    .legal-content { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 50px 60px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); color: var(--color-steel-300); font-size: 15px; line-height: 1.8; }
-    @media (max-width: 600px) { .legal-content { padding: 30px 20px; } }
-    .legal-content h1 { font-family: 'Montserrat', sans-serif; font-size: 40px; color: #fff; margin-top: 0; margin-bottom: 12px; letter-spacing: -1px; }
-    .legal-content .meta { color: var(--color-steel-500); font-size: 13px; margin-bottom: 40px; }
-    .legal-content h2 { font-family: 'Montserrat', sans-serif; font-size: 24px; color: #fff; margin-top: 50px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-    .legal-content h3 { font-size: 18px; color: #fff; margin-top: 40px; margin-bottom: 15px; }
-    .legal-content p, .legal-content li { margin-bottom: 16px; }
-    .legal-content ul, .legal-content ol { padding-left: 24px; margin-bottom: 24px; }
-    .legal-content table { width: 100%; border-collapse: collapse; margin: 30px 0; font-size: 14px; }
-    .legal-content th, .legal-content td { padding: 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .legal-content th { color: #fff; background: rgba(255,255,255,0.05); }
-    .legal-content .notice { background: rgba(91,124,255,0.08); border: 1px solid rgba(91,124,255,0.2); border-radius: 8px; padding: 16px; margin: 30px 0; color: #a9baf0; font-size: 14px; }
-    .legal-content a { color: var(--color-electric); text-decoration: underline; text-underline-offset: 3px; }
+    .legal-framework-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 120px 5% 100px 5%;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .legal-framework-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .legal-sidebar {
+      position: sticky;
+      top: 100px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .legal-sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0 0;
+    }
+
+    .legal-sidebar-menu li {
+      margin-bottom: 8px;
+    }
+
+    .legal-sidebar-menu a {
+      display: block;
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: var(--color-steel-300);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .legal-sidebar-menu a:hover,
+    .legal-sidebar-menu a.active {
+      background: rgba(91, 124, 255, 0.1);
+      color: var(--color-electric);
+    }
+
+    .legal-content {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 50px 60px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      color: var(--color-steel-300);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 600px) {
+      .legal-content {
+        padding: 30px 20px;
+      }
+    }
+
+    .legal-content h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 40px;
+      color: #fff;
+      margin-top: 0;
+      margin-bottom: 12px;
+      letter-spacing: -1px;
+    }
+
+    .legal-content .meta {
+      color: var(--color-steel-500);
+      font-size: 13px;
+      margin-bottom: 40px;
+    }
+
+    .legal-content h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      color: #fff;
+      margin-top: 50px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+    }
+
+    .legal-content h3 {
+      font-size: 18px;
+      color: #fff;
+      margin-top: 40px;
+      margin-bottom: 15px;
+    }
+
+    .legal-content p,
+    .legal-content li {
+      margin-bottom: 16px;
+    }
+
+    .legal-content ul,
+    .legal-content ol {
+      padding-left: 24px;
+      margin-bottom: 24px;
+    }
+
+    .legal-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 30px 0;
+      font-size: 14px;
+    }
+
+    .legal-content th,
+    .legal-content td {
+      padding: 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .legal-content th {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .legal-content .notice {
+      background: rgba(91, 124, 255, 0.08);
+      border: 1px solid rgba(91, 124, 255, 0.2);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 30px 0;
+      color: #a9baf0;
+      font-size: 14px;
+    }
+
+    .legal-content a {
+      color: var(--color-electric);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
   </style>
 
 </head>
+
 <body class="marketing-page" style="background: var(--color-void);">
   <nav class="navbar" id="navbar"
     style="position: fixed; width: 100%; top: 0; z-index: 100; transition: background 0.3s; padding: var(--space-4) var(--space-6); background: rgba(12,12,12,0.8); backdrop-filter: blur(20px);">
     <div
       style="display: flex; justify-content: space-between; align-items: center; max-width: 95%; margin: 0 auto; width: 100%;">
       <div class="navbar__brand" style="display: flex; align-items: center; gap: 12px; flex: 1;">
-        <a href="/" aria-label="Home"><img src="/logos/atlasdt-logo-light.png" alt="Atlas DT" style="height: 32px; width: auto; object-fit: contain;" /></a>
+        <a href="/" aria-label="Home"><img src="/logos/atlasdt-logo-light.png" alt="Atlas DT"
+            style="height: 32px; width: auto; object-fit: contain;" /></a>
       </div>
-      <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
+      <button class="mobile-menu-toggle" aria-label="Toggle mobile menu"
+        onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
       <div class="nav-links-container" style="display: flex; align-items: center; gap: 4px; flex: 0 0 auto;">
         <a href="index.html" class="global-nav-link global-nav-link--single" data-nav="home" style="padding: 8px 24px;">
           <span class="global-nav-link__top">Home</span>
@@ -69,7 +253,7 @@
         <a href="/app.html#rfq" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">Quote</span>
           <span class="global-nav-link__sub">Instantly</span>
-        </a>        <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
+        </a> <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">OEMs</span>
           <span class="global-nav-link__sub">Marketplace</span>
         </a>
@@ -84,12 +268,15 @@
         <div id="nav-user-menu" class="nav-user-menu">
           <div class="nav-avatar" id="nav-avatar">?</div>
           <div class="dropdown-content" style="right: 20px;">
-            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter Platform</a>
+            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter
+              Platform</a>
             <a href="/workspace.html" class="dropdown-item">Workspace</a>
             <a href="/profile.html" class="dropdown-item">Profile Settings</a>
-            <a href="/workspace.html" class="dropdown-item" id="nav-notifications-link" style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="/workspace.html" class="dropdown-item" id="nav-notifications-link"
+              style="display: flex; justify-content: space-between; align-items: center;">
               Notifications
-              <span id="nav-notif-badge" style="background:var(--color-electric); color:white; border-radius:10px; padding:2px 6px; font-size:10px; display:none;">0</span>
+              <span id="nav-notif-badge"
+                style="background:var(--color-electric); color:white; border-radius:10px; padding:2px 6px; font-size:10px; display:none;">0</span>
             </a>
             <div class="dropdown-divider"></div>
             <a href="#" id="nav-logout-btn" class="dropdown-item">Log Out</a>
@@ -99,207 +286,298 @@
     </div>
   </nav>
   <!-- OVERRIDE FOR LEGAL SUBPAGES -->
-  <style> body { background: var(--color-void); } </style>
+  <style>
+    body {
+      background: var(--color-void);
+    }
+  </style>
   <div class="legal-framework-container">
     <aside class="legal-sidebar">
-      <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--color-steel-500); margin-bottom: 20px;">AtlasDT Legal</div>
-      <h2 style="font-size: 20px; color: #fff; margin:0 0 10px 0; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.05); font-weight: 500;">Framework</h2>
+      <div
+        style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--color-steel-500); margin-bottom: 20px;">
+        AtlasDT Legal</div>
+      <h2
+        style="font-size: 20px; color: #fff; margin:0 0 10px 0; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.05); font-weight: 500;">
+        Framework</h2>
       <ul class="legal-sidebar-menu">
-        
-          <li><a class="" href="data-protection.html">Data Protection</a></li>
-<li><a class="" href="email-security.html">Email Security</a></li>
-<li><a class="" href="privacy-policy.html">Privacy Policy</a></li>
-<li><a class="" href="website-terms.html">Website Terms</a></li>
-<li><a class="active" href="conditions-of-sale.html">Conditions of Sale</a></li>
-<li><a class="" href="cookie-policy.html">Cookie Policy</a></li>
-<li><a class="" href="nda.html">NDA</a></li>
-        
+
+        <li><a class="" href="data-protection.html">Data Protection</a></li>
+        <li><a class="" href="email-security.html">Email Security</a></li>
+        <li><a class="" href="privacy-policy.html">Privacy Policy</a></li>
+        <li><a class="" href="website-terms.html">Website Terms</a></li>
+        <li><a class="active" href="conditions-of-sale.html">Conditions of Sale</a></li>
+        <li><a class="" href="cookie-policy.html">Cookie Policy</a></li>
+        <li><a class="" href="nda.html">NDA</a></li>
+
       </ul>
     </aside>
     <main class="legal-content">
-      
-        <h1>Conditions of Sale</h1>
-        <div class="meta">Effective date: 20 April 2026 &nbsp;•&nbsp; Website: www.atlasdt.com</div>
-        <div class="notice">Recommended use: publish as AtlasDT's core commercial terms for products, consulting, sourcing, managed supply-chain work and marketplace-enabled transactions.</div>
-        
-<p>These Conditions of Sale ("<strong>Conditions</strong>") govern the supply by <strong>Paniani Products Pty Ltd</strong> trading as <strong>AtlasDT</strong> ("<strong>AtlasDT</strong>") of products, software access, consulting, sourcing, project, procurement, supply-chain management, supplier-introduction, and related services. These Conditions are intended for commercial/B2B transactions unless AtlasDT expressly agrees otherwise in writing.</p>
 
-<div class="notice"><strong>Hybrid business model:</strong> AtlasDT may act as (a) a direct supplier of services, (b) an operator of a marketplace or transaction workflow, (c) a disclosed sourcing/procurement agent, or (d) a reseller/principal seller in specific transactions. The proposal, quotation, order confirmation, statement of work or listing will determine AtlasDT's role for a given transaction.</div>
-
-<h2>1. Definitions</h2>
-<ul>
-  <li><strong>Buyer</strong> means the customer, purchaser or client placing an order or engaging AtlasDT.</li>
-  <li><strong>Marketplace Transaction</strong> means a transaction where a third-party supplier provides products or services to a Buyer through or with the support of AtlasDT's platform or workflow.</li>
-  <li><strong>Order</strong> means any order, statement of work, purchase order, accepted quotation, service engagement, or similar commitment.</li>
-  <li><strong>Products</strong> means goods, software licences, digital goods or other items supplied under an Order.</li>
-  <li><strong>Services</strong> means consulting, advisory, sourcing, procurement, project management, supplier management, marketplace, platform, onboarding, data services and related professional services.</li>
-  <li><strong>Supplier</strong> means a third party that supplies or proposes to supply goods or services to Buyer directly or through AtlasDT.</li>
-</ul>
-
-<h2>2. Formation of contract</h2>
-<ol>
-  <li>A quotation, supplier listing, pricing indication, service estimate, scope outline or response to an RFQ is not a binding offer unless it expressly states otherwise.</li>
-  <li>An Order is accepted only when AtlasDT issues a written order confirmation, signs a statement of work, begins performing the Services, or otherwise expressly confirms acceptance.</li>
-  <li>These Conditions prevail over any terms proposed by Buyer unless AtlasDT expressly agrees otherwise in writing signed by an authorised representative.</li>
-  <li>AtlasDT may update these Conditions from time to time for future Orders. The version in force when an Order is accepted will govern that Order unless the parties agree otherwise.</li>
-</ol>
-
-<h2>3. AtlasDT role in different transaction types</h2>
-<h3>3.1 Direct AtlasDT services</h3>
-<p>Where AtlasDT provides consulting, project, software, sourcing, procurement, supplier-management or related services in its own name, AtlasDT contracts directly with Buyer for those Services.</p>
-
-<h3>3.2 Marketplace transactions</h3>
-<ol>
-  <li>Unless expressly identified as the seller, AtlasDT acts only as platform operator, facilitator, coordinator or disclosed intermediary.</li>
-  <li>In a Marketplace Transaction, the supply contract for Products is between Buyer and the relevant Supplier, and AtlasDT is not the manufacturer and is not a party to the underlying sale unless expressly stated.</li>
-  <li>Supplier specifications, pricing, certifications, warranties, stock availability, lead times and delivery dates may be provided by the Supplier and remain subject to Supplier confirmation.</li>
-</ol>
-
-<h3>3.3 Sourcing and introductions</h3>
-<p>Where AtlasDT introduces suppliers, manufacturers, agents or logistics providers, AtlasDT does not guarantee that Buyer will proceed with a transaction or achieve any particular commercial outcome unless expressly committed in writing.</p>
-
-<h2>4. Product descriptions and suitability</h2>
-<ol>
-  <li>Descriptions, images, drawings, samples, technical statements, compliance references, certifications, pricing information and performance claims are informative only and may be approximate.</li>
-  <li>Buyer is responsible for validating technical suitability, regulatory compliance, import requirements, testing, commercial fit, and intended use before ordering or deploying any Product.</li>
-  <li>AtlasDT does not warrant that any Product is suitable for a critical, safety-sensitive, medical, defence, aviation, nuclear or other high-risk use unless that use is specifically stated in writing and accepted by AtlasDT.</li>
-</ol>
-
-<h2>5. Pricing, taxes and charges</h2>
-<ol>
-  <li>Prices are stated exclusive of GST, duties, levies, customs clearance fees, insurance, freight, storage, inspection charges and third-party charges unless expressly stated otherwise.</li>
-  <li>AtlasDT may correct manifest pricing errors before acceptance of an Order.</li>
-  <li>Where pricing depends on exchange rates, supplier quotes, minimum order quantities, tooling, engineering changes, tariff classifications, or shipping assumptions, AtlasDT may revise the price if those assumptions change before dispatch or acceptance.</li>
-  <li>Buyer must pay all taxes and governmental charges arising from the transaction other than taxes imposed on AtlasDT's net income.</li>
-</ol>
-
-<h2>6. Payment terms</h2>
-<ol>
-  <li>Unless otherwise agreed in writing, invoices are payable within {{PAYMENT_TERMS_DAYS|14}} days from invoice date.</li>
-  <li>AtlasDT may require deposits, milestone payments, tooling advances, prepaid freight, escrow, credit checks or security before accepting or continuing an Order.</li>
-  <li>Buyer must pay invoices without set-off, deduction or withholding except where required by law.</li>
-  <li>Late payments may attract interest at the lower of 1.5% per month and the maximum rate permitted by law, plus reasonable recovery costs.</li>
-  <li>AtlasDT may suspend performance, withhold deliveries, disable access to software or dashboards, or cancel unfulfilled work if Buyer is overdue.</li>
-</ol>
-
-<h2>7. Delivery, lead times and risk</h2>
-<ol>
-  <li>Delivery dates and lead times are estimates only unless expressly guaranteed in writing.</li>
-  <li>AtlasDT is not liable for delay caused by Suppliers, carriers, customs, inspections, force majeure events, shortages, Buyer-caused changes, or matters outside AtlasDT's reasonable control.</li>
-  <li>Unless otherwise agreed in writing:
-    <ul>
-      <li>risk in Products passes on delivery to the agreed delivery point or to the carrier, depending on the commercial model described in the Order; and</li>
-      <li>title passes only after AtlasDT or the relevant seller has received payment in full for the applicable Products.</li>
-    </ul>
-  </li>
-  <li>Buyer must provide accurate delivery information and ensure that the delivery site is safe and accessible.</li>
-</ol>
-
-<h2>8. Inspection, acceptance and claims</h2>
-<ol>
-  <li>Buyer must inspect Products and deliverables promptly upon receipt.</li>
-  <li>Buyer must notify AtlasDT in writing within {{INSPECTION_DAYS|7}} days after delivery or completion of any shortage, visible defect, shipping damage, mismatch, or non-conformity that would be apparent on reasonable inspection.</li>
-  <li>Failure to provide timely notice constitutes acceptance, except for non-excludable rights under law or latent defects not reasonably discoverable on inspection.</li>
-</ol>
-
-<h2>9. Returns and cancellations</h2>
-<ol>
-  <li>Returns require AtlasDT's prior written approval and a return authorisation number.</li>
-  <li>Unless otherwise stated in the Order, standard-stock Products may be returnable within {{RETURN_WINDOW_DAYS|14}} days of delivery if unused, in original packaging, and in a resaleable condition.</li>
-  <li>Custom, built-to-print, engineered, tooled, cut-to-length, configured, special-order, hazardous, perishable, calibration, software, digital access, and non-cancellable/non-returnable items are not returnable unless defective or required by law.</li>
-  <li>Cancellation of an Order after acceptance requires AtlasDT's written consent and may be subject to cancellation charges, non-recoverable supplier costs, work-in-progress charges, and reasonable margin on committed work.</li>
-</ol>
-
-<h2>10. Services standards, changes and acceptance</h2>
-<ol>
-  <li>AtlasDT will perform Services with reasonable care, skill and diligence consistent with the nature of the engagement.</li>
-  <li>Buyer must provide timely decisions, access, approvals, information and cooperation reasonably required for AtlasDT to perform the Services.</li>
-  <li>Any change in scope, assumptions, timeline, deliverables, supplier base, technical requirements, compliance obligations or quantities may require a written change order and adjustment to price, schedule or resources.</li>
-  <li>Deliverables are deemed accepted when Buyer signs them off, uses them in production or operations, or fails to reject them with reasonably detailed reasons within the acceptance period stated in the Order or, if none is stated, within 7 days after delivery.</li>
-</ol>
-
-<h2>11. Marketplace and supplier disclaimers</h2>
-<ol>
-  <li>AtlasDT does not manufacture Products listed by Suppliers and does not independently verify every technical, regulatory or commercial statement made by Suppliers.</li>
-  <li>AtlasDT may assist with supplier due diligence, communication and issue resolution, but AtlasDT does not guarantee Supplier solvency, production capacity, quality consistency or uninterrupted availability unless expressly agreed in a managed-service scope.</li>
-  <li>Where Buyer contracts directly with a Supplier, Supplier warranties, limitations, lead times and remedies may apply in addition to these Conditions.</li>
-</ol>
-
-<h2>12. Intellectual property</h2>
-<ol>
-  <li>Each party retains ownership of its pre-existing intellectual property, know-how, templates, tooling concepts, software, data models and confidential methodologies.</li>
-  <li>Unless otherwise agreed in writing:
-    <ul>
-      <li>AtlasDT grants Buyer a non-exclusive licence to use AtlasDT deliverables created specifically for Buyer for Buyer's internal business purposes once all amounts due have been paid in full; and</li>
-      <li>AtlasDT retains ownership of all general know-how, methods, reusable materials, software, analytics logic, marketplace structures, and improvements developed or used in performing the Services.</li>
-    </ul>
-  </li>
-  <li>Buyer grants AtlasDT a limited licence to use materials supplied by Buyer as necessary to provide the Services.</li>
-</ol>
-
-<h2>13. Confidentiality</h2>
-<p>Each party must keep the other party's confidential information secure and use it only for the purpose of performing or receiving the relevant transaction or Services. If the parties sign a separate NDA, that NDA will govern to the extent of any inconsistency.</p>
-
-<h2>14. Compliance, sanctions and export</h2>
-<ol>
-  <li>Buyer must comply with all applicable import, export, anti-bribery, sanctions, customs, product-compliance and supply-chain laws.</li>
-  <li>Buyer must not request, procure, export, re-export or use Products in breach of any sanction, embargo, end-use restriction or prohibited destination rule.</li>
-  <li>AtlasDT may refuse or suspend any Order that creates legal or compliance risk.</li>
-</ol>
-
-<h2>15. Warranties and remedies</h2>
-<ol>
-  <li>AtlasDT warrants that Services supplied directly by AtlasDT will be performed with reasonable care and skill.</li>
-  <li>For Products sold directly by AtlasDT, AtlasDT passes through the benefit of any manufacturer warranty to the extent transferable, and may, at its option, repair, replace, re-perform or refund defective Products or Services that breach an express warranty.</li>
-  <li>Except as expressly stated and to the maximum extent permitted by law, AtlasDT excludes all other warranties, representations and conditions, including implied warranties of merchantability, fitness for purpose and non-infringement.</li>
-  <li>Nothing in these Conditions excludes non-excludable guarantees or rights under the Australian Consumer Law or other mandatory law.</li>
-</ol>
-
-<h2>16. Liability</h2>
-<ol>
-  <li>To the maximum extent permitted by law, AtlasDT is not liable for any indirect, incidental, consequential, punitive or special loss, or for any loss of profit, revenue, anticipated savings, production, opportunity, goodwill, reputation or data.</li>
-  <li>AtlasDT is not liable for:
-    <ul>
-      <li>Buyer specifications, designs or instructions;</li>
-      <li>acts or omissions of a Supplier, carrier, customs authority or other third party not under AtlasDT's direct control;</li>
-      <li>advice or information provided informally and not expressly incorporated into the contract;</li>
-      <li>use of Products outside documented specifications or in unsafe, unlawful or high-risk applications not expressly approved in writing; or</li>
-      <li>delays or failures caused by force majeure.</li>
-    </ul>
-  </li>
-  <li>AtlasDT's aggregate liability arising out of or in connection with an Order or these Conditions will not exceed the greater of:
-    <ul>
-      <li>the total amount paid or payable to AtlasDT under the affected Order in the 12 months preceding the claim; and</li>
-      <li>AUD {{LIABILITY_CAP_AUD|50000}}.</li>
-    </ul>
-  </li>
-  <li>This clause does not exclude liability that cannot lawfully be excluded or limited, including liability for fraud, wilful misconduct, death or personal injury caused by negligence where the law so provides.</li>
-</ol>
-
-<h2>17. Force majeure</h2>
-<p>AtlasDT is not liable for any delay or failure caused by events beyond its reasonable control, including supplier shortages, labour disputes, epidemics, pandemics, acts of government, sanctions, customs interventions, cyber incidents, utility failure, transport disruption, natural disasters, and failure of telecommunications or hosting infrastructure.</p>
-
-<h2>18. Suspension and termination</h2>
-<ol>
-  <li>AtlasDT may suspend or terminate an Order immediately if Buyer fails to pay on time, breaches a material obligation, becomes insolvent, or creates compliance, legal or credit risk.</li>
-  <li>Either party may terminate a Services engagement for material breach if the breach is not remedied within 14 days after written notice, unless the Order states otherwise.</li>
-  <li>Termination does not affect accrued rights, amounts already due, or clauses intended to survive termination.</li>
-</ol>
-
-<h2>19. Dispute resolution</h2>
-<ol>
-  <li>The parties will first seek to resolve any dispute through good-faith business discussion between authorised representatives.</li>
-  <li>If the dispute is not resolved within 20 business days, either party may commence court proceedings or, if agreed in writing, mediation or arbitration.</li>
-</ol>
-
-<h2>20. Governing law</h2>
-<p>These Conditions are governed by the laws of Victoria, Australia, and the parties submit to the exclusive jurisdiction of the courts of that jurisdiction and any appellate courts from them.</p>
-
-        
-      
-    </main>
+      <h1>Conditions of Sale</h1>
+      <div class="meta">Effective date: 20 April 2026 &nbsp;•&nbsp; Website: www.atlasdt.com</div>
+      sourcing, managed supply-chain work and marketplace-enabled transactions.
   </div>
-<footer id="footer" class="m-footer"
+
+  <p>These Conditions of Sale ("<strong>Conditions</strong>") govern the supply by <strong>Paniani Products Pty
+      Ltd</strong> trading as <strong>AtlasDT</strong> ("<strong>AtlasDT</strong>") of products, software access,
+    consulting, sourcing, project, procurement, supply-chain management, supplier-introduction, and related
+    services. These Conditions are intended for commercial/B2B transactions unless AtlasDT expressly agrees
+    otherwise in writing.</p>
+
+  <h2>1. Definitions</h2>
+  <ul>
+    <li><strong>Buyer</strong> means the customer, purchaser or client placing an order or engaging AtlasDT.</li>
+    <li><strong>Marketplace Transaction</strong> means a transaction where a third-party supplier provides products
+      or services to a Buyer through or with the support of AtlasDT's platform or workflow.</li>
+    <li><strong>Order</strong> means any order, statement of work, purchase order, accepted quotation, service
+      engagement, or similar commitment.</li>
+    <li><strong>Products</strong> means goods, software licences, digital goods or other items supplied under an
+      Order.</li>
+    <li><strong>Services</strong> means consulting, advisory, sourcing, procurement, project management, supplier
+      management, marketplace, platform, onboarding, data services and related professional services.</li>
+    <li><strong>Supplier</strong> means a third party that supplies or proposes to supply goods or services to Buyer
+      directly or through AtlasDT.</li>
+  </ul>
+
+  <h2>2. Formation of contract</h2>
+  <ol>
+    <li>A quotation, supplier listing, pricing indication, service estimate, scope outline or response to an RFQ is
+      not a binding offer unless it expressly states otherwise.</li>
+    <li>An Order is accepted only when AtlasDT issues a written order confirmation, signs a statement of work,
+      begins performing the Services, or otherwise expressly confirms acceptance.</li>
+    <li>These Conditions prevail over any terms proposed by Buyer unless AtlasDT expressly agrees otherwise in
+      writing signed by an authorised representative.</li>
+    <li>AtlasDT may update these Conditions from time to time for future Orders. The version in force when an Order
+      is accepted will govern that Order unless the parties agree otherwise.</li>
+  </ol>
+
+  <h2>3. AtlasDT role in different transaction types</h2>
+  <h3>3.1 Direct AtlasDT services</h3>
+  <p>Where AtlasDT provides consulting, project, software, sourcing, procurement, supplier-management or related
+    services in its own name, AtlasDT contracts directly with Buyer for those Services.</p>
+
+  <h3>3.2 Marketplace transactions</h3>
+  <ol>
+    <li>Unless expressly identified as the seller, AtlasDT acts only as platform operator, facilitator, coordinator
+      or disclosed intermediary.</li>
+    <li>In a Marketplace Transaction, the supply contract for Products is between Buyer and the relevant Supplier,
+      and AtlasDT is not the manufacturer and is not a party to the underlying sale unless expressly stated.</li>
+    <li>Supplier specifications, pricing, certifications, warranties, stock availability, lead times and delivery
+      dates may be provided by the Supplier and remain subject to Supplier confirmation.</li>
+  </ol>
+
+  <h3>3.3 Sourcing and introductions</h3>
+  <p>Where AtlasDT introduces suppliers, manufacturers, agents or logistics providers, AtlasDT does not guarantee
+    that Buyer will proceed with a transaction or achieve any particular commercial outcome unless expressly
+    committed in writing.</p>
+
+  <h2>4. Product descriptions and suitability</h2>
+  <ol>
+    <li>Descriptions, images, drawings, samples, technical statements, compliance references, certifications,
+      pricing information and performance claims are informative only and may be approximate.</li>
+    <li>Buyer is responsible for validating technical suitability, regulatory compliance, import requirements,
+      testing, commercial fit, and intended use before ordering or deploying any Product.</li>
+    <li>AtlasDT does not warrant that any Product is suitable for a critical, safety-sensitive, medical, defence,
+      aviation, nuclear or other high-risk use unless that use is specifically stated in writing and accepted by
+      AtlasDT.</li>
+  </ol>
+
+  <h2>5. Pricing, taxes and charges</h2>
+  <ol>
+    <li>Prices are stated exclusive of GST, duties, levies, customs clearance fees, insurance, freight, storage,
+      inspection charges and third-party charges unless expressly stated otherwise.</li>
+    <li>AtlasDT may correct manifest pricing errors before acceptance of an Order.</li>
+    <li>Where pricing depends on exchange rates, supplier quotes, minimum order quantities, tooling, engineering
+      changes, tariff classifications, or shipping assumptions, AtlasDT may revise the price if those assumptions
+      change before dispatch or acceptance.</li>
+    <li>Buyer must pay all taxes and governmental charges arising from the transaction other than taxes imposed on
+      AtlasDT's net income.</li>
+  </ol>
+
+  <h2>6. Payment terms</h2>
+  <ol>
+    <li>Unless otherwise agreed in writing, invoices are payable within {{PAYMENT_TERMS_DAYS|14}} days from invoice
+      date.</li>
+    <li>AtlasDT may require deposits, milestone payments, tooling advances, prepaid freight, escrow, credit checks
+      or security before accepting or continuing an Order.</li>
+    <li>Buyer must pay invoices without set-off, deduction or withholding except where required by law.</li>
+    <li>Late payments may attract interest at the lower of 1.5% per month and the maximum rate permitted by law,
+      plus reasonable recovery costs.</li>
+    <li>AtlasDT may suspend performance, withhold deliveries, disable access to software or dashboards, or cancel
+      unfulfilled work if Buyer is overdue.</li>
+  </ol>
+
+  <h2>7. Delivery, lead times and risk</h2>
+  <ol>
+    <li>Delivery dates and lead times are estimates only unless expressly guaranteed in writing.</li>
+    <li>AtlasDT is not liable for delay caused by Suppliers, carriers, customs, inspections, force majeure events,
+      shortages, Buyer-caused changes, or matters outside AtlasDT's reasonable control.</li>
+    <li>Unless otherwise agreed in writing:
+      <ul>
+        <li>risk in Products passes on delivery to the agreed delivery point or to the carrier, depending on the
+          commercial model described in the Order; and</li>
+        <li>title passes only after AtlasDT or the relevant seller has received payment in full for the applicable
+          Products.</li>
+      </ul>
+    </li>
+    <li>Buyer must provide accurate delivery information and ensure that the delivery site is safe and accessible.
+    </li>
+  </ol>
+
+  <h2>8. Inspection, acceptance and claims</h2>
+  <ol>
+    <li>Buyer must inspect Products and deliverables promptly upon receipt.</li>
+    <li>Buyer must notify AtlasDT in writing within {{INSPECTION_DAYS|7}} days after delivery or completion of any
+      shortage, visible defect, shipping damage, mismatch, or non-conformity that would be apparent on reasonable
+      inspection.</li>
+    <li>Failure to provide timely notice constitutes acceptance, except for non-excludable rights under law or
+      latent defects not reasonably discoverable on inspection.</li>
+  </ol>
+
+  <h2>9. Returns and cancellations</h2>
+  <ol>
+    <li>Returns require AtlasDT's prior written approval and a return authorisation number.</li>
+    <li>Unless otherwise stated in the Order, standard-stock Products may be returnable within
+      {{RETURN_WINDOW_DAYS|14}} days of delivery if unused, in original packaging, and in a resaleable condition.
+    </li>
+    <li>Custom, built-to-print, engineered, tooled, cut-to-length, configured, special-order, hazardous, perishable,
+      calibration, software, digital access, and non-cancellable/non-returnable items are not returnable unless
+      defective or required by law.</li>
+    <li>Cancellation of an Order after acceptance requires AtlasDT's written consent and may be subject to
+      cancellation charges, non-recoverable supplier costs, work-in-progress charges, and reasonable margin on
+      committed work.</li>
+  </ol>
+
+  <h2>10. Services standards, changes and acceptance</h2>
+  <ol>
+    <li>AtlasDT will perform Services with reasonable care, skill and diligence consistent with the nature of the
+      engagement.</li>
+    <li>Buyer must provide timely decisions, access, approvals, information and cooperation reasonably required for
+      AtlasDT to perform the Services.</li>
+    <li>Any change in scope, assumptions, timeline, deliverables, supplier base, technical requirements, compliance
+      obligations or quantities may require a written change order and adjustment to price, schedule or resources.
+    </li>
+    <li>Deliverables are deemed accepted when Buyer signs them off, uses them in production or operations, or fails
+      to reject them with reasonably detailed reasons within the acceptance period stated in the Order or, if none
+      is stated, within 7 days after delivery.</li>
+  </ol>
+
+  <h2>11. Marketplace and supplier disclaimers</h2>
+  <ol>
+    <li>AtlasDT does not manufacture Products listed by Suppliers and does not independently verify every technical,
+      regulatory or commercial statement made by Suppliers.</li>
+    <li>AtlasDT may assist with supplier due diligence, communication and issue resolution, but AtlasDT does not
+      guarantee Supplier solvency, production capacity, quality consistency or uninterrupted availability unless
+      expressly agreed in a managed-service scope.</li>
+    <li>Where Buyer contracts directly with a Supplier, Supplier warranties, limitations, lead times and remedies
+      may apply in addition to these Conditions.</li>
+  </ol>
+
+  <h2>12. Intellectual property</h2>
+  <ol>
+    <li>Each party retains ownership of its pre-existing intellectual property, know-how, templates, tooling
+      concepts, software, data models and confidential methodologies.</li>
+    <li>Unless otherwise agreed in writing:
+      <ul>
+        <li>AtlasDT grants Buyer a non-exclusive licence to use AtlasDT deliverables created specifically for Buyer
+          for Buyer's internal business purposes once all amounts due have been paid in full; and</li>
+        <li>AtlasDT retains ownership of all general know-how, methods, reusable materials, software, analytics
+          logic, marketplace structures, and improvements developed or used in performing the Services.</li>
+      </ul>
+    </li>
+    <li>Buyer grants AtlasDT a limited licence to use materials supplied by Buyer as necessary to provide the
+      Services.</li>
+  </ol>
+
+  <h2>13. Confidentiality</h2>
+  <p>Each party must keep the other party's confidential information secure and use it only for the purpose of
+    performing or receiving the relevant transaction or Services. If the parties sign a separate NDA, that NDA will
+    govern to the extent of any inconsistency.</p>
+
+  <h2>14. Compliance, sanctions and export</h2>
+  <ol>
+    <li>Buyer must comply with all applicable import, export, anti-bribery, sanctions, customs, product-compliance
+      and supply-chain laws.</li>
+    <li>Buyer must not request, procure, export, re-export or use Products in breach of any sanction, embargo,
+      end-use restriction or prohibited destination rule.</li>
+    <li>AtlasDT may refuse or suspend any Order that creates legal or compliance risk.</li>
+  </ol>
+
+  <h2>15. Warranties and remedies</h2>
+  <ol>
+    <li>AtlasDT warrants that Services supplied directly by AtlasDT will be performed with reasonable care and
+      skill.</li>
+    <li>For Products sold directly by AtlasDT, AtlasDT passes through the benefit of any manufacturer warranty to
+      the extent transferable, and may, at its option, repair, replace, re-perform or refund defective Products or
+      Services that breach an express warranty.</li>
+    <li>Except as expressly stated and to the maximum extent permitted by law, AtlasDT excludes all other
+      warranties, representations and conditions, including implied warranties of merchantability, fitness for
+      purpose and non-infringement.</li>
+    <li>Nothing in these Conditions excludes non-excludable guarantees or rights under the Australian Consumer Law
+      or other mandatory law.</li>
+  </ol>
+
+  <h2>16. Liability</h2>
+  <ol>
+    <li>To the maximum extent permitted by law, AtlasDT is not liable for any indirect, incidental, consequential,
+      punitive or special loss, or for any loss of profit, revenue, anticipated savings, production, opportunity,
+      goodwill, reputation or data.</li>
+    <li>AtlasDT is not liable for:
+      <ul>
+        <li>Buyer specifications, designs or instructions;</li>
+        <li>acts or omissions of a Supplier, carrier, customs authority or other third party not under AtlasDT's
+          direct control;</li>
+        <li>advice or information provided informally and not expressly incorporated into the contract;</li>
+        <li>use of Products outside documented specifications or in unsafe, unlawful or high-risk applications not
+          expressly approved in writing; or</li>
+        <li>delays or failures caused by force majeure.</li>
+      </ul>
+    </li>
+    <li>AtlasDT's aggregate liability arising out of or in connection with an Order or these Conditions will not
+      exceed the greater of:
+      <ul>
+        <li>the total amount paid or payable to AtlasDT under the affected Order in the 12 months preceding the
+          claim; and</li>
+        <li>AUD {{LIABILITY_CAP_AUD|50000}}.</li>
+      </ul>
+    </li>
+    <li>This clause does not exclude liability that cannot lawfully be excluded or limited, including liability for
+      fraud, wilful misconduct, death or personal injury caused by negligence where the law so provides.</li>
+  </ol>
+
+  <h2>17. Force majeure</h2>
+  <p>AtlasDT is not liable for any delay or failure caused by events beyond its reasonable control, including
+    supplier shortages, labour disputes, epidemics, pandemics, acts of government, sanctions, customs interventions,
+    cyber incidents, utility failure, transport disruption, natural disasters, and failure of telecommunications or
+    hosting infrastructure.</p>
+
+  <h2>18. Suspension and termination</h2>
+  <ol>
+    <li>AtlasDT may suspend or terminate an Order immediately if Buyer fails to pay on time, breaches a material
+      obligation, becomes insolvent, or creates compliance, legal or credit risk.</li>
+    <li>Either party may terminate a Services engagement for material breach if the breach is not remedied within 14
+      days after written notice, unless the Order states otherwise.</li>
+    <li>Termination does not affect accrued rights, amounts already due, or clauses intended to survive termination.
+    </li>
+  </ol>
+
+  <h2>19. Dispute resolution</h2>
+  <ol>
+    <li>The parties will first seek to resolve any dispute through good-faith business discussion between authorised
+      representatives.</li>
+    <li>If the dispute is not resolved within 20 business days, either party may commence court proceedings or, if
+      agreed in writing, mediation or arbitration.</li>
+  </ol>
+
+  <h2>20. Governing law</h2>
+  <p>These Conditions are governed by the laws of Victoria, Australia, and the parties submit to the exclusive
+    jurisdiction of the courts of that jurisdiction and any appellate courts from them.</p>
+
+
+
+  </main>
+  </div>
+  <footer id="footer" class="m-footer"
     style="padding: 100px var(--space-8); background: #080808; border-top: 1px solid rgba(255,255,255,0.05);">
     <div
       style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 60px; max-width: 1400px; margin: 0 auto; text-align: left;">
@@ -338,13 +616,22 @@
           <div>
             <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Legal</h4>
             <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
-              <li><a href="data-protection.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Data Protection</a></li>
-              <li><a href="email-security.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Email Security</a></li>
-              <li><a href="privacy-policy.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Privacy Policy</a></li>
-              <li><a href="website-terms.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Website Terms</a></li>
-              <li><a href="conditions-of-sale.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Conditions of Sale</a></li>
-              <li><a href="cookie-policy.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Cookie Policy</a></li>
-              <li><a href="nda.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">NDA</a></li>
+              <li><a href="data-protection.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Data Protection</a>
+              </li>
+              <li><a href="email-security.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Email Security</a></li>
+              <li><a href="privacy-policy.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Privacy Policy</a></li>
+              <li><a href="website-terms.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Website Terms</a></li>
+              <li><a href="conditions-of-sale.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Conditions of Sale</a>
+              </li>
+              <li><a href="cookie-policy.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Cookie Policy</a></li>
+              <li><a href="nda.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">NDA</a></li>
             </ul>
           </div>
         </div>
@@ -361,8 +648,10 @@
           <li><strong>USA:</strong> 500 Terry Francine Street, San Francisco, CA 94158</li>
         </ul>
         <div style="margin-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
-          <p style="font-size: 11px; color: var(--color-steel-400); margin-bottom: 8px;">AtlasDT is a trademark and a brand that belongs to Paniani Products Pty Ltd</p>
-          <img src="/logos/paniani-logo.png" alt="Paniani Products" class="paniani-footer-logo" style="height: 16px; width: auto; opacity: 0.8; vertical-align: middle;">
+          <p style="font-size: 11px; color: var(--color-steel-400); margin-bottom: 8px;">AtlasDT is a trademark and a
+            brand that belongs to Paniani Products Pty Ltd</p>
+          <img src="/logos/paniani-logo.png" alt="Paniani Products" class="paniani-footer-logo"
+            style="height: 16px; width: auto; opacity: 0.8; vertical-align: middle;">
         </div>
       </div>
 
@@ -416,9 +705,11 @@
             </div>
             <div class="auth-input-group">
               <label for="login-password">Password</label>
-              <input type="password" id="login-password" required placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+              <input type="password" id="login-password" required
+                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
             </div>
-            <div style="text-align:right; margin-top:-10px; margin-bottom:15px;"><a id="toggle-to-reset" style="font-size:12px; color:var(--color-electric); cursor:pointer;">Forgot password?</a></div>
+            <div style="text-align:right; margin-top:-10px; margin-bottom:15px;"><a id="toggle-to-reset"
+                style="font-size:12px; color:var(--color-electric); cursor:pointer;">Forgot password?</a></div>
             <div id="login-error" class="auth-error-msg"></div>
             <button type="submit" class="auth-btn" id="login-submit-btn">Log In</button>
           </form>
@@ -426,7 +717,7 @@
             No account yet? <a id="toggle-to-signup">Sign up for access</a>
           </div>
         </div>
-        
+
         <!-- RESET PASSWORD FORM -->
         <div class="auth-form-wrapper" id="form-reset" style="display: none;">
           <div class="auth-header">
@@ -445,7 +736,7 @@
             Remembered it? <a id="toggle-reset-to-login" style="cursor:pointer">Log In instead</a>
           </div>
         </div>
-        
+
         <div class="auth-form-wrapper" id="form-signup" style="display: none;">
           <div class="auth-header">
             <h2>Request Access.</h2>
@@ -472,18 +763,28 @@
             </div>
             <div class="auth-input-group">
               <label for="signup-password">Password</label>
-              <input type="password" id="signup-password" required placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
-              <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars: 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
+              <input type="password" id="signup-password" required
+                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+              <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars:
+                1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
             </div>
-            <div class="auth-input-group" style="display: flex; flex-direction: row; gap: 10px; align-items: flex-start; margin-top: 10px; margin-bottom: 15px;">
+            <div class="auth-input-group"
+              style="display: flex; flex-direction: row; gap: 10px; align-items: flex-start; margin-top: 10px; margin-bottom: 15px;">
               <input type="checkbox" id="signup-terms" required style="margin-top: 4px;">
-              <label for="signup-terms" style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
-                I agree to the <a href="website-terms.html" style="color: var(--color-electric); text-decoration: underline;">Terms & Conditions</a>, <a href="privacy-policy.html" style="color: var(--color-electric); text-decoration: underline;">Privacy Policy</a>, and understand my data is protected under the <a href="nda.html" style="color: var(--color-electric); text-decoration: underline;">NDA & Data Protection Policy</a>.
+              <label for="signup-terms"
+                style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
+                I agree to the <a href="website-terms.html"
+                  style="color: var(--color-electric); text-decoration: underline;">Terms & Conditions</a>, <a
+                  href="privacy-policy.html" style="color: var(--color-electric); text-decoration: underline;">Privacy
+                  Policy</a>, and understand my data is protected under the <a href="nda.html"
+                  style="color: var(--color-electric); text-decoration: underline;">NDA & Data Protection Policy</a>.
               </label>
             </div>
-                        <div class="auth-input-group" style="display: flex; flex-direction: row; gap: 10px; align-items: flex-start; margin-top: 10px; margin-bottom: 15px;">
+            <div class="auth-input-group"
+              style="display: flex; flex-direction: row; gap: 10px; align-items: flex-start; margin-top: 10px; margin-bottom: 15px;">
               <input type="checkbox" id="signup-marketing" style="margin-top: 4px;">
-              <label for="signup-marketing" style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
+              <label for="signup-marketing"
+                style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
                 I would like to receive newsletters, promotions, and updates from Atlas DT.
               </label>
             </div>
@@ -497,8 +798,8 @@
       </div>
     </div>
   </div>
-    <script type="text/javascript" src="https://res.public.onecdn.static.microsoft/customerconnect/v1/7dttl/init.js" id="chatbot" environmentId="016ca71b-616b-e187-b02d-3fcb9c6568c2" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://res.public.onecdn.static.microsoft/customerconnect/v1/7dttl/init.js"
+    id="chatbot" environmentId="016ca71b-616b-e187-b02d-3fcb9c6568c2" crossorigin="anonymous"></script>
 </body>
 
 </html>
-

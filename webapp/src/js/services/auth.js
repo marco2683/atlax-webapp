@@ -1,5 +1,8 @@
 import { supabase } from '../utils/supabaseClient.js';
 
+// Base URL for auth redirects — always use production URL so email links work
+const SITE_URL = import.meta.env.VITE_SITE_URL || window.location.origin;
+
 /**
  * Sign up a new user
  * @param {string} email 
@@ -8,8 +11,10 @@ import { supabase } from '../utils/supabaseClient.js';
  */
 export async function signUpUser(email, password, metadata = {}) {
     try {
-        // Allow caller to specify a custom redirect (e.g. supplier portal)
-        const redirectTo = metadata._redirectTo || `${window.location.origin}/index.html?login=true`;
+        // Allow caller to specify a custom redirect path (e.g. /supplier-dashboard.html)
+        const redirectPath = metadata._redirectTo || '/index.html?login=true';
+        // Build full URL using the production site URL
+        const redirectTo = redirectPath.startsWith('http') ? redirectPath : `${SITE_URL}${redirectPath}`;
         // Remove internal key so it doesn't persist in user_metadata
         const cleanMeta = { ...metadata };
         delete cleanMeta._redirectTo;
@@ -74,7 +79,7 @@ export async function logoutUser() {
 export async function resetPasswordForEmail(email) {
     try {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/index.html?login=true&type=recovery`
+            redirectTo: `${SITE_URL}/index.html?login=true&type=recovery`
         });
         if (error) throw error;
         return { error: null };

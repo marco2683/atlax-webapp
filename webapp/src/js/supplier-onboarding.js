@@ -187,17 +187,17 @@ function renderAddressesStep() {
 function renderContactsStep() {
   const r=formData.legal_representatives[0]||{}, c0=formData.key_contacts[0]||{};
   const titleOpts = ['CEO','Managing Director','Director','General Manager','COO','CFO','Sales Manager','Procurement Manager','Other'];
-  const titleSel = (id, val) => `<select id="${id}"><option value="">${t('titlePh')}</option>${titleOpts.map(o=>`<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;
+  const titleSel = (id, val) => `<select id="${id}"><option value="" disabled ${!val?'selected':''}>${t('titlePh')}</option>${titleOpts.map(o=>`<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;
   return `<h3 class="ob-sub-title">${t('legalRep')}</h3><div class="ob-form-grid">
     <div class="ob-field"><label>${t('fullName')} ${req}</label><input type="text" id="lr-name" value="${esc(r.name||'')}"></div>
     <div class="ob-field"><label>${t('titlePosition')} ${req}</label>${titleSel('lr-title', r.title)}</div>
     <div class="ob-field"><label>${t('email')} ${req}</label><input type="email" id="lr-email" value="${esc(r.email||'')}"></div>
-    <div class="ob-field"><label>${t('phone')} ${req}</label><input type="tel" id="lr-phone" value="${esc(r.phone||'')}" placeholder="+86 13800138000" pattern="^\\+?[0-9\\s\\-]{7,20}$"></div>
+    <div class="ob-field"><label>${t('phone')} ${req}</label><input type="tel" id="lr-phone" value="${esc(r.phone||'')}" placeholder="+86 13800138000" pattern="^\\+?[0-9][0-9\\s\\-()]{5,24}$"></div>
   </div><h3 class="ob-sub-title" style="margin-top:32px;">${t('salesContact')}</h3><div class="ob-form-grid">
     <div class="ob-field"><label>${t('fullName')}</label><input type="text" id="cc-name" value="${esc(c0.name||'')}"></div>
     <div class="ob-field"><label>${t('titlePosition')}</label>${titleSel('cc-title', c0.title)}</div>
     <div class="ob-field"><label>${t('email')}</label><input type="email" id="cc-email" value="${esc(c0.email||'')}"></div>
-    <div class="ob-field"><label>${t('phone')}</label><input type="tel" id="cc-phone" value="${esc(c0.phone||'')}" placeholder="+86 13800138000" pattern="^\\+?[0-9\\s\\-]{7,20}$"></div>
+    <div class="ob-field"><label>${t('phone')}</label><input type="tel" id="cc-phone" value="${esc(c0.phone||'')}" placeholder="+86 13800138000" pattern="^\\+?[0-9][0-9\\s\\-()]{5,24}$"></div>
   </div>
   <h3 class="ob-sub-title" style="margin-top:32px;">${t('teamTitle')}</h3>
   <p class="ob-hint">${t('teamHint')}</p>
@@ -296,7 +296,7 @@ function validateCurrentStep() {
       if(!v('lr-name'))m.push(t('fullName')); if(!v('lr-title'))m.push(t('titlePosition')); if(!v('lr-email'))m.push(t('email'));
       const ph = v('lr-phone');
       if(!ph) m.push(t('phone'));
-      else if(!/^\+?[0-9\s\-]{7,20}$/.test(ph)){alert(t('phoneInvalid'));return false;}
+      else if(!/^\+?[0-9][0-9\s\-()]{5,24}$/.test(ph)){alert(t('phoneInvalid'));return false;}
       break;
     case 4: if(!v('bk-bank'))m.push(t('bankName')); if(!v('bk-holder'))m.push(t('acctName')); if(!v('bk-acct'))m.push(t('acctNumber')); break;
     case 5:

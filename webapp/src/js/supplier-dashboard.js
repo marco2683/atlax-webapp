@@ -271,7 +271,7 @@ function showSupplierAuthScreen() {
     btn.disabled = true;
 
     try {
-      const { data, error } = await signUpUser(email, pass, { full_name: name, company, _redirectTo: `${window.location.origin}/supplier-dashboard.html` });
+      const { data, error } = await signUpUser(email, pass, { full_name: name, company, _redirectTo: '/supplier-dashboard.html' });
       if (error) {
         errEl.textContent = error.message || (_authLang === 'zh' ? '注册失败，请重试。' : 'Registration failed. Please try again.');
         errEl.style.display = '';
