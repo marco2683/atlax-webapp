@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -13,51 +14,234 @@
   <script type="module" src="/src/js/contact-modal.js"></script>
   <script defer src="/src/js/cms-loader.js"></script>
   <style>
-    .faq-container { max-width: 800px; margin: 0 auto; padding: 100px 5%; }
-    .faq-section { margin-bottom: 40px; }
-    .faq-section h2 { color: white; margin-bottom: 20px; font-size: 24px; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-    .faq-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
-    .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500; font-size: 16px; color: white; transition: background 0.2s; }
-    .faq-question:hover { background: rgba(255,255,255,0.05); }
-    .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out; color: var(--color-steel-300); line-height: 1.6; }
-    .faq-item.active .faq-answer { padding: 0 20px 20px 20px; max-height: 1000px; }
-    .faq-icon { transition: transform 0.3s; }
-    .faq-item.active .faq-icon { transform: rotate(180deg); }
+    .faq-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 100px 5%;
+    }
+
+    .faq-section {
+      margin-bottom: 40px;
+    }
+
+    .faq-section h2 {
+      color: white;
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+    }
+
+    .faq-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      padding: 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 500;
+      font-size: 16px;
+      color: white;
+      transition: background 0.2s;
+    }
+
+    .faq-question:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .faq-answer {
+      padding: 0 20px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+      color: var(--color-steel-300);
+      line-height: 1.6;
+    }
+
+    .faq-item.active .faq-answer {
+      padding: 0 20px 20px 20px;
+      max-height: 1000px;
+    }
+
+    .faq-icon {
+      transition: transform 0.3s;
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(180deg);
+    }
   </style>
 
   <style>
-    .legal-framework-container { max-width: 1400px; margin: 0 auto; padding: 120px 5% 100px 5%; display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; }
-    @media (max-width: 900px) { .legal-framework-container { grid-template-columns: 1fr; } }
-    .legal-sidebar { position: sticky; top: 100px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-    .legal-sidebar-menu { list-style: none; padding: 0; margin: 20px 0 0; }
-    .legal-sidebar-menu li { margin-bottom: 8px; }
-    .legal-sidebar-menu a { display: block; padding: 10px 14px; border-radius: 8px; color: var(--color-steel-300); text-decoration: none; font-size: 14px; transition: all 0.2s; }
-    .legal-sidebar-menu a:hover, .legal-sidebar-menu a.active { background: rgba(91,124,255,0.1); color: var(--color-electric); }
-    .legal-content { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 50px 60px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); color: var(--color-steel-300); font-size: 15px; line-height: 1.8; }
-    @media (max-width: 600px) { .legal-content { padding: 30px 20px; } }
-    .legal-content h1 { font-family: 'Montserrat', sans-serif; font-size: 40px; color: #fff; margin-top: 0; margin-bottom: 12px; letter-spacing: -1px; }
-    .legal-content .meta { color: var(--color-steel-500); font-size: 13px; margin-bottom: 40px; }
-    .legal-content h2 { font-family: 'Montserrat', sans-serif; font-size: 24px; color: #fff; margin-top: 50px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-    .legal-content h3 { font-size: 18px; color: #fff; margin-top: 40px; margin-bottom: 15px; }
-    .legal-content p, .legal-content li { margin-bottom: 16px; }
-    .legal-content ul, .legal-content ol { padding-left: 24px; margin-bottom: 24px; }
-    .legal-content table { width: 100%; border-collapse: collapse; margin: 30px 0; font-size: 14px; }
-    .legal-content th, .legal-content td { padding: 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .legal-content th { color: #fff; background: rgba(255,255,255,0.05); }
-    .legal-content .notice { background: rgba(91,124,255,0.08); border: 1px solid rgba(91,124,255,0.2); border-radius: 8px; padding: 16px; margin: 30px 0; color: #a9baf0; font-size: 14px; }
-    .legal-content a { color: var(--color-electric); text-decoration: underline; text-underline-offset: 3px; }
+    .legal-framework-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 120px 5% 100px 5%;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .legal-framework-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .legal-sidebar {
+      position: sticky;
+      top: 100px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .legal-sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0 0;
+    }
+
+    .legal-sidebar-menu li {
+      margin-bottom: 8px;
+    }
+
+    .legal-sidebar-menu a {
+      display: block;
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: var(--color-steel-300);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .legal-sidebar-menu a:hover,
+    .legal-sidebar-menu a.active {
+      background: rgba(91, 124, 255, 0.1);
+      color: var(--color-electric);
+    }
+
+    .legal-content {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 50px 60px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      color: var(--color-steel-300);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 600px) {
+      .legal-content {
+        padding: 30px 20px;
+      }
+    }
+
+    .legal-content h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 40px;
+      color: #fff;
+      margin-top: 0;
+      margin-bottom: 12px;
+      letter-spacing: -1px;
+    }
+
+    .legal-content .meta {
+      color: var(--color-steel-500);
+      font-size: 13px;
+      margin-bottom: 40px;
+    }
+
+    .legal-content h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      color: #fff;
+      margin-top: 50px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+    }
+
+    .legal-content h3 {
+      font-size: 18px;
+      color: #fff;
+      margin-top: 40px;
+      margin-bottom: 15px;
+    }
+
+    .legal-content p,
+    .legal-content li {
+      margin-bottom: 16px;
+    }
+
+    .legal-content ul,
+    .legal-content ol {
+      padding-left: 24px;
+      margin-bottom: 24px;
+    }
+
+    .legal-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 30px 0;
+      font-size: 14px;
+    }
+
+    .legal-content th,
+    .legal-content td {
+      padding: 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .legal-content th {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .legal-content .notice {
+      background: rgba(91, 124, 255, 0.08);
+      border: 1px solid rgba(91, 124, 255, 0.2);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 30px 0;
+      color: #a9baf0;
+      font-size: 14px;
+    }
+
+    .legal-content a {
+      color: var(--color-electric);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
   </style>
 
 </head>
+
 <body class="marketing-page" style="background: var(--color-void);">
   <nav class="navbar" id="navbar"
     style="position: fixed; width: 100%; top: 0; z-index: 100; transition: background 0.3s; padding: var(--space-4) var(--space-6); background: rgba(12,12,12,0.8); backdrop-filter: blur(20px);">
     <div
       style="display: flex; justify-content: space-between; align-items: center; max-width: 95%; margin: 0 auto; width: 100%;">
       <div class="navbar__brand" style="display: flex; align-items: center; gap: 12px; flex: 1;">
-        <a href="/" aria-label="Home"><img src="/logos/atlasdt-logo-light.png" alt="Atlas DT" style="height: 32px; width: auto; object-fit: contain;" /></a>
+        <a href="/" aria-label="Home"><img src="/logos/atlasdt-logo-light.png" alt="Atlas DT"
+            style="height: 32px; width: auto; object-fit: contain;" /></a>
       </div>
-      <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
+      <button class="mobile-menu-toggle" aria-label="Toggle mobile menu"
+        onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
       <div class="nav-links-container" style="display: flex; align-items: center; gap: 4px; flex: 0 0 auto;">
         <a href="index.html" class="global-nav-link global-nav-link--single" data-nav="home" style="padding: 8px 24px;">
           <span class="global-nav-link__top">Home</span>
@@ -69,7 +253,7 @@
         <a href="/app.html#rfq" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">Quote</span>
           <span class="global-nav-link__sub">Instantly</span>
-        </a>        <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
+        </a> <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">OEMs</span>
           <span class="global-nav-link__sub">Marketplace</span>
         </a>
@@ -84,12 +268,15 @@
         <div id="nav-user-menu" class="nav-user-menu">
           <div class="nav-avatar" id="nav-avatar">?</div>
           <div class="dropdown-content" style="right: 20px;">
-            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter Platform</a>
+            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter
+              Platform</a>
             <a href="/workspace.html" class="dropdown-item">Workspace</a>
             <a href="/profile.html" class="dropdown-item">Profile Settings</a>
-            <a href="/workspace.html" class="dropdown-item" id="nav-notifications-link" style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="/workspace.html" class="dropdown-item" id="nav-notifications-link"
+              style="display: flex; justify-content: space-between; align-items: center;">
               Notifications
-              <span id="nav-notif-badge" style="background:var(--color-electric); color:white; border-radius:10px; padding:2px 6px; font-size:10px; display:none;">0</span>
+              <span id="nav-notif-badge"
+                style="background:var(--color-electric); color:white; border-radius:10px; padding:2px 6px; font-size:10px; display:none;">0</span>
             </a>
             <div class="dropdown-divider"></div>
             <a href="#" id="nav-logout-btn" class="dropdown-item">Log Out</a>
@@ -99,166 +286,254 @@
     </div>
   </nav>
   <!-- OVERRIDE FOR LEGAL SUBPAGES -->
-  <style> body { background: var(--color-void); } </style>
+  <style>
+    body {
+      background: var(--color-void);
+    }
+  </style>
   <div class="legal-framework-container">
     <aside class="legal-sidebar">
-      <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--color-steel-500); margin-bottom: 20px;">AtlasDT Legal</div>
-      <h2 style="font-size: 20px; color: #fff; margin:0 0 10px 0; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.05); font-weight: 500;">Framework</h2>
+      <div
+        style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--color-steel-500); margin-bottom: 20px;">
+        AtlasDT Legal</div>
+      <h2
+        style="font-size: 20px; color: #fff; margin:0 0 10px 0; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.05); font-weight: 500;">
+        Framework</h2>
       <ul class="legal-sidebar-menu">
-        
-          <li><a class="active" href="data-protection.html">Data Protection</a></li>
-<li><a class="" href="email-security.html">Email Security</a></li>
-<li><a class="" href="privacy-policy.html">Privacy Policy</a></li>
-<li><a class="" href="website-terms.html">Website Terms</a></li>
-<li><a class="" href="conditions-of-sale.html">Conditions of Sale</a></li>
-<li><a class="" href="cookie-policy.html">Cookie Policy</a></li>
-<li><a class="" href="nda.html">NDA</a></li>
-        
+
+        <li><a class="active" href="data-protection.html">Data Protection</a></li>
+        <li><a class="" href="email-security.html">Email Security</a></li>
+        <li><a class="" href="privacy-policy.html">Privacy Policy</a></li>
+        <li><a class="" href="website-terms.html">Website Terms</a></li>
+        <li><a class="" href="conditions-of-sale.html">Conditions of Sale</a></li>
+        <li><a class="" href="cookie-policy.html">Cookie Policy</a></li>
+        <li><a class="" href="nda.html">NDA</a></li>
+
       </ul>
     </aside>
     <main class="legal-content">
-      
-        <h1>Data Protection</h1>
-        <div class="meta">Effective date: 20 April 2026 &nbsp;•&nbsp; Website: www.atlasdt.com</div>
-        <div class="notice">Recommended use: publish this page as AtlasDT's public data protection addendum for customers where AtlasDT processes personal data on the customer's behalf.</div>
-        
-<p>This Data Protection Addendum ("<strong>DPA</strong>") forms part of, and is incorporated into, the agreement under which <strong>Paniani Products Pty Ltd</strong> trading as <strong>AtlasDT</strong> provides software, marketplace, consulting, sourcing, project, supplier-management, procurement, or related services to a customer ("<strong>Customer</strong>"). This DPA applies only to the extent AtlasDT processes <strong>Customer Personal Data</strong> on behalf of Customer.</p>
 
-<h2>1. Definitions</h2>
-<p>In this DPA:</p>
-<ul>
-  <li><strong>Applicable Data Protection Law</strong> means all laws, regulations and binding guidance applicable to the processing of personal data under the Agreement, including, where relevant, the Privacy Act 1988 (Cth), the Australian Privacy Principles, the EU GDPR, the UK GDPR and related implementing legislation.</li>
-  <li><strong>Customer Personal Data</strong> means personal data processed by AtlasDT on behalf of Customer in connection with the Services.</li>
-  <li><strong>Data Subject</strong>, <strong>Personal Data</strong>, <strong>Controller</strong>, <strong>Processor</strong>, <strong>Sub-processor</strong>, and <strong>Personal Data Breach</strong> have the meanings given by Applicable Data Protection Law, or the closest equivalent meaning where those terms are not expressly defined.</li>
-  <li><strong>Security Incident</strong> means any confirmed or reasonably suspected unauthorised access to, disclosure of, alteration of, loss of, or destruction of Customer Personal Data.</li>
-</ul>
+      <h1>Data Protection</h1>
+      <div class="meta">Effective date: 20 April 2026 &nbsp;•&nbsp; Website: www.atlasdt.com</div>
 
-<h2>2. Roles of the parties</h2>
-<ol>
-  <li>As between the parties, Customer is the Controller (or equivalent deciding party) and AtlasDT is the Processor, except where AtlasDT independently determines the purposes and means of processing, in which case AtlasDT acts as an independent controller for that processing.</li>
-  <li>Customer warrants that it has all rights, consents, notices and other lawful bases necessary to provide Customer Personal Data to AtlasDT and to instruct AtlasDT to process it under the Agreement.</li>
-</ol>
+      <p>This Data Protection Addendum ("<strong>DPA</strong>") forms part of, and is incorporated into, the agreement
+        under which <strong>Paniani Products Pty Ltd</strong> trading as <strong>AtlasDT</strong> provides software,
+        marketplace, consulting, sourcing, project, supplier-management, procurement, or related services to a customer
+        ("<strong>Customer</strong>"). This DPA applies only to the extent AtlasDT processes <strong>Customer Personal
+          Data</strong> on behalf of Customer.</p>
 
-<h2>3. Scope and processing instructions</h2>
-<ol>
-  <li>AtlasDT will process Customer Personal Data only:
-    <ul>
-      <li>to provide, secure, support and improve the Services;</li>
-      <li>to fulfil documented instructions from Customer;</li>
-      <li>as necessary to comply with applicable law; and</li>
-      <li>as otherwise expressly permitted under the Agreement and this DPA.</li>
-    </ul>
-  </li>
-  <li>If AtlasDT believes an instruction infringes Applicable Data Protection Law, AtlasDT may suspend the relevant processing and notify Customer.</li>
-  <li>Customer appoints AtlasDT to engage Sub-processors in accordance with clause 7.</li>
-</ol>
+      <h2>1. Definitions</h2>
+      <p>In this DPA:</p>
+      <ul>
+        <li><strong>Applicable Data Protection Law</strong> means all laws, regulations and binding guidance applicable
+          to the processing of personal data under the Agreement, including, where relevant, the Privacy Act 1988 (Cth),
+          the Australian Privacy Principles, the EU GDPR, the UK GDPR and related implementing legislation.</li>
+        <li><strong>Customer Personal Data</strong> means personal data processed by AtlasDT on behalf of Customer in
+          connection with the Services.</li>
+        <li><strong>Data Subject</strong>, <strong>Personal Data</strong>, <strong>Controller</strong>,
+          <strong>Processor</strong>, <strong>Sub-processor</strong>, and <strong>Personal Data Breach</strong> have the
+          meanings given by Applicable Data Protection Law, or the closest equivalent meaning where those terms are not
+          expressly defined.
+        </li>
+        <li><strong>Security Incident</strong> means any confirmed or reasonably suspected unauthorised access to,
+          disclosure of, alteration of, loss of, or destruction of Customer Personal Data.</li>
+      </ul>
 
-<h2>4. AtlasDT processor obligations</h2>
-<ol>
-  <li>AtlasDT will ensure that personnel authorised to process Customer Personal Data are subject to appropriate confidentiality obligations.</li>
-  <li>AtlasDT will implement and maintain reasonable and appropriate technical and organisational measures designed to protect Customer Personal Data against accidental or unlawful destruction, loss, alteration, unauthorised disclosure, or access.</li>
-  <li>AtlasDT will not sell Customer Personal Data or share it for cross-context behavioural advertising except as expressly instructed by Customer and permitted by law.</li>
-  <li>AtlasDT will maintain records and practices reasonably sufficient to demonstrate compliance with this DPA.</li>
-</ol>
+      <h2>2. Roles of the parties</h2>
+      <ol>
+        <li>As between the parties, Customer is the Controller (or equivalent deciding party) and AtlasDT is the
+          Processor, except where AtlasDT independently determines the purposes and means of processing, in which case
+          AtlasDT acts as an independent controller for that processing.</li>
+        <li>Customer warrants that it has all rights, consents, notices and other lawful bases necessary to provide
+          Customer Personal Data to AtlasDT and to instruct AtlasDT to process it under the Agreement.</li>
+      </ol>
 
-<h2>5. Security measures</h2>
-<p>AtlasDT will maintain security measures appropriate to the nature of the Services and the risk presented by the processing. Depending on the Services purchased and AtlasDT's technical environment from time to time, such measures may include:</p>
-<ul>
-  <li>access controls based on least privilege;</li>
-  <li>multi-factor authentication for administrative accounts where practicable;</li>
-  <li>network and endpoint monitoring;</li>
-  <li>logging and audit trails for key system events;</li>
-  <li>encryption in transit and, where appropriate, at rest;</li>
-  <li>segregation of customer environments and permissions;</li>
-  <li>vulnerability management and patching processes;</li>
-  <li>backup and recovery procedures;</li>
-  <li>secure supplier and contractor onboarding; and</li>
-  <li>incident response procedures.</li>
-</ul>
+      <h2>3. Scope and processing instructions</h2>
+      <ol>
+        <li>AtlasDT will process Customer Personal Data only:
+          <ul>
+            <li>to provide, secure, support and improve the Services;</li>
+            <li>to fulfil documented instructions from Customer;</li>
+            <li>as necessary to comply with applicable law; and</li>
+            <li>as otherwise expressly permitted under the Agreement and this DPA.</li>
+          </ul>
+        </li>
+        <li>If AtlasDT believes an instruction infringes Applicable Data Protection Law, AtlasDT may suspend the
+          relevant processing and notify Customer.</li>
+        <li>Customer appoints AtlasDT to engage Sub-processors in accordance with clause 7.</li>
+      </ol>
 
-<h2>6. Security incident notification</h2>
-<ol>
-  <li>AtlasDT will notify Customer without undue delay after becoming aware of a Security Incident affecting Customer Personal Data and, where reasonably possible, within {{SECURITY_INCIDENT_NOTICE_HOURS|72}} hours of confirmation.</li>
-  <li>The notification will include, to the extent known at the time:
-    <ul>
-      <li>the nature of the incident;</li>
-      <li>the categories of affected data and data subjects;</li>
-      <li>the likely consequences;</li>
-      <li>the containment and remediation steps taken or proposed; and</li>
-      <li>a contact point for follow-up.</li>
-    </ul>
-  </li>
-  <li>AtlasDT's notification of a Security Incident is not an admission of fault or liability.</li>
-</ol>
+      <h2>4. AtlasDT processor obligations</h2>
+      <ol>
+        <li>AtlasDT will ensure that personnel authorised to process Customer Personal Data are subject to appropriate
+          confidentiality obligations.</li>
+        <li>AtlasDT will implement and maintain reasonable and appropriate technical and organisational measures
+          designed to protect Customer Personal Data against accidental or unlawful destruction, loss, alteration,
+          unauthorised disclosure, or access.</li>
+        <li>AtlasDT will not sell Customer Personal Data or share it for cross-context behavioural advertising except as
+          expressly instructed by Customer and permitted by law.</li>
+        <li>AtlasDT will maintain records and practices reasonably sufficient to demonstrate compliance with this DPA.
+        </li>
+      </ol>
 
-<h2>7. Sub-processors</h2>
-<ol>
-  <li>Customer grants AtlasDT general written authorisation to appoint Sub-processors to support the Services, including infrastructure, analytics, hosting, communications, customer support, identity, payments, logistics, and professional advisers.</li>
-  <li>AtlasDT will impose data protection obligations on each Sub-processor that are no less protective than the material obligations in this DPA, taking into account the nature of the services performed by that Sub-processor.</li>
-  <li>AtlasDT remains responsible for the performance of its Sub-processors to the extent required by Applicable Data Protection Law.</li>
-</ol>
+      <h2>5. Security measures</h2>
+      <p>AtlasDT will maintain security measures appropriate to the nature of the Services and the risk presented by the
+        processing. Depending on the Services purchased and AtlasDT's technical environment from time to time, such
+        measures may include:</p>
+      <ul>
+        <li>access controls based on least privilege;</li>
+        <li>multi-factor authentication for administrative accounts where practicable;</li>
+        <li>network and endpoint monitoring;</li>
+        <li>logging and audit trails for key system events;</li>
+        <li>encryption in transit and, where appropriate, at rest;</li>
+        <li>segregation of customer environments and permissions;</li>
+        <li>vulnerability management and patching processes;</li>
+        <li>backup and recovery procedures;</li>
+        <li>secure supplier and contractor onboarding; and</li>
+        <li>incident response procedures.</li>
+      </ul>
 
-<h2>8. International data transfers</h2>
-<ol>
-  <li>Customer acknowledges that AtlasDT, its affiliates, suppliers and Sub-processors may process Customer Personal Data in Australia and other countries where AtlasDT or its Sub-processors operate.</li>
-  <li>Where Applicable Data Protection Law requires transfer safeguards, the parties agree to cooperate in implementing appropriate transfer mechanisms, including contractual safeguards and supplementary security measures where appropriate.</li>
-</ol>
+      <h2>6. Security incident notification</h2>
+      <ol>
+        <li>AtlasDT will notify Customer without undue delay after becoming aware of a Security Incident affecting
+          Customer Personal Data and, where reasonably possible, within {{SECURITY_INCIDENT_NOTICE_HOURS|72}} hours of
+          confirmation.</li>
+        <li>The notification will include, to the extent known at the time:
+          <ul>
+            <li>the nature of the incident;</li>
+            <li>the categories of affected data and data subjects;</li>
+            <li>the likely consequences;</li>
+            <li>the containment and remediation steps taken or proposed; and</li>
+            <li>a contact point for follow-up.</li>
+          </ul>
+        </li>
+        <li>AtlasDT's notification of a Security Incident is not an admission of fault or liability.</li>
+      </ol>
 
-<h2>9. Assistance with data subject requests and compliance</h2>
-<ol>
-  <li>Taking into account the nature of the processing, AtlasDT will provide reasonable assistance to Customer to enable Customer to respond to requests from data subjects to access, correct, delete, restrict, port or object to the processing of their personal data, to the extent required by law.</li>
-  <li>AtlasDT will provide reasonable assistance to Customer with data protection impact assessments, prior consultations with regulators, breach notifications, and other compliance obligations, provided Customer reimburses AtlasDT's reasonable costs where the assistance goes beyond the Services ordinarily included in the Agreement.</li>
-</ol>
+      <h2>7. Sub-processors</h2>
+      <ol>
+        <li>Customer grants AtlasDT general written authorisation to appoint Sub-processors to support the Services,
+          including infrastructure, analytics, hosting, communications, customer support, identity, payments, logistics,
+          and professional advisers.</li>
+        <li>AtlasDT will impose data protection obligations on each Sub-processor that are no less protective than the
+          material obligations in this DPA, taking into account the nature of the services performed by that
+          Sub-processor.</li>
+        <li>AtlasDT remains responsible for the performance of its Sub-processors to the extent required by Applicable
+          Data Protection Law.</li>
+      </ol>
 
-<h2>10. Audits and information rights</h2>
-<ol>
-  <li>Upon reasonable written request no more than once in any 12-month period, AtlasDT will provide information reasonably necessary to demonstrate compliance with this DPA.</li>
-  <li>Where that information is insufficient and Customer has a reasonable basis for concern, Customer may conduct an audit, or appoint an independent auditor bound by confidentiality, during normal business hours and with at least 30 days' prior written notice.</li>
-  <li>Audits must not unreasonably interfere with AtlasDT's business, compromise the security of other customers, or require AtlasDT to disclose confidential information unrelated to Customer.</li>
-</ol>
+      <h2>8. International data transfers</h2>
+      <ol>
+        <li>Customer acknowledges that AtlasDT, its affiliates, suppliers and Sub-processors may process Customer
+          Personal Data in Australia and other countries where AtlasDT or its Sub-processors operate.</li>
+        <li>Where Applicable Data Protection Law requires transfer safeguards, the parties agree to cooperate in
+          implementing appropriate transfer mechanisms, including contractual safeguards and supplementary security
+          measures where appropriate.</li>
+      </ol>
 
-<h2>11. Deletion and return of data</h2>
-<ol>
-  <li>Upon termination or expiry of the Agreement, AtlasDT will, at Customer's election and subject to technical feasibility, either return or delete Customer Personal Data within a reasonable period, unless retention is required by law, for backup integrity, dispute resolution, fraud prevention, security logs, or enforcement of legal rights.</li>
-  <li>Where data is retained for these limited purposes, AtlasDT will continue to protect it in accordance with this DPA.</li>
-</ol>
+      <h2>9. Assistance with data subject requests and compliance</h2>
+      <ol>
+        <li>Taking into account the nature of the processing, AtlasDT will provide reasonable assistance to Customer to
+          enable Customer to respond to requests from data subjects to access, correct, delete, restrict, port or object
+          to the processing of their personal data, to the extent required by law.</li>
+        <li>AtlasDT will provide reasonable assistance to Customer with data protection impact assessments, prior
+          consultations with regulators, breach notifications, and other compliance obligations, provided Customer
+          reimburses AtlasDT's reasonable costs where the assistance goes beyond the Services ordinarily included in the
+          Agreement.</li>
+      </ol>
 
-<h2>12. Controller-to-controller processing</h2>
-<p>Certain processing carried out by AtlasDT may occur as an independent controller, including account administration, billing, security logging, fraud prevention, service analytics, legal compliance, and direct communications relating to the business relationship. Such processing is governed by AtlasDT's <a href="privacy-policy.html">Privacy Policy</a>, not this DPA.</p>
+      <h2>10. Audits and information rights</h2>
+      <ol>
+        <li>Upon reasonable written request no more than once in any 12-month period, AtlasDT will provide information
+          reasonably necessary to demonstrate compliance with this DPA.</li>
+        <li>Where that information is insufficient and Customer has a reasonable basis for concern, Customer may conduct
+          an audit, or appoint an independent auditor bound by confidentiality, during normal business hours and with at
+          least 30 days' prior written notice.</li>
+        <li>Audits must not unreasonably interfere with AtlasDT's business, compromise the security of other customers,
+          or require AtlasDT to disclose confidential information unrelated to Customer.</li>
+      </ol>
 
-<h2>13. Liability and order of precedence</h2>
-<ol>
-  <li>Each party's liability under this DPA is subject to the limitations and exclusions of liability in the Agreement, except to the extent prohibited by Applicable Data Protection Law.</li>
-  <li>If there is a conflict between this DPA and the Agreement in relation to the processing of Customer Personal Data, this DPA prevails to the extent of the conflict.</li>
-</ol>
+      <h2>11. Deletion and return of data</h2>
+      <ol>
+        <li>Upon termination or expiry of the Agreement, AtlasDT will, at Customer's election and subject to technical
+          feasibility, either return or delete Customer Personal Data within a reasonable period, unless retention is
+          required by law, for backup integrity, dispute resolution, fraud prevention, security logs, or enforcement of
+          legal rights.</li>
+        <li>Where data is retained for these limited purposes, AtlasDT will continue to protect it in accordance with
+          this DPA.</li>
+      </ol>
 
-<h2>14. Annex 1 — subject matter and duration of processing</h2>
-<table>
-  <tr><th>Item</th><th>Description</th></tr>
-  <tr><td>Subject matter</td><td>Provision of AtlasDT software, marketplace functionality, supplier onboarding, sourcing support, consulting, project delivery, procurement support, and related support services.</td></tr>
-  <tr><td>Duration</td><td>For the term of the Agreement and any permitted retention period thereafter.</td></tr>
-  <tr><td>Nature of processing</td><td>Collection, storage, organisation, review, retrieval, transmission, matching, hosting, support, analytics, and deletion of customer-related information.</td></tr>
-  <tr><td>Purpose</td><td>To provide the Services, manage customer accounts, facilitate supplier-buyer workflows, and perform support, security and compliance functions.</td></tr>
-  <tr><td>Categories of data subjects</td><td>Customer personnel, supplier personnel, buyer personnel, end users, contractors, authorised representatives, and other individuals whose information is submitted to the Services.</td></tr>
-  <tr><td>Categories of personal data</td><td>Names, business contact details, login credentials, account metadata, transaction records, support requests, communications, project data, supplier onboarding materials, shipping or billing contact details, and other data uploaded by or for Customer.</td></tr>
-  <tr><td>Sensitive data</td><td>Only where expressly agreed in writing and supported by appropriate controls.</td></tr>
-</table>
+      <h2>12. Controller-to-controller processing</h2>
+      <p>Certain processing carried out by AtlasDT may occur as an independent controller, including account
+        administration, billing, security logging, fraud prevention, service analytics, legal compliance, and direct
+        communications relating to the business relationship. Such processing is governed by AtlasDT's <a
+          href="privacy-policy.html">Privacy Policy</a>, not this DPA.</p>
 
-<h2>15. Annex 2 — minimum security commitments</h2>
-<ul>
-  <li>Role-based access management and password policies.</li>
-  <li>Reasonable authentication controls for privileged access.</li>
-  <li>Encryption for public-network transmission of personal data.</li>
-  <li>Documented incident response and recovery procedures.</li>
-  <li>Security awareness obligations for relevant personnel.</li>
-  <li>Reasonable vendor due diligence for material Sub-processors.</li>
-</ul>
+      <h2>13. Liability and order of precedence</h2>
+      <ol>
+        <li>Each party's liability under this DPA is subject to the limitations and exclusions of liability in the
+          Agreement, except to the extent prohibited by Applicable Data Protection Law.</li>
+        <li>If there is a conflict between this DPA and the Agreement in relation to the processing of Customer Personal
+          Data, this DPA prevails to the extent of the conflict.</li>
+      </ol>
 
-        
-      
+      <h2>14. Annex 1 — subject matter and duration of processing</h2>
+      <table>
+        <tr>
+          <th>Item</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>Subject matter</td>
+          <td>Provision of AtlasDT software, marketplace functionality, supplier onboarding, sourcing support,
+            consulting, project delivery, procurement support, and related support services.</td>
+        </tr>
+        <tr>
+          <td>Duration</td>
+          <td>For the term of the Agreement and any permitted retention period thereafter.</td>
+        </tr>
+        <tr>
+          <td>Nature of processing</td>
+          <td>Collection, storage, organisation, review, retrieval, transmission, matching, hosting, support, analytics,
+            and deletion of customer-related information.</td>
+        </tr>
+        <tr>
+          <td>Purpose</td>
+          <td>To provide the Services, manage customer accounts, facilitate supplier-buyer workflows, and perform
+            support, security and compliance functions.</td>
+        </tr>
+        <tr>
+          <td>Categories of data subjects</td>
+          <td>Customer personnel, supplier personnel, buyer personnel, end users, contractors, authorised
+            representatives, and other individuals whose information is submitted to the Services.</td>
+        </tr>
+        <tr>
+          <td>Categories of personal data</td>
+          <td>Names, business contact details, login credentials, account metadata, transaction records, support
+            requests, communications, project data, supplier onboarding materials, shipping or billing contact details,
+            and other data uploaded by or for Customer.</td>
+        </tr>
+        <tr>
+          <td>Sensitive data</td>
+          <td>Only where expressly agreed in writing and supported by appropriate controls.</td>
+        </tr>
+      </table>
+
+      <h2>15. Annex 2 — minimum security commitments</h2>
+      <ul>
+        <li>Role-based access management and password policies.</li>
+        <li>Reasonable authentication controls for privileged access.</li>
+        <li>Encryption for public-network transmission of personal data.</li>
+        <li>Documented incident response and recovery procedures.</li>
+        <li>Security awareness obligations for relevant personnel.</li>
+        <li>Reasonable vendor due diligence for material Sub-processors.</li>
+      </ul>
+
+
+
     </main>
   </div>
-<footer id="footer" class="m-footer"
+  <footer id="footer" class="m-footer"
     style="padding: 100px var(--space-8); background: #080808; border-top: 1px solid rgba(255,255,255,0.05);">
     <div
       style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 60px; max-width: 1400px; margin: 0 auto; text-align: left;">
@@ -297,13 +572,22 @@
           <div>
             <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Legal</h4>
             <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
-              <li><a href="data-protection.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Data Protection</a></li>
-              <li><a href="email-security.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Email Security</a></li>
-              <li><a href="privacy-policy.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Privacy Policy</a></li>
-              <li><a href="website-terms.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Website Terms</a></li>
-              <li><a href="conditions-of-sale.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Conditions of Sale</a></li>
-              <li><a href="cookie-policy.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Cookie Policy</a></li>
-              <li><a href="nda.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">NDA</a></li>
+              <li><a href="data-protection.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Data Protection</a>
+              </li>
+              <li><a href="email-security.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Email Security</a></li>
+              <li><a href="privacy-policy.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Privacy Policy</a></li>
+              <li><a href="website-terms.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Website Terms</a></li>
+              <li><a href="conditions-of-sale.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Conditions of Sale</a>
+              </li>
+              <li><a href="cookie-policy.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Cookie Policy</a></li>
+              <li><a href="nda.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">NDA</a></li>
             </ul>
           </div>
         </div>
@@ -320,8 +604,10 @@
           <li><strong>USA:</strong> 500 Terry Francine Street, San Francisco, CA 94158</li>
         </ul>
         <div style="margin-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
-          <p style="font-size: 11px; color: var(--color-steel-400); margin-bottom: 8px;">AtlasDT is a trademark and a brand that belongs to Paniani Products Pty Ltd</p>
-          <img src="/logos/paniani-logo.png" alt="Paniani Products" class="paniani-footer-logo" style="height: 16px; width: auto; opacity: 0.8; vertical-align: middle;">
+          <p style="font-size: 11px; color: var(--color-steel-400); margin-bottom: 8px;">AtlasDT is a trademark and a
+            brand that belongs to Paniani Products Pty Ltd</p>
+          <img src="/logos/paniani-logo.png" alt="Paniani Products" class="paniani-footer-logo"
+            style="height: 16px; width: auto; opacity: 0.8; vertical-align: middle;">
         </div>
       </div>
 
@@ -375,9 +661,11 @@
             </div>
             <div class="auth-input-group">
               <label for="login-password">Password</label>
-              <input type="password" id="login-password" required placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+              <input type="password" id="login-password" required
+                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
             </div>
-            <div style="text-align:right; margin-top:-10px; margin-bottom:15px;"><a id="toggle-to-reset" style="font-size:12px; color:var(--color-electric); cursor:pointer;">Forgot password?</a></div>
+            <div style="text-align:right; margin-top:-10px; margin-bottom:15px;"><a id="toggle-to-reset"
+                style="font-size:12px; color:var(--color-electric); cursor:pointer;">Forgot password?</a></div>
             <div id="login-error" class="auth-error-msg"></div>
             <button type="submit" class="auth-btn" id="login-submit-btn">Log In</button>
           </form>
@@ -385,7 +673,7 @@
             No account yet? <a id="toggle-to-signup">Sign up for access</a>
           </div>
         </div>
-        
+
         <!-- RESET PASSWORD FORM -->
         <div class="auth-form-wrapper" id="form-reset" style="display: none;">
           <div class="auth-header">
@@ -404,7 +692,7 @@
             Remembered it? <a id="toggle-reset-to-login" style="cursor:pointer">Log In instead</a>
           </div>
         </div>
-        
+
         <div class="auth-form-wrapper" id="form-signup" style="display: none;">
           <div class="auth-header">
             <h2>Request Access.</h2>
@@ -431,18 +719,28 @@
             </div>
             <div class="auth-input-group">
               <label for="signup-password">Password</label>
-              <input type="password" id="signup-password" required placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
-              <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars: 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
+              <input type="password" id="signup-password" required
+                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+              <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars:
+                1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
             </div>
-            <div class="auth-input-group" style="display: flex; flex-direction: row; gap: 10px; align-items: flex-start; margin-top: 10px; margin-bottom: 15px;">
+            <div class="auth-input-group"
+              style="display: flex; flex-direction: row; gap: 10px; align-items: flex-start; margin-top: 10px; margin-bottom: 15px;">
               <input type="checkbox" id="signup-terms" required style="margin-top: 4px;">
-              <label for="signup-terms" style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
-                I agree to the <a href="website-terms.html" style="color: var(--color-electric); text-decoration: underline;">Terms & Conditions</a>, <a href="privacy-policy.html" style="color: var(--color-electric); text-decoration: underline;">Privacy Policy</a>, and understand my data is protected under the <a href="nda.html" style="color: var(--color-electric); text-decoration: underline;">NDA & Data Protection Policy</a>.
+              <label for="signup-terms"
+                style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
+                I agree to the <a href="website-terms.html"
+                  style="color: var(--color-electric); text-decoration: underline;">Terms & Conditions</a>, <a
+                  href="privacy-policy.html" style="color: var(--color-electric); text-decoration: underline;">Privacy
+                  Policy</a>, and understand my data is protected under the <a href="nda.html"
+                  style="color: var(--color-electric); text-decoration: underline;">NDA & Data Protection Policy</a>.
               </label>
             </div>
-                        <div class="auth-input-group" style="display: flex; flex-direction: row; gap: 10px; align-items: flex-start; margin-top: 10px; margin-bottom: 15px;">
+            <div class="auth-input-group"
+              style="display: flex; flex-direction: row; gap: 10px; align-items: flex-start; margin-top: 10px; margin-bottom: 15px;">
               <input type="checkbox" id="signup-marketing" style="margin-top: 4px;">
-              <label for="signup-marketing" style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
+              <label for="signup-marketing"
+                style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
                 I would like to receive newsletters, promotions, and updates from Atlas DT.
               </label>
             </div>
@@ -456,8 +754,8 @@
       </div>
     </div>
   </div>
-    <script type="text/javascript" src="https://res.public.onecdn.static.microsoft/customerconnect/v1/7dttl/init.js" id="chatbot" environmentId="016ca71b-616b-e187-b02d-3fcb9c6568c2" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://res.public.onecdn.static.microsoft/customerconnect/v1/7dttl/init.js"
+    id="chatbot" environmentId="016ca71b-616b-e187-b02d-3fcb9c6568c2" crossorigin="anonymous"></script>
 </body>
 
 </html>
-

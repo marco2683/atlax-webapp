@@ -1,5 +1,6 @@
 import { supabase } from './utils/supabaseClient.js';
 import { getMyProfile } from './services/profile.js';
+import { markFormLoaded, injectHoneypot, checkForBot } from './utils/botGuard.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -14,6 +15,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const pip2 = document.getElementById('pip-2');
   
   let currentTier = initialTier;
+
+  // Bot Guard: start timing and inject honeypot
+  markFormLoaded();
+  const step1Form = document.getElementById('step-1-form');
+  if (step1Form) injectHoneypot(step1Form);
   
   const colors = {
     free: '#94a3b8',
@@ -125,6 +131,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const company = document.getElementById('company')?.value || '';
     const email = document.getElementById('email')?.value || '';
     const password = document.getElementById('password')?.value || '';
+
+    // Bot Guard: check before proceeding (only for new signups)
+    if (!isLoggedIn && password) {
+      const botCheck = checkForBot(
+        { firstName: fname, lastName: lname, company, email },
+        'step-1-form'
+      );
+      if (botCheck.isBot) {
+        step1Btn.classList.remove('loading');
+        alert('Unable to create account. Please try again later.');
+        console.warn('[BotGuard] Blocked signup:', botCheck.reason);
+        return;
+      }
+    }
 
     // If not already logged in, create the account
     if (!isLoggedIn && password) {

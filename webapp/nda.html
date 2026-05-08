@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -13,51 +14,234 @@
   <script type="module" src="/src/js/contact-modal.js"></script>
   <script defer src="/src/js/cms-loader.js"></script>
   <style>
-    .faq-container { max-width: 800px; margin: 0 auto; padding: 100px 5%; }
-    .faq-section { margin-bottom: 40px; }
-    .faq-section h2 { color: white; margin-bottom: 20px; font-size: 24px; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-    .faq-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
-    .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500; font-size: 16px; color: white; transition: background 0.2s; }
-    .faq-question:hover { background: rgba(255,255,255,0.05); }
-    .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out; color: var(--color-steel-300); line-height: 1.6; }
-    .faq-item.active .faq-answer { padding: 0 20px 20px 20px; max-height: 1000px; }
-    .faq-icon { transition: transform 0.3s; }
-    .faq-item.active .faq-icon { transform: rotate(180deg); }
+    .faq-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 100px 5%;
+    }
+
+    .faq-section {
+      margin-bottom: 40px;
+    }
+
+    .faq-section h2 {
+      color: white;
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+    }
+
+    .faq-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      padding: 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 500;
+      font-size: 16px;
+      color: white;
+      transition: background 0.2s;
+    }
+
+    .faq-question:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .faq-answer {
+      padding: 0 20px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+      color: var(--color-steel-300);
+      line-height: 1.6;
+    }
+
+    .faq-item.active .faq-answer {
+      padding: 0 20px 20px 20px;
+      max-height: 1000px;
+    }
+
+    .faq-icon {
+      transition: transform 0.3s;
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(180deg);
+    }
   </style>
 
   <style>
-    .legal-framework-container { max-width: 1400px; margin: 0 auto; padding: 120px 5% 100px 5%; display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; }
-    @media (max-width: 900px) { .legal-framework-container { grid-template-columns: 1fr; } }
-    .legal-sidebar { position: sticky; top: 100px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-    .legal-sidebar-menu { list-style: none; padding: 0; margin: 20px 0 0; }
-    .legal-sidebar-menu li { margin-bottom: 8px; }
-    .legal-sidebar-menu a { display: block; padding: 10px 14px; border-radius: 8px; color: var(--color-steel-300); text-decoration: none; font-size: 14px; transition: all 0.2s; }
-    .legal-sidebar-menu a:hover, .legal-sidebar-menu a.active { background: rgba(91,124,255,0.1); color: var(--color-electric); }
-    .legal-content { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 50px 60px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); color: var(--color-steel-300); font-size: 15px; line-height: 1.8; }
-    @media (max-width: 600px) { .legal-content { padding: 30px 20px; } }
-    .legal-content h1 { font-family: 'Montserrat', sans-serif; font-size: 40px; color: #fff; margin-top: 0; margin-bottom: 12px; letter-spacing: -1px; }
-    .legal-content .meta { color: var(--color-steel-500); font-size: 13px; margin-bottom: 40px; }
-    .legal-content h2 { font-family: 'Montserrat', sans-serif; font-size: 24px; color: #fff; margin-top: 50px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-    .legal-content h3 { font-size: 18px; color: #fff; margin-top: 40px; margin-bottom: 15px; }
-    .legal-content p, .legal-content li { margin-bottom: 16px; }
-    .legal-content ul, .legal-content ol { padding-left: 24px; margin-bottom: 24px; }
-    .legal-content table { width: 100%; border-collapse: collapse; margin: 30px 0; font-size: 14px; }
-    .legal-content th, .legal-content td { padding: 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .legal-content th { color: #fff; background: rgba(255,255,255,0.05); }
-    .legal-content .notice { background: rgba(91,124,255,0.08); border: 1px solid rgba(91,124,255,0.2); border-radius: 8px; padding: 16px; margin: 30px 0; color: #a9baf0; font-size: 14px; }
-    .legal-content a { color: var(--color-electric); text-decoration: underline; text-underline-offset: 3px; }
+    .legal-framework-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 120px 5% 100px 5%;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .legal-framework-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .legal-sidebar {
+      position: sticky;
+      top: 100px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .legal-sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0 0;
+    }
+
+    .legal-sidebar-menu li {
+      margin-bottom: 8px;
+    }
+
+    .legal-sidebar-menu a {
+      display: block;
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: var(--color-steel-300);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .legal-sidebar-menu a:hover,
+    .legal-sidebar-menu a.active {
+      background: rgba(91, 124, 255, 0.1);
+      color: var(--color-electric);
+    }
+
+    .legal-content {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 50px 60px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      color: var(--color-steel-300);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 600px) {
+      .legal-content {
+        padding: 30px 20px;
+      }
+    }
+
+    .legal-content h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 40px;
+      color: #fff;
+      margin-top: 0;
+      margin-bottom: 12px;
+      letter-spacing: -1px;
+    }
+
+    .legal-content .meta {
+      color: var(--color-steel-500);
+      font-size: 13px;
+      margin-bottom: 40px;
+    }
+
+    .legal-content h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      color: #fff;
+      margin-top: 50px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+    }
+
+    .legal-content h3 {
+      font-size: 18px;
+      color: #fff;
+      margin-top: 40px;
+      margin-bottom: 15px;
+    }
+
+    .legal-content p,
+    .legal-content li {
+      margin-bottom: 16px;
+    }
+
+    .legal-content ul,
+    .legal-content ol {
+      padding-left: 24px;
+      margin-bottom: 24px;
+    }
+
+    .legal-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 30px 0;
+      font-size: 14px;
+    }
+
+    .legal-content th,
+    .legal-content td {
+      padding: 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .legal-content th {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .legal-content .notice {
+      background: rgba(91, 124, 255, 0.08);
+      border: 1px solid rgba(91, 124, 255, 0.2);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 30px 0;
+      color: #a9baf0;
+      font-size: 14px;
+    }
+
+    .legal-content a {
+      color: var(--color-electric);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
   </style>
 
 </head>
+
 <body class="marketing-page" style="background: var(--color-void);">
   <nav class="navbar" id="navbar"
     style="position: fixed; width: 100%; top: 0; z-index: 100; transition: background 0.3s; padding: var(--space-4) var(--space-6); background: rgba(12,12,12,0.8); backdrop-filter: blur(20px);">
     <div
       style="display: flex; justify-content: space-between; align-items: center; max-width: 95%; margin: 0 auto; width: 100%;">
       <div class="navbar__brand" style="display: flex; align-items: center; gap: 12px; flex: 1;">
-        <a href="/" aria-label="Home"><img src="/logos/atlasdt-logo-light.png" alt="Atlas DT" style="height: 32px; width: auto; object-fit: contain;" /></a>
+        <a href="/" aria-label="Home"><img src="/logos/atlasdt-logo-light.png" alt="Atlas DT"
+            style="height: 32px; width: auto; object-fit: contain;" /></a>
       </div>
-      <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
+      <button class="mobile-menu-toggle" aria-label="Toggle mobile menu"
+        onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
       <div class="nav-links-container" style="display: flex; align-items: center; gap: 4px; flex: 0 0 auto;">
         <a href="index.html" class="global-nav-link global-nav-link--single" data-nav="home" style="padding: 8px 24px;">
           <span class="global-nav-link__top">Home</span>
@@ -69,7 +253,7 @@
         <a href="/app.html#rfq" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">Quote</span>
           <span class="global-nav-link__sub">Instantly</span>
-        </a>        <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
+        </a> <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
           <span class="global-nav-link__top">OEMs</span>
           <span class="global-nav-link__sub">Marketplace</span>
         </a>
@@ -84,12 +268,15 @@
         <div id="nav-user-menu" class="nav-user-menu">
           <div class="nav-avatar" id="nav-avatar">?</div>
           <div class="dropdown-content" style="right: 20px;">
-            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter Platform</a>
+            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter
+              Platform</a>
             <a href="/workspace.html" class="dropdown-item">Workspace</a>
             <a href="/profile.html" class="dropdown-item">Profile Settings</a>
-            <a href="/workspace.html" class="dropdown-item" id="nav-notifications-link" style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="/workspace.html" class="dropdown-item" id="nav-notifications-link"
+              style="display: flex; justify-content: space-between; align-items: center;">
               Notifications
-              <span id="nav-notif-badge" style="background:var(--color-electric); color:white; border-radius:10px; padding:2px 6px; font-size:10px; display:none;">0</span>
+              <span id="nav-notif-badge"
+                style="background:var(--color-electric); color:white; border-radius:10px; padding:2px 6px; font-size:10px; display:none;">0</span>
             </a>
             <div class="dropdown-divider"></div>
             <a href="#" id="nav-logout-btn" class="dropdown-item">Log Out</a>
@@ -99,135 +286,187 @@
     </div>
   </nav>
   <!-- OVERRIDE FOR LEGAL SUBPAGES -->
-  <style> body { background: var(--color-void); } </style>
+  <style>
+    body {
+      background: var(--color-void);
+    }
+  </style>
   <div class="legal-framework-container">
     <aside class="legal-sidebar">
-      <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--color-steel-500); margin-bottom: 20px;">AtlasDT Legal</div>
-      <h2 style="font-size: 20px; color: #fff; margin:0 0 10px 0; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.05); font-weight: 500;">Framework</h2>
+      <div
+        style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--color-steel-500); margin-bottom: 20px;">
+        AtlasDT Legal</div>
+      <h2
+        style="font-size: 20px; color: #fff; margin:0 0 10px 0; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.05); font-weight: 500;">
+        Framework</h2>
       <ul class="legal-sidebar-menu">
-        
-          <li><a class="" href="data-protection.html">Data Protection</a></li>
-<li><a class="" href="email-security.html">Email Security</a></li>
-<li><a class="" href="privacy-policy.html">Privacy Policy</a></li>
-<li><a class="" href="website-terms.html">Website Terms</a></li>
-<li><a class="" href="conditions-of-sale.html">Conditions of Sale</a></li>
-<li><a class="" href="cookie-policy.html">Cookie Policy</a></li>
-<li><a class="active" href="nda.html">NDA</a></li>
-        
+
+        <li><a class="" href="data-protection.html">Data Protection</a></li>
+        <li><a class="" href="email-security.html">Email Security</a></li>
+        <li><a class="" href="privacy-policy.html">Privacy Policy</a></li>
+        <li><a class="" href="website-terms.html">Website Terms</a></li>
+        <li><a class="" href="conditions-of-sale.html">Conditions of Sale</a></li>
+        <li><a class="" href="cookie-policy.html">Cookie Policy</a></li>
+        <li><a class="active" href="nda.html">NDA</a></li>
+
       </ul>
     </aside>
     <main class="legal-content">
-      
-        <h1>NDA</h1>
-        <div class="meta">Effective date: 20 April 2026 &nbsp;•&nbsp; Website: www.atlasdt.com</div>
-        <div class="notice">Recommended use: website-accessible mutual NDA template; for important transactions, execute a signed version with counterparty details.</div>
-        
-<p>This Mutual Non-Disclosure Agreement ("<strong>Agreement</strong>") is made between <strong>Paniani Products Pty Ltd</strong> trading as <strong>AtlasDT</strong> and the counterparty identified in the applicable order form, statement of work, proposal, onboarding workflow, or signature block ("<strong>Recipient Party</strong>" / "<strong>Disclosing Party</strong>", as applicable). If both parties disclose information, each party is both a Disclosing Party and a Recipient Party.</p>
 
-<div class="notice"><strong>Use note:</strong> This page works as a website-published template. For higher-value deals, investor discussions, manufacturing disclosures, tooling transfers or IP-heavy projects, AtlasDT should execute a signed PDF or e-signature version that inserts the counterparty name and effective date.</div>
+      <h1>NDA</h1>
+      <div class="meta">Effective date: 20 April 2026 &nbsp;•&nbsp; Website: www.atlasdt.com</div>
 
-<h2>1. Purpose</h2>
-<p>The parties wish to exchange certain confidential or proprietary information for the purpose of evaluating or pursuing a possible business relationship, including consulting, sourcing, procurement, marketplace participation, supplier onboarding, manufacturing support, project delivery, software evaluation, logistics, quality or related commercial opportunities (the "<strong>Purpose</strong>").</p>
+      <p>This Mutual Non-Disclosure Agreement ("<strong>Agreement</strong>") is made between <strong>Paniani Products
+          Pty Ltd</strong> trading as <strong>AtlasDT</strong> and the counterparty identified in the applicable order
+        form, statement of work, proposal, onboarding workflow, or signature block ("<strong>Recipient Party</strong>" /
+        "<strong>Disclosing Party</strong>", as applicable). If both parties disclose information, each party is both a
+        Disclosing Party and a Recipient Party.</p>
 
-<h2>2. Confidential Information</h2>
-<ol>
-  <li><strong>Confidential Information</strong> means any non-public information disclosed by or on behalf of a Disclosing Party, whether oral, visual, written, electronic, digital, machine-readable or otherwise, that a reasonable person would understand to be confidential given its nature or the circumstances of disclosure.</li>
-  <li>Confidential Information includes, without limitation:
-    <ul>
-      <li>business plans, supplier networks, pricing, margins, sales pipelines and market strategy;</li>
-      <li>customer, supplier, manufacturer or logistics information;</li>
-      <li>technical information, designs, drawings, BOMs, prototypes, test data, source materials, methods, specifications, tooling concepts, process flows and know-how;</li>
-      <li>software, product roadmaps, APIs, account architecture, security controls and non-public product information;</li>
-      <li>commercial terms, proposals, negotiations, due diligence materials and project documentation; and</li>
-      <li>notes, summaries, analyses or materials derived from any of the above.</li>
-    </ul>
-  </li>
-</ol>
 
-<h2>3. Exclusions</h2>
-<p>Confidential Information does not include information that the Recipient Party can demonstrate by written records:</p>
-<ul>
-  <li>was already lawfully known to it without restriction before disclosure;</li>
-  <li>is or becomes publicly available through no breach of this Agreement;</li>
-  <li>is lawfully received from a third party without breach of any duty of confidentiality; or</li>
-  <li>is independently developed without use of or reference to the Disclosing Party's Confidential Information.</li>
-</ul>
+      <h2>1. Purpose</h2>
+      <p>The parties wish to exchange certain confidential or proprietary information for the purpose of evaluating or
+        pursuing a possible business relationship, including consulting, sourcing, procurement, marketplace
+        participation, supplier onboarding, manufacturing support, project delivery, software evaluation, logistics,
+        quality or related commercial opportunities (the "<strong>Purpose</strong>").</p>
 
-<h2>4. Recipient obligations</h2>
-<ol>
-  <li>The Recipient Party must:
-    <ul>
-      <li>use the Confidential Information solely for the Purpose;</li>
-      <li>keep the Confidential Information strictly confidential and protect it with at least the same degree of care it uses for its own information of a similar nature, and in any event not less than reasonable care;</li>
-      <li>limit disclosure to its officers, employees, contractors, advisers, affiliates and financing sources who have a genuine need to know for the Purpose and who are bound by confidentiality obligations no less protective than those in this Agreement; and</li>
-      <li>not copy, reverse engineer, decompile, disassemble or otherwise analyse any tangible, software or prototype materials beyond what is necessary for the Purpose, unless expressly authorised in writing.</li>
-    </ul>
-  </li>
-  <li>The Recipient Party is responsible for breaches of this Agreement by persons to whom it discloses Confidential Information.</li>
-</ol>
+      <h2>2. Confidential Information</h2>
+      <ol>
+        <li><strong>Confidential Information</strong> means any non-public information disclosed by or on behalf of a
+          Disclosing Party, whether oral, visual, written, electronic, digital, machine-readable or otherwise, that a
+          reasonable person would understand to be confidential given its nature or the circumstances of disclosure.
+        </li>
+        <li>Confidential Information includes, without limitation:
+          <ul>
+            <li>business plans, supplier networks, pricing, margins, sales pipelines and market strategy;</li>
+            <li>customer, supplier, manufacturer or logistics information;</li>
+            <li>technical information, designs, drawings, BOMs, prototypes, test data, source materials, methods,
+              specifications, tooling concepts, process flows and know-how;</li>
+            <li>software, product roadmaps, APIs, account architecture, security controls and non-public product
+              information;</li>
+            <li>commercial terms, proposals, negotiations, due diligence materials and project documentation; and</li>
+            <li>notes, summaries, analyses or materials derived from any of the above.</li>
+          </ul>
+        </li>
+      </ol>
 
-<h2>5. Permitted disclosure by law</h2>
-<p>If the Recipient Party is compelled by law, court order or regulatory requirement to disclose Confidential Information, it may do so only to the minimum extent legally required and, where legally permitted, after giving prompt written notice to the Disclosing Party so the Disclosing Party may seek protective treatment.</p>
+      <h2>3. Exclusions</h2>
+      <p>Confidential Information does not include information that the Recipient Party can demonstrate by written
+        records:</p>
+      <ul>
+        <li>was already lawfully known to it without restriction before disclosure;</li>
+        <li>is or becomes publicly available through no breach of this Agreement;</li>
+        <li>is lawfully received from a third party without breach of any duty of confidentiality; or</li>
+        <li>is independently developed without use of or reference to the Disclosing Party's Confidential Information.
+        </li>
+      </ul>
 
-<h2>6. No licence or transfer of rights</h2>
-<p>All Confidential Information remains the property of the Disclosing Party. No licence, assignment, transfer, ownership right or other intellectual property interest is granted except the limited right to use the Confidential Information for the Purpose.</p>
+      <h2>4. Recipient obligations</h2>
+      <ol>
+        <li>The Recipient Party must:
+          <ul>
+            <li>use the Confidential Information solely for the Purpose;</li>
+            <li>keep the Confidential Information strictly confidential and protect it with at least the same degree of
+              care it uses for its own information of a similar nature, and in any event not less than reasonable care;
+            </li>
+            <li>limit disclosure to its officers, employees, contractors, advisers, affiliates and financing sources who
+              have a genuine need to know for the Purpose and who are bound by confidentiality obligations no less
+              protective than those in this Agreement; and</li>
+            <li>not copy, reverse engineer, decompile, disassemble or otherwise analyse any tangible, software or
+              prototype materials beyond what is necessary for the Purpose, unless expressly authorised in writing.</li>
+          </ul>
+        </li>
+        <li>The Recipient Party is responsible for breaches of this Agreement by persons to whom it discloses
+          Confidential Information.</li>
+      </ol>
 
-<h2>7. No obligation to proceed</h2>
-<p>Nothing in this Agreement obliges either party to enter into any further agreement, place any order, proceed with any project, or continue discussions. Each party reserves the right to stop discussions at any time.</p>
+      <h2>5. Permitted disclosure by law</h2>
+      <p>If the Recipient Party is compelled by law, court order or regulatory requirement to disclose Confidential
+        Information, it may do so only to the minimum extent legally required and, where legally permitted, after giving
+        prompt written notice to the Disclosing Party so the Disclosing Party may seek protective treatment.</p>
 
-<h2>8. Return, deletion and retention</h2>
-<ol>
-  <li>Upon written request of the Disclosing Party, or upon completion of the Purpose, the Recipient Party must promptly return or securely destroy the Disclosing Party's Confidential Information, except to the extent retention is required by law, backup integrity, document retention policy, legal hold or compliance archive.</li>
-  <li>Any retained copy remains subject to this Agreement for so long as it is retained.</li>
-</ol>
+      <h2>6. No licence or transfer of rights</h2>
+      <p>All Confidential Information remains the property of the Disclosing Party. No licence, assignment, transfer,
+        ownership right or other intellectual property interest is granted except the limited right to use the
+        Confidential Information for the Purpose.</p>
 
-<h2>9. Term and survival</h2>
-<ol>
-  <li>This Agreement starts on the earlier of the effective date inserted in the parties' signed version or the first disclosure of Confidential Information under the Purpose.</li>
-  <li>The confidentiality obligations continue for 5 years after the last disclosure of Confidential Information, except that trade secrets and information that remains commercially sensitive by its nature must be protected for so long as it remains confidential under applicable law.</li>
-</ol>
+      <h2>7. No obligation to proceed</h2>
+      <p>Nothing in this Agreement obliges either party to enter into any further agreement, place any order, proceed
+        with any project, or continue discussions. Each party reserves the right to stop discussions at any time.</p>
 
-<h2>10. Remedies</h2>
-<p>The parties acknowledge that unauthorised disclosure or misuse of Confidential Information may cause irreparable harm for which damages may be an inadequate remedy. The Disclosing Party may therefore seek injunctive or equitable relief in addition to any other available remedies.</p>
+      <h2>8. Return, deletion and retention</h2>
+      <ol>
+        <li>Upon written request of the Disclosing Party, or upon completion of the Purpose, the Recipient Party must
+          promptly return or securely destroy the Disclosing Party's Confidential Information, except to the extent
+          retention is required by law, backup integrity, document retention policy, legal hold or compliance archive.
+        </li>
+        <li>Any retained copy remains subject to this Agreement for so long as it is retained.</li>
+      </ol>
 
-<h2>11. Warranties and disclaimer</h2>
-<p>Confidential Information is provided “as is” without warranty as to completeness, accuracy or fitness for purpose. Except as expressly agreed in writing, neither party makes any representation that it will update or correct disclosed information.</p>
+      <h2>9. Term and survival</h2>
+      <ol>
+        <li>This Agreement starts on the earlier of the effective date inserted in the parties' signed version or the
+          first disclosure of Confidential Information under the Purpose.</li>
+        <li>The confidentiality obligations continue for 5 years after the last disclosure of Confidential Information,
+          except that trade secrets and information that remains commercially sensitive by its nature must be protected
+          for so long as it remains confidential under applicable law.</li>
+      </ol>
 
-<h2>12. Liability</h2>
-<p>Nothing in this Agreement excludes liability that cannot lawfully be excluded. Subject to that, neither party excludes liability for misuse of the other party's Confidential Information, fraud, wilful misconduct, or infringement of the other party's intellectual property rights arising from unauthorised use of Confidential Information.</p>
+      <h2>10. Remedies</h2>
+      <p>The parties acknowledge that unauthorised disclosure or misuse of Confidential Information may cause
+        irreparable harm for which damages may be an inadequate remedy. The Disclosing Party may therefore seek
+        injunctive or equitable relief in addition to any other available remedies.</p>
 
-<h2>13. General</h2>
-<ul>
-  <li>This Agreement contains the entire confidentiality understanding between the parties for the Purpose unless replaced or supplemented by a signed agreement.</li>
-  <li>No amendment is effective unless in writing.</li>
-  <li>If any provision is unenforceable, the remaining provisions remain in effect.</li>
-  <li>This Agreement may be executed electronically and in counterparts.</li>
-</ul>
+      <h2>11. Warranties and disclaimer</h2>
+      <p>Confidential Information is provided “as is” without warranty as to completeness, accuracy or fitness for
+        purpose. Except as expressly agreed in writing, neither party makes any representation that it will update or
+        correct disclosed information.</p>
 
-<h2>14. Governing law</h2>
-<p>This Agreement is governed by the laws of Victoria, Australia, and the parties submit to the exclusive jurisdiction of the courts of that jurisdiction and any appellate courts from them.</p>
+      <h2>12. Liability</h2>
+      <p>Nothing in this Agreement excludes liability that cannot lawfully be excluded. Subject to that, neither party
+        excludes liability for misuse of the other party's Confidential Information, fraud, wilful misconduct, or
+        infringement of the other party's intellectual property rights arising from unauthorised use of Confidential
+        Information.</p>
 
-<h2>15. Signature block template</h2>
-<table>
-  <tr><th>AtlasDT</th><th>Counterparty</th></tr>
-  <tr><td>
-    Entity: Paniani Products Pty Ltd<br />
-    Signatory: ____________________<br />
-    Title: ____________________<br />
-    Date: ____________________
-  </td><td>
-    Entity: ____________________<br />
-    Signatory: ____________________<br />
-    Title: ____________________<br />
-    Date: ____________________
-  </td></tr>
-</table>
+      <h2>13. General</h2>
+      <ul>
+        <li>This Agreement contains the entire confidentiality understanding between the parties for the Purpose unless
+          replaced or supplemented by a signed agreement.</li>
+        <li>No amendment is effective unless in writing.</li>
+        <li>If any provision is unenforceable, the remaining provisions remain in effect.</li>
+        <li>This Agreement may be executed electronically and in counterparts.</li>
+      </ul>
 
-        
-      
+      <h2>14. Governing law</h2>
+      <p>This Agreement is governed by the laws of Victoria, Australia, and the parties submit to the exclusive
+        jurisdiction of the courts of that jurisdiction and any appellate courts from them.</p>
+
+      <h2>15. Signature block template</h2>
+      <table>
+        <tr>
+          <th>AtlasDT</th>
+          <th>Counterparty</th>
+        </tr>
+        <tr>
+          <td>
+            Entity: Paniani Products Pty Ltd<br />
+            Signatory: ____________________<br />
+            Title: ____________________<br />
+            Date: ____________________
+          </td>
+          <td>
+            Entity: ____________________<br />
+            Signatory: ____________________<br />
+            Title: ____________________<br />
+            Date: ____________________
+          </td>
+        </tr>
+      </table>
+
+
+
     </main>
   </div>
-<footer id="footer" class="m-footer"
+  <footer id="footer" class="m-footer"
     style="padding: 100px var(--space-8); background: #080808; border-top: 1px solid rgba(255,255,255,0.05);">
     <div
       style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 60px; max-width: 1400px; margin: 0 auto; text-align: left;">
@@ -266,13 +505,22 @@
           <div>
             <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Legal</h4>
             <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
-              <li><a href="data-protection.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Data Protection</a></li>
-              <li><a href="email-security.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Email Security</a></li>
-              <li><a href="privacy-policy.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Privacy Policy</a></li>
-              <li><a href="website-terms.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Website Terms</a></li>
-              <li><a href="conditions-of-sale.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Conditions of Sale</a></li>
-              <li><a href="cookie-policy.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Cookie Policy</a></li>
-              <li><a href="nda.html" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">NDA</a></li>
+              <li><a href="data-protection.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Data Protection</a>
+              </li>
+              <li><a href="email-security.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Email Security</a></li>
+              <li><a href="privacy-policy.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Privacy Policy</a></li>
+              <li><a href="website-terms.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Website Terms</a></li>
+              <li><a href="conditions-of-sale.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Conditions of Sale</a>
+              </li>
+              <li><a href="cookie-policy.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Cookie Policy</a></li>
+              <li><a href="nda.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">NDA</a></li>
             </ul>
           </div>
         </div>
@@ -289,8 +537,10 @@
           <li><strong>USA:</strong> 500 Terry Francine Street, San Francisco, CA 94158</li>
         </ul>
         <div style="margin-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
-          <p style="font-size: 11px; color: var(--color-steel-400); margin-bottom: 8px;">AtlasDT is a trademark and a brand that belongs to Paniani Products Pty Ltd</p>
-          <img src="/logos/paniani-logo.png" alt="Paniani Products" class="paniani-footer-logo" style="height: 16px; width: auto; opacity: 0.8; vertical-align: middle;">
+          <p style="font-size: 11px; color: var(--color-steel-400); margin-bottom: 8px;">AtlasDT is a trademark and a
+            brand that belongs to Paniani Products Pty Ltd</p>
+          <img src="/logos/paniani-logo.png" alt="Paniani Products" class="paniani-footer-logo"
+            style="height: 16px; width: auto; opacity: 0.8; vertical-align: middle;">
         </div>
       </div>
 
@@ -344,9 +594,11 @@
             </div>
             <div class="auth-input-group">
               <label for="login-password">Password</label>
-              <input type="password" id="login-password" required placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+              <input type="password" id="login-password" required
+                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
             </div>
-            <div style="text-align:right; margin-top:-10px; margin-bottom:15px;"><a id="toggle-to-reset" style="font-size:12px; color:var(--color-electric); cursor:pointer;">Forgot password?</a></div>
+            <div style="text-align:right; margin-top:-10px; margin-bottom:15px;"><a id="toggle-to-reset"
+                style="font-size:12px; color:var(--color-electric); cursor:pointer;">Forgot password?</a></div>
             <div id="login-error" class="auth-error-msg"></div>
             <button type="submit" class="auth-btn" id="login-submit-btn">Log In</button>
           </form>
@@ -354,7 +606,7 @@
             No account yet? <a id="toggle-to-signup">Sign up for access</a>
           </div>
         </div>
-        
+
         <!-- RESET PASSWORD FORM -->
         <div class="auth-form-wrapper" id="form-reset" style="display: none;">
           <div class="auth-header">
@@ -373,7 +625,7 @@
             Remembered it? <a id="toggle-reset-to-login" style="cursor:pointer">Log In instead</a>
           </div>
         </div>
-        
+
         <div class="auth-form-wrapper" id="form-signup" style="display: none;">
           <div class="auth-header">
             <h2>Request Access.</h2>
@@ -400,18 +652,28 @@
             </div>
             <div class="auth-input-group">
               <label for="signup-password">Password</label>
-              <input type="password" id="signup-password" required placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
-              <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars: 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
+              <input type="password" id="signup-password" required
+                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+              <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; margin-bottom: 0;">Min 8 chars:
+                1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
             </div>
-            <div class="auth-input-group" style="display: flex; flex-direction: row; gap: 10px; align-items: flex-start; margin-top: 10px; margin-bottom: 15px;">
+            <div class="auth-input-group"
+              style="display: flex; flex-direction: row; gap: 10px; align-items: flex-start; margin-top: 10px; margin-bottom: 15px;">
               <input type="checkbox" id="signup-terms" required style="margin-top: 4px;">
-              <label for="signup-terms" style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
-                I agree to the <a href="website-terms.html" style="color: var(--color-electric); text-decoration: underline;">Terms & Conditions</a>, <a href="privacy-policy.html" style="color: var(--color-electric); text-decoration: underline;">Privacy Policy</a>, and understand my data is protected under the <a href="nda.html" style="color: var(--color-electric); text-decoration: underline;">NDA & Data Protection Policy</a>.
+              <label for="signup-terms"
+                style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
+                I agree to the <a href="website-terms.html"
+                  style="color: var(--color-electric); text-decoration: underline;">Terms & Conditions</a>, <a
+                  href="privacy-policy.html" style="color: var(--color-electric); text-decoration: underline;">Privacy
+                  Policy</a>, and understand my data is protected under the <a href="nda.html"
+                  style="color: var(--color-electric); text-decoration: underline;">NDA & Data Protection Policy</a>.
               </label>
             </div>
-                        <div class="auth-input-group" style="display: flex; flex-direction: row; gap: 10px; align-items: flex-start; margin-top: 10px; margin-bottom: 15px;">
+            <div class="auth-input-group"
+              style="display: flex; flex-direction: row; gap: 10px; align-items: flex-start; margin-top: 10px; margin-bottom: 15px;">
               <input type="checkbox" id="signup-marketing" style="margin-top: 4px;">
-              <label for="signup-marketing" style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
+              <label for="signup-marketing"
+                style="font-size: 12px; color: var(--color-steel-300); line-height: 1.4; padding-left: 0;">
                 I would like to receive newsletters, promotions, and updates from Atlas DT.
               </label>
             </div>
@@ -425,8 +687,8 @@
       </div>
     </div>
   </div>
-    <script type="text/javascript" src="https://res.public.onecdn.static.microsoft/customerconnect/v1/7dttl/init.js" id="chatbot" environmentId="016ca71b-616b-e187-b02d-3fcb9c6568c2" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://res.public.onecdn.static.microsoft/customerconnect/v1/7dttl/init.js"
+    id="chatbot" environmentId="016ca71b-616b-e187-b02d-3fcb9c6568c2" crossorigin="anonymous"></script>
 </body>
 
 </html>
-

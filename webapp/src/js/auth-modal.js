@@ -1,5 +1,6 @@
 import { signUpUser, loginUser } from './services/auth.js';
 import { supabase } from './utils/supabaseClient.js';
+import { markFormLoaded, injectHoneypot, checkForBot } from './utils/botGuard.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const authModal = document.getElementById('auth-modal');
@@ -59,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       containerLogin.style.display = 'none';
       containerSignup.style.display = 'block';
+      markFormLoaded(); // Bot Guard: start timer
     });
 
     toggleToLogin.addEventListener('click', (e) => {
@@ -114,6 +116,23 @@ document.addEventListener('DOMContentLoaded', () => {
       const company = document.getElementById('signup-company').value;
       const marketingOptIn = document.getElementById('signup-marketing')?.checked || false;
       
+      // Bot Guard: inject honeypot on first submit attempt (idempotent)
+      injectHoneypot(signupForm);
+
+      // Bot Guard: check before proceeding
+      const botCheck = checkForBot(
+        { firstName: first, lastName: last, company, email },
+        signupForm
+      );
+      if (botCheck.isBot) {
+        signupError.innerText = 'Unable to create account. Please try again later.';
+        signupError.classList.add('visible');
+        signupBtn.innerText = 'Create Account';
+        signupBtn.disabled = false;
+        console.warn('[BotGuard] Blocked signup:', botCheck.reason);
+        return;
+      }
+
       signupBtn.innerText = 'Creating Account...';
       signupBtn.disabled = true;
 

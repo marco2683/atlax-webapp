@@ -1,5 +1,6 @@
 import { signUpUser, loginUser, logoutUser, onAuthStateChange, getCurrentUser } from '../services/auth.js';
 import { getMyProfile } from '../services/profile.js';
+import { markFormLoaded, injectHoneypot, checkForBot } from '../utils/botGuard.js';
 
 export function initAuthModal() {
   const modal = document.getElementById('auth-modal');
@@ -24,6 +25,9 @@ export function initAuthModal() {
   // Forms
   const loginForm = document.getElementById('login-form');
   const signupForm = document.getElementById('signup-form');
+
+  // Bot Guard: inject honeypot into signup form
+  if (signupForm) injectHoneypot(signupForm);
 
   // Function to open modal
   function openModal(state = 'login') {
@@ -64,6 +68,7 @@ export function initAuthModal() {
       formsContainer.classList.add('auth-state-signup');
       formLogin.style.display = 'none';
       formSignup.style.display = 'block';
+      markFormLoaded(); // Bot Guard: start the timer
     } else {
       formsContainer.classList.remove('auth-state-signup');
       formsContainer.classList.add('auth-state-login');
@@ -130,6 +135,19 @@ export function initAuthModal() {
       const pass = document.getElementById('signup-password').value;
       const btn = document.getElementById('signup-submit-btn');
       const err = document.getElementById('signup-error');
+
+      // Bot Guard: check before proceeding
+      const botCheck = checkForBot(
+        { firstName: first, lastName: last, company, email },
+        signupForm
+      );
+      if (botCheck.isBot) {
+        // Show a generic error — don't reveal detection method
+        err.textContent = 'Unable to create account. Please try again later.';
+        err.classList.add('visible');
+        console.warn('[BotGuard] Blocked signup:', botCheck.reason);
+        return;
+      }
 
       btn.disabled = true;
       btn.textContent = 'Creating account...';
