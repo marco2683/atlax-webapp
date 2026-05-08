@@ -92,7 +92,7 @@ export const DICT = {
   legalRep:         { en: 'Primary Legal Representative', zh: '主要法定代表人' },
   fullName:         { en: 'Full Name', zh: '姓名' },
   titlePosition:    { en: 'Title / Position', zh: '职务/头衔' },
-  titlePh:          { en: 'CEO, Director, etc.', zh: '总经理、董事长等' },
+  titlePh:          { en: '— Select title —', zh: '— 请选择职位 —' },
   email:            { en: 'Email', zh: '电子邮箱' },
   phone:            { en: 'Phone', zh: '电话' },
   salesContact:     { en: 'Commercial / Sales Contact', zh: '商务/销售联系人' },

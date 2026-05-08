@@ -1388,7 +1388,7 @@ function renderCreateProductForm(editProdId = null) {
         unit: unit || null,
         priority: priority,
         filter_ui: dataType === 'boolean' ? 'toggle' : (dataType === 'number' ? 'min_max' : 'multi_select'),
-        is_facetable: true
+        facetable: true
       }).select();
 
       if (error) {
