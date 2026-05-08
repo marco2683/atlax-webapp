@@ -728,6 +728,7 @@ async function loadCatalogTab() {
           <div class="sp-row-actions">
             <button class="sp-row-save" data-save-id="${p.id}" disabled>Save</button>
             <button class="sp-row-btn btn-edit-prod" data-id="${p.id}">Edit</button>
+             <button class="sp-row-btn btn-delete-prod" data-id="${p.id}" title="Delete product" style="color:#d32f2f;font-size:14px;padding:2px 6px;">✕</button>
           </div>
         </td>
       </tr>`;
@@ -817,7 +818,36 @@ async function loadCatalogTab() {
     });
   });
 
-  // ── Dirty tracking & Save ──
+  // ── Delete product handler ──
+  grid.querySelectorAll('.btn-delete-prod').forEach(el => {
+    el.addEventListener('click', async (e) => {
+      const id = e.currentTarget.dataset.id;
+      const prod = myProducts.find(p => p.id === id);
+      const prodName = prod?.description || prod?.mpn || id;
+      if (!confirm(`Are you sure you want to permanently delete "${prodName}"?\n\nThis will also delete all uploaded images, files, and pricing data.`)) return;
+
+      el.textContent = '…';
+      el.disabled = true;
+      try {
+        // 1. Delete storage files for this product
+        const { data: assets } = await supabase.from('product_assets').select('url').eq('product_id', id);
+        if (assets?.length) {
+          const paths = assets.map(a => {
+            try { const u = new URL(a.url); return u.pathname.split('/product_assets/')[1]; } catch { return null; }
+          }).filter(Boolean);
+          if (paths.length) await supabase.storage.from('product_assets').remove(paths);
+        }
+        // 2. Delete DB records (CASCADE handles product_assets, pricing_tiers, product_attributes)
+        const { error } = await supabase.from('products').delete().eq('id', id);
+        if (error) throw error;
+        loadCatalogTab();
+      } catch (err) {
+        alert('Failed to delete: ' + err.message);
+        el.textContent = '✕';
+        el.disabled = false;
+      }
+    });
+  });
   function markRowDirty(productId) {
     const saveBtn = grid.querySelector(`.sp-row-save[data-save-id="${productId}"]`);
     if (saveBtn) saveBtn.disabled = false;
@@ -962,8 +992,8 @@ function renderCreateProductForm(editProdId = null) {
     <div style="margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--amz-border);">
       <div style="display:flex; justify-content:space-between; align-items:flex-end;">
          <div style="flex:1;">
-            <label style="font-size:12px; font-weight:700; color:#565959; margin-bottom:4px; display:block; text-transform:uppercase; letter-spacing:0.5px;">Product Name / Title</label>
-            <input type="text" id="p-desc" required class="amz-form-input" style="font-size:20px; font-weight:700; padding:10px 14px; border:1px solid #ccc; width:100%; border-radius:4px; box-shadow:inset 0 1px 2px rgba(0,0,0,0.05);" value="${prod?.description || ''}">
+            <label style="font-size:12px; font-weight:700; color:#565959; margin-bottom:4px; display:block; text-transform:uppercase; letter-spacing:0.5px;">Product Name / Title <span style="color:#d32f2f;">*</span></label>
+            <input type="text" id="p-desc" required class="amz-form-input" style="font-size:20px; font-weight:700; padding:10px 14px; border:1px solid #ccc; width:100%; border-radius:4px; box-shadow:inset 0 1px 2px rgba(0,0,0,0.05);" placeholder="e.g. Stainless Steel CNC-Machined Bracket" value="${prod?.description || ''}">
          </div>
       </div>
     </div>
@@ -1603,6 +1633,19 @@ function renderCreateProductForm(editProdId = null) {
     // Wrap everything so a crash re-enables the button
     try {
 
+    // ── Mandatory field validation ────────────────────────────────────────
+    const descEl = document.getElementById('p-desc');
+    if (!descEl.value.trim()) {
+      descEl.style.border = '2px solid #d32f2f';
+      descEl.style.boxShadow = '0 0 0 3px rgba(211,47,47,0.15)';
+      descEl.focus();
+      descEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      alert('Please enter a Product Name / Title before saving.');
+      btn.textContent = ogText; btn.disabled = false; return;
+    }
+    descEl.style.border = '1px solid #ccc';
+    descEl.style.boxShadow = '';
+
     const catId = catSelect.value; // It could be value (text) or we need the raw id
     // Resolve catId properly
     let finalCatId = catId;
@@ -1784,13 +1827,16 @@ function renderCreateProductForm(editProdId = null) {
         // Non-fatal — file is still in storage, just not registered in the table
       }
 
-      // For images: update specs.images array and track first image for image_url
+      // For gallery images: append to specs.images array
       if (assetType === 'image') {
         const { data: cData } = await supabase.from('products').select('specs').eq('id', prodId).single();
         const currentSpecs = cData?.specs || {};
-        currentSpecs.images = [publicUrl, ...(currentSpecs.images || [])];
+        currentSpecs.images = [...(currentSpecs.images || []), publicUrl];
         await supabase.from('products').update({ specs: currentSpecs }).eq('id', prodId);
-        if (!firstImageUrl) firstImageUrl = publicUrl;
+      }
+      // For main image: track for image_url (takes priority over gallery)
+      if (assetType === 'main_image') {
+        firstImageUrl = publicUrl;
       }
 
       return publicUrl;
@@ -1802,9 +1848,9 @@ function renderCreateProductForm(editProdId = null) {
 
       if (hasAnyFile) btn.textContent = 'Uploading assets...';
 
-      // 1. Main product image (maps to catalog display)
+      // 1. Main product image (maps to catalog display — uses 'main_image' type)
       for (let i = 0; i < mainImageFiles.length; i++) {
-        await uploadAsset(mainImageFiles[i], 'image');
+        await uploadAsset(mainImageFiles[i], 'main_image');
       }
 
       // 2. Extra gallery images
