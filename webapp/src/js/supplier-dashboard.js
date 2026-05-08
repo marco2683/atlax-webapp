@@ -1715,6 +1715,19 @@ function renderCreateProductForm(editProdId = null) {
       const fileName = `${prodId}_${safeType}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
       const filePath = `${factoryRecord.id}/${fileName}`;
 
+      // Map engineering file extensions to proper MIME types
+      // (browsers often report application/octet-stream for CAD files)
+      const mimeMap = {
+        step: 'application/x-step', stp: 'application/x-step',
+        stl: 'model/stl', iges: 'model/iges', igs: 'model/iges',
+        dxf: 'application/dxf', dwg: 'application/acad',
+        pdf: 'application/pdf',
+        jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png',
+        webp: 'image/webp', gif: 'image/gif', svg: 'image/svg+xml',
+        mp4: 'video/mp4', webm: 'video/webm',
+      };
+      const contentType = mimeMap[fileExt] || file.type || 'application/octet-stream';
+
       let publicUrl = null;
       try {
         // Direct upload to Supabase Storage (no size limit from Netlify proxy)
@@ -1722,7 +1735,7 @@ function renderCreateProductForm(editProdId = null) {
           .from('product_assets')
           .upload(filePath, file, {
             upsert: true,
-            contentType: file.type || 'application/octet-stream',
+            contentType: contentType,
             cacheControl: '3600'
           });
 
