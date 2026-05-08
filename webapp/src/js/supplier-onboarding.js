@@ -29,7 +29,7 @@ export function launchOnboardingWizard(user, rec) {
     warehouse_address: rec?.warehouse_address||{},
     legal_representatives: rec?.legal_representatives||[{name:m.full_name||'',title:'',email:user.email,phone:'',is_primary:true}],
     key_contacts: rec?.key_contacts||[],
-    banking_info: rec?.banking_info||{},
+    banking_info: Array.isArray(rec?.banking_info) ? rec.banking_info : (rec?.banking_info && rec.banking_info.bank_name ? [rec.banking_info] : [{}]),
     certifications: rec?.certifications||[],
   };
   supplierId = rec?.id||null;
@@ -108,7 +108,12 @@ function renderStepContent() {
   // banking country/currency change handler — re-render on change
   if(currentStep===4) {
     const reRenderBanking = () => { collectCurrentData(); c.innerHTML = `<h2 class="ob-step-title">${steps[4].icon} ${steps[4].title}</h2>` + renderBankingStep(); bindBankingHandlers(); };
-    const bindBankingHandlers = () => { document.getElementById('bk-country')?.addEventListener('change', reRenderBanking); document.getElementById('bk-currency')?.addEventListener('change', reRenderBanking); };
+    const bindBankingHandlers = () => {
+      document.querySelectorAll('.bk-country-sel').forEach(el => el.addEventListener('change', reRenderBanking));
+      document.querySelectorAll('.bk-currency-sel').forEach(el => el.addEventListener('change', reRenderBanking));
+      document.getElementById('ob-add-bank-acct')?.addEventListener('click', () => { collectCurrentData(); formData.banking_info.push({}); reRenderBanking(); });
+      document.querySelectorAll('.ob-remove-bank').forEach(btn => btn.addEventListener('click', () => { const idx = +btn.dataset.idx; collectCurrentData(); formData.banking_info.splice(idx, 1); if(!formData.banking_info.length) formData.banking_info.push({}); reRenderBanking(); }));
+    };
     bindBankingHandlers();
   }
 }
@@ -208,38 +213,50 @@ function renderContactsStep() {
 }
 
 function renderBankingStep() {
-  const b = formData.banking_info;
-  const bc = b.bank_country||'CN';
+  const accounts = formData.banking_info;
   const countryOpts = [['CN','bankCN'],['HK','bankHK'],['SG','bankSG'],['MY','bankMY'],['OTHER','bankOther']];
   const curOpts = [['CNY','curCNY'],['USD','curUSD'],['HKD','curHKD'],['SGD','curSGD'],['MYR','curMYR'],['AUD','curAUD'],['EUR','curEUR'],['OTHER','curOther']];
 
-  let fields = `<p class="ob-hint">${t('bankHint')}</p><div class="ob-form-grid">
-    <div class="ob-field ob-full"><label>${t('bankCountry')} ${req}</label>
-      <select id="bk-country">${countryOpts.map(([v,k])=>`<option value="${v}" ${bc===v?'selected':''}>${t(k)}</option>`).join('')}</select></div>
-    <div class="ob-field"><label>${t('bankName')} ${req}</label><input type="text" id="bk-bank" value="${esc(b.bank_name||'')}" placeholder="${t('bankNamePh')}"></div>
-    <div class="ob-field"><label>${t('branchName')} ${req}</label><input type="text" id="bk-branch" value="${esc(b.branch_name||'')}" placeholder="${t('branchNamePh')}"></div>
-    <div class="ob-field ob-full"><label>${t('acctName')} ${req}</label><input type="text" id="bk-holder" value="${esc(b.account_name||'')}" placeholder="${t('acctNamePh')}"></div>
-    <div class="ob-field"><label>${t('acctNumber')} ${req}</label><input type="text" id="bk-acct" value="${esc(b.account_number||'')}"></div>
-    <div class="ob-field"><label>${t('swiftCode')} ${req}</label><input type="text" id="bk-swift" value="${esc(b.swift_bic||'')}" placeholder="${t('swiftPh')}"></div>`;
+  let html = `<p class="ob-hint">${t('bankHint')}</p>`;
 
-  // China-specific: CNAPS
-  if(bc==='CN') fields += `<div class="ob-field"><label>${t('cnapsCode')}</label><input type="text" id="bk-cnaps" value="${esc(b.cnaps_code||'')}" placeholder="${t('cnapsPh')}"></div>`;
-  // Singapore: bank code + branch code
-  if(bc==='SG') fields += `<div class="ob-field"><label>${t('bankCode')}</label><input type="text" id="bk-bankcode" value="${esc(b.bank_code||'')}" placeholder="${t('bankCodePh')}"></div>
-    <div class="ob-field"><label>${t('branchCode')}</label><input type="text" id="bk-branchcode" value="${esc(b.branch_code||'')}" placeholder="${t('branchCodePh')}"></div>`;
-  // Malaysia: bank code
-  if(bc==='MY') fields += `<div class="ob-field"><label>${t('bankCode')}</label><input type="text" id="bk-bankcode" value="${esc(b.bank_code||'')}" placeholder="${t('bankCodePh')}"></div>`;
-  // Other/international: IBAN + routing
-  if(bc==='OTHER') fields += `<div class="ob-field"><label>${t('iban')}</label><input type="text" id="bk-iban" value="${esc(b.iban||'')}" placeholder="${t('ibanPh')}"></div>
-    <div class="ob-field"><label>${t('routingNo')}</label><input type="text" id="bk-routing" value="${esc(b.routing_number||'')}" placeholder="${t('routingPh')}"></div>`;
+  accounts.forEach((b, idx) => {
+    const bc = b.bank_country||'CN';
+    const pfx = `bk${idx}`;
+    const isOnly = accounts.length === 1;
+    const curLabel = curOpts.find(([v])=>v===(b.currency||'CNY'));
+    const acctLabel = curLabel ? t(curLabel[1]) : (b.currency || 'CNY');
 
-  // Common fields for all regions
-  fields += `<div class="ob-field ob-full"><label>${t('benefAddr')} ${req}</label><input type="text" id="bk-benef-addr" value="${esc(b.beneficiary_address||'')}" placeholder="${t('benefAddrPh')}"></div>
-    <div class="ob-field ob-full"><label>${t('bankAddr')} ${req}</label><input type="text" id="bk-bank-addr" value="${esc(b.bank_address||'')}" placeholder="${t('bankAddrPh')}"></div>
-    <div class="ob-field"><label>${t('currency')} ${req}</label><select id="bk-currency">${curOpts.map(([v,k])=>`<option value="${v}" ${(b.currency||'CNY')===v?'selected':''}>${t(k)}</option>`).join('')}</select></div>
-    ${(b.currency==='OTHER')?`<div class="ob-field"><label>${t('curOtherLabel')}</label><input type="text" id="bk-currency-other" value="${esc(b.currency_other||'')}" placeholder="${t('curOtherPh')}"></div>`:''}
-  </div>`;
-  return fields;
+    html += `<div class="ob-bank-card" data-idx="${idx}" style="border:1px solid rgba(148,163,184,0.15);border-radius:12px;padding:20px;margin-bottom:16px;position:relative;background:rgba(255,255,255,0.02);">`;
+    html += `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">`;
+    html += `<div style="font-weight:600;font-size:14px;color:#e2e8f0;">🏦 ${t('bankAcctLabel')} ${idx+1}${b.currency && b.currency!=='OTHER' ? ` — ${b.currency}` : ''}</div>`;
+    if(!isOnly) html += `<button type="button" class="ob-remove-bank ob-btn-remove" data-idx="${idx}" title="${t('removeAcct')}" style="font-size:18px;">✕</button>`;
+    html += `</div>`;
+
+    html += `<div class="ob-form-grid">
+      <div class="ob-field ob-full"><label>${t('bankCountry')} ${req}</label>
+        <select class="bk-country-sel" data-idx="${idx}">${countryOpts.map(([v,k])=>`<option value="${v}" ${bc===v?'selected':''}>${t(k)}</option>`).join('')}</select></div>
+      <div class="ob-field"><label>${t('bankName')} ${req}</label><input type="text" class="bk-bank" value="${esc(b.bank_name||'')}" placeholder="${t('bankNamePh')}"></div>
+      <div class="ob-field"><label>${t('branchName')} ${req}</label><input type="text" class="bk-branch" value="${esc(b.branch_name||'')}" placeholder="${t('branchNamePh')}"></div>
+      <div class="ob-field ob-full"><label>${t('acctName')} ${req}</label><input type="text" class="bk-holder" value="${esc(b.account_name||'')}" placeholder="${t('acctNamePh')}"></div>
+      <div class="ob-field"><label>${t('acctNumber')} ${req}</label><input type="text" class="bk-acct" value="${esc(b.account_number||'')}"></div>
+      <div class="ob-field"><label>${t('swiftCode')} ${req}</label><input type="text" class="bk-swift" value="${esc(b.swift_bic||'')}" placeholder="${t('swiftPh')}"></div>`;
+
+    if(bc==='CN') html += `<div class="ob-field"><label>${t('cnapsCode')}</label><input type="text" class="bk-cnaps" value="${esc(b.cnaps_code||'')}" placeholder="${t('cnapsPh')}"></div>`;
+    if(bc==='SG') html += `<div class="ob-field"><label>${t('bankCode')}</label><input type="text" class="bk-bankcode" value="${esc(b.bank_code||'')}" placeholder="${t('bankCodePh')}"></div>
+      <div class="ob-field"><label>${t('branchCode')}</label><input type="text" class="bk-branchcode" value="${esc(b.branch_code||'')}" placeholder="${t('branchCodePh')}"></div>`;
+    if(bc==='MY') html += `<div class="ob-field"><label>${t('bankCode')}</label><input type="text" class="bk-bankcode" value="${esc(b.bank_code||'')}" placeholder="${t('bankCodePh')}"></div>`;
+    if(bc==='OTHER') html += `<div class="ob-field"><label>${t('iban')}</label><input type="text" class="bk-iban" value="${esc(b.iban||'')}" placeholder="${t('ibanPh')}"></div>
+      <div class="ob-field"><label>${t('routingNo')}</label><input type="text" class="bk-routing" value="${esc(b.routing_number||'')}" placeholder="${t('routingPh')}"></div>`;
+
+    html += `<div class="ob-field ob-full"><label>${t('benefAddr')} ${req}</label><input type="text" class="bk-benef-addr" value="${esc(b.beneficiary_address||'')}" placeholder="${t('benefAddrPh')}"></div>
+      <div class="ob-field ob-full"><label>${t('bankAddr')} ${req}</label><input type="text" class="bk-bank-addr" value="${esc(b.bank_address||'')}" placeholder="${t('bankAddrPh')}"></div>
+      <div class="ob-field"><label>${t('currency')} ${req}</label><select class="bk-currency-sel" data-idx="${idx}">${curOpts.map(([v,k])=>`<option value="${v}" ${(b.currency||'CNY')===v?'selected':''}>${t(k)}</option>`).join('')}</select></div>
+      ${(b.currency==='OTHER')?`<div class="ob-field"><label>${t('curOtherLabel')}</label><input type="text" class="bk-currency-other" value="${esc(b.currency_other||'')}" placeholder="${t('curOtherPh')}"></div>`:''}
+    </div></div>`;
+  });
+
+  html += `<button type="button" class="ob-btn-ghost" id="ob-add-bank-acct" style="margin-top:4px;">+ ${t('addBankAcct')}</button>`;
+  return html;
 }
 
 function renderAgreementStep() {
@@ -275,14 +292,19 @@ function collectCurrentData() {
       });
       break;
     case 4:
-      formData.banking_info = {
-        bank_country:v('bk-country'), bank_name:v('bk-bank'), branch_name:v('bk-branch'),
-        account_name:v('bk-holder'), account_number:v('bk-acct'), swift_bic:v('bk-swift'),
-        cnaps_code:v('bk-cnaps'), bank_code:v('bk-bankcode'), branch_code:v('bk-branchcode'),
-        iban:v('bk-iban'), routing_number:v('bk-routing'),
-        beneficiary_address:v('bk-benef-addr'), bank_address:v('bk-bank-addr'), currency:v('bk-currency'),
-        currency_other:v('bk-currency-other'),
-      };
+      formData.banking_info = [];
+      document.querySelectorAll('.ob-bank-card').forEach(card => {
+        const q = sel => card.querySelector(sel)?.value?.trim()||'';
+        formData.banking_info.push({
+          bank_country: q('.bk-country-sel'), bank_name: q('.bk-bank'), branch_name: q('.bk-branch'),
+          account_name: q('.bk-holder'), account_number: q('.bk-acct'), swift_bic: q('.bk-swift'),
+          cnaps_code: q('.bk-cnaps'), bank_code: q('.bk-bankcode'), branch_code: q('.bk-branchcode'),
+          iban: q('.bk-iban'), routing_number: q('.bk-routing'),
+          beneficiary_address: q('.bk-benef-addr'), bank_address: q('.bk-bank-addr'),
+          currency: q('.bk-currency-sel'), currency_other: q('.bk-currency-other'),
+        });
+      });
+      if(!formData.banking_info.length) formData.banking_info.push({});
       break;
   }
 }
@@ -298,7 +320,11 @@ function validateCurrentStep() {
       if(!ph) m.push(t('phone'));
       else if(!/^\+?[0-9][0-9\s\-()]{5,24}$/.test(ph)){alert(t('phoneInvalid'));return false;}
       break;
-    case 4: if(!v('bk-bank'))m.push(t('bankName')); if(!v('bk-holder'))m.push(t('acctName')); if(!v('bk-acct'))m.push(t('acctNumber')); break;
+    case 4: {
+      const firstCard = document.querySelector('.ob-bank-card');
+      const fv = sel => firstCard?.querySelector(sel)?.value?.trim()||'';
+      if(!fv('.bk-bank'))m.push(t('bankName')); if(!fv('.bk-holder'))m.push(t('acctName')); if(!fv('.bk-acct'))m.push(t('acctNumber')); break;
+    }
     case 5:
       if(!document.getElementById('agree-terms')?.checked){alert(t('alertAgree'));return false;}
       if(!v('sig-name')||!v('sig-signature')){alert(t('alertSig'));return false;}

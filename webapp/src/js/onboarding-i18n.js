@@ -112,6 +112,9 @@ export const DICT = {
 
   // ── Step 5: Banking ─────────────────────────────
   bankHint:         { en: 'Provide your banking details for marketplace payouts. This information is encrypted and stored securely.', zh: '请提供您的银行账户信息用于平台付款结算。所有信息均加密安全存储。' },
+  bankAcctLabel:    { en: 'Bank Account', zh: '银行账户' },
+  addBankAcct:      { en: 'Add Another Bank Account', zh: '添加另一个银行账户' },
+  removeAcct:       { en: 'Remove this account', zh: '移除此账户' },
   bankCountry:      { en: 'Bank Account Country / Region', zh: '银行账户所在国家/地区' },
   bankName:         { en: 'Bank Name', zh: '开户银行名称' },
   bankNamePh:       { en: 'e.g. Industrial and Commercial Bank of China', zh: '如：中国工商银行' },

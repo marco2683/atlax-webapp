@@ -1383,7 +1383,7 @@ function renderCreateProductForm(editProdId = null) {
       const { data, error } = await supabase.from('category_parameters').insert({
         category_id: catId,
         parameter_name: name,
-        parameter_slug: paramSlug,
+        parameter_id: paramSlug,
         data_type: dataType,
         unit: unit || null,
         priority: priority,

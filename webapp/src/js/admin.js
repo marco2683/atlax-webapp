@@ -852,7 +852,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const contact = (s.legal_representatives || [])[0] || {};
     const salesContact = (s.key_contacts || [])[0] || {};
-    const banking = s.banking_info || {};
+    const bankingRaw = s.banking_info || {};
+    const bankingAccounts = Array.isArray(bankingRaw) ? bankingRaw : (bankingRaw.bank_name ? [bankingRaw] : []);
     const certs = s.certifications || [];
     const regAddr = s.registered_address || {};
     const facAddr = s.factory_address || {};
@@ -1034,21 +1035,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><line x1="4" y1="10" x2="4" y2="21"/><line x1="20" y1="10" x2="20" y2="21"/><line x1="8" y1="14" x2="8" y2="17"/><line x1="12" y1="14" x2="12" y2="17"/><line x1="16" y1="14" x2="16" y2="17"/></svg>
                 Banking Information
               </div>
+              <span style="font-size:12px;color:var(--color-steel-400);font-weight:400;">${bankingAccounts.length} account${bankingAccounts.length !== 1 ? 's' : ''}</span>
             </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-              ${infoField('Bank Name', banking.bank_name)}
-              ${infoField('Branch', banking.branch_name)}
-              ${infoField('Account Name', banking.account_name)}
-              ${infoField('Account Number', banking.account_number)}
-              ${infoField('SWIFT/BIC', banking.swift_bic)}
-              ${infoField('Currency', banking.currency)}
-              ${infoField('Bank Country', banking.bank_country)}
-              ${infoField('CNAPS Code', banking.cnaps_code)}
-              ${infoField('IBAN', banking.iban)}
-              ${infoField('Beneficiary Address', banking.beneficiary_address)}
-              ${infoField('Bank Address', banking.bank_address)}
-              ${infoField('Routing No.', banking.routing_number)}
-            </div>
+            ${bankingAccounts.map((bk, bi) => `
+              <div style="border:1px solid var(--color-slate-800);border-radius:8px;padding:16px;margin-bottom:12px;${bi > 0 ? 'margin-top:8px;' : ''}">
+                <div style="font-weight:600;font-size:13px;color:var(--color-cloud);margin-bottom:10px;">🏦 Account ${bi+1}${bk.currency ? ' — '+bk.currency : ''}</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+                  ${infoField('Bank Name', bk.bank_name)}
+                  ${infoField('Branch', bk.branch_name)}
+                  ${infoField('Account Name', bk.account_name)}
+                  ${infoField('Account Number', bk.account_number)}
+                  ${infoField('SWIFT/BIC', bk.swift_bic)}
+                  ${infoField('Currency', bk.currency)}
+                  ${infoField('Bank Country', bk.bank_country)}
+                  ${infoField('CNAPS Code', bk.cnaps_code)}
+                  ${infoField('IBAN', bk.iban)}
+                  ${infoField('Beneficiary Address', bk.beneficiary_address)}
+                  ${infoField('Bank Address', bk.bank_address)}
+                  ${infoField('Routing No.', bk.routing_number)}
+                </div>
+              </div>
+            `).join('')}
           </div>
 
           <!-- Certifications (full width) -->
