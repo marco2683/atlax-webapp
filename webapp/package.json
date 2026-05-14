@@ -20,6 +20,7 @@
     "jspdf-autotable": "^5.0.7",
     "jszip": "^3.10.1",
     "occt-import-js": "^0.0.23",
+    "puppeteer": "^24.43.1",
     "resend": "^6.12.2",
     "stripe": "^22.0.0",
     "three": "^0.183.2"

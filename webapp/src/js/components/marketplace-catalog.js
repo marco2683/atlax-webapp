@@ -669,7 +669,7 @@ async function fetchAndRenderProducts(searchQuery = '') {
   }
 
   // Build query
-  let queryBuilder = supabase.from('products').select('*, oem_sellers(name)');
+  let queryBuilder = supabase.from('products').select('*, oem_sellers(id, name), product_assets(asset_type)');
 
   if (activeCategoryId) {
     // Include child categories
@@ -712,7 +712,7 @@ function applyFiltersAndRender(searchQuery = '') {
   if (query) {
     const q = query.toLowerCase();
     results = results.filter(p => {
-      const text = `${p.mpn || ''} ${p.name || ''} ${p.suppliers?.name || ''} ${JSON.stringify(p.specs || {})}`.toLowerCase();
+      const text = `${p.mpn || ''} ${p.name || ''} ${p.oem_sellers?.name || ''} ${JSON.stringify(p.specs || {})}`.toLowerCase();
       return text.includes(q);
     });
   }
@@ -723,7 +723,7 @@ function applyFiltersAndRender(searchQuery = '') {
 
     if (paramName === 'supplier') {
       results = results.filter(p => {
-        return selectedValues.has(p.suppliers?.name || '');
+        return selectedValues.has(p.oem_sellers?.name || '');
       });
     } else {
       results = results.filter(p => {
@@ -774,8 +774,8 @@ function applySorting() {
         bVal = b.stock_qty || 0;
         break;
       case 'supplier':
-        aVal = (a.suppliers?.name || '').toLowerCase();
-        bVal = (b.suppliers?.name || '').toLowerCase();
+        aVal = (a.oem_sellers?.name || '').toLowerCase();
+        bVal = (b.oem_sellers?.name || '').toLowerCase();
         break;
       default:
         if (sortField.startsWith('spec_')) {
@@ -842,21 +842,26 @@ function renderTableData(products) {
   }
 
   const html = products.map((p, idx) => {
-    const suppName = p.suppliers?.name || 'Unknown';
+    const suppName = p.oem_sellers?.name || 'Unknown';
     const mpn = p.mpn || 'N/A';
     const desc = p.name || p.description || '';
-    const price = p.base_price ? `$${Number(p.base_price).toFixed(5)}` : 'RFQ';
-    const moq = p.moq || 1;
-    const stockQty = p.stock_qty || Math.floor(Math.random() * 50000); // Fallback for demo
+    const price = p.base_price != null ? `$${Number(p.base_price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}` : 'RFQ';
+    const moq = p.pricing_tiers?.[0]?.min_quantity || p.moq || 1;
+    const stockQty = p.stock_quantity != null ? p.stock_quantity : Math.floor(Math.random() * 50000); // Fallback for demo
     const stockFormatted = stockQty.toLocaleString();
-    const leadTime = p.specs?.lead_time || 'Factory Stock';
+    const leadTime = p.specs?.lead_time || p.pricing_tiers?.[0]?.lead_time_days || 'Factory Stock';
 
     // Parse pricing tiers
-    const p1 = p.specs?.price_1 ? `1: $${Number(p.specs.price_1).toFixed(5)}<br>` : '';
-    const p10 = p.specs?.price_10 ? `10: $${Number(p.specs.price_10).toFixed(5)}<br>` : '';
-    const p100 = p.specs?.price_100 ? `100: $${Number(p.specs.price_100).toFixed(5)}<br>` : '';
-    const p1000 = p.specs?.price_1000 ? `1,000: $${Number(p.specs.price_1000).toFixed(5)}` : '';
-    const pricingHTML = p1+p10+p100+p1000 || (p.base_price ? `1: $${Number(p.base_price).toFixed(5)}` : 'RFQ');
+    let pricingHTML = '';
+    if (p.pricing_tiers && p.pricing_tiers.length > 0) {
+      pricingHTML = p.pricing_tiers.map(t => `${t.min_quantity.toLocaleString()}: $${Number(t.unit_price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}`).join('<br>');
+    } else {
+      const p1 = p.specs?.price_1 ? `1: $${Number(p.specs.price_1).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}<br>` : '';
+      const p10 = p.specs?.price_10 ? `10: $${Number(p.specs.price_10).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}<br>` : '';
+      const p100 = p.specs?.price_100 ? `100: $${Number(p.specs.price_100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}<br>` : '';
+      const p1000 = p.specs?.price_1000 ? `1,000: $${Number(p.specs.price_1000).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}` : '';
+      pricingHTML = p1+p10+p100+p1000 || (p.base_price != null ? `1: $${Number(p.base_price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}` : 'RFQ');
+    }
 
     // Build spec cells
     const specCells = specColumns.map(col => {
@@ -865,6 +870,22 @@ function renderTableData(products) {
       const val = p.specs?.[col] ?? '-';
       return `<td>${val}</td>`;
     }).join('');
+    // Asset Badges
+    const assets = p.product_assets || [];
+    const has3D = assets.some(a => a.asset_type === '3d_model');
+    const has2D = assets.some(a => a.asset_type === '2d_drawing');
+    const hasPDF = assets.some(a => a.asset_type === 'datasheet');
+    const hasVid = assets.some(a => a.asset_type === 'video');
+    
+    let assetHTML = '';
+    if(has3D || has2D || hasPDF || hasVid) {
+      assetHTML = '<div style="display:flex; gap:4px; margin-top:6px; margin-bottom:4px;">';
+      if(has3D) assetHTML += `<span style="font-size:10px; background:#e0f2fe; color:#0369a1; padding:2px 4px; border-radius:3px; font-weight:600; cursor:help;" title="3D Model Available">3D</span>`;
+      if(has2D) assetHTML += `<span style="font-size:10px; background:#f1f5f9; color:#475569; padding:2px 4px; border-radius:3px; font-weight:600; cursor:help;" title="2D Drawing Available">2D</span>`;
+      if(hasPDF) assetHTML += `<span style="font-size:10px; background:#fee2e2; color:#b91c1c; padding:2px 4px; border-radius:3px; font-weight:600; cursor:help;" title="Datasheet Available">PDF</span>`;
+      if(hasVid) assetHTML += `<span style="font-size:10px; background:#fef3c7; color:#b45309; padding:2px 4px; border-radius:3px; font-weight:600; cursor:help;" title="Video Available">VID</span>`;
+      assetHTML += '</div>';
+    }
 
     return `
       <tr>
@@ -880,17 +901,18 @@ function renderTableData(products) {
         <td>
           <a class="dk-part-link" data-product-id="${p.id}">${mpn}</a>
           <span class="dk-part-desc">${desc}</span>
+          ${assetHTML}
           <span class="dk-supplier-link">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             ${suppName}
           </span>
         </td>
         <td>
-          <div class="dk-stock-qty">${stockFormatted}</div>
+          <div class="dk-stock-qty" style="font-weight:normal; color:#555;">${stockFormatted}</div>
           <div class="dk-stock-status">${stockQty > 0 ? 'In Stock' : leadTime}</div>
         </td>
         <td class="dk-price-cell">
-          <div class="dk-price-value">${pricingHTML}</div>
+          <div class="dk-price-value" style="font-weight:bold;">${pricingHTML}</div>
         </td>
         <td>${suppName}</td>
         <td><span class="dk-status-active">Active</span></td>
@@ -1035,7 +1057,7 @@ function wireEventListeners() {
     // Extract unique manufacturers from allProducts
     const mfgMap = {};
     allProducts.forEach(p => {
-      const name = p.suppliers?.name || 'Unknown';
+      const name = p.oem_sellers?.name || 'Unknown';
       if (!mfgMap[name]) {
         mfgMap[name] = { name, productCount: 0, categories: new Set(), image: null };
       }
@@ -1446,7 +1468,7 @@ function downloadTableCSV() {
     const base = [
       p.mpn || '',
       p.name || '',
-      p.suppliers?.name || '',
+      p.oem_sellers?.name || '',
       p.base_price || '',
       p.moq || '',
       'Active'
@@ -1473,7 +1495,7 @@ function downloadTableCSV() {
 // PRODUCT DETAIL PAGE (PDP) LOGIC
 // ═══════════════════════════════════════════════════════════════
 
-function openPDP(productId) {
+async function openPDP(productId) {
   const p = allProducts.find(x => String(x.id) === String(productId));
   if (!p) return;
 
@@ -1491,7 +1513,7 @@ function openPDP(productId) {
   // Header Details
   document.getElementById('pdp-mpn').textContent = p.name || p.description || p.mpn;
   document.getElementById('pdp-desc').textContent = p.description || '';
-  const mfgName = p.suppliers?.name || 'Unknown Manufacturer';
+  const mfgName = p.oem_sellers?.name || 'Unknown Manufacturer';
   document.getElementById('pdp-supplier').textContent = mfgName;
 
   // Media - initialise carousel
@@ -1521,23 +1543,73 @@ function openPDP(productId) {
   const dsCell = document.getElementById('pdp-pdf-cell');
   if (dsCell) dsCell.innerHTML = `<span style="color:#999;font-style:italic;">No datasheet available</span>`;
 
+  // Fetch product assets dynamically
+  const wrapper3d = document.getElementById('pdp-3d-wrapper');
+  const wrapper2d = document.getElementById('pdp-2d-wrapper');
+  const wrapperVideo = document.getElementById('pdp-video-wrapper');
+  if(wrapper3d) wrapper3d.style.display = 'none';
+  if(wrapper2d) wrapper2d.style.display = 'none';
+  if(wrapperVideo) wrapperVideo.style.display = 'none';
+
+  try {
+    const { data: assets } = await supabase.from('product_assets').select('*').eq('product_id', productId);
+      assets.forEach(a => {
+        let ext = a.url.split('.').pop().split('?')[0];
+        let dlUrl = `${a.url}?download=${encodeURIComponent(p.mpn + '.' + ext)}`;
+
+        if (a.asset_type === 'datasheet') {
+          if (dsCell) dsCell.innerHTML = `<a href="javascript:void(0)" onclick="window.openAssetViewer('${a.url}', 'Technical Datasheet', 'pdf')" style="color:#007185; text-decoration:underline; font-weight:600;"><svg style="vertical-align:middle; margin-right:4px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>View Datasheet</a>`;
+        } else if (a.asset_type === '3d_model') {
+          if (wrapper3d) { 
+            const vBtn = document.getElementById('pdp-3d-view');
+            const dBtn = document.getElementById('pdp-3d-dl');
+            if(vBtn) { vBtn.href = "javascript:void(0)"; vBtn.onclick = () => window.openAssetViewer(a.url, '3D Model Viewer', '3d'); }
+            if(dBtn) { dBtn.href = dlUrl; dBtn.download = ''; }
+            wrapper3d.style.display = 'flex'; 
+          }
+        } else if (a.asset_type === '2d_drawing') {
+          if (wrapper2d) { 
+            const vBtn = document.getElementById('pdp-2d-view');
+            const dBtn = document.getElementById('pdp-2d-dl');
+            if(vBtn) { vBtn.href = "javascript:void(0)"; vBtn.onclick = () => window.openAssetViewer(a.url, '2D Engineering Drawing', 'pdf'); }
+            if(dBtn) { dBtn.href = dlUrl; dBtn.download = ''; }
+            wrapper2d.style.display = 'flex'; 
+          }
+        } else if (a.asset_type === 'video') {
+          if (wrapperVideo) { 
+            const vBtn = document.getElementById('pdp-video-view');
+            const dBtn = document.getElementById('pdp-video-dl');
+            if(vBtn) { vBtn.href = "javascript:void(0)"; vBtn.onclick = () => window.openAssetViewer(a.url, 'Product Video', 'video'); }
+            if(dBtn) { dBtn.href = dlUrl; dBtn.download = ''; }
+            wrapperVideo.style.display = 'flex'; 
+          }
+        }
+      });
+  } catch (err) {
+    console.error('Error fetching product assets for PDP:', err);
+  }
+
   // Description and Specs
   const richDesc = document.getElementById('pdp-rich-desc');
   if(richDesc) richDesc.innerHTML = p.rich_description || p.description || 'No overview available.';
   
-  // Specifications Build (2 Column)
-  const col1 = document.getElementById('pdp-specs-col1');
-  const col2 = document.getElementById('pdp-specs-col2');
-  if (col1 && col2) {
-    let s1 = '', s2 = '';
-    const ignoreKeys = ['price_1', 'price_10', 'price_100', 'price_1000', 'lead_time', 'price', 'pricing_tiers', 'features'];
+  // Specifications Build (unified 4-column zebra table)
+  const tBody = document.getElementById('pdp-attributes-tbody');
+  if (tBody) {
+    const ignoreKeys = ['price_1', 'price_10', 'price_100', 'price_1000', 'lead_time', 'price', 'pricing_tiers', 'features', 'series', 'packaging', 'base_product_number'];
+    const categoryName = activeCategoryPath.length ? activeCategoryPath[activeCategoryPath.length-1].name : 'Uncategorized';
     
     // Add Base Specs
     const specsArray = [];
+    specsArray.push({k: 'Category', v: `<a href="#" style="color:#2563eb; text-decoration:none; font-weight:600;">${categoryName}</a>`});
     specsArray.push({k: 'Manufacturer', v: mfgName});
-    specsArray.push({k: 'Product Range', v: 'Standard Series'});
+    specsArray.push({k: 'Series', v: p.specs?.series ? `<a href="#" style="color:#2563eb; text-decoration:none; font-weight:600;">${p.specs.series}</a>` : '<a href="#" style="color:#2563eb; text-decoration:none; font-weight:600;">Standard Series</a>'});
+    specsArray.push({k: 'Packaging', v: p.specs?.packaging || 'Bulk'});
     specsArray.push({k: 'Part Status', v: 'Active'});
-    
+    if (p.specs?.base_product_number) {
+        specsArray.push({k: 'Base Product Number', v: `<a href="#" style="color:#2563eb; text-decoration:none; font-weight:600;">${p.specs.base_product_number}</a>`});
+    }
+
     // Dynamic JSONB specs
     if (p.specs && typeof p.specs === 'object' && !Array.isArray(p.specs)) {
       Object.keys(p.specs).forEach(k => {
@@ -1548,18 +1620,21 @@ function openPDP(productId) {
       });
     }
     
-    // distribute evenly
-    const half = Math.ceil(specsArray.length / 2);
-    specsArray.forEach((s, idx) => {
-        const row = `<tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:8px; color:#666; width:40%;">${s.k}</td><td style="padding:8px;">${s.v}</td></tr>`;
-        if(idx < half) s1 += row; else s2 += row;
-    });
-    col1.innerHTML = s1;
-    col2.innerHTML = s2;
+    // Process one attribute per row (2-column layout)
+    for (let i = 0; i < specsArray.length; i++) {
+      const s = specsArray[i];
+      const bg = i % 2 === 0 ? '#F3F4F6' : '#FFFFFF';
+      
+      html += `<tr style="background:${bg}; border-bottom: 1px solid #E5E7EB;">
+        <td style="padding:8px 12px; width:40%; font-weight:700; color:#374151;">${s.k}</td>
+        <td style="padding:8px 12px; width:60%; color:#111827;">${s.v}</td>
+      </tr>`;
+    }
+    tBody.innerHTML = html;
   }
 
   // Buy Box Data
-  const stockQty = p.stock_qty || Math.floor(Math.random() * 50000);
+  const stockQty = p.stock_qty != null ? p.stock_qty : Math.floor(Math.random() * 50000);
   document.getElementById('pdp-stock-val').textContent = stockQty.toLocaleString();
   document.getElementById('pdp-lead-time').innerHTML = `Delivery in <b>${p.specs?.lead_time || '3-5'} Days</b> <span style="font-weight:normal; font-size:12px; color:#666;">(Factory stock)</span>`;
 
@@ -1578,13 +1653,13 @@ function openPDP(productId) {
   const hlPrice = document.getElementById('pdp-highlight-price');
   if(pTbody) {
     let ptHtml = '';
-    const baseP = p.base_price ? Number(p.base_price) : 0;
+    const baseP = p.base_price != null ? Number(p.base_price) : 0;
     
-    if (p.specs && p.specs.pricing_tiers && p.specs.pricing_tiers.length > 0) {
-        const tiers = [...p.specs.pricing_tiers].sort((a,b)=>a.quantity - b.quantity);
+    if (p.pricing_tiers && p.pricing_tiers.length > 0) {
+        const tiers = [...p.pricing_tiers].sort((a,b)=>a.min_quantity - b.min_quantity);
         tiers.forEach((t, i) => {
-           ptHtml += `<tr style="border-bottom:1px solid #f0f0f0; ${i===0?'background:#f4fcf7;':''}"><td style="padding:8px;">${t.quantity}+</td><td style="text-align:right; padding:8px;">$${Number(t.price).toFixed(3)}</td></tr>`;
-           if (i === 0 && hlPrice) hlPrice.innerHTML = `$${Number(t.price).toFixed(3)} <span style="font-size:11px; font-weight:normal; color:#666;">(Unit Price)</span>`;
+           ptHtml += `<tr style="border-bottom:1px solid #f0f0f0; ${i===0?'background:#f4fcf7;':''}"><td style="padding:8px;">${t.min_quantity}+</td><td style="text-align:right; padding:8px;">$${Number(t.unit_price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}</td></tr>`;
+           if (i === 0 && hlPrice) hlPrice.innerHTML = `$${Number(t.unit_price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})} <span style="font-size:11px; font-weight:normal; color:#666;">(Unit Price)</span>`;
         });
     } else {
         const t1 = p.specs?.price_1 ? Number(p.specs.price_1) : baseP;
@@ -1593,12 +1668,12 @@ function openPDP(productId) {
         const t1000 = p.specs?.price_1000 ? Number(p.specs.price_1000) : (baseP * 0.85);
     
         if (t1 > 0) {
-            ptHtml += `<tr style="background:#f4fcf7; border-bottom:1px solid #f0f0f0;"><td style="padding:8px;">1+</td><td style="text-align:right; padding:8px;">$${t1.toFixed(3)}</td></tr>`;
-            if(hlPrice) hlPrice.innerHTML = `$${t1.toFixed(3)} <span style="font-size:11px; font-weight:normal; color:#666;">(Unit Price)</span>`;
+            ptHtml += `<tr style="background:#f4fcf7; border-bottom:1px solid #f0f0f0;"><td style="padding:8px;">1+</td><td style="text-align:right; padding:8px;">$${t1.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}</td></tr>`;
+            if(hlPrice) hlPrice.innerHTML = `$${t1.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})} <span style="font-size:11px; font-weight:normal; color:#666;">(Unit Price)</span>`;
         }
-        if (t10 > 1 && t10 !== t1) ptHtml += `<tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:8px;">10+</td><td style="text-align:right; padding:8px;">$${t10.toFixed(3)}</td></tr>`;
-        if (t100 > 1 && t100 !== t10) ptHtml += `<tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:8px;">100+</td><td style="text-align:right; padding:8px;">$${t100.toFixed(3)}</td></tr>`;
-        if (t1000 > 1 && t1000 !== t100) ptHtml += `<tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:8px;">1,000+</td><td style="text-align:right; padding:8px;">$${t1000.toFixed(3)}</td></tr>`;
+        if (t10 > 1 && t10 !== t1) ptHtml += `<tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:8px;">10+</td><td style="text-align:right; padding:8px;">$${t10.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}</td></tr>`;
+        if (t100 > 1 && t100 !== t10) ptHtml += `<tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:8px;">100+</td><td style="text-align:right; padding:8px;">$${t100.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}</td></tr>`;
+        if (t1000 > 1 && t1000 !== t100) ptHtml += `<tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:8px;">1,000+</td><td style="text-align:right; padding:8px;">$${t1000.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}</td></tr>`;
     }
 
     if(ptHtml === '') {
@@ -1624,7 +1699,7 @@ function openPDP(productId) {
       newBtn.disabled = true;
       newBtn.innerHTML = 'Adding...';
 
-      let unitPrice = p.base_price ? Number(p.base_price) : 0;
+      let unitPrice = p.base_price != null ? Number(p.base_price) : 0;
       if (p.specs && p.specs.pricing_tiers && p.specs.pricing_tiers.length > 0) {
           const tiers = [...p.specs.pricing_tiers].sort((a,b)=>b.quantity - a.quantity);
           const matched = tiers.find(t => reqQty >= t.quantity);
@@ -1640,7 +1715,7 @@ function openPDP(productId) {
         type: 'marketplace_order',
         product_id: p.id,
         mpn: p.mpn,
-        supplier_id: p.supplier_id || p.suppliers?.id,
+        supplier_id: p.supplier_id || p.oem_sellers?.id,
         supplier_name: mfgName,
         quantity: reqQty,
         specs_snapshot: p.specs,
@@ -1672,6 +1747,47 @@ function closePDP() {
   }
   document.getElementById('catalog-layout').style.display = '';
 }
+
+// ═══════════════════════════════════════════════════════════════
+// ASSET VIEWER MODAL LOGIC
+// ═══════════════════════════════════════════════════════════════
+
+window.openAssetViewer = function(url, title, type) {
+  const modal = document.getElementById('asset-viewer-modal');
+  const iframe = document.getElementById('asset-viewer-iframe');
+  const titleEl = document.getElementById('asset-viewer-title');
+  const dlBtn = document.getElementById('asset-viewer-download');
+  const loading = document.getElementById('asset-viewer-loading');
+
+  if (!modal || !iframe) return;
+
+  titleEl.textContent = title;
+  dlBtn.href = url;
+  
+  loading.style.display = 'flex';
+  iframe.style.visibility = 'hidden';
+  iframe.src = ''; // reset
+
+  // Use 3DViewer.net embed for 3D files (STEP, STL, IGES)
+  if (type === '3d') {
+    iframe.src = `https://3dviewer.net/embed.html#model=${url}$edgesettings=on,64,64,64,15`;
+  } else if (type === 'pdf') {
+    // Standard PDF embed via browser iframe
+    iframe.src = url;
+  } else {
+    // Video or unknown, just pass through
+    iframe.src = url;
+  }
+
+  modal.classList.remove('hidden');
+};
+
+window.closeAssetViewer = function() {
+  const modal = document.getElementById('asset-viewer-modal');
+  const iframe = document.getElementById('asset-viewer-iframe');
+  if (modal) modal.classList.add('hidden');
+  if (iframe) iframe.src = ''; // Stop video playback / clean memory
+};
 
 // ═══════════════════════════════════════════════════════════════
 // CART UI AND CHECKOUT LOGIC

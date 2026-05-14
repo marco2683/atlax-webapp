@@ -1,7 +1,5 @@
 import { signUpUser, loginUser } from './services/auth.js';
 import { supabase } from './utils/supabaseClient.js';
-import { markFormLoaded, injectHoneypot, checkForBot } from './utils/botGuard.js';
-
 document.addEventListener('DOMContentLoaded', () => {
   const authModal = document.getElementById('auth-modal');
   if (!authModal) return;
@@ -60,7 +58,25 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       containerLogin.style.display = 'none';
       containerSignup.style.display = 'block';
-      markFormLoaded(); // Bot Guard: start timer
+
+      // Inject Turnstile into signup form
+      const signupFormEl = document.getElementById('signup-form');
+      if (signupFormEl && !document.querySelector('#signup-form .cf-turnstile')) {
+         const turnstileContainer = document.createElement('div');
+         turnstileContainer.className = 'cf-turnstile auth-input-group';
+         turnstileContainer.dataset.sitekey = '0x4AAAAAADOr_yhZAEAJ5dWN'; // Turnstile test key
+         turnstileContainer.style.marginTop = '15px';
+         signupFormEl.insertBefore(turnstileContainer, document.getElementById('signup-submit-btn'));
+    
+         if (!document.getElementById('turnstile-script')) {
+            const script = document.createElement('script');
+            script.id = 'turnstile-script';
+            script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+         }
+      }
     });
 
     toggleToLogin.addEventListener('click', (e) => {
@@ -115,21 +131,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const last = document.getElementById('signup-last').value;
       const company = document.getElementById('signup-company').value;
       const marketingOptIn = document.getElementById('signup-marketing')?.checked || false;
-      
-      // Bot Guard: inject honeypot on first submit attempt (idempotent)
-      injectHoneypot(signupForm);
+      const captchaToken = document.querySelector('#form-signup [name="cf-turnstile-response"]')?.value || document.querySelector('#signup-form [name="cf-turnstile-response"]')?.value;
 
-      // Bot Guard: check before proceeding
-      const botCheck = checkForBot(
-        { firstName: first, lastName: last, company, email },
-        signupForm
-      );
-      if (botCheck.isBot) {
-        signupError.innerText = 'Unable to create account. Please try again later.';
+      if (!captchaToken) {
+        signupError.innerText = 'Please complete the CAPTCHA to proceed.';
         signupError.classList.add('visible');
         signupBtn.innerText = 'Create Account';
         signupBtn.disabled = false;
-        console.warn('[BotGuard] Blocked signup:', botCheck.reason);
         return;
       }
 
@@ -144,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tier: 'basic'
       };
 
-      const { data, error } = await signUpUser(email, pass, metadata);
+      const { data, error } = await signUpUser(email, pass, metadata, captchaToken);
       
       if (error) {
         signupError.innerText = error.message;

@@ -1,7 +1,5 @@
 import { supabase } from './utils/supabaseClient.js';
 import { getMyProfile } from './services/profile.js';
-import { markFormLoaded, injectHoneypot, checkForBot } from './utils/botGuard.js';
-
 document.addEventListener('DOMContentLoaded', async () => {
   const urlParams = new URLSearchParams(window.location.search);
   const initialTier = urlParams.get('tier') || 'free';
@@ -16,10 +14,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   let currentTier = initialTier;
 
-  // Bot Guard: start timing and inject honeypot
-  markFormLoaded();
+  // Inject Turnstile widget
   const step1Form = document.getElementById('step-1-form');
-  if (step1Form) injectHoneypot(step1Form);
+  if (step1Form) {
+     const turnstileContainer = document.createElement('div');
+     turnstileContainer.className = 'cf-turnstile auth-input-group';
+     turnstileContainer.dataset.sitekey = '0x4AAAAAADOr_yhZAEAJ5dWN'; // Turnstile dummy key
+     turnstileContainer.style.marginTop = '15px';
+     step1Form.insertBefore(turnstileContainer, step1Btn);
+     
+     if (!document.getElementById('turnstile-script')) {
+        const script = document.createElement('script');
+        script.id = 'turnstile-script';
+        script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+     }
+  }
   
   const colors = {
     free: '#94a3b8',
@@ -132,18 +144,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const email = document.getElementById('email')?.value || '';
     const password = document.getElementById('password')?.value || '';
 
-    // Bot Guard: check before proceeding (only for new signups)
-    if (!isLoggedIn && password) {
-      const botCheck = checkForBot(
-        { firstName: fname, lastName: lname, company, email },
-        'step-1-form'
-      );
-      if (botCheck.isBot) {
-        step1Btn.classList.remove('loading');
-        alert('Unable to create account. Please try again later.');
-        console.warn('[BotGuard] Blocked signup:', botCheck.reason);
-        return;
-      }
+    const captchaToken = document.querySelector('#step-1-form [name="cf-turnstile-response"]')?.value;
+
+    if (!isLoggedIn && password && !captchaToken) {
+      step1Btn.classList.remove('loading');
+      alert('Please complete the CAPTCHA to proceed.');
+      return;
     }
 
     // If not already logged in, create the account
@@ -154,7 +160,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         last_name: lname,
         company: company,
         tier: currentTier
-      });
+      }, captchaToken);
       
       if (error) {
         step1Btn.classList.remove('loading');

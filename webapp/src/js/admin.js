@@ -136,7 +136,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       loadedSuppliers = allSupData.map(row => {
         const s = { ...row.data, id: row.id, name: row.name, segment: row.segment, techGroup: row.tech_group };
         // Reconstruct techGroups array: prefer data.techGroups, fallback to single tech_group
-        if (!s.techGroups || !Array.isArray(s.techGroups) || s.techGroups.length === 0) {
+        if (typeof s.techGroups === 'string') {
+          s.techGroups = s.techGroups.split(',').map(g => g.trim()).filter(Boolean);
+        } else if (!s.techGroups || !Array.isArray(s.techGroups) || s.techGroups.length === 0) {
           s.techGroups = s.techGroup ? [s.techGroup] : [];
         }
         if (!s.techGroup && s.techGroups.length > 0) {
@@ -879,7 +881,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const price = p.base_price ? fmtCurrency(p.base_price) : '—';
       return `<tr>
         <td><div style="display:flex;align-items:center;gap:10px;">
-          <img src="${p.image_url || '/placeholder.png'}" style="width:36px;height:36px;object-fit:cover;border-radius:4px;border:1px solid rgba(255,255,255,0.08);" onerror="this.src='https://via.placeholder.com/64x64.png?text=—'">
+          <img src="${p.image_url || p.specs?.images?.[0] || '/placeholder.png'}" style="width:36px;height:36px;object-fit:cover;border-radius:4px;border:1px solid rgba(255,255,255,0.08);" onerror="this.src='https://via.placeholder.com/64x64.png?text=—'">
           <div><div style="font-weight:600;font-size:13px;">${esc(p.description || p.mpn)}</div><div style="font-size:11px;color:var(--color-steel-400);">${esc(p.mpn)}</div></div>
         </div></td>
         <td style="${stockClass}">${stock.toLocaleString()}</td>
@@ -1883,102 +1885,122 @@ document.addEventListener('DOMContentLoaded', async () => {
             const categoryHTMLMap = {
               'img_product': `
                 <div class="admin-image-category admin-category-draggable" data-img-name="img_product" draggable="true" style="margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 16px; background: rgba(0,0,0,0.2); position: relative;">
-                  <h5 style="margin-top: 0; cursor: grab; display: flex; align-items: center; gap: 8px;" class="admin-cat-drag-handle">
-                    <span style="color: rgba(255,255,255,0.4); font-size:16px;">⠿</span> Product Samples
+                  <h5 style="margin-top: 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px; cursor: grab;" class="admin-cat-drag-handle">
+                      <span style="color: rgba(255,255,255,0.4); font-size:16px;">⠿</span> Product Samples
+                    </div>
+                    <button type="button" onclick="const c = this.parentElement.nextElementSibling; const isHidden = c.style.display === 'none'; c.style.display = isHidden ? 'block' : 'none'; this.innerHTML = isHidden ? '▼' : '▶';" style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:12px; padding:4px;">▼</button>
                   </h5>
-                  <div class="admin-image-url-list" id="admin-sup-img-products">
-                    ${(s.images?.product?.length ? s.images.product : ['']).map(url => `
-                      <div class="admin-img-url-row" draggable="true">
-                        <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
-                        ${url ? `<img src="${url}" class="admin-img-thumb" referrerpolicy="no-referrer" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
-                        <input type="text" name="img_product" value="${url}" placeholder="https://example.com/product-1.jpg">
-                        <div class="admin-img-reorder-group">
-                          <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
-                          <button type="button" class="admin-img-reorder-btn admin-img-move-down" title="Move down">▼</button>
+                  <div class="admin-category-content">
+                    <div class="admin-image-url-list" id="admin-sup-img-products">
+                      ${(s.images?.product?.length ? s.images.product : ['']).map(url => `
+                        <div class="admin-img-url-row" draggable="true">
+                          <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
+                          ${url ? `<img src="${url}" class="admin-img-thumb" referrerpolicy="no-referrer" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
+                          <input type="text" name="img_product" value="${url}" placeholder="https://example.com/product-1.jpg">
+                          <div class="admin-img-reorder-group">
+                            <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
+                            <button type="button" class="admin-img-reorder-btn admin-img-move-down" title="Move down">▼</button>
+                          </div>
+                          <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
+                            📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="image/*">
+                          </label>
+                          <button type="button" class="admin-remove-row-btn">✕</button>
                         </div>
-                        <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
-                          📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="image/*">
-                        </label>
-                        <button type="button" class="admin-remove-row-btn">✕</button>
-                      </div>
-                    `).join('')}
+                      `).join('')}
+                    </div>
+                    <button type="button" class="admin-add-row-btn" data-target="admin-sup-img-products" data-name="img_product" data-accept="image/*">+ Add Product Image</button>
                   </div>
-                  <button type="button" class="admin-add-row-btn" data-target="admin-sup-img-products" data-name="img_product" data-accept="image/*">+ Add Product Image</button>
                 </div>
               `,
               'img_facility': `
                 <div class="admin-image-category admin-category-draggable" data-img-name="img_facility" draggable="true" style="margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 16px; background: rgba(0,0,0,0.2); position: relative;">
-                  <h5 style="margin-top: 0; cursor: grab; display: flex; align-items: center; gap: 8px;" class="admin-cat-drag-handle">
-                    <span style="color: rgba(255,255,255,0.4); font-size:16px;">⠿</span> Facility / Factory Floor
+                  <h5 style="margin-top: 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px; cursor: grab;" class="admin-cat-drag-handle">
+                      <span style="color: rgba(255,255,255,0.4); font-size:16px;">⠿</span> Facility / Factory Floor
+                    </div>
+                    <button type="button" onclick="const c = this.parentElement.nextElementSibling; const isHidden = c.style.display === 'none'; c.style.display = isHidden ? 'block' : 'none'; this.innerHTML = isHidden ? '▼' : '▶';" style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:12px; padding:4px;">▼</button>
                   </h5>
-                  <div class="admin-image-url-list" id="admin-sup-img-facility">
-                    ${(s.images?.facility?.length ? s.images.facility : ['']).map(url => `
-                      <div class="admin-img-url-row" draggable="true">
-                        <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
-                        ${url ? `<img src="${url}" class="admin-img-thumb" referrerpolicy="no-referrer" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
-                        <input type="text" name="img_facility" value="${url}" placeholder="https://example.com/factory-1.jpg">
-                        <div class="admin-img-reorder-group">
-                          <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
-                          <button type="button" class="admin-img-reorder-btn admin-img-move-down" title="Move down">▼</button>
+                  <div class="admin-category-content">
+                    <div class="admin-image-url-list" id="admin-sup-img-facility">
+                      ${(s.images?.facility?.length ? s.images.facility : ['']).map(url => `
+                        <div class="admin-img-url-row" draggable="true">
+                          <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
+                          ${url ? `<img src="${url}" class="admin-img-thumb" referrerpolicy="no-referrer" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
+                          <input type="text" name="img_facility" value="${url}" placeholder="https://example.com/factory-1.jpg">
+                          <div class="admin-img-reorder-group">
+                            <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
+                            <button type="button" class="admin-img-reorder-btn admin-img-move-down" title="Move down">▼</button>
+                          </div>
+                          <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
+                            📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="image/*">
+                          </label>
+                          <button type="button" class="admin-remove-row-btn">✕</button>
                         </div>
-                        <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
-                          📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="image/*">
-                        </label>
-                        <button type="button" class="admin-remove-row-btn">✕</button>
-                      </div>
-                    `).join('')}
+                      `).join('')}
+                    </div>
+                    <button type="button" class="admin-add-row-btn" data-target="admin-sup-img-facility" data-name="img_facility" data-accept="image/*">+ Add Facility Image</button>
                   </div>
-                  <button type="button" class="admin-add-row-btn" data-target="admin-sup-img-facility" data-name="img_facility" data-accept="image/*">+ Add Facility Image</button>
                 </div>
               `,
               'img_equipment': `
                 <div class="admin-image-category admin-category-draggable" data-img-name="img_equipment" draggable="true" style="margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 16px; background: rgba(0,0,0,0.2); position: relative;">
-                  <h5 style="margin-top: 0; cursor: grab; display: flex; align-items: center; gap: 8px;" class="admin-cat-drag-handle">
-                    <span style="color: rgba(255,255,255,0.4); font-size:16px;">⠿</span> Equipment / Machinery
+                  <h5 style="margin-top: 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px; cursor: grab;" class="admin-cat-drag-handle">
+                      <span style="color: rgba(255,255,255,0.4); font-size:16px;">⠿</span> Equipment / Machinery
+                    </div>
+                    <button type="button" onclick="const c = this.parentElement.nextElementSibling; const isHidden = c.style.display === 'none'; c.style.display = isHidden ? 'block' : 'none'; this.innerHTML = isHidden ? '▼' : '▶';" style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:12px; padding:4px;">▼</button>
                   </h5>
-                  <div class="admin-image-url-list" id="admin-sup-img-equipment">
-                    ${(s.images?.equipment?.length ? s.images.equipment : ['']).map(url => `
-                      <div class="admin-img-url-row" draggable="true">
-                        <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
-                        ${url ? `<img src="${url}" class="admin-img-thumb" referrerpolicy="no-referrer" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
-                        <input type="text" name="img_equipment" value="${url}" placeholder="https://example.com/cnc-machine.jpg">
-                        <div class="admin-img-reorder-group">
-                          <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
-                          <button type="button" class="admin-img-reorder-btn admin-img-move-down" title="Move down">▼</button>
+                  <div class="admin-category-content">
+                    <div class="admin-image-url-list" id="admin-sup-img-equipment">
+                      ${(s.images?.equipment?.length ? s.images.equipment : ['']).map(url => `
+                        <div class="admin-img-url-row" draggable="true">
+                          <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
+                          ${url ? `<img src="${url}" class="admin-img-thumb" referrerpolicy="no-referrer" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
+                          <input type="text" name="img_equipment" value="${url}" placeholder="https://example.com/cnc-machine.jpg">
+                          <div class="admin-img-reorder-group">
+                            <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
+                            <button type="button" class="admin-img-reorder-btn admin-img-move-down" title="Move down">▼</button>
+                          </div>
+                          <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
+                            📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="image/*">
+                          </label>
+                          <button type="button" class="admin-remove-row-btn">✕</button>
                         </div>
-                        <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
-                          📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="image/*">
-                        </label>
-                        <button type="button" class="admin-remove-row-btn">✕</button>
-                      </div>
-                    `).join('')}
+                      `).join('')}
+                    </div>
+                    <button type="button" class="admin-add-row-btn" data-target="admin-sup-img-equipment" data-name="img_equipment" data-accept="image/*">+ Add Equipment Image</button>
                   </div>
-                  <button type="button" class="admin-add-row-btn" data-target="admin-sup-img-equipment" data-name="img_equipment" data-accept="image/*">+ Add Equipment Image</button>
                 </div>
               `,
               'img_certificate': `
                 <div class="admin-image-category admin-category-draggable" data-img-name="img_certificate" draggable="true" style="margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 16px; background: rgba(0,0,0,0.2); position: relative;">
-                  <h5 style="margin-top: 0; cursor: grab; display: flex; align-items: center; gap: 8px;" class="admin-cat-drag-handle">
-                    <span style="color: rgba(255,255,255,0.4); font-size:16px;">⠿</span> Certificates Images
+                  <h5 style="margin-top: 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px; cursor: grab;" class="admin-cat-drag-handle">
+                      <span style="color: rgba(255,255,255,0.4); font-size:16px;">⠿</span> Certificates Images
+                    </div>
+                    <button type="button" onclick="const c = this.parentElement.nextElementSibling; const isHidden = c.style.display === 'none'; c.style.display = isHidden ? 'block' : 'none'; this.innerHTML = isHidden ? '▼' : '▶';" style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:12px; padding:4px;">▼</button>
                   </h5>
-                  <div class="admin-image-url-list" id="admin-sup-img-certs">
-                    ${(s.certificates?.length ? s.certificates : ['']).map(url => `
-                      <div class="admin-img-url-row" draggable="true">
-                        <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
-                        ${url ? `<img src="${url}" class="admin-img-thumb" referrerpolicy="no-referrer" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
-                        <input type="text" name="img_certificate" value="${url}" placeholder="Paste an image here (Ctrl+V) or type URL">
-                        <div class="admin-img-reorder-group">
-                          <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
-                          <button type="button" class="admin-img-reorder-btn admin-img-move-down" title="Move down">▼</button>
+                  <div class="admin-category-content">
+                    <div class="admin-image-url-list" id="admin-sup-img-certs">
+                      ${(s.certificates?.length ? s.certificates : ['']).map(url => `
+                        <div class="admin-img-url-row" draggable="true">
+                          <span class="admin-img-drag-handle" title="Drag to reorder or move to another category">⠿</span>
+                          ${url ? `<img src="${url}" class="admin-img-thumb" referrerpolicy="no-referrer" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="admin-img-thumb-empty" style="display:none">🖼</span>` : `<span class="admin-img-thumb-empty">🖼</span>`}
+                          <input type="text" name="img_certificate" value="${url}" placeholder="Paste an image here (Ctrl+V) or type URL">
+                          <div class="admin-img-reorder-group">
+                            <button type="button" class="admin-img-reorder-btn admin-img-move-up" title="Move up">▲</button>
+                            <button type="button" class="admin-img-reorder-btn admin-img-move-down" title="Move down">▼</button>
+                          </div>
+                          <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
+                            📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="image/*">
+                          </label>
+                          <button type="button" class="admin-remove-row-btn">✕</button>
                         </div>
-                        <label class="admin-action-btn" style="cursor:pointer; display:flex; align-items:center;">
-                          📤 <input type="file" style="display:none;" class="admin-s3-upload" accept="image/*">
-                        </label>
-                        <button type="button" class="admin-remove-row-btn">✕</button>
-                      </div>
-                    `).join('')}
+                      `).join('')}
+                    </div>
+                    <button type="button" class="admin-add-row-btn" data-target="admin-sup-img-certs" data-name="img_certificate" data-accept="image/*">+ Add Certificate Image</button>
                   </div>
-                  <button type="button" class="admin-add-row-btn" data-target="admin-sup-img-certs" data-name="img_certificate" data-accept="image/*">+ Add Certificate Image</button>
                 </div>
               `
             };
@@ -2057,7 +2079,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
           </div>
 
-          <div class="admin-image-category">
+          <div class="admin-image-category" data-img-name="documents">
             <h5>Other Downloadable Documents</h5>
             <div class="admin-image-url-list" id="admin-sup-img-docs">
               ${(s.documents?.length ? s.documents : ['']).map(url => `
@@ -2377,7 +2399,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           id: payload.id,
           name: payload.name,
           segment: payload.segment,
-          tech_group: (payload.techGroups || [payload.techGroup]).filter(Boolean)[0] || '',
+          tech_group: (payload.techGroups?.length ? payload.techGroups : [payload.techGroup]).filter(Boolean)[0] || '',
           data: (() => {
              const clone = { ...payload };
              delete clone.id; delete clone.name; delete clone.segment; delete clone.techGroup;

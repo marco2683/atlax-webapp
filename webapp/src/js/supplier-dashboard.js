@@ -698,15 +698,17 @@ async function loadCatalogTab() {
       ? p.pricing_tiers.slice(0, 3)
       : [{ min_quantity: 1, unit_price: Number(p.base_price || 0), lead_time_days: '' }];
     while (tiers.length < 3) tiers.push({ min_quantity: '', unit_price: '', lead_time_days: '' });
-    const tiersHtml = tiers.map((t, i) => `
-      <div class="sp-tier-row">
-        <span class="sp-tier-moq">MOQ</span>
-        <input type="number" min="0" value="${t.min_quantity || ''}" placeholder="—" data-pid="${p.id}" data-tier="${i}" data-tf="qty">
-        <span class="sp-tier-label">→ $</span>
-        <input type="number" step="0.01" min="0" value="${t.unit_price || ''}" placeholder="—" data-pid="${p.id}" data-tier="${i}" data-tf="price">
-        <span class="sp-tier-label">/</span>
-        <input type="number" min="0" value="${t.lead_time_days || ''}" placeholder="—" data-pid="${p.id}" data-tier="${i}" data-tf="lead">
-        <span class="sp-tier-label">days</span>
+    const tiersHtml = `
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 11px; font-weight: bold; color: #666; margin-bottom: 4px; padding: 0 4px;">
+        <div>MOQ</div>
+        <div>Price ($)</div>
+        <div>Lead (Days)</div>
+      </div>
+    ` + tiers.map((t, i) => `
+      <div class="sp-tier-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 4px;">
+        <input type="number" min="0" value="${t.min_quantity || ''}" placeholder="—" data-pid="${p.id}" data-tier="${i}" data-tf="qty" style="width: 100%; box-sizing: border-box; text-align: center;">
+        <input type="number" step="0.01" min="0" value="${t.unit_price || ''}" placeholder="—" data-pid="${p.id}" data-tier="${i}" data-tf="price" style="width: 100%; box-sizing: border-box; font-weight: bold; color: #007185; text-align: center; border-color: #a5d8dd;">
+        <input type="number" min="0" value="${t.lead_time_days || ''}" placeholder="—" data-pid="${p.id}" data-tier="${i}" data-tf="lead" style="width: 100%; box-sizing: border-box; text-align: center;">
       </div>
     `).join('');
     return `
@@ -954,11 +956,18 @@ async function loadCatalogTab() {
 // ─────────────────────────────────────────────────────────────────────────────
 // ADD PRODUCT VIEW (Amazon Style)
 // ─────────────────────────────────────────────────────────────────────────────
-function renderCreateProductForm(editProdId = null) {
+async function renderCreateProductForm(editProdId = null) {
   const routing = document.getElementById('supplier-content-routing');
-  const prod = editProdId ? myProducts.find(p => p.id === editProdId) : null;
-  const specs = prod?.specs || {};
-  
+  let prod = null;
+  let existingAssets = [];
+  if (editProdId) {
+    prod = myProducts.find(p => p.id === editProdId);
+    if (prod) {
+      const { data: assetsData } = await supabase.from('product_assets').select('*').eq('product_id', editProdId);
+      if (assetsData) existingAssets = assetsData;
+    }
+  }
+
   const rootCats = categories.filter(c => !c.parent_id);
   const options = [];
   rootCats.forEach(r => {
@@ -986,7 +995,16 @@ function renderCreateProductForm(editProdId = null) {
   const rawHtml = prod?.rich_description || '';
   const escHtml = rawHtml.split('<').join('&lt;').split('>').join('&gt;');
 
-  routing.innerHTML = `
+  const renderAssetCheckmark = (typeStr) => {
+    const found = existingAssets.find(a => a.asset_type === typeStr);
+    if (found) {
+      const filename = found.url.split('/').pop().split('?')[0];
+      return `<span style="font-size:11px; color:#2e7d32; font-weight:600; margin-left:8px;">✓ Attached (${decodeURIComponent(filename)})</span>`;
+    }
+    return '';
+  };
+
+    routing.innerHTML = `
 <div class="amz-container">
     <!-- Top Header -->
     <div style="margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--amz-border);">
@@ -1007,7 +1025,7 @@ function renderCreateProductForm(editProdId = null) {
           <label style="font-size:12px; font-weight:700; color:#111; margin-bottom:10px; display:block; text-transform:uppercase; border-bottom:2px solid #e0e0e0; padding-bottom:6px;">Media & Documents</label>
           
           <div style="text-align:center; padding:24px; border:1px solid #ccc; background:#fff; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.05); margin-bottom:16px; position:relative;">
-             <img id="prod-main-img-preview" src="${prod?.image_url || prod?.specs?.images?.[0] || prod?.specs?.image_url || '/placeholder.png'}" style="max-width:100%; max-height:200px; height:auto; margin-bottom:16px; object-fit:contain;">
+             <img id="prod-main-img-preview" src="${prod?.specs?.images?.[0] || prod?.image_url || '/placeholder.png'}" style="max-width:100%; max-height:200px; height:auto; margin-bottom:16px; object-fit:contain;">
              <br>
              <button type="button" onclick="document.getElementById('p-img-file').click()" style="background:#fff; border:1px solid #007185; color:#007185; padding:8px 16px; border-radius:4px; cursor:pointer; font-size:12px; font-weight:700; transition:background 0.2s; width:100%;">
                 <svg style="vertical-align:middle; margin-right:4px; margin-top:-2px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> Upload Main Image
@@ -1017,26 +1035,43 @@ function renderCreateProductForm(editProdId = null) {
 
           <div style="display:flex; flex-direction:column; gap:8px;">
              <!-- Extra Images -->
-             <div style="display:flex; justify-content:space-between; align-items:center; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; background:#fafafa;">
-                <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Extra Gallery Images</div>
-                <button type="button" onclick="document.getElementById('p-extra-imgs').click()" style="background:none; border:none; color:#007185; font-size:12px; font-weight:700; cursor:pointer;">Add</button>
-                <input type="file" accept="image/*" multiple id="p-extra-imgs" style="display:none;">
+             <div style="display:flex; flex-direction:column; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; background:#fafafa;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                   <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Extra Gallery Images</div>
+                   <button type="button" onclick="document.getElementById('p-extra-imgs').click()" style="background:none; border:none; color:#007185; font-size:12px; font-weight:700; cursor:pointer;">Add</button>
+                   <input type="file" accept="image/*" multiple id="p-extra-imgs" style="display:none;">
+                </div>
+                ${(() => {
+                   const imgs = existingAssets.filter(a => a.asset_type === 'image');
+                   if (imgs.length > 0) {
+                      return `<div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+                         ${imgs.map(img => {
+                            const fname = decodeURIComponent(img.url.split('/').pop().split('?')[0]);
+                            return `<div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:48px;" title="${fname}">
+                                       <img src="${img.url}" style="width:48px; height:48px; object-fit:cover; border-radius:4px; border:1px solid #ccc;">
+                                       <span style="font-size:9px; color:#666; width:100%; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; text-align:center;">${fname}</span>
+                                    </div>`;
+                         }).join('')}
+                      </div>`;
+                   }
+                   return '';
+                })()}
              </div>
              <!-- 3D Model -->
              <div style="display:flex; justify-content:space-between; align-items:center; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; background:#fafafa;">
-                <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> 3D Model (STEP/STL)</div>
+                <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> 3D Model (STEP/STL) ${renderAssetCheckmark('3d_model')}</div>
                 <button type="button" onclick="document.getElementById('p-3d-model').click()" style="background:none; border:none; color:#007185; font-size:12px; font-weight:700; cursor:pointer;">Add</button>
                 <input type="file" accept=".stp,.step,.stl,.igs,.iges" id="p-3d-model" style="display:none;">
              </div>
              <!-- 2D Drawing -->
              <div style="display:flex; justify-content:space-between; align-items:center; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; background:#fafafa;">
-                <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> 2D Drawing (PDF/DXF)</div>
+                <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> 2D Drawing (PDF/DXF) ${renderAssetCheckmark('2d_drawing')}</div>
                 <button type="button" onclick="document.getElementById('p-2d-drawing').click()" style="background:none; border:none; color:#007185; font-size:12px; font-weight:700; cursor:pointer;">Add</button>
                 <input type="file" accept=".pdf,.dxf,.dwg" id="p-2d-drawing" style="display:none;">
              </div>
              <!-- Product Video -->
              <div style="display:flex; justify-content:space-between; align-items:center; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; background:#fafafa;">
-                <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg> Video (.MP4)</div>
+                <div style="font-size:12px; color:#333; font-weight:600;"><svg style="vertical-align:middle; margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg> Video (.MP4) ${renderAssetCheckmark('video')}</div>
                 <button type="button" onclick="document.getElementById('p-video').click()" style="background:none; border:none; color:#007185; font-size:12px; font-weight:700; cursor:pointer;">Add</button>
                 <input type="file" accept="video/mp4" id="p-video" style="display:none;">
              </div>
@@ -1076,7 +1111,7 @@ function renderCreateProductForm(editProdId = null) {
               <td style="padding:10px 0; color:#666;">Technical Datasheet</td>
               <td style="padding:10px 0;">
                  <div style="display:flex; align-items:center; gap:8px;">
-                     <input type="file" accept="application/pdf" id="p-pdf-file" style="font-size:11px; width:100%; padding:4px;">
+                     <input type="file" accept="application/pdf" id="p-pdf-file" style="font-size:11px; width:100%; padding:4px;"> ${renderAssetCheckmark('datasheet')}
                  </div>
               </td>
             </tr>
@@ -1851,10 +1886,13 @@ function renderCreateProductForm(editProdId = null) {
       // 6. Product video (MP4)
       if (videoFile) await uploadAsset(videoFile, 'video');
 
-      // Patch product.image_url with the first uploaded image
-      // (this is what the marketplace catalog and cart read directly)
+      // Patch product.specs.images with the first uploaded image
+      // (because products table does NOT have an image_url column)
       if (firstImageUrl) {
-        await supabase.from('products').update({ image_url: firstImageUrl }).eq('id', prodId);
+        const { data: cData } = await supabase.from('products').select('specs').eq('id', prodId).single();
+        const currentSpecs = cData?.specs || {};
+        currentSpecs.images = [firstImageUrl, ...(currentSpecs.images || [])];
+        await supabase.from('products').update({ specs: currentSpecs }).eq('id', prodId);
       }
 
       if (uploadErrors.length > 0) {

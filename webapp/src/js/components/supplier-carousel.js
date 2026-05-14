@@ -104,6 +104,9 @@ function renderCurrentCard() {
   if (!body || !currentSuppliers[currentIndex]) return;
   const s = currentSuppliers[currentIndex];
 
+  const supplierId = s.id || s.name;
+  const isShortlisted = !!document.querySelector(`.shortlist-item[data-id="${supplierId}"]`);
+
   if (title) {
     title.style.display = 'flex';
     title.style.flex = '1';
@@ -125,14 +128,16 @@ function renderCurrentCard() {
           <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${_addressEN}</span>
         </div>
       </div>
+      <button class="modal-add-to-shortlist-btn sup-dossier-shortlist-desktop" style="margin-left: auto; height: 38px; padding:0 16px; border-radius:8px; font-weight:700; font-size:12px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s; ${isShortlisted ? 'background:#d1fae5; color:#059669; border:1px solid #a7f3d0; pointer-events:none;' : 'background:#0f172a; color:#fff;'}">
+        ${isShortlisted 
+          ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg><span>Shortlisted</span>' 
+          : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Add to Shortlist</span>'}
+      </button>
     `;
   }
 
   const email = s.email || 'sales@' + s.name.toLowerCase().replace(/[^a-z]/g, '') + '.com';
   const phone = s.phone || '';
-
-  const supplierId = s.id || s.name;
-  const isShortlisted = !!document.querySelector(`.shortlist-item[data-id="${supplierId}"]`);
   
   let productImgs = s.images?.product || s.imagesProducts || [];
   let facilityImgs = s.images?.facility || s.imagesFacility || [];
@@ -238,28 +243,26 @@ function renderCurrentCard() {
          ${renderServiceButton('Manage My Project', 'Manage My Project')}
          ${renderServiceButton('Get Competitive Quote', 'Get Competitive Quote')}
          ${renderServiceButton('Draft NDA / NNN Agreement', 'Draft NDA / NNN Agreement')}
-         <!-- Add to Shortlist (Desktop Only) -->
-         <button class="modal-add-to-shortlist-btn sup-dossier-shortlist-desktop" style="margin-left: auto; height: 38px; padding:0 16px; border-radius:8px; font-weight:700; font-size:12px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s; ${isShortlisted ? 'background:#d1fae5; color:#059669; border:1px solid #a7f3d0; pointer-events:none;' : 'background:#0f172a; color:#fff;'}">
-           ${isShortlisted 
-             ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg><span>Shortlisted</span>' 
-             : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Add to Shortlist</span>'}
-         </button>
       </div>
     </div>
 
-    <!-- Certifications Badges (top-right) -->
-    ${certsList.length > 0 ? `<div style="display: flex; flex-direction: column; gap: 8px; justify-content: flex-start; border-left: 1px solid #e2e8f0; padding-left: 20px;">
-      <div style="display: flex; align-items: center; gap: 6px; height: 14px; margin-bottom: 2px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-        <span style="font-size: 10px; font-weight: 800; color: #0f766e; text-transform: uppercase; letter-spacing: 0.05em;">Certifications</span>
+    <!-- Certifications Badges (top-right) & Shortlist Button -->
+    <div style="display: flex; flex-direction: column; gap: 12px; justify-content: flex-start; border-left: 1px solid #e2e8f0; padding-left: 20px; min-width: 200px;">
+      ${certsList.length > 0 ? `
+      <div>
+        <div style="display: flex; align-items: center; gap: 6px; height: 14px; margin-bottom: 6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          <span style="font-size: 10px; font-weight: 800; color: #0f766e; text-transform: uppercase; letter-spacing: 0.05em;">Certifications</span>
+        </div>
+        <div style="display: grid; grid-template-columns: auto auto; gap: 6px;">
+          ${certsList.map(c => `<span style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; background:rgba(13,148,136,0.08); border:1px solid rgba(13,148,136,0.25); border-radius:6px; font-size:11px; font-weight:700; color:#0f766e; white-space: nowrap;">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            ${c}
+          </span>`).join('')}
+        </div>
       </div>
-      <div style="display: grid; grid-template-columns: auto auto; gap: 6px;">
-        ${certsList.map(c => `<span style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; background:rgba(13,148,136,0.08); border:1px solid rgba(13,148,136,0.25); border-radius:6px; font-size:11px; font-weight:700; color:#0f766e; white-space: nowrap;">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          ${c}
-        </span>`).join('')}
-      </div>
-    </div>` : ''}
+      ` : ''}
+    </div>
   </div>
 
   <div class="sup-dossier-main-grid" style="display: grid; grid-template-columns: 1fr 300px; gap: 32px;">
@@ -435,7 +438,12 @@ function renderCurrentCard() {
 
   // Attach shortlist event listener
   if (!isShortlisted) {
-    body.querySelectorAll('.modal-add-to-shortlist-btn').forEach(btn => {
+    const attachBtns = [
+      ...body.querySelectorAll('.modal-add-to-shortlist-btn'),
+      ...(title ? title.querySelectorAll('.modal-add-to-shortlist-btn') : [])
+    ];
+    
+    attachBtns.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const clickedBtn = e.currentTarget;
@@ -444,7 +452,11 @@ function renderCurrentCard() {
         }));
         
         // Update all shortlist buttons on screen
-        body.querySelectorAll('.modal-add-to-shortlist-btn').forEach(b => {
+        const allBtns = [
+          ...body.querySelectorAll('.modal-add-to-shortlist-btn'),
+          ...(title ? title.querySelectorAll('.modal-add-to-shortlist-btn') : [])
+        ];
+        allBtns.forEach(b => {
           b.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> <span>Shortlisted</span>`;
           b.style.background = b.classList.contains('sup-dossier-shortlist-desktop') ? '#d1fae5' : '#ecfdf5';
           b.style.border = '1px solid #a7f3d0';

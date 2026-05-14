@@ -1,7 +1,5 @@
 import { signUpUser, loginUser, logoutUser, onAuthStateChange, getCurrentUser } from '../services/auth.js';
 import { getMyProfile } from '../services/profile.js';
-import { markFormLoaded, injectHoneypot, checkForBot } from '../utils/botGuard.js';
-
 export function initAuthModal() {
   const modal = document.getElementById('auth-modal');
   const overlay = modal?.querySelector('.auth-modal-glass');
@@ -26,8 +24,23 @@ export function initAuthModal() {
   const loginForm = document.getElementById('login-form');
   const signupForm = document.getElementById('signup-form');
 
-  // Bot Guard: inject honeypot into signup form
-  if (signupForm) injectHoneypot(signupForm);
+  // Inject Turnstile into signup form
+  if (signupForm) {
+     const turnstileContainer = document.createElement('div');
+     turnstileContainer.className = 'cf-turnstile auth-input-group';
+     turnstileContainer.dataset.sitekey = '0x4AAAAAADOr_yhZAEAJ5dWN'; // Turnstile test key
+     turnstileContainer.style.marginTop = '15px';
+     signupForm.insertBefore(turnstileContainer, document.getElementById('signup-submit-btn'));
+
+     if (!document.getElementById('turnstile-script')) {
+        const script = document.createElement('script');
+        script.id = 'turnstile-script';
+        script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+     }
+  }
 
   // Function to open modal
   function openModal(state = 'login') {
@@ -68,7 +81,6 @@ export function initAuthModal() {
       formsContainer.classList.add('auth-state-signup');
       formLogin.style.display = 'none';
       formSignup.style.display = 'block';
-      markFormLoaded(); // Bot Guard: start the timer
     } else {
       formsContainer.classList.remove('auth-state-signup');
       formsContainer.classList.add('auth-state-login');
@@ -136,16 +148,11 @@ export function initAuthModal() {
       const btn = document.getElementById('signup-submit-btn');
       const err = document.getElementById('signup-error');
 
-      // Bot Guard: check before proceeding
-      const botCheck = checkForBot(
-        { firstName: first, lastName: last, company, email },
-        signupForm
-      );
-      if (botCheck.isBot) {
-        // Show a generic error — don't reveal detection method
-        err.textContent = 'Unable to create account. Please try again later.';
+      const captchaToken = document.querySelector('#form-signup [name="cf-turnstile-response"]')?.value;
+
+      if (!captchaToken) {
+        err.textContent = 'Please complete the CAPTCHA to proceed.';
         err.classList.add('visible');
-        console.warn('[BotGuard] Blocked signup:', botCheck.reason);
         return;
       }
 
@@ -157,7 +164,7 @@ export function initAuthModal() {
         first_name: first,
         last_name: last,
         company: company
-      });
+      }, captchaToken);
 
       btn.disabled = false;
       btn.textContent = 'Create Account';

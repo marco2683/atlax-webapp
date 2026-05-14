@@ -61,7 +61,7 @@ function renderProductsTable(container, search = '') {
         <td style="font-family:monospace; font-size:11px; color:var(--color-steel-400);" title="${p.id}">${p.id.substring(0, 8)}…</td>
         <td>
           <div style="display:flex; align-items:center; gap:10px;">
-            <img src="${p.image_url || '/placeholder.png'}" style="width:36px; height:36px; object-fit:cover; border-radius:4px; border:1px solid rgba(255,255,255,0.08);" onerror="this.onerror=null; this.src='https://via.placeholder.com/64x64.png?text=No+Image'">
+            <img src="${p.image_url || p.specs?.images?.[0] || '/placeholder.png'}" style="width:36px; height:36px; object-fit:cover; border-radius:4px; border:1px solid rgba(255,255,255,0.08);" onerror="this.onerror=null; this.src='https://via.placeholder.com/64x64.png?text=No+Image'">
             <div>
               <div style="font-weight:600; font-size:13px;">${p.description || p.mpn}</div>
               <div style="font-size:11px; color:var(--color-steel-400);">${p.mpn}</div>
@@ -227,7 +227,7 @@ function renderAdminProductForm(container, prod) {
           <div class="admin-form-grid cols-2">
             <div class="admin-field">
               <label>Image URL</label>
-              <input type="url" name="image_url" value="${prod.image_url || ''}" placeholder="https://...">
+              <input type="url" name="image_url" value="${prod.image_url || prod.specs?.images?.[0] || ''}" placeholder="https://...">
             </div>
             <div class="admin-field">
               <label>Product ID <span class="hint">(read-only)</span></label>
@@ -379,9 +379,13 @@ function renderAdminProductForm(container, prod) {
       stock_quantity: Number(fd.get('stock_quantity')) || 0,
       moq: Number(fd.get('moq')) || 1,
       base_price: Number(fd.get('base_price')) || null,
-      image_url: fd.get('image_url') || null,
       specs: specsPayload
     };
+
+    const formImageUrl = fd.get('image_url');
+    if (formImageUrl) {
+        specsPayload.images = [formImageUrl, ...(prod.specs?.images || []).filter(u => u !== formImageUrl)];
+    }
 
     const { error } = await supabase.from('products').update(payload).eq('id', prod.id);
     

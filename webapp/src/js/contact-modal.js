@@ -13,6 +13,16 @@ import { signUpUser } from './services/auth.js';
 (async function () {
   'use strict';
 
+  // Load Cloudflare Turnstile
+  if (!document.getElementById('cf-turnstile-script')) {
+    const s = document.createElement('script');
+    s.id = 'cf-turnstile-script';
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    s.async = true;
+    s.defer = true;
+    document.head.appendChild(s);
+  }
+
   // ─── 1. Inject Modal HTML ────────────────────────────
   const modalHTML = `
   <div class="contact-modal-overlay" id="atlasdt-contact-overlay">
@@ -61,8 +71,9 @@ import { signUpUser } from './services/auth.js';
       <!-- Form -->
       <div class="contact-modal-body">
         <iframe name="contact-hidden-iframe" id="contact-hidden-iframe" style="display:none;"></iframe>
-        <form id="atlasdt-contact-form" action="https://formsubmit.co/info@atlasdt.com" method="POST" target="contact-hidden-iframe" enctype="multipart/form-data">
+        <form id="atlasdt-contact-form" method="POST" target="contact-hidden-iframe" enctype="multipart/form-data">
           <input type="hidden" name="_captcha" value="false">
+          <input type="text" name="_honey" style="display:none">
           <div class="contact-form-grid">
             <div class="contact-field">
               <label>First Name <span class="cf-req">*</span></label>
@@ -117,6 +128,10 @@ import { signUpUser } from './services/auth.js';
                 <input type="file" id="atlasdt-file-input" name="attachment" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.step,.stp,.igs,.iges,.stl,.3mf,.obj,.dwg,.dxf,.png,.jpg,.jpeg,.webp,.zip,.rar">
               </div>
               <div class="contact-file-list" id="atlasdt-file-list"></div>
+            </div>
+            
+            <div class="contact-field full" style="margin-top: 12px; display: flex; justify-content: center;">
+              <div class="cf-turnstile" data-sitekey="0x4AAAAAADOr_yhZAEAJ5dWN" data-theme="light"></div>
             </div>
           </div>
 
@@ -278,6 +293,13 @@ import { signUpUser } from './services/auth.js';
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
+    // Check Turnstile token before proceeding
+    const turnstileResponse = form.querySelector('[name="cf-turnstile-response"]')?.value;
+    if (!turnstileResponse) {
+      alert('Please complete the security check to verify you are human.');
+      return;
+    }
+    
     const submitBtn = form.querySelector('.contact-submit-btn');
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Verifying...';
@@ -339,6 +361,12 @@ import { signUpUser } from './services/auth.js';
     }
     
     isContactSubmitted = true;
+    
+    // Obfuscate the FormSubmit action URL to prevent static HTML scraping
+    const p1 = 'https://formsubmit.co';
+    const p2 = '/info@atlasdt.com';
+    form.action = p1 + p2;
+    
     form.submit();
   });
 

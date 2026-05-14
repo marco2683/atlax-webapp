@@ -8,8 +8,9 @@ const SITE_URL = import.meta.env.VITE_SITE_URL || window.location.origin;
  * @param {string} email 
  * @param {string} password 
  * @param {object} metadata - Additional info like full_name, company
+ * @param {string} [captchaToken] - Optional CAPTCHA token (Turnstile, reCAPTCHA, etc.)
  */
-export async function signUpUser(email, password, metadata = {}) {
+export async function signUpUser(email, password, metadata = {}, captchaToken = null) {
     try {
         // Allow caller to specify a custom redirect path (e.g. /supplier-dashboard.html)
         const redirectPath = metadata._redirectTo || '/index.html?login=true';
@@ -19,13 +20,18 @@ export async function signUpUser(email, password, metadata = {}) {
         const cleanMeta = { ...metadata };
         delete cleanMeta._redirectTo;
 
+        const options = {
+            data: cleanMeta,
+            emailRedirectTo: redirectTo
+        };
+        if (captchaToken) {
+            options.captchaToken = captchaToken;
+        }
+
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
-            options: {
-                data: cleanMeta,
-                emailRedirectTo: redirectTo
-            }
+            options
         });
         if (error) throw error;
         return { data, error: null };
