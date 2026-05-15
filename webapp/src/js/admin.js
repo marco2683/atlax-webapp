@@ -247,16 +247,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       .subscribe();
     renderOverview();
 
-    // ── Collapsible OEM Nav Group ──────────────────────────
-    const oemGroup = document.getElementById('oem-nav-group');
-    const oemToggle = document.getElementById('oem-group-toggle');
-    if (oemGroup && oemToggle) {
-      oemGroup.classList.add('collapsed'); // start collapsed
-      oemToggle.addEventListener('click', () => {
-        oemGroup.classList.toggle('collapsed');
-        oemGroup.classList.toggle('expanded');
-      });
-    }
+    // OEM group is now permanently expanded
 
     navItems.forEach(tab => {
       // Clone to remove old listeners
@@ -267,12 +258,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.currentTarget.classList.add('active');
         const t = e.currentTarget.dataset.tab;
 
-        // Auto-expand OEM group if an OEM child tab is clicked
-        const oemTabs = ['marketplace-taxonomy', 'products', 'oem-sellers'];
-        if (oemTabs.includes(t) && oemGroup) {
-          oemGroup.classList.remove('collapsed');
-          oemGroup.classList.add('expanded');
-        }
+        // No need to auto-expand OEM group as it is permanently expanded
 
         if (t === 'overview')  { pageTitle.textContent = 'Platform Overview';        renderOverview(); }
         if (t === 'suppliers') { pageTitle.textContent = 'Suppliers CRM Directory';  renderSuppliersTable(); }

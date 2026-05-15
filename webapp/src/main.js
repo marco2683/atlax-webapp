@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Handle initial state from URL hash (e.g. app.html#project-quote)
   const initialHash = window.location.hash.replace('#', '');
-  if (initialHash && initialHash !== 'suppliers') {
+  if (initialHash && initialHash !== 'suppliers' && initialHash !== 'suppliers-table' && initialHash !== 'table') {
     // Delay to let all engines finish registering
     setTimeout(() => switchView(initialHash, globe), 300);
   }

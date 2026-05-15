@@ -501,9 +501,12 @@ function renderParametersPane() {
         <td style="padding: 16px 8px; text-align: center;">
           <input type="checkbox" disabled ${p.facetable ? 'checked' : ''} style="accent-color: var(--color-electric);">
         </td>
-        <td style="padding: 16px 8px; text-align: right;">
-          <button class="btn-del-param" data-id="${p.id}" style="background: transparent; border: none; color: #ef4444; cursor: pointer; padding: 4px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        <td style="padding: 16px 8px; text-align: right; white-space: nowrap;">
+          <button class="btn-edit-param" data-id="${p.id}" title="Edit Parameter" style="background: transparent; border: none; color: var(--color-steel-400); cursor: pointer; padding: 4px; margin-right: 4px; transition: color 0.2s;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events: none;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          </button>
+          <button class="btn-del-param" data-id="${p.id}" title="Delete Parameter" style="background: transparent; border: none; color: #ef4444; cursor: pointer; padding: 4px; transition: color 0.2s;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events: none;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
           </button>
         </td>
       </tr>
@@ -523,10 +526,44 @@ function renderParametersPane() {
   // Bind delete buttons
   container.querySelectorAll('.btn-del-param').forEach(btn => {
     btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
       if(!confirm("Delete this parameter? Existing products won't lose data, but it will vanish from search filters.")) return;
-      const pid = e.currentTarget.dataset.id;
+      const pid = e.target.closest('.btn-del-param').dataset.id;
       const { error } = await supabase.from('category_parameters').delete().eq('id', pid);
       if (error) { alert("Error deleting: " + error.message); return; }
+      await loadTaxonomyData();
+      renderParametersPane();
+    });
+  });
+
+  // Bind edit buttons
+  container.querySelectorAll('.btn-edit-param').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const pid = e.target.closest('.btn-edit-param').dataset.id;
+      const p = parameters.find(x => x.id === pid);
+      if (!p) return;
+
+      const newName = prompt("Edit Parameter Name (display name):", p.parameter_name);
+      if (!newName || newName === p.parameter_name) return;
+
+      const newType = prompt("Edit Data Type (text, number, boolean, enum, multienum):", p.data_type);
+      if (!newType) return;
+
+      const newUnit = prompt("Edit Unit (leave blank for none):", p.unit || '');
+
+      const { error } = await supabase.from('category_parameters')
+        .update({
+          parameter_name: newName,
+          data_type: newType.toLowerCase(),
+          unit: newUnit || null
+        })
+        .eq('id', pid);
+
+      if (error) {
+        alert("Error updating parameter: " + error.message);
+        return;
+      }
       await loadTaxonomyData();
       renderParametersPane();
     });

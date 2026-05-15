@@ -141,8 +141,29 @@ function renderProductsTable(container, search = '') {
       if (!confirm('Are you sure you want to permanently delete this product?')) return;
       btn.textContent = '...';
       btn.style.pointerEvents = 'none';
-      const { error } = await supabase.from('products').delete().eq('id', btn.dataset.id);
-      if (error) { alert('Failed: ' + error.message); btn.textContent = 'Delete'; btn.style.pointerEvents = ''; return; }
+      
+      let deleteError;
+      const serviceKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+      if (serviceKey) {
+        // Use service role key to bypass RLS for admin actions
+        const { createClient } = await import('@supabase/supabase-js');
+        const adminClient = createClient(import.meta.env.VITE_SUPABASE_URL, serviceKey);
+        const { error, data } = await adminClient.from('products').delete().eq('id', btn.dataset.id).select('id');
+        deleteError = error;
+        if (!deleteError && (!data || data.length === 0)) deleteError = { message: "Item not found or already deleted." };
+      } else {
+        const { error, data } = await supabase.from('products').delete().eq('id', btn.dataset.id).select('id');
+        deleteError = error;
+        if (!deleteError && (!data || data.length === 0)) deleteError = { message: "RLS prevented deletion. Admin needs VITE_SUPABASE_SERVICE_ROLE_KEY in .env" };
+      }
+
+      if (deleteError) { 
+        alert('Failed: ' + deleteError.message); 
+        btn.textContent = 'Delete'; 
+        btn.style.pointerEvents = ''; 
+        return; 
+      }
+      
       allProducts = allProducts.filter(p => p.id !== btn.dataset.id);
       renderProductsTable(container, search);
     });

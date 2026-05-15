@@ -69,8 +69,35 @@ document.addEventListener('DOMContentLoaded', async () => {
   const urlParams = new URLSearchParams(window.location.search);
   const justSubscribed = urlParams.get('success') === 'true';
 
-  // Allow free access to the application
-  openGlobeView();
+  // --- HASH ROUTING INIT ---
+  const handleHashRouting = (hash) => {
+    if (hash === 'table' || hash === 'suppliers-table') {
+      openTabularView();
+    } else if (!hash || hash === 'suppliers' || hash === 'home') {
+      openGlobeView();
+    }
+  };
+
+  const initialHash = window.location.hash.replace('#', '');
+  handleHashRouting(initialHash);
+
+  window.addEventListener('hashchange', () => {
+    handleHashRouting(window.location.hash.replace('#', ''));
+  });
+
+  // Also listen to internal nav switch to ensure UI initializes correctly
+  // if user started on a different view (like #catalog) and switches to suppliers
+  window.addEventListener('prd-nav-switch', (e) => {
+    if (e.detail.view === 'suppliers') {
+      // Restore previous supplier sub-view or default to globe
+      const isTabularActive = document.querySelector('.view-toggle-btn[data-view="table"]')?.classList.contains('active');
+      if (isTabularActive) {
+        openTabularView();
+      } else {
+        openGlobeView();
+      }
+    }
+  });
 
   // Load unified data
   try {
@@ -136,8 +163,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.view-toggle-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const mode = e.currentTarget.dataset.view;
-      if (mode === 'table') openTabularView();
-      if (mode === 'globe') openGlobeView();
+      if (mode === 'table') {
+        openTabularView();
+        window.history.replaceState(null, null, '#table');
+      }
+      if (mode === 'globe') {
+        openGlobeView();
+        window.history.replaceState(null, null, '#suppliers');
+      }
     });
   });
 
