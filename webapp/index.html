@@ -5,7 +5,9 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Atlas DT - Strategic Product Realization</title>
+  <meta name="description"
+    content="AtlasDT helps hardware companies design, prototype, source, cost-down, and manufacture physical products in Asia through engineering-led DFM, supplier sourcing, and production support.">
+  <title>AtlasDT | Product Design, Sourcing & Manufacturing in Asia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -42,24 +44,24 @@
       <div class="nav-links-container"
         style="display: flex; align-items: center; gap: 4px; flex: 0 0 auto; justify-content: center;">
 
-        <a href="/app.html#services" class="global-nav-link" style="padding: 8px 24px;">
-          <span class="global-nav-link__top">Design</span>
-          <span class="global-nav-link__sub">Services</span>
+        <a href="/" class="global-nav-link" style="padding: 8px 16px;">
+          <span class="global-nav-link__top">Home</span>
         </a>
-        <a href="/app.html#suppliers" class="global-nav-link" style="padding: 8px 24px;">
-          <span class="global-nav-link__top">Supply Chain</span>
-          <span class="global-nav-link__sub">Discovery</span>
+        <a href="/services.html" class="global-nav-link" style="padding: 8px 16px;">
+          <span class="global-nav-link__top">Services</span>
         </a>
-        <a href="/app.html#rfq" class="global-nav-link" style="padding: 8px 24px;">
-          <span class="global-nav-link__top">Quote Parts</span>
-          <span class="global-nav-link__sub">Instantly</span>
-        </a> <a href="/app.html#catalog" class="global-nav-link" style="padding: 8px 24px;">
-          <span class="global-nav-link__top">OEMs</span>
-          <span class="global-nav-link__sub">Marketplace</span>
+        <a href="/who-we-help.html" class="global-nav-link" style="padding: 8px 16px;">
+          <span class="global-nav-link__top">Who We Help</span>
         </a>
-        <a href="/app.html#designers" class="global-nav-link" style="padding: 8px 24px;">
-          <span class="global-nav-link__top">Engineering</span>
-          <span class="global-nav-link__sub">Talents Finder</span>
+        <a href="/how-it-works.html" class="global-nav-link" style="padding: 8px 16px;">
+          <span class="global-nav-link__top">How It Works</span>
+        </a>
+        <a href="/app.html" class="global-nav-link" style="padding: 8px 16px; display: flex; flex-direction: column; align-items: center;">
+          <span class="global-nav-link__top" style="color: var(--color-electric); font-weight: 700;">Manufacturing</span>
+          <span class="global-nav-link__sub" style="color: var(--color-electric); font-weight: 700; font-size: 0.85em; opacity: 0.9;">Engine</span>
+        </a>
+        <a href="/about.html" class="global-nav-link" style="padding: 8px 16px;">
+          <span class="global-nav-link__top">About</span>
         </a>
         <!-- Workspace link: visible on mobile nav, hidden on desktop -->
         <a href="/workspace.html" class="nav-workspace-link-mobile" id="nav-workspace-mobile" style="display: none;">
@@ -415,96 +417,74 @@
     </script>
 
 
+    <style>
+      @keyframes fadeZoomInSeq {
+        0% {
+          opacity: 0;
+          transform: scale(0.9) translateY(20px);
+        }
+
+        100% {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      .seq-anim {
+        opacity: 0;
+        animation: fadeZoomInSeq 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      }
+
+      .seq-anim-1 {
+        animation-delay: 0.5s;
+      }
+
+      .seq-anim-2 {
+        animation-delay: 1.5s;
+      }
+
+      .seq-anim-3 {
+        animation-delay: 2.5s;
+      }
+
+      .seq-anim-4 {
+        animation-delay: 3.5s;
+      }
+
+      .seq-anim-5 {
+        animation-delay: 4.5s;
+      }
+    </style>
     <!-- 100vh Top Section -->
     <div class="hero-top-section"
-      style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; z-index: 2; padding-top: 28vh; box-sizing: border-box;">
-
-
+      style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; z-index: 2; padding-top: 15vh; box-sizing: border-box;">
 
       <div class="m-hero__content"
-        style="text-align: center; align-items: center; justify-content: center; display: flex; flex-direction: column; max-width: 900px; width: 100%; min-height: 200px; margin: 0 auto; box-sizing: border-box;">
+        style="text-align: center; align-items: center; justify-content: center; display: flex; flex-direction: column; max-width: 1400px; width: 100%; margin: 0 auto; box-sizing: border-box; z-index: 10; gap: 32px;">
 
-        <style>
-          @keyframes hero-logo-reveal {
-            0% {
-              opacity: 0;
-              transform: scale(0.05);
-              filter: blur(8px);
-            }
+        <img src="/logos/atlasdt-logo-light.png" alt="AtlasDT Logo" class="seq-anim seq-anim-1"
+          style="height: 140px; width: auto; object-fit: contain; margin-bottom: 24px;" />
 
-            60% {
-              opacity: 1;
-              filter: blur(0);
-            }
-
-            80% {
-              transform: scale(1.03);
-            }
-
-            100% {
-              opacity: 1;
-              transform: scale(1);
-              filter: blur(0);
-            }
-          }
-        </style>
-
-        <div
-          style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 12px; margin-left: auto; margin-right: auto; padding: 0 10px; width: 100%; box-sizing: border-box; animation: hero-logo-reveal 4s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;">
-          <img src="/logos/atlasdt-logo-light.png" alt="AtlasDT — Design & Technology"
-            style="width: 100%; max-width: 750px; max-height: 220px; object-fit: contain; padding: 0 15px; box-sizing: border-box;">
+        <h1 class="seq-anim seq-anim-2"
+          style="font-family: 'Outfit', sans-serif; font-size: clamp(2rem, 5vw, 3.8rem); color: white; line-height: 1.05; margin-bottom: 24px; font-weight: 800; letter-spacing: -1px; max-width: 1800px;">
+          Design locally. Source & manufacture in Asia<br>— without losing IP & technical control.</h1>
+        <p class="seq-anim seq-anim-3"
+          style="font-family: 'Inter', sans-serif; font-size: 1.25rem; color: rgba(255, 255, 255, 0.85); line-height: 1.6; max-width: 800px; margin-bottom: 48px;">
+          AtlasDT helps founders, product teams, and industrial companies move from idea, CAD, or prototype to
+          cost-effective production through Engineering-led DFM, Supplier Sourcing, and Manufacturing Support throughout
+          South-East Asia
+        </p>
+        <div class="seq-anim seq-anim-4"
+          style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px;">
+          <button class="btn-marketing btn-marketing--primary nav-contact-trigger"
+            style="padding: 16px 32px; font-size: 1rem; font-weight: 600;">Book a Manufacturing Strategy Call</button>
+          <button class="btn-marketing btn-marketing--outline nav-contact-trigger"
+            style="padding: 16px 32px; font-size: 1rem; font-weight: 600;">Upload CAD / BOM for Review</button>
         </div>
-      </div>
-
-      <!-- Discover More Arrow -->
-      <style>
-        @keyframes bounce-arrow {
-
-          0%,
-          20%,
-          50%,
-          80%,
-          100% {
-            transform: translateY(0);
-          }
-
-          40% {
-            transform: translateY(-10px);
-          }
-
-          60% {
-            transform: translateY(-5px);
-          }
-        }
-      </style>
-      <script>
-        function slowScrollToCards() {
-          const target = document.getElementById('home-cards-section');
-          // Calculate the position so the cards sit higher on the screen (scrolling lower)
-          const offset = window.innerHeight * 0.1; // 10% from the top
-          const targetY = target.getBoundingClientRect().top + window.scrollY - offset;
-
-          window.scrollTo({
-            top: targetY,
-            behavior: 'smooth'
-          });
-        }
-      </script>
-      <div
-        style="position: absolute; bottom: 13vh; left: 50%; transform: translateX(-50%); width: 100%; display: flex; flex-direction: column; align-items: center; gap: 14px; cursor: pointer; z-index: 10; transition: opacity 0.3s; opacity: 0.7;"
-        onclick="slowScrollToCards()" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
-        <span class="hero-prompt__text"
-          style="display: block; text-align: center; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; font-size: 13px; letter-spacing: 2px; color: rgba(255, 255, 255, 0.7); text-transform: uppercase; line-height: 1.6; max-width: 850px; white-space: normal; padding: 0 20px; box-sizing: border-box; animation: hero-logo-reveal 4s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;">We
-          help hardware companies turn ideas and designs into production-ready products, then connect them to the right
-          Asian manufacturing ecosystem.</span>
-        <span
-          style="color: rgba(255,255,255,0.7); font-family: 'Outfit', sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 3px; font-weight: 600;">Discover
-          More</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-          stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-          style="animation: bounce-arrow 2s infinite;">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
+        <p class="seq-anim seq-anim-5"
+          style="font-family: 'Inter', sans-serif; font-size: 0.8rem; color: rgba(255, 255, 255, 0.5); text-transform: uppercase; letter-spacing: 2px;">
+          Melbourne-led. China-connected. Engineering-first.
+        </p>
       </div>
     </div>
 
@@ -540,19 +520,19 @@
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg> Analyse Technical Feasibility</li>
               </ul>
-              <button class="pb-stage-cta" onclick="document.querySelector('.nav-contact-trigger')?.click();">Talk to
+              <button class="pb-stage-cta nav-contact-trigger">Talk to
                 Us</button>
             </div>
           </div>
         </div>
 
-        <!-- CARD 2: I HAVE A DESIGN -->
+        <!-- CARD 2: I HAVE A CAD FILE -->
         <div class="pb-stage-card" data-color="blue">
           <div class="pb-stage-bg" style="background-image: url('/assets/images/phases/concept.png');"></div>
           <div class="pb-stage-avatar-overlay"></div>
           <div class="pb-stage-content">
             <div class="pb-stage-title-row">
-              <h3 class="pb-stage-title">I have a Design</h3>
+              <h3 class="pb-stage-title">I have a CAD file</h3>
               <p class="pb-stage-prompt">...and I want to:</p>
             </div>
             <div class="pb-stage-expand-panel">
@@ -567,7 +547,7 @@
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg> Prepare for Mass Production</li>
               </ul>
-              <button class="pb-stage-cta" onclick="window.location.href='/app.html#project-quote'">Get a Prototype
+              <button class="pb-stage-cta nav-contact-trigger">Get a Prototype
                 Quote</button>
             </div>
           </div>
@@ -592,40 +572,37 @@
                   </svg> Set Up My Supply Chain Fast</li>
                 <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg> Manage Quality &amp; On-Time Delivery</li>
+                  </svg> Run a Trial Production Batch</li>
               </ul>
-              <button class="pb-stage-cta" onclick="window.location.href='/app.html#suppliers'">Start
-                Manufacturing</button>
+              <button class="pb-stage-cta nav-contact-trigger">Start
+                Sourcing</button>
             </div>
           </div>
         </div>
 
-        <!-- CARD 4: MY PRODUCT COSTS TOO MUCH -->
+        <!-- CARD 4: MY COSTS ARE TOO HIGH -->
         <div class="pb-stage-card" data-color="orange">
           <div class="pb-stage-bg" style="background-image: url('/assets/images/phases/market.png');"></div>
           <div class="pb-stage-avatar-overlay"></div>
           <div class="pb-stage-content">
             <div class="pb-stage-title-row">
-              <h3 class="pb-stage-title">My Product costs too much</h3>
+              <h3 class="pb-stage-title">My costs are too high</h3>
               <p class="pb-stage-prompt">...and I want to:</p>
             </div>
             <div class="pb-stage-expand-panel">
               <ul class="pb-stage-list">
                 <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg> Reduce Unit Cost by 40–60%</li>
+                  </svg> Audit My Existing Supply Chain</li>
                 <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg> Move Production to Asia</li>
+                  </svg> Redesign for Cost-Down (DFM)</li>
                 <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg> Re-engineer for Manufacturability</li>
-                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg> Automate my Production Line</li>
+                  </svg> Transition to a Better Factory</li>
               </ul>
-              <button class="pb-stage-cta" onclick="document.querySelector('.nav-contact-trigger')?.click();">Cut My
-                Production Costs</button>
+              <button class="pb-stage-cta nav-contact-trigger">Request Cost
+                Analysis</button>
             </div>
           </div>
         </div>
@@ -695,113 +672,40 @@
       </script>
 
 
-      <!-- Scroll to Who We Are Arrow -->
-      <div
-        style="position: absolute; bottom: 15vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 10; transition: opacity 0.3s; opacity: 0.7;"
-        onclick="document.getElementById('who-we-are').scrollIntoView({ behavior: 'smooth' })"
-        onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
-        <span
-          style="color: rgba(255,255,255,0.7); font-family: 'Outfit', sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; font-weight: 600;">Who
-          We Are</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-          stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-          style="animation: bounce-arrow 2s infinite;">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
-      </div>
+
     </div>
   </header>
   <!-- WHO WE ARE SECTION -->
   <section id="who-we-are" class="prd-who-section"
     style="min-height: 100vh; display: flex; flex-direction: column; justify-content: start; padding-top: 90px; position: relative; padding-bottom: 80px;">
     <div class="prd-who-inner" style="flex-shrink: 0; align-items: flex-start;">
-      <!-- LEFT: Messaging + Pillars -->
-      <div class="prd-who-left" style="display: flex; flex-direction: column; gap: 64px;">
+      <!-- LEFT: Problem Messaging -->
+      <div class="prd-who-left" style="display: flex; flex-direction: column; gap: 40px;">
         <div>
           <p class="prd-who-eyebrow" style="margin-bottom: 0;">Who We Are</p>
-          <ul
-            style="list-style: none; padding: 0; margin: 12px 0 20px 0; display: flex; flex-direction: column; gap: 8px;">
-            <li class="prd-who-title"
-              style="font-size: clamp(1.2rem, 2.5vw, 1.5rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
-              <span style="color: #0e7a6c; margin-top: -2px;">&bull;</span> Hands-on designers &amp; engineers.
-            </li>
-            <li class="prd-who-title"
-              style="font-size: clamp(1.2rem, 2.5vw, 1.5rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
-              <span style="color: #0e7a6c; margin-top: -2px;">&bull;</span> On-the-ground procurement &amp; quality.
-            </li>
-            <li class="prd-who-title"
-              style="font-size: clamp(1.2rem, 2.5vw, 1.5rem); margin: 0; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;">
-              <span style="color: #0e7a6c; margin-top: -2px;">&bull;</span> Not just a corporate agency.
-            </li>
-          </ul>
-          <p class="prd-who-body" style="margin-bottom: 8px; font-size: 0.95rem; line-height: 1.5;">
-            We're a lean team of engineers and designers headquartered in Melbourne, with boots on the ground in China
-            and
-            deep roots in the Pearl River Delta supplier network. We've stripped out every layer of corporate overhead
-            so
-            our clients never pay for a corner office — they pay for results.
-          </p>
-          <p class="prd-who-body" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.5;">
-            Whether your idea is groundbreaking or incremental, we plug you into the most competitive manufacturing
-            ecosystem in the world. You start from an advantage that most companies spend years trying to reach.
-          </p>
+          <h2 class="prd-who-title" style="margin-top: 12px; margin-bottom: 24px;">25+ years of hands-on product
+            development.</h2>
+          <div class="prd-who-body" style="margin-bottom: 8px; font-size: 1.1rem; line-height: 1.6;">
+            We are a tight-knit group of designers, engineers, and manufacturing experts. We skip the corporate bureaucracy and get straight to the point:
+            <ul style="margin-top: 16px; margin-bottom: 0; padding-left: 24px; color: var(--color-steel-300); display: flex; flex-direction: column; gap: 10px;">
+              <li><strong style="color: #0e7a6c;">Hands-on Development:</strong> Rapid transition from design to physical prototype.</li>
+              <li><strong style="color: #0e7a6c;">Direct Prototyping:</strong> We build, iterate, and refine physical models immediately.</li>
+              <li><strong style="color: #0e7a6c;">Factory-Floor Testing:</strong> We validate directly where the product is manufactured.</li>
+            </ul>
+          </div>
         </div>
-        <div class="prd-pillars" style="margin-top: -40px; gap: 16px;">
-          <div class="prd-pillar">
-            <span class="prd-pillar-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
-                stroke-linecap="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
-              </svg>
-            </span>
-            <div>
-              <strong>Melbourne HQ</strong>
-              <span>Western design rigour &amp; accountability</span>
-            </div>
-          </div>
-          <div class="prd-pillar">
-            <span class="prd-pillar-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
-                stroke-linecap="round">
-                <rect x="2" y="7" width="20" height="14" rx="1" />
-                <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
-                <line x1="12" y1="12" x2="12" y2="15" />
-                <line x1="10" y1="14" x2="14" y2="14" />
-              </svg>
-            </span>
-            <div>
-              <strong>China Presence</strong>
-              <span>On-the-ground factory oversight &amp; QC</span>
-            </div>
-          </div>
-          <div class="prd-pillar">
-            <span class="prd-pillar-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
-                stroke-linecap="round">
-                <circle cx="18" cy="5" r="3" />
-                <circle cx="6" cy="12" r="3" />
-                <circle cx="18" cy="19" r="3" />
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-              </svg>
-            </span>
-            <div>
-              <strong>Vetted Network</strong>
-              <span>500+ qualified suppliers across 12 categories</span>
-            </div>
-          </div>
-          <div class="prd-pillar">
-            <span class="prd-pillar-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c" stroke-width="1.8"
-                stroke-linecap="round">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-              </svg>
-            </span>
-            <div>
-              <strong>Lean Structure</strong>
-              <span>No overhead. Every dollar goes to your product.</span>
-            </div>
+
+        <div style="padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1);">
+          <p class="prd-who-eyebrow" style="margin-bottom: 0;">Our Approach</p>
+          <h2 class="prd-who-title" style="margin-top: 12px; margin-bottom: 24px;">Elite local expertise, zero bloat.
+          </h2>
+          <div class="prd-who-body" style="margin-bottom: 8px; font-size: 1.1rem; line-height: 1.6;">
+            By operating locally in Asia without expensive layers of management, we deliver world-class technical control at a fraction of the cost:
+            <ul style="margin-top: 16px; margin-bottom: 0; padding-left: 24px; color: var(--color-steel-300); display: flex; flex-direction: column; gap: 10px;">
+              <li><strong style="color: #0e7a6c;">Agile Methodologies:</strong> We fail fast and iterate faster to beat the competition.</li>
+              <li><strong style="color: #0e7a6c;">Top-Tier Execution:</strong> World-class engineering standards applied directly to the assembly line.</li>
+              <li><strong style="color: #0e7a6c;">Cost Efficiency:</strong> We eliminate bloated overhead to maximize your production budget.</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -812,15 +716,15 @@
         <!-- Team Photo -->
         <div class="prd-who-photo">
           <div class="prd-photo-frame">
-            <img src="/assets/images/team/engineers_tech_lab.png" alt="Atlas Engineers"
-              style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            <img src="/assets/images/team/who_we_are_team.jpg" alt="Atlas Engineers"
+              style="width: 100%; height: auto; object-fit: contain; display: block;">
             <div class="prd-photo-badge">
-              <span class="prd-badge-num">500+</span>
-              <span class="prd-badge-label">Qualified Suppliers</span>
+              <span class="prd-badge-num">25+</span>
+              <span class="prd-badge-label">Years Experience</span>
             </div>
             <div class="prd-photo-badge prd-photo-badge--2">
-              <span class="prd-badge-num">12+</span>
-              <span class="prd-badge-label">Years in PRD</span>
+              <span class="prd-badge-num">100%</span>
+              <span class="prd-badge-label">Agile Driven</span>
             </div>
           </div> <!-- Close prd-photo-frame -->
         </div> <!-- Close prd-who-photo -->
@@ -830,860 +734,311 @@
           style="text-align: center; max-width: 90%; margin-left: auto; margin-right: auto; padding-bottom: 0; margin-top: 54px;">
           <p
             style="font-family: var(--font-body), 'Inter', sans-serif; font-style: italic; font-size: 18px; font-weight: 400; line-height: 1.5; color: #64748b; margin: 0;">
-            "We eliminate the <span style="font-weight: 600;">overhead</span> and <span
-              style="font-weight: 600;">processes for the sake of process</span>. Every ounce
-            of our engineering effort is concentrated purely on advancing your product."
+            We fail fast and iterate faster to build products that win.
           </p>
         </div>
       </div>
     </div>
 
-    <!-- Scroll to Our Expertise Arrow -->
-    <div
-      style="display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 0px; margin-top: 0; transition: opacity 0.3s; opacity: 0.5; position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 10; width: auto;"
-      onclick="document.getElementById('design-engineering').scrollIntoView({ behavior: 'smooth' })"
-      onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='0.5'">
-      <span
-        style="color: #0e7a6c; font-family: 'Outfit', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; font-weight: 700;">Design
-        &amp; Engineering</span>
-      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c"
-        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: bounce-arrow 2s infinite;">
-        <polyline points="6 9 12 15 18 9"></polyline>
-      </svg>
-    </div>
+
 
   </section>
 
   <!-- OUR EXPERTISE SECTION -->
 
-  <!-- DESIGN & ENGINEERING SECTION -->
-  <section id="design-engineering" class="prd-who-section"
-    style="min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-start; position: relative; padding-bottom: 60px; padding-top: 50px;">
-    <div class="prd-who-inner"
-      style="display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 1400px; margin: 0 auto; gap: 50px; padding-top: 0; flex-shrink: 0;">
+    <!-- SERVICES SECTION -->
+  <section id="design-engineering" style="position: relative;">
+    
+    <!-- Part 1: Full-width Darkened Background -->
+    <div style="position: relative; padding: 140px 5%; min-height: 80vh; display: flex; align-items: center; overflow: hidden;">
+      <!-- Background Image -->
+      <div style="position: absolute; inset: 0; background-image: url('/assets/images/team/execution_bg.jpg'); background-size: cover; background-position: center; z-index: 1;"></div>
+      <!-- Dark Gradient Overlay -->
+      <div style="position: absolute; inset: 0; background: linear-gradient(to right, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0.85) 45%, rgba(10,10,15,0.2) 100%); z-index: 2;"></div>
+      <div style="position: absolute; inset: 0; background: linear-gradient(to top, var(--color-background) 0%, transparent 15%); z-index: 2;"></div>
+      
+      <!-- Content on Left Side -->
+      <div class="m-fade-up" style="position: relative; z-index: 3; width: 100%; max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column;">
+        <div style="max-width: 650px;">
+          <p class="prd-who-eyebrow" style="margin-bottom: 12px; color: var(--color-electric); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; font-size: 0.9rem;">End-to-End Execution</p>
+          <h2 style="font-size: 3.5rem; font-weight: 800; color: white; margin-bottom: 24px; line-height: 1.1;">From Concept to <br>Mass Production.</h2>
+          <p style="font-size: 1.25rem; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 48px;">
+            We provide a proprietary Manufacturing Engine that connects design, engineering, and factory-floor execution into a single, cohesive workflow.
+          </p>
 
-      <div class="prd-expertise-header m-fade-up" style="margin-bottom: 0; text-align: center; width: 100%;">
-        <h2 class="prd-who-title" style="margin-top: 0; margin-bottom: 16px;">Design &amp; Engineering.</h2>
-        <p class="prd-who-body" style="max-width: 700px; margin: 0 auto;">From sketching the first concept to
-          engineering the mechanics that make it work.</p>
-      </div>
-
-      <div class="pb-stages-container m-fade-up" style="width: 100%; padding: 0;">
-        <div class="pb-stages-grid" style="grid-template-columns: repeat(3, 1fr); padding-bottom: 30px;">
-          <!-- CARD 1 -->
-          <div
-            style="background: transparent; border: none; box-shadow: none; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px;">
-            <div
-              style="position: relative; width: 100%; aspect-ratio: 1; border-radius: 16px; overflow: hidden; margin-bottom: 48px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); background: #f8fafc;">
-              <img src="/assets/images/phases/concept.png"
-                style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;"
-                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-              <div
-                style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(15, 23, 42, 0.85) 100%); pointer-events: none;">
-              </div>
-              <div
-                style="position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; pointer-events: none;">
-                <h3
-                  style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; color: #ffffff; margin: 0; font-weight: 700; letter-spacing: 0.5px;">
-                  Industrial Design</h3>
-              </div>
+          <!-- Feature 1 & 2 -->
+          <div style="display: flex; flex-direction: column; gap: 40px;">
+            <div>
+              <h3 style="font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; background: rgba(94, 234, 212, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(94, 234, 212, 0.2);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-electric)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </div>
+                Product Design & Engineering
+              </h3>
+              <p style="color: rgba(255,255,255,0.6); font-size: 1.1rem; line-height: 1.5; margin: 0;">User journey mapping, industrial design, mechanical engineering, and rigorous component selection.</p>
             </div>
-            <ul
-              style="list-style: none; padding: 0; margin: 0 0 24px 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.95rem; color: #475569;">
-              <li>User Journey Mapping (UJM)</li>
-              <li>Renders and Animation</li>
-              <li>Graphic Design</li>
-            </ul>
-            <button onclick="document.querySelector('.nav-contact-trigger')?.click();"
-              style="padding: 12px 32px; background: #0e7a6c; color: #fff; border: none; border-radius: 99px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(14, 122, 108, 0.3);"
-              onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">Talk to
-              Us</button>
-          </div>
-
-          <!-- CARD 2 -->
-          <div
-            style="background: transparent; border: none; box-shadow: none; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px;">
-            <div
-              style="position: relative; width: 100%; aspect-ratio: 1; border-radius: 16px; overflow: hidden; margin-bottom: 48px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); background: #f8fafc;">
-              <img src="/assets/images/phases/prototype.png"
-                style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;"
-                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-              <div
-                style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(15, 23, 42, 0.85) 100%); pointer-events: none;">
-              </div>
-              <div
-                style="position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; pointer-events: none;">
-                <h3
-                  style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; color: #ffffff; margin: 0; font-weight: 700; letter-spacing: 0.5px;">
-                  Mechanical Design</h3>
-              </div>
+            
+            <div>
+              <h3 style="font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; background: rgba(94, 234, 212, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(94, 234, 212, 0.2);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-electric)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                </div>
+                DFM & Prototyping
+              </h3>
+              <p style="color: rgba(255,255,255,0.6); font-size: 1.1rem; line-height: 1.5; margin: 0;">Rapid prototype builds, tooling analysis, BOM optimization, and thorough feasibility assessments.</p>
             </div>
-            <ul
-              style="list-style: none; padding: 0; margin: 0 0 24px 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.95rem; color: #475569;">
-              <li>DFM embedded from sketch</li>
-              <li>Prototyping &amp; CAD</li>
-              <li>Engineering Feasibility</li>
-            </ul>
-            <button onclick="window.location.href='/app.html#project-quote'"
-              style="padding: 12px 32px; background: #0e7a6c; color: #fff; border: none; border-radius: 99px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(14, 122, 108, 0.3);"
-              onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">Get a
-              Prototype Quote</button>
           </div>
-
-          <!-- CARD 3 -->
-          <div
-            style="background: transparent; border: none; box-shadow: none; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px;">
-            <div
-              style="position: relative; width: 100%; aspect-ratio: 1; border-radius: 16px; overflow: hidden; margin-bottom: 48px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); background: #f8fafc;">
-              <img src="/assets/images/expertise/factory-automation.png"
-                style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;"
-                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-              <div
-                style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(15, 23, 42, 0.85) 100%); pointer-events: none;">
-              </div>
-              <div
-                style="position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; pointer-events: none;">
-                <h3
-                  style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; color: #ffffff; margin: 0; font-weight: 700; letter-spacing: 0.5px;">
-                  Factory Automation</h3>
-              </div>
-            </div>
-            <ul
-              style="list-style: none; padding: 0; margin: 0 0 24px 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.95rem; color: #475569;">
-              <li>PLC &amp; Robotics integration</li>
-              <li>Custom assembly lines</li>
-              <li>Automated quality inspection</li>
-            </ul>
-            <button onclick="window.location.href='/app.html#suppliers'"
-              style="padding: 12px 32px; background: #0e7a6c; color: #fff; border: none; border-radius: 99px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(14, 122, 108, 0.3);"
-              onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">Start
-              Manufacturing</button>
-          </div>
-
         </div>
       </div>
+    </div>
 
-      <!-- Scroll to Manufacturing Capabilities Arrow -->
-      <div
-        style="position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 10; transition: opacity 0.3s; opacity: 0.5;"
-        onclick="document.getElementById('expertise').scrollIntoView({ behavior: 'smooth' })"
-        onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='0.5'">
-        <span
-          style="color: #0e7a6c; font-family: 'Outfit', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; font-weight: 700;">Manufacturing</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c"
-          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: bounce-arrow 2s infinite;">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
-      </div>
-  </section>
+    <!-- Part 2: Split Layout -->
+    <div style="background: var(--color-background); padding: 100px 5%; position: relative;">
+      <div style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 500px), 1fr)); gap: 80px; align-items: center;">
+        
+        <!-- Text Side -->
+        <div class="m-fade-up">
+          <h2 style="font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 24px; line-height: 1.2;">Unrivaled Supply Chain Control.</h2>
+          <p style="font-size: 1.15rem; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 48px;">
+            We leverage deep local networks and decades of experience to negotiate, vet, and manage suppliers. Quality control isn't an afterthought—it's built into every stage.
+          </p>
 
-  <section id="expertise" class="prd-expertise-section">
-    <div class="prd-expertise-inner">
-      <div class="prd-expertise-header m-fade-up">
-        <h2 class="prd-expertise-title">Manufacturing Capabilities.</h2>
-      </div>
-
-      <div class="prd-expertise-grid m-fade-up" style="gap: 16px; grid-template-columns: repeat(3, 1fr);">
-
-        <!-- Rapid Prototyping — Tall (1 col × 2 rows) -->
-        <div class="prd-exp-card prd-exp-card--tall">
-          <div class="prd-exp-img-wrap" style="height: 100px;">
-            <img src="/assets/images/expertise/rapid-prototyping.png" alt="Rapid Prototyping">
-            <div class="prd-exp-img-overlay">
-              <div class="prd-exp-tag">Most Requested</div>
-              <h3 class="prd-exp-img-title">Rapid Prototyping</h3>
-              <p class="prd-exp-img-desc">From CAD to physical part in 48–72 hours.</p>
+          <div style="display: flex; flex-direction: column; gap: 40px;">
+            <div>
+              <h3 style="font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; background: rgba(94, 234, 212, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(94, 234, 212, 0.2);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-electric)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                </div>
+                Supplier Sourcing & RFQ
+              </h3>
+              <p style="color: rgba(255,255,255,0.6); font-size: 1.05rem; line-height: 1.5; margin: 0;">Supplier shortlisting, factory audits, direct quote negotiation, and robust risk mitigation strategies.</p>
+            </div>
+            
+            <div>
+              <h3 style="font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; background: rgba(94, 234, 212, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(94, 234, 212, 0.2);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-electric)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline><polyline points="7.5 19.79 12 17.19 16.5 19.79"></polyline><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                </div>
+                Production, QC & Logistics
+              </h3>
+              <p style="color: rgba(255,255,255,0.6); font-size: 1.05rem; line-height: 1.5; margin: 0;">First article inspections, mass production QC, assembly line setup, and global export routing.</p>
             </div>
           </div>
-          <div class="prd-exp-body" style="padding: 12px 16px;">
-            <ul class="prd-exp-list">
-              <li>SLA &amp; SLS resin — tolerances to ±0.1mm</li>
-              <li>FDM in ABS, PLA, Nylon, Carbon-fibre composites</li>
-              <li>CNC soft tooling for bridge production runs</li>
-              <li>Vacuum casting — up to 20 copies</li>
-              <li>First Article Inspection (FAI) report included</li>
-            </ul>
-          </div>
         </div>
 
-        <!-- Tooling & Injection Moulding — Wide (2 cols) -->
-        <div class="prd-exp-card prd-exp-card--wide">
-          <div class="prd-exp-img-wrap" style="height: 100px;">
-            <img src="/assets/images/expertise/injection-moulding.png" alt="Injection Moulding">
-            <div class="prd-exp-img-overlay">
-              <h3 class="prd-exp-img-title">Tooling &amp; Injection Moulding</h3>
-              <p class="prd-exp-img-desc">P20, H13 &amp; soft aluminium tooling.</p>
-            </div>
-          </div>
-          <div class="prd-exp-body" style="padding: 12px 16px;">
-            <ul class="prd-exp-list">
-              <li>P20 (100k+ shots), H13 (500k+ shots), 1.2316</li>
-              <li>Mould-flow simulation before any steel is cut</li>
-              <li>Multi-cavity, family, and hot-runner tooling</li>
-              <li>ABS, PC, PA66, TPU, POM, PEEK</li>
-            </ul>
-          </div>
+        <!-- Image Side -->
+        <div class="m-fade-up" style="position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5); aspect-ratio: 4/3;">
+          <img src="/assets/images/services/contract-mfg.png" alt="Production, QC & Logistics" style="width: 100%; height: 100%; object-fit: cover;">
+          <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,15,0.6) 0%, transparent 40%); pointer-events: none;"></div>
         </div>
-
-        <!-- CNC Machining -->
-        <div class="prd-exp-card">
-          <div class="prd-exp-img-wrap" style="height: 100px;">
-            <img src="/assets/images/expertise/cnc-machining.png" alt="CNC Machining">
-            <div class="prd-exp-img-overlay">
-              <h3 class="prd-exp-img-title">CNC Machining</h3>
-              <p class="prd-exp-img-desc">3, 4 &amp; 5-axis precision.</p>
-            </div>
-          </div>
-          <div class="prd-exp-body" style="padding: 12px 16px;">
-            <ul class="prd-exp-list">
-              <li>Al 6061/7075, SS 316L, Ti6Al4V, PEEK, Delrin</li>
-              <li>Anodising, bead-blast, hard chrome, black oxide</li>
-              <li>Turning, milling, EDM wire &amp; sinker</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Metal Fabrication -->
-        <div class="prd-exp-card">
-          <div class="prd-exp-img-wrap" style="height: 100px;">
-            <img src="/assets/images/expertise/metal-fabrication.png" alt="Metal Fabrication">
-            <div class="prd-exp-img-overlay">
-              <h3 class="prd-exp-img-title">Metal Fabrication</h3>
-              <p class="prd-exp-img-desc">Enclosures, frames, brackets.</p>
-            </div>
-          </div>
-          <div class="prd-exp-body" style="padding: 12px 16px;">
-            <ul class="prd-exp-list">
-              <li>Laser cutting up to 25mm mild steel, 12mm SS</li>
-              <li>CNC press brake, JIS / DIN compliance</li>
-              <li>Progressive die stamping from 10k pcs</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Electronics Development -->
-        <div class="prd-exp-card">
-          <div class="prd-exp-img-wrap" style="height: 100px;">
-            <img src="/assets/images/expertise/electronics-pcba.png" alt="Electronics Development">
-            <div class="prd-exp-img-overlay">
-              <h3 class="prd-exp-img-title">Electronics Development</h3>
-              <p class="prd-exp-img-desc">Schematic to tested board. IPC Class 2 &amp; 3.</p>
-            </div>
-          </div>
-          <div class="prd-exp-body" style="padding: 12px 16px;">
-            <ul class="prd-exp-list">
-              <li>4-layer to 16-layer HDI PCB design &amp; layout</li>
-              <li>SMT 0201 / BGA / QFN &amp; through-hole assembly</li>
-              <li>AOI + X-ray BGA verification</li>
-              <li>UL/CE sourcing; BOM cost optimisation</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Soft Goods -->
-        <div class="prd-exp-card">
-          <div class="prd-exp-img-wrap" style="height: 100px;">
-            <img src="/assets/images/expertise/soft-goods.png" alt="Soft Goods">
-            <div class="prd-exp-img-overlay">
-              <h3 class="prd-exp-img-title">Soft Goods</h3>
-              <p class="prd-exp-img-desc">Technical fabrics & wearable integration.</p>
-            </div>
-          </div>
-          <div class="prd-exp-body" style="padding: 12px 16px;">
-            <ul class="prd-exp-list">
-              <li>Cut and sew manufacturing</li>
-              <li>Technical fabrics &amp; textiles</li>
-              <li>Sonic welding &amp; thermoforming</li>
-              <li>Wearables integration</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- See Full Capabilities — fills bottom-right grid cell -->
-        <div style="display: flex; align-items: center; justify-content: center;">
-          <a href="services.html" class="btn-marketing btn-marketing--primary"
-            style="display: inline-flex; align-items: center; gap: 8px;">
-            See Full Capabilities
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2">
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
-          </a>
-        </div>
-
-      </div><!-- end .prd-expertise-grid -->
-
-      <!-- Scroll to Platform Arrow -->
-      <div
-        style="display: flex; flex-direction: column; align-items: center; cursor: pointer; margin-top: 24px; transition: opacity 0.3s; opacity: 0.5;"
-        onclick="document.getElementById('platform').scrollIntoView({ behavior: 'smooth' })"
-        onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='0.5'">
-        <span
-          style="color: #5eead4; font-family: 'Outfit', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; font-weight: 700;">The
-          Platform</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5eead4"
-          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: bounce-arrow 2s infinite;">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
+        
       </div>
     </div>
   </section>
+
 
   <!-- ── MANUFACTURING ENGINE PLATFORM SECTION ──────────────── -->
   <section class="prd-platform-section" id="platform"
-    style="scroll-margin-top: 20px; padding: 80px 40px 40px; min-height: 100vh; display: flex; align-items: start; justify-content: center;">
-    <div class="prd-platform-inner" style="max-width: 1400px; width: 100%;">
-      <div class="prd-platform-header m-fade-up" style="margin-bottom: 28px;">
-        <p class="prd-who-eyebrow">The Platform</p>
-        <h2 class="prd-platform-title" style="margin-bottom: 8px;">Discover our Platform</h2>
-        <p class="prd-platform-subtitle">Tools built for the real world of hardware development.</p>
+    style="scroll-margin-top: 20px; min-height: 100vh; padding: 120px 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0f172a; position: relative; overflow: hidden;">
+    <!-- Technical Pattern Background -->
+    <div style="position: absolute; inset: 0; opacity: 0.04; z-index: 0; pointer-events: none;">
+      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="techGrid" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#5eead4" stroke-width="0.5"/>
+            <circle cx="0" cy="0" r="1.5" fill="#5eead4"/>
+            <circle cx="60" cy="0" r="1.5" fill="#5eead4"/>
+            <circle cx="0" cy="60" r="1.5" fill="#5eead4"/>
+            <circle cx="60" cy="60" r="1.5" fill="#5eead4"/>
+            <circle cx="30" cy="30" r="1" fill="#5eead4" opacity="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#techGrid)"/>
+      </svg>
+    </div>
+    <div class="prd-platform-inner"
+      style="max-width: 1000px; width: 100%; text-align: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 60px 40px; position: relative; z-index: 2;">
+      <div class="prd-platform-header m-fade-up" style="margin-bottom: 32px;">
+        <p class="prd-who-eyebrow" style="margin-bottom: 12px; color: #5eead4;">Our Technology</p>
+        <h2 class="prd-platform-title" style="margin-bottom: 16px; font-size: 2.2rem;">Manufacturing Engine Platform.
+        </h2>
+        <p class="prd-platform-subtitle"
+          style="margin: 0 auto; max-width: 600px; font-size: 1.05rem; color: #94a3b8; line-height: 1.6;">We manage your
+          manufacturing data using our proprietary hardware development platform. Track CAD revisions, review factory
+          audits, and approve quotes in one secure workspace.</p>
       </div>
+      <div class="m-fade-up" style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+        <a href="#" class="btn-marketing btn-marketing--primary nav-contact-trigger">Request Platform Access</a>
+      </div>
+    </div>
 
-      <!-- Bento Grid -->
+    <!-- Platform Modules Carousel -->
+    <div class="platform-carousel-wrap m-fade-up"
+      style="width: 100%; max-width: 1400px; margin-top: 80px; overflow: hidden; position: relative;">
+      <!-- Hide scrollbar for a clean look -->
       <style>
-        .platform-bento {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          grid-auto-rows: minmax(310px, auto);
-          gap: 16px;
+        .platform-carousel::-webkit-scrollbar {
+          display: none;
         }
 
-        .platform-card {
-          position: relative;
-          border-radius: 16px;
-          overflow: hidden;
-          border: 1px solid rgba(0, 0, 0, 0.08);
-          transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.3s;
+        .platform-carousel {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
 
-        .platform-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        @keyframes scrollCarousel {
+          0% {
+            transform: translateX(0);
+          }
+
+          100% {
+            transform: translateX(calc(-600px * 8 - 24px * 8));
+          }
         }
 
-        .platform-card--tall {
-          grid-row: span 2;
-        }
-
-        .platform-card--wide {
-          grid-column: span 2;
-        }
-
-        .platform-card img {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        .platform-card:hover img {
-          transform: scale(1.04);
-        }
-
-        .platform-card__overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(to top, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.55) 50%, rgba(15, 23, 42, 0.15) 100%);
+        .carousel-track {
           display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          padding: 20px;
+          gap: 24px;
+          animation: scrollCarousel 20s linear infinite;
         }
 
-        .platform-card__tag {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 10px;
-          text-transform: uppercase;
-          letter-spacing: 1.2px;
-          padding: 3px 10px;
-          border-radius: 6px;
-          width: fit-content;
-          margin-bottom: 6px;
+        .carousel-track:hover {
+          animation-play-state: paused;
+        }
+
+        @keyframes scrollCarousel {
+          0% {
+            transform: translateX(0);
+          }
+
+          100% {
+            transform: translateX(calc(-600px * 4 - 24px * 4));
+          }
+        }
+
+        .carousel-img-card {
+          flex: 0 0 600px;
+          border-radius: 12px;
+          overflow: hidden;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.02);
+          transition: transform 0.3s;
+          position: relative;
+        }
+
+        .carousel-img-card img {
+          width: 100%;
+          aspect-ratio: 16/9;
+          display: block;
+          object-fit: cover;
+          object-position: top;
+        }
+
+        .carousel-img-overlay {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          padding: 40px 32px 32px;
+          background: linear-gradient(to top, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 0.8) 60%, transparent 100%);
+          text-align: left;
+        }
+
+        .carousel-img-overlay h4 {
+          color: white;
+          font-family: 'Outfit', sans-serif;
+          font-size: 1.4rem;
+          margin-bottom: 8px;
           font-weight: 700;
         }
 
-        .platform-card__title {
-          font-family: 'Outfit', sans-serif;
-          font-size: 1.1rem;
-          font-weight: 600;
-          color: #fff;
-          margin: 0 0 4px;
-        }
-
-        .platform-card__desc {
-          font-size: 0.78rem;
-          color: rgba(255, 255, 255, 0.65);
-          line-height: 1.45;
-          margin: 0 0 8px;
-        }
-
-        .platform-card__list {
-          list-style: none;
-          padding: 0;
+        .carousel-img-overlay p {
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 1rem;
           margin: 0;
-          display: flex;
-          flex-direction: column;
-          gap: 3px;
+          line-height: 1.5;
         }
 
-        .platform-card__list li {
-          font-size: 0.72rem;
-          color: rgba(255, 255, 255, 0.5);
-          line-height: 1.35;
-          padding-left: 12px;
-          position: relative;
-        }
-
-        .platform-card__list li::before {
-          content: '\2192';
-          position: absolute;
-          left: 0;
-          font-size: 9px;
-        }
-
-        .platform-card__cta {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 7px 16px;
-          border-radius: 8px;
-          font-size: 12px;
-          font-weight: 600;
-          text-decoration: none;
-          transition: all 0.3s;
-          width: fit-content;
-          margin-top: 8px;
-        }
-
-        .platform-card__cta:hover {
-          filter: brightness(1.15);
-          transform: translateY(-1px);
+        .carousel-img-card:hover {
+          transform: translateY(-5px);
+          border-color: rgba(94, 234, 212, 0.4);
         }
       </style>
-
-      <div class="platform-bento m-fade-up">
-
-        <!-- Supply Chain Discovery — Tall -->
-        <div class="platform-card platform-card--tall">
-          <img src="/assets/images/platform/supply-chain.png" alt="Supply Chain Discovery">
-          <div class="platform-card__overlay">
-            <span class="platform-card__tag" style="background: rgba(16,185,129,0.2); color: #6ee7b7;">
-              <svg width="8" height="8" fill="#6ee7b7" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" />
-              </svg>
-              Workhorse
-            </span>
-            <h3 class="platform-card__title">Supply Chain Discovery</h3>
-            <p class="platform-card__desc">Direct gateway to our vetted PRD supplier network. Search, filter, compare,
-              and shortlist factories across 12 categories.</p>
-            <ul class="platform-card__list">
-              <li>500+ pre-audited suppliers with ISO certs</li>
-              <li>Downloadable reports &amp; NDA templates</li>
-              <li>Save shortlists, share with your team</li>
-              <li>Globe + tabular view with filters</li>
-            </ul>
-            <a href="/app.html#suppliers" class="platform-card__cta"
-              style="background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3);">
-              Discover Suppliers
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </a>
+      <div class="platform-carousel" style="display: flex; overflow: hidden; position: relative;">
+        <div class="carousel-track">
+          <!-- Set 1 -->
+          <div class="carousel-img-card">
+            <img src="/images/showcase-4.png" alt="Qualified Supply Chain">
+            <div class="carousel-img-overlay">
+              <h4>Qualified Supply Chain</h4>
+              <p>Network of 1,100+ pre-audited factories in Asia</p>
+            </div>
           </div>
-        </div>
+          <div class="carousel-img-card">
+            <img src="/images/showcase-2.png" alt="Instant Part Quotes">
+            <div class="carousel-img-overlay">
+              <h4>Instant Part Quotes</h4>
+              <p>Upload CAD for rapid, reliable costs & quick ordering</p>
+            </div>
+          </div>
+          <div class="carousel-img-card">
+            <img src="/images/showcase-marketplace.png" alt="OEM Marketplace">
+            <div class="carousel-img-overlay">
+              <h4>OEM Marketplace</h4>
+              <p>Directly engage with top-tier Asian OEMs & white-label products</p>
+            </div>
+          </div>
+          <div class="carousel-img-card">
+            <img src="/images/showcase-6.png" alt="Talents Finder">
+            <div class="carousel-img-overlay">
+              <h4>Talents Finder</h4>
+              <p>Embed vetted, specialized engineers into your team</p>
+            </div>
+          </div>
 
-        <!-- Project Quote &amp; Instant Quote — Wide -->
-        <div class="platform-card platform-card--wide">
-          <img src="/assets/images/platform/project-quote.png" alt="Quoting Engine">
-          <div class="platform-card__overlay">
-            <span class="platform-card__tag" style="background: rgba(59,130,246,0.2); color: #93c5fd;">
-              <svg width="8" height="8" fill="#93c5fd" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" />
-              </svg>
-              Quoting Engine
-            </span>
-            <h3 class="platform-card__title">Project Quote &amp; Instant Parts Quote</h3>
-            <p class="platform-card__desc">Instant Quote gives pre-negotiated prices for standard parts. Project Quote
-              lets our team analyse complex assemblies and BOMs.</p>
-            <ul class="platform-card__list">
-              <li>CNC, injection, sheet metal, PCBA pricing</li>
-              <li>Upload STEP/IGES for geometry analysis</li>
-              <li>Full BOM review, DFM, human negotiation</li>
-            </ul>
-            <div style="display: flex; gap: 8px;">
-              <a href="/app.html#instant-quote" class="platform-card__cta"
-                style="background: rgba(59,130,246,0.2); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3);">
-                Instant Quote
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14" />
-                  <path d="m12 5 7 7-7 7" />
-                </svg>
-              </a>
-              <a href="/app.html#project-quote" class="platform-card__cta"
-                style="background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15);">
-                Project Quote
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14" />
-                  <path d="m12 5 7 7-7 7" />
-                </svg>
-              </a>
+          <!-- Duplicate Set 1 for infinite scroll effect -->
+          <div class="carousel-img-card">
+            <img src="/images/showcase-4.png" alt="Qualified Supply Chain">
+            <div class="carousel-img-overlay">
+              <h4>Qualified Supply Chain</h4>
+              <p>Network of 1,100+ pre-audited factories in Asia</p>
+            </div>
+          </div>
+          <div class="carousel-img-card">
+            <img src="/images/showcase-2.png" alt="Instant Part Quotes">
+            <div class="carousel-img-overlay">
+              <h4>Instant Part Quotes</h4>
+              <p>Upload CAD for rapid, reliable costs & quick ordering</p>
+            </div>
+          </div>
+          <div class="carousel-img-card">
+            <img src="/images/showcase-marketplace.png" alt="OEM Marketplace">
+            <div class="carousel-img-overlay">
+              <h4>OEM Marketplace</h4>
+              <p>Directly engage with top-tier Asian OEMs & white-label products</p>
+            </div>
+          </div>
+          <div class="carousel-img-card">
+            <img src="/images/showcase-6.png" alt="Talents Finder">
+            <div class="carousel-img-overlay">
+              <h4>Talents Finder</h4>
+              <p>Embed vetted, specialized engineers into your team</p>
             </div>
           </div>
         </div>
-
-        <!-- OEM Marketplace -->
-        <div class="platform-card">
-          <img src="/assets/images/platform/marketplace.png" alt="OEM Marketplace">
-          <div class="platform-card__overlay">
-            <span class="platform-card__tag" style="background: rgba(139,92,246,0.2); color: #c4b5fd;">
-              <svg width="8" height="8" fill="#c4b5fd" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" />
-              </svg>
-              Marketplace
-            </span>
-            <h3 class="platform-card__title">OEM Marketplace</h3>
-            <p class="platform-card__desc">Western access to China's industrial OEM ecosystem. Motors, sensors, PLCs —
-              same factories, 40-70% cheaper.</p>
-            <ul class="platform-card__list">
-              <li>Chinese industrial OEM brands</li>
-              <li>Request samples, datasheets, raise a PO</li>
-            </ul>
-            <a href="/app.html#catalog" class="platform-card__cta"
-              style="background: rgba(139,92,246,0.2); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3);">
-              Browse Marketplace
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        <!-- Find Designers &amp; Engineers -->
-        <div class="platform-card">
-          <img src="/images/showcase-6.png" alt="Find Designers and Engineers">
-          <div class="platform-card__overlay">
-            <span class="platform-card__tag" style="background: rgba(244,114,182,0.2); color: #f9a8d4;">
-              <svg width="8" height="8" fill="#f9a8d4" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" />
-              </svg>
-              Expert Network
-            </span>
-            <h3 class="platform-card__title">Find Designers &amp; Engineers</h3>
-            <p class="platform-card__desc">Pre-vetted industrial designers and mechanical engineers. Augment your team
-              for production-ready design.</p>
-            <ul class="platform-card__list">
-              <li>Hire pre-vetted hardware professionals</li>
-              <li>Manage contracts and NDAs in-platform</li>
-            </ul>
-            <a href="/app.html#designers" class="platform-card__cta"
-              style="background: rgba(244,114,182,0.2); color: #f9a8d4; border: 1px solid rgba(244,114,182,0.3);">
-              Browse Network
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </a>
-          </div>
-        </div>
-
-      </div><!-- end .platform-bento -->
-
-      <!-- Scroll to Convergence Arrow -->
+      </div>
+      <!-- Fade edges to blend into background -->
       <div
-        style="display: flex; flex-direction: column; align-items: center; cursor: pointer; margin-top: 48px; transition: opacity 0.3s; opacity: 0.5;"
-        onclick="document.getElementById('convergence').scrollIntoView({ behavior: 'smooth' })"
-        onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='0.5'">
-        <span
-          style="color: #0e7a6c; font-family: 'Outfit', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; font-weight: 700;">Discover
-          More</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0e7a6c"
-          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: bounce-arrow 2s infinite;">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
+        style="position: absolute; top: 0; left: 0; width: 80px; height: 100%; background: linear-gradient(to right, #0f172a, transparent); pointer-events: none; z-index: 5;">
       </div>
-
-    </div>
-  </section>
-
-  <!-- ── CONVERGENCE: Premium Requires Orchestration ── -->
-  <section class="prd-convergence-section" id="convergence">
-    <div class="prd-convergence-inner">
-
-      <!-- Header -->
-      <div class="prd-convergence-header m-fade-up">
-        <p class="prd-who-eyebrow">The Difference</p>
-        <h2 class="prd-convergence-title">Premium isn't just design.<br>It's orchestration.</h2>
-        <p class="prd-convergence-subtitle">Premium hardware requires merging material science, finish strategy, and
-          process engineering from the very first sketch to achieve flawless form and function.</p>
-      </div>
-
-      <!-- ── Process Network: Vertical 3-Phase Flow ── -->
-      <div class="prd-phase-network prd-phase-network--vertical m-fade-up">
-
-        <!-- SVG Connection Lines — coordinates matched to actual rendered card positions -->
-        <svg class="prd-phase-svg prd-phase-svg--vert" viewBox="0 0 1400 700" preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <linearGradient id="flowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="#a78bfa" />
-              <stop offset="100%" stop-color="#5eead4" />
-            </linearGradient>
-          </defs>
-
-          <!-- Phase 1 bottom (y=142) → Phase 2 card tops (y=163) — fan out -->
-          <path d="M700 142 C700 152, 167 152, 167 163" fill="none" stroke="#a78bfa" stroke-width="1.5"
-            stroke-dasharray="6,4" class="animated-flow" />
-          <path d="M700 142 C700 152, 522 152, 522 163" fill="none" stroke="#a78bfa" stroke-width="1.5"
-            stroke-dasharray="6,4" class="animated-flow" />
-          <path d="M700 142 C700 152, 878 152, 878 163" fill="none" stroke="#a78bfa" stroke-width="1.5"
-            stroke-dasharray="6,4" class="animated-flow" />
-          <path d="M700 142 C700 152, 1233 152, 1233 163" fill="none" stroke="#a78bfa" stroke-width="1.5"
-            stroke-dasharray="6,4" class="animated-flow" />
-
-          <!-- Phase 2 card bottoms (y=325) → converge to center (y=388) -->
-          <path d="M167 325 C167 360, 700 370, 700 388" fill="none" stroke="url(#flowGrad)" stroke-width="1.5"
-            stroke-dasharray="6,4" class="animated-flow" />
-          <path d="M522 325 C522 360, 700 370, 700 388" fill="none" stroke="url(#flowGrad)" stroke-width="1.5"
-            stroke-dasharray="6,4" class="animated-flow" />
-          <path d="M878 325 C878 360, 700 370, 700 388" fill="none" stroke="url(#flowGrad)" stroke-width="1.5"
-            stroke-dasharray="6,4" class="animated-flow" />
-          <path d="M1233 325 C1233 360, 700 370, 700 388" fill="none" stroke="url(#flowGrad)" stroke-width="1.5"
-            stroke-dasharray="6,4" class="animated-flow" />
-
-          <!-- Phase 3 center (y=388) → fan out to 3 product card tops (y=452) -->
-          <path d="M700 388 C700 420, 406 430, 406 452" fill="none" stroke="url(#flowGrad)" stroke-width="1.5"
-            stroke-dasharray="5,4" class="animated-flow" />
-          <path d="M700 388 L700 452" fill="none" stroke="url(#flowGrad)" stroke-width="1.5" stroke-dasharray="5,4"
-            class="animated-flow" />
-          <path d="M700 388 C700 420, 994 430, 994 452" fill="none" stroke="url(#flowGrad)" stroke-width="1.5"
-            stroke-dasharray="5,4" class="animated-flow" />
-
-          <!-- Feedback loop -->
-          <path d="M700 600 C700 500, 1350 480, 1350 142 C1350 20, 850 20, 750 60" fill="none"
-            stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="8,8" />
-        </svg>
-        <!-- Top Entry: Customer Vision -->
-        <div class="prd-phase-entry">
-          <div class="prd-phase-entry-badge">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-            Customer Vision
-          </div>
-          <div class="prd-phase-entry-line"></div>
-        </div>
-
-        <div class="prd-phase-tier prd-phase-tier--top">
-          <div class="prd-phase-group prd-phase-group--hero" style="position: relative;">
-            <div class="prd-phase-label"
-              style="position: absolute; top: 0; left: 40px; transform: translateY(-50%); margin: 0; background: #0f172a; border-color: #a78bfa; color: #c4b5fd;">
-              Phase 1 — Co-Creation</div>
-            <div class="prd-phase-hero-layout">
-              <div class="prd-phase-hero-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.5">
-                  <path d="M12 19l7-7 3 3-7 7-3-3zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5zM2 2l5 2M2 2l2 5"
-                    stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </div>
-              <div class="prd-phase-hero-text">
-                <h4>Design Intent</h4>
-                <p>Translating customer vision into <em>high-fidelity CMF</em>, functional architecture, and product
-                  benchmarking.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="prd-phase-tier prd-phase-tier--mid" style="position: relative;">
-          <div
-            style="width: 100%; max-width: 1200px; display: flex; justify-content: flex-end; padding-right: 40px; box-sizing: border-box;">
-            <div class="prd-phase-label prd-phase-label--floating"
-              style="position: absolute; top: -16px; right: 40px; background: #0f172a; border-color: #5eead4; color: #5eead4; box-shadow: 0 4px 16px rgba(94,234,212,0.15); z-index: 1000;">
-              Phase 2 — Atlas Orchestrates</div>
-          </div>
-          <div class="prd-phase-cards--row">
-            <!-- card 1 -->
-            <div class="prd-phase-card" style="--phase-color: #f472b6;">
-              <div class="prd-phase-card-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-              </div>
-              <h4>Materials Science</h4>
-              <p>Resins, fillers, shore hardness</p>
-            </div>
-            <!-- card 2 -->
-            <div class="prd-phase-card" style="--phase-color: #60a5fa;">
-              <div class="prd-phase-card-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 8l4 4-4 4M8 12h7" />
-                </svg>
-              </div>
-              <h4>Finish Strategy</h4>
-              <p>PVD, texture, anodise, EDM</p>
-            </div>
-            <!-- card 3 -->
-            <div class="prd-phase-card" style="--phase-color: #34d399;">
-              <div class="prd-phase-card-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path
-                    d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-                </svg>
-              </div>
-              <h4>Technology Selection</h4>
-              <p>Mould flow, 2K, tolerancing</p>
-            </div>
-            <!-- card 4 -->
-            <div class="prd-phase-card" style="--phase-color: #fbbf24;">
-              <div class="prd-phase-card-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path
-                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                </svg>
-              </div>
-              <h4>Supply Chain</h4>
-              <p>Supplier orchestration & risk</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="prd-phase-tier prd-phase-tier--bottom" style="margin-top: 30px; position: relative;">
-          <div class="prd-phase-label"
-            style="position: absolute; top: 0; right: 40px; transform: translateY(-50%); margin: 0; z-index: 1000; background: #0f172a; border-color: #38bdf8; color: #38bdf8; box-shadow: 0 4px 16px rgba(56,189,248,0.15);">
-            Phase 3 — Collaborative Realization</div>
-          <div class="adv-matrix-container" id="matrix-container"
-            style="height: auto; min-height: 340px; padding-bottom: 80px; position: relative;">
-            <svg id="matrix-canvas" class="matrix-canvas"></svg>
-
-            <div class="prd-phase-cards--row matrix-constellation" id="matrix-constellation"
-              style="position: relative; pointer-events: all; height: auto; min-height: 260px; display: flex; align-items: stretch; justify-content: center; gap: 20px; margin-top: 70px;">
-              <!-- Product Card 1 -->
-              <div class="prd-phase-card node intent-node" data-id="skin" data-type="intent"
-                style="--phase-color: #a78bfa; position: relative; left: auto; top: auto; transform: none; width: 100%; max-width: 260px; flex: 1; padding: 16px 14px;">
-                <div class="node-label" style="font-size: 13px;">Skin-like Wearable</div>
-                <div class="node-icon" style="max-width: 120px; margin: 8px auto;"><img
-                    src="/assets/images/sensory/skin_product.png" alt="Skin Feel" style="max-height: 80px;"></div>
-                <p style="margin-top: 6px; color: rgba(255,255,255,0.45); font-size: 11px; line-height: 1.4;">
-                  Elastomeric interfaces with organic tactility.</p>
-              </div>
-              <!-- Product Card 2 -->
-              <div class="prd-phase-card node intent-node" data-id="woven" data-type="intent"
-                style="--phase-color: #5eead4; position: relative; left: auto; top: auto; transform: none; width: 100%; max-width: 260px; flex: 1; padding: 16px 14px;">
-                <div class="node-label" style="font-size: 13px;">Woven Micro-Texture</div>
-                <div class="node-icon" style="max-width: 120px; margin: 8px auto;"><img
-                    src="/assets/images/sensory/woven_product.png" alt="Woven Tactility" style="max-height: 80px;">
-                </div>
-                <p style="margin-top: 6px; color: rgba(255,255,255,0.45); font-size: 11px; line-height: 1.4;">Technical
-                  textiles for structural performance.</p>
-              </div>
-              <!-- Product Card 3 -->
-              <div class="prd-phase-card node intent-node" data-id="optical" data-type="intent"
-                style="--phase-color: #60a5fa; position: relative; left: auto; top: auto; transform: none; width: 100%; max-width: 260px; flex: 1; padding: 16px 14px;">
-                <div class="node-label" style="font-size: 13px;">Glass-like Transparency</div>
-                <div class="node-icon" style="max-width: 120px; margin: 8px auto;"><img
-                    src="/assets/images/sensory/optical_product.png" alt="Optical Clarity" style="max-height: 80px;">
-                </div>
-                <p style="margin-top: 6px; color: rgba(255,255,255,0.45); font-size: 11px; line-height: 1.4;">
-                  Optical-grade clarity with flow control.</p>
-              </div>
-            </div>
-
-            <!-- Tech nodes pool -->
-            <div class="matrix-tech-nodes-pool">
-              <div class="node tech-node" data-id="tpu-soft" data-type="tech" style="opacity:0; pointer-events:none;">
-              </div>
-              <div class="node tech-node" data-id="ceramic-pa" data-type="tech" style="opacity:0; pointer-events:none;">
-              </div>
-              <div class="node tech-node" data-id="abs-mica" data-type="tech" style="opacity:0; pointer-events:none;">
-              </div>
-              <div class="node tech-node" data-id="optical-pc" data-type="tech" style="opacity:0; pointer-events:none;">
-              </div>
-              <div class="node tech-node" data-id="liquid-silicone" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="highly-conductive-pa" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="carbon-infused-pa" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="high-density-epp" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="overmold" data-type="tech" style="opacity:0; pointer-events:none;">
-              </div>
-              <div class="node tech-node" data-id="multi-spray" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="iml" data-type="tech" style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="diamond-turning" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="micro-edm" data-type="tech" style="opacity:0; pointer-events:none;">
-              </div>
-              <div class="node tech-node" data-id="five-axis-cnc" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="ultrasonic-welding" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="high-speed-im" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="production-im" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="precision-cnc" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="optical-injection" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="compression-molding" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="insert-molding" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="extrusion" data-type="tech" style="opacity:0; pointer-events:none;">
-              </div>
-              <div class="node tech-node" data-id="lsr-molding" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-              <div class="node tech-node" data-id="vacuum-casting" data-type="tech"
-                style="opacity:0; pointer-events:none;"></div>
-            </div>
-
-            <button class="reset-map-btn" id="reset-map-btn"
-              style="opacity: 0; pointer-events: none; transition: all 0.4s;">&larr; Reset Constellation</button>
-          </div>
-        </div>
+      <div
+        style="position: absolute; top: 0; right: 0; width: 80px; height: 100%; background: linear-gradient(to left, #0f172a, transparent); pointer-events: none; z-index: 5;">
       </div>
     </div>
   </section>
-
-  <!-- Transformation Overlay (Dual View) -->
-  <div id="matrix-overlay" class="matrix-overlay hidden">
-    <div class="overlay-glass transformation-view">
-      <button class="close-overlay" id="close-overlay">&times;</button>
-      <div class="transformation-header">
-        <h2 id="overlay-title">Transformation Logic</h2>
-        <div class="divider"></div>
-      </div>
-      <div class="transformation-compare">
-        <div class="compare-card">
-          <div class="compare-tag">Step 1: Sensory Goal</div>
-          <div class="compare-visual"><img id="overlay-img-product" src="" alt="Product Goal"></div>
-          <p id="overlay-desc" class="compare-text"></p>
-        </div>
-        <div class="transformation-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </div>
-        <div class="compare-card">
-          <div class="compare-tag">Step 2: Steel Finish</div>
-          <div class="compare-visual"><img id="overlay-img-steel" src="" alt="Steel Reality"></div>
-          <div class="compromise-box">
-            <strong>MOLD TRANSFORMATION</strong>
-            <p id="overlay-compromise"></p>
-          </div>
-        </div>
-      </div>
-    </div>
+  </div>
+  </div>
+  </div>
   </div>
 
   <!-- Tech Info Modal -->
@@ -1869,28 +1224,25 @@
         </div>
         <p
           style="color: var(--color-steel-400); max-width: 480px; line-height: 1.6; font-size: 13px; margin-bottom: 32px;">
-          Accelerating and de-risking product development through fast, cost-effective, and scalable manufacturing
-          solutions.
+          AtlasDT helps hardware companies design, prototype, source, cost-down, and manufacture physical products in
+          Asia through engineering-led DFM, supplier sourcing, and production support.
         </p>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
 
           <div>
-            <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Platform</h4>
+            <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Explore</h4>
             <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
-              <li><a href="app.html"
-                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Supplier
-                  Engine</a></li>
-              <li><a href="app.html#rfq"
-                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Instant RFQ</a></li>
-              <li><a href="app.html#designers"
-                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Find Designers</a></li>
-              <li><a href="services.html"
-                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Our Services</a></li>
-              <li><a href="faq.html"
-                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">FAQ</a></li>
-              <li><a href="blog.html"
-                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Blog</a></li>
+              <li><a href="/" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Home</a>
+              </li>
+              <li><a href="/services.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Services</a></li>
+              <li><a href="/who-we-help.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Who We Help</a></li>
+              <li><a href="/how-it-works.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">How It Works</a></li>
+              <li><a href="/about.html"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">About</a></li>
             </ul>
           </div>
           <div>
@@ -1923,9 +1275,8 @@
           Locations</h4>
         <ul
           style="list-style: none; display: flex; flex-direction: column; gap: 16px; font-size: 12px; color: var(--color-steel-400);">
-          <li><strong>Australia:</strong> Corner Carrington Rd & Thurston St, Suite 10/1 Main St, Box Hill VIC 3128</li>
-          <li><strong>China:</strong> No 8 XiJing Road, Longhua District, Shenzhen, Guangdong</li>
-          <li><strong>USA:</strong> 500 Terry Francine Street, San Francisco, CA 94158</li>
+          <li><strong>Melbourne, Australia:</strong> Client management, engineering review, product strategy.</li>
+          <li><strong>Shenzhen, China:</strong> Supplier network, sourcing, production follow-up.</li>
         </ul>
         <div style="margin-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
           <p style="font-size: 11px; color: var(--color-steel-400); margin-bottom: 8px;">AtlasDT is a trademark and a
@@ -1938,8 +1289,8 @@
       <!-- Column 3: Contact Form -->
       <div>
         <h4 style="color: white; margin-bottom: 24px; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">
-          Get Intouch</h4>
-        <form class="atlasdt-footer-form"  method="POST"
+          Get in Touch</h4>
+        <form class="atlasdt-footer-form" method="POST"
           style="display: flex; flex-direction: column; gap: 16px; background: rgba(255, 255, 255, 0.03); padding: 24px; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px;">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
             <input type="text" name="name" placeholder="Name" required

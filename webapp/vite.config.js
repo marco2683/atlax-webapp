@@ -167,6 +167,38 @@ function crudPlugin() {
               res.end(JSON.stringify({ error: error.message }));
             }
           });
+        } else if (req.url.startsWith('/.netlify/functions/admin-products') && req.method === 'DELETE') {
+          import('@supabase/supabase-js').then(async ({ createClient }) => {
+            const { loadEnv } = await import('vite');
+            const env = loadEnv('development', process.cwd(), '');
+            const supabaseUrl = env.VITE_SUPABASE_URL;
+            const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY;
+            if (!supabaseUrl || !supabaseKey) {
+              res.statusCode = 500;
+              res.setHeader('Content-Type', 'application/json');
+              return res.end(JSON.stringify({ error: 'Missing Supabase env vars' }));
+            }
+            const supabase = createClient(supabaseUrl, supabaseKey);
+            try {
+              const urlObj = new URL(req.url, 'http://' + req.headers.host);
+              const id = urlObj.searchParams.get('id');
+              if (!id) {
+                res.statusCode = 400;
+                res.setHeader('Content-Type', 'application/json');
+                return res.end(JSON.stringify({ error: 'Missing product id' }));
+              }
+              await supabase.from('pricing_tiers').delete().eq('product_id', id);
+              await supabase.from('product_assets').delete().eq('product_id', id);
+              const { error } = await supabase.from('products').delete().eq('id', id);
+              if (error) throw error;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ success: true }));
+            } catch (error) {
+              res.statusCode = 500;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: error.message }));
+            }
+          });
         } else if (req.url.startsWith('/.netlify/functions/admin-profiles') && req.method === 'GET') {
           // Setup Supabase with Service Role to bypass RLS for Admin
           import('@supabase/supabase-js').then(async ({ createClient }) => {

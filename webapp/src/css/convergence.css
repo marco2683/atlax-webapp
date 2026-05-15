@@ -141,11 +141,16 @@
   overflow: visible;
   background: #f1f5f9;
   border: 1px solid rgba(0, 0, 0, 0.06);
-  aspect-ratio: 4 / 3;
 }
 
 .prd-photo-frame img {
   border-radius: 20px;
+  width: 100%;
+  max-height: 720px;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  object-position: top center;
 }
 
 .prd-photo-placeholder {
@@ -161,34 +166,34 @@
 
 .prd-photo-badge {
   position: absolute;
-  bottom: -16px;
-  left: 20px;
+  bottom: -14px;
+  left: 16px;
   background: #022c22;
   border-radius: 999px;
   border: 1px solid rgba(16, 185, 129, 0.4);
-  padding: 10px 24px;
+  padding: 7px 16px;
   box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   z-index: 10;
 }
 
 .prd-photo-badge--2 {
   left: auto;
-  right: 20px;
-  bottom: -16px;
+  right: 16px;
+  bottom: -14px;
 }
 
 .prd-badge-num {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 800;
   color: #6ee7b7;
   line-height: 1.1;
 }
 
 .prd-badge-label {
-  font-size: 11px;
+  font-size: 9px;
   color: #34d399;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -427,7 +432,7 @@
   font-family: var(--font-display);
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 600;
-  color: #0f172a;
+  color: #ffffff;
   line-height: 1.15;
   letter-spacing: -0.5px;
 }

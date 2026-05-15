@@ -2,6 +2,15 @@
    PRD — Main Entry Point v3 — Radial results + cascading selector
    ============================================================ */
 
+if (sessionStorage.getItem('atlasdt_access') !== 'granted') {
+  if (prompt('AtlasDT Site Maintenance. Enter password:') === 'atlas2026') {
+    sessionStorage.setItem('atlasdt_access', 'granted');
+  } else {
+    document.documentElement.innerHTML = '<div style="padding: 50px; text-align: center; color: white; background: #111; height: 100vh; font-family: sans-serif;">Access Denied.</div>';
+    throw new Error('Access Denied');
+  }
+}
+
 import './css/design-system.css';
 import './css/components.css';
 import './css/layout.css';
@@ -130,10 +139,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Handle initial state from URL hash (e.g. app.html#project-quote)
-  const initialHash = window.location.hash.replace('#', '');
-  if (initialHash && initialHash !== 'suppliers' && initialHash !== 'suppliers-table' && initialHash !== 'table') {
+  const initialHash = window.location.hash.replace('#', '') || 'projects';
+  if (initialHash !== 'suppliers' && initialHash !== 'suppliers-table' && initialHash !== 'table') {
     // Delay to let all engines finish registering
     setTimeout(() => switchView(initialHash, globe), 300);
+  } else {
+    setTimeout(() => switchView('projects', globe), 300);
   }
 
   // Also handle hash changes after initial load (e.g. user navigates via link)
@@ -528,6 +539,7 @@ function switchView(view, globe) {
   const selectionScreen = document.getElementById('sales-funnel');
   const tabularEngine = document.getElementById('supplier-tabular-engine');
   const catalogEngine = document.getElementById('catalog-engine');
+  const betaEngine = document.getElementById('beta-engine');
 
   console.log('[PRD] Switching to view:', view);
 
@@ -539,10 +551,11 @@ function switchView(view, globe) {
   servicesEngine?.classList.add('hidden');
   tariffEngine?.classList.add('hidden');
   taxonomyEngine?.classList.add('hidden');
-  hero?.classList.remove('hidden');
+  hero?.classList.add('hidden');
   tabularEngine?.classList.add('hidden');
   selectionScreen?.classList.add('hidden');
   catalogEngine?.classList.add('hidden');
+  betaEngine?.classList.add('hidden');
 
   // Restore global footer when leaving marketplace
   const globalFooter = document.getElementById('footer');
@@ -603,30 +616,33 @@ function switchView(view, globe) {
     globe.disableInteraction();
   }
 
-  if (view === 'project-quote') {
-    appState.searchType = 'project-quote';
-    bottomResults?.classList.add('hidden');
-    projectQuoteEngine?.classList.remove('hidden');
+    if (view === 'projects' || view === 'documents' || view === 'production') {
+      betaEngine?.classList.remove('hidden');
+      bottomResults?.classList.add('hidden');
+    } else if (view === 'project-quote') {
+      appState.searchType = 'project-quote';
+      bottomResults?.classList.add('hidden');
+      projectQuoteEngine?.classList.remove('hidden');
 
-    // Wire bulk upload handlers if not already done
-    if (!appState._projectQuoteInitialized) {
-      import('./js/components/rfq-controller.js').then(m => {
-        m.initProjectQuoteController?.();
-        appState._projectQuoteInitialized = true;
-      });
-    }
-  } else if (view === 'rfq') {
-    appState.searchType = 'rfq';
-    rfqEngine?.classList.remove('hidden');
-    rfqRight?.classList.remove('hidden');
-    bottomResults?.classList.add('hidden');
+      // Wire bulk upload handlers if not already done
+      if (!appState._projectQuoteInitialized) {
+        import('./js/components/rfq-controller.js').then(m => {
+          m.initProjectQuoteController?.();
+          appState._projectQuoteInitialized = true;
+        });
+      }
+    } else if (view === 'rfq') {
+      appState.searchType = 'rfq';
+      rfqEngine?.classList.remove('hidden');
+      rfqRight?.classList.remove('hidden');
+      bottomResults?.classList.add('hidden');
 
-    if (!appState._rfqInitialized) {
-      appState._rfqInitialized = true;
-      import('./js/components/rfq-controller.js').then(m => {
-        m.initRFQController();
-      });
-    }
+      if (!appState._rfqInitialized) {
+        appState._rfqInitialized = true;
+        import('./js/components/rfq-controller.js').then(m => {
+          m.initRFQController();
+        });
+      }
 
     // Force detailed mode — hide bulk, show detailed
     const detailedPanel = document.getElementById('rfq-detailed-panel');

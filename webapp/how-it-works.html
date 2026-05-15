@@ -1,21 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description"
-    content="Engineering-led product design, DFM, cost-down, supplier sourcing, RFQ management, prototyping, and manufacturing support for hardware companies working with Asia.">
-  <title>Services | Product Design, DFM, Sourcing & Production Support | AtlasDT</title>
+  <meta name="description" content="A practical path from product uncertainty to manufacturing execution.">
+  <title>How It Works | The AtlasDT Process</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;0,900;1,800;1,900&family=Orbitron:wght@400;600;800&family=Rajdhani:wght@400;500;600;700&display=swap"
-    rel="stylesheet">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Outfit:wght@100..900&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;0,900;1,800;1,900&family=Orbitron:wght@400;600;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/css/advantage.css">
   <link rel="stylesheet" href="/src/css/auth.css">
   <link rel="stylesheet" href="/src/css/responsive.css">
@@ -26,81 +20,43 @@
   <script type="module" src="/src/marketing.js"></script>
   <script defer src="/src/js/cms-loader.js"></script>
 </head>
-
 <body class="marketing-page">
-
-  <!-- ── Navbar ────────────────────────────────────────── -->
-  <nav class="navbar" id="navbar"
-    style="position: fixed; width: 100%; top: 0; z-index: 100; transition: background 0.3s; padding: var(--space-4) var(--space-6); background: transparent; backdrop-filter: blur(12px);">
-    <div
-      style="display: flex; justify-content: space-between; align-items: center; max-width: 95%; margin: 0 auto; width: 100%;">
+  <nav class="navbar" id="navbar" style="position: fixed; width: 100%; top: 0; z-index: 100; transition: background 0.3s; padding: var(--space-4) var(--space-6); background: transparent; backdrop-filter: blur(12px);">
+    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 95%; margin: 0 auto; width: 100%;">
       <div class="navbar__brand" style="display: flex; align-items: center; gap: 12px; flex: 1;">
-        <a href="/" aria-label="Home"><img id="nav-brand-logo" src="/logos/atlasdt-logo-light.png" alt="Atlas DT"
-            style="height: 32px; width: auto; object-fit: contain; transition: opacity 0.4s ease;" /></a>
-
+        <a href="/" aria-label="Home"><img id="nav-brand-logo" src="/logos/atlasdt-logo-light.png" alt="Atlas DT" style="height: 32px; width: auto; object-fit: contain; transition: opacity 0.4s ease;" /></a>
       </div>
-      <button class="mobile-menu-toggle" id="mobile-menu-btn" aria-label="Toggle mobile menu"
-        onclick="const nb=document.getElementById('navbar'); nb.classList.toggle('menu-open'); this.textContent=nb.classList.contains('menu-open')?'✕':'☰'">☰</button>
-      <div class="nav-links-container"
-        style="display: flex; align-items: center; gap: 4px; flex: 0 0 auto; justify-content: center;">
-
-        <a href="/" class="global-nav-link" style="padding: 8px 16px;">
-          <span class="global-nav-link__top">Home</span>
-        </a>
-        <a href="/services.html" class="global-nav-link" style="padding: 8px 16px;">
-          <span class="global-nav-link__top">Services</span>
-        </a>
-        <a href="/who-we-help.html" class="global-nav-link" style="padding: 8px 16px;">
-          <span class="global-nav-link__top">Who We Help</span>
-        </a>
-        <a href="/how-it-works.html" class="global-nav-link" style="padding: 8px 16px;">
-          <span class="global-nav-link__top">How It Works</span>
-        </a>
+      <button class="mobile-menu-toggle" id="mobile-menu-btn" aria-label="Toggle mobile menu" onclick="const nb=document.getElementById('navbar'); nb.classList.toggle('menu-open'); this.textContent=nb.classList.contains('menu-open')?'&#10005;':'&#9776;'">&#9776;</button>
+      <div class="nav-links-container" style="display: flex; align-items: center; gap: 4px; flex: 0 0 auto; justify-content: center;">
+        <a href="/" class="global-nav-link" style="padding: 8px 16px;"><span class="global-nav-link__top">Home</span></a>
+        <a href="/services.html" class="global-nav-link" style="padding: 8px 16px;"><span class="global-nav-link__top">Services</span></a>
+        <a href="/who-we-help.html" class="global-nav-link" style="padding: 8px 16px;"><span class="global-nav-link__top">Who We Help</span></a>
+        <a href="/how-it-works.html" class="global-nav-link" style="padding: 8px 16px;"><span class="global-nav-link__top">How It Works</span></a>
         <a href="/app.html" class="global-nav-link" style="padding: 8px 16px; display: flex; flex-direction: column; align-items: center;">
           <span class="global-nav-link__top" style="color: var(--color-electric); font-weight: 700;">Manufacturing</span>
           <span class="global-nav-link__sub" style="color: var(--color-electric); font-weight: 700; font-size: 0.85em; opacity: 0.9;">Engine</span>
         </a>
-        <a href="/about.html" class="global-nav-link" style="padding: 8px 16px;">
-          <span class="global-nav-link__top">About</span>
-        </a>
-        <!-- Workspace link: visible on mobile nav, hidden on desktop -->
+        <a href="/about.html" class="global-nav-link" style="padding: 8px 16px;"><span class="global-nav-link__top">About</span></a>
         <a href="/workspace.html" class="nav-workspace-link-mobile" id="nav-workspace-mobile" style="display: none;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect width="7" height="7" x="3" y="3" rx="1" />
-            <rect width="7" height="7" x="14" y="3" rx="1" />
-            <rect width="7" height="7" x="3" y="14" rx="1" />
-            <rect width="7" height="7" x="14" y="14" rx="1" />
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /></svg>
           Workspace
         </a>
       </div>
       <div class="navbar__actions">
         <a href="/workspace.html" class="navbar__workspace-link" id="btn-workspace" title="My Workspace">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect width="7" height="7" x="3" y="3" rx="1" />
-            <rect width="7" height="7" x="14" y="3" rx="1" />
-            <rect width="7" height="7" x="3" y="14" rx="1" />
-            <rect width="7" height="7" x="14" y="14" rx="1" />
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /></svg>
           Workspace
         </a>
-        <!-- Dynamic User Dropdown -->
-        <a href="#" id="nav-login-btn" class="nav-link"
-          style="font-weight: 500; color: var(--color-electric); display: none;">Log In</a>
+        <a href="#" id="nav-login-btn" class="nav-link" style="font-weight: 500; color: var(--color-electric); display: none;">Log In</a>
         <div id="nav-user-menu" class="nav-user-menu">
           <div class="nav-avatar" id="nav-avatar">?</div>
           <div class="dropdown-content" style="right: 20px;">
-            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter
-              Platform</a>
+            <a href="/app.html" class="dropdown-item" style="color: var(--color-electric); font-weight: bold;">Enter Platform</a>
             <a href="/workspace.html" class="dropdown-item">Workspace</a>
             <a href="/profile.html" class="dropdown-item">Profile Settings</a>
-            <a href="/workspace.html" class="dropdown-item" id="nav-notifications-link"
-              style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="/workspace.html" class="dropdown-item" id="nav-notifications-link" style="display: flex; justify-content: space-between; align-items: center;">
               Notifications
-              <span id="nav-notif-badge"
-                style="background:var(--color-electric); color:white; border-radius:10px; padding:2px 6px; font-size:10px; display:none;">0</span>
+              <span id="nav-notif-badge" style="background:var(--color-electric); color:white; border-radius:10px; padding:2px 6px; font-size:10px; display:none;">0</span>
             </a>
             <div class="dropdown-divider"></div>
             <a href="#" id="nav-logout-btn" class="dropdown-item">Log Out</a>
@@ -110,376 +66,71 @@
     </div>
   </nav>
 
-  <main style="padding: 120px 20px; min-height: 80vh; max-width: 1200px; margin: 0 auto; color: white;">
-    <!-- Hero Section -->
-    <div style="text-align: center; margin-bottom: 80px;">
-      <h1
-        style="font-size: 3.5rem; font-weight: 800; font-family: 'Outfit', sans-serif; letter-spacing: -1.5px; margin-bottom: 20px;">
-        Our Services
-      </h1>
-      <p
-        style="font-size: 1.25rem; color: var(--color-steel-400); max-width: 1100px; margin: 0 auto; line-height: 1.6;">
-        Based right here in Melbourne, our engineering team works directly with the factory floors in Asia to ensure
-        your
-        product is built right.
-      </p>
-      <div style="margin-top: 32px;">
-        <a href="#" class="btn-marketing btn-marketing--primary nav-contact-trigger">Book a Teams Consultation</a>
-      </div>
-    </div>
-
-    <style>
-      .srv-module {
-        display: flex;
-        gap: 60px;
-        align-items: center;
-        margin-bottom: 100px;
-      }
-
-      .srv-module:nth-child(even) {
-        flex-direction: row-reverse;
-      }
-
-      .srv-image-col {
-        flex: 1;
-        position: relative;
-      }
-
-      .srv-image-col img {
-        width: 100%;
-        border-radius: 12px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        aspect-ratio: 4/3;
-        object-fit: cover;
-      }
-
-      .srv-melb-badge {
-        position: absolute;
-        bottom: -20px;
-        right: -20px;
-        background: var(--color-electric);
-        color: #000;
-        font-weight: 800;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-family: 'Outfit', sans-serif;
-        box-shadow: 0 10px 20px rgba(94, 234, 212, 0.2);
-        z-index: 2;
-      }
-
-      .srv-module:nth-child(even) .srv-melb-badge {
-        right: auto;
-        left: -20px;
-      }
-
-      .srv-content-col {
-        flex: 1;
-      }
-
-      .srv-content-col h2 {
-        font-size: 2.2rem;
-        font-family: 'Outfit', sans-serif;
-        margin-bottom: 24px;
-        font-weight: 700;
-      }
-
-      .srv-content-col p.srv-intro {
-        color: var(--color-steel-300);
-        font-size: 1.1rem;
-        line-height: 1.6;
-        margin-bottom: 32px;
-      }
-
-      .srv-what-we-do {
-        margin-bottom: 32px;
-      }
-
-      .srv-what-we-do h4 {
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--color-steel-400);
-        margin-bottom: 16px;
-      }
-
-      .srv-what-we-do ul {
-        list-style: none;
-        padding: 0;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-      }
-
-      .srv-what-we-do li {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: white;
-        font-size: 0.95rem;
-      }
-
-      .srv-what-we-do li svg {
-        color: var(--color-electric);
-        flex-shrink: 0;
-      }
-
-      .srv-result-box {
-        border: 1px solid rgba(94, 234, 212, 0.3);
-        background: rgba(94, 234, 212, 0.05);
-        padding: 24px;
-        border-radius: 8px;
-      }
-
-      .srv-result-box h4 {
-        color: var(--color-electric);
-        margin-bottom: 8px;
-        font-family: 'Outfit', sans-serif;
-        font-size: 1.1rem;
-      }
-
-      .srv-result-box p {
-        color: var(--color-steel-300);
-        margin: 0;
-        font-size: 0.95rem;
-        line-height: 1.5;
-      }
-
-      @media (max-width: 900px) {
-
-        .srv-module,
-        .srv-module:nth-child(even) {
-          flex-direction: column;
-          gap: 40px;
-        }
-
-        .srv-melb-badge {
-          bottom: 20px;
-          right: 20px;
-        }
-
-        .srv-module:nth-child(even) .srv-melb-badge {
-          left: auto;
-          right: 20px;
-        }
-
-        .srv-what-we-do ul {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-
-    <div class="services-list">
-
-      <!-- Module 1 -->
-      <div class="srv-module">
-        <div class="srv-image-col">
-          <img src="/images/service_product_design_new.jpg" alt="Product Design">
-          <div class="srv-melb-badge">Melbourne-Led Design</div>
-        </div>
-        <div class="srv-content-col">
-          <h2>Product Design & Development</h2>
-          <p class="srv-intro">We bridge the gap between brilliant ideas and manufacturing reality. Our local
-            engineering team refines your concepts into robust, production-ready assemblies.</p>
-          <div class="srv-what-we-do">
-            <h4>What We Do</h4>
-            <ul>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Industrial Design</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Mechanical Eng. (CAD)</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> DFM / DFA Analysis</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Certification</li>
-            </ul>
-          </div>
-          <div class="srv-result-box">
-            <h4>The Result</h4>
-            <p>Our Melbourne team manages the risk, so you get a production-ready package without the usual overseas
-              headaches.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Module 2 -->
-      <div class="srv-module">
-        <div class="srv-image-col">
-          <img src="/images/service_dfm_new.png" alt="Rapid Prototyping">
-        </div>
-        <div class="srv-content-col">
-          <h2>Rapid Prototyping</h2>
-          <p class="srv-intro">Move fast and break things—but do it smartly. We iterate physical models quickly to
-            validate mechanics, ergonomics, and aesthetics before investing in hard tooling.</p>
-          <div class="srv-what-we-do">
-            <h4>What We Do</h4>
-            <ul>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> SLA / SLS 3D Printing</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> CNC Machining</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Vacuum Casting</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Gateway Management</li>
-            </ul>
-          </div>
-          <div class="srv-result-box">
-            <h4>The Result</h4>
-            <p>Your local bridge to global manufacturing ensures functional, looks-like/works-like prototypes in your
-              hands in days, not weeks.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Module 3 -->
-      <div class="srv-module">
-        <div class="srv-image-col">
-          <img src="/assets/images/services/supply-chain.png" alt="Strategic Sourcing">
-          <div class="srv-melb-badge">Boots on the Ground</div>
-        </div>
-        <div class="srv-content-col">
-          <h2>Strategic Sourcing & Supply Chain</h2>
-          <p class="srv-intro">Stop guessing on Alibaba. We leverage our network of pre-audited factories in Asia,
-            handling RFQs and negotiations directly in the local language.</p>
-          <div class="srv-what-we-do">
-            <h4>What We Do</h4>
-            <ul>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Supplier Qualification</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Vendor Comparison</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Factory Audits</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Logistics & Shipping</li>
-            </ul>
-          </div>
-          <div class="srv-result-box">
-            <h4>The Result</h4>
-            <p>Melbourne expertise with Asian efficiency. We secure the best pricing while strictly enforcing IP
-              protection and quality agreements.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Module 4 -->
-      <div class="srv-module">
-        <div class="srv-image-col">
-          <img src="/assets/images/services/contract-mfg.png" alt="Contract Manufacturing">
-        </div>
-        <div class="srv-content-col">
-          <h2>Contract Manufacturing</h2>
-          <p class="srv-intro">When tooling is cut and mass production begins, you need eyes on the factory floor. We
-            oversee production to guarantee the golden sample standard is met on every unit.</p>
-          <div class="srv-what-we-do">
-            <h4>What We Do</h4>
-            <ul>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Mass Production Overseeing</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Quality Control (AQL)</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Tooling Management</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Pre-Shipment Inspection</li>
-            </ul>
-          </div>
-          <div class="srv-result-box">
-            <h4>The Result</h4>
-            <p>We are your local safety net. We deal with the late-night calls and factory issues so you can focus on
-              selling your product.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Module 5 -->
-      <div class="srv-module">
-        <div class="srv-image-col">
-          <img src="/assets/images/prd_tech_floating_pcb.png" alt="Electronics Development">
-          <div class="srv-melb-badge">Local Support</div>
-        </div>
-        <div class="srv-content-col">
-          <h2>Electronics Development</h2>
-          <p class="srv-intro">From custom PCBAs to complex embedded firmware, our electronics team ensures your
-            hardware is intelligent, power-efficient, and optimized for mass production.</p>
-          <div class="srv-what-we-do">
-            <h4>What We Do</h4>
-            <ul>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Schematic & PCB Design</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Firmware Development</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> PCBA Manufacturing</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Component Sourcing</li>
-            </ul>
-          </div>
-          <div class="srv-result-box">
-            <h4>The Result</h4>
-            <p>A fully integrated electronics stack managed by experts who understand exactly how to avoid global supply
-              chain chip shortages.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Module 6 -->
-      <div class="srv-module">
-        <div class="srv-image-col">
-          <img src="/images/service_factory_automation.png" alt="Factory Automation">
-        </div>
-        <div class="srv-content-col">
-          <h2>Factory Automation</h2>
-          <p class="srv-intro">Increase yield and lower defects by removing human error from the assembly line. We
-            design and deploy custom jigs, testing fixtures, and robotic integrations.</p>
-          <div class="srv-what-we-do">
-            <h4>What We Do</h4>
-            <ul>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Custom Jigs & Fixtures</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Robotic Integration</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> EOL Testing</li>
-              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg> Line Optimization</li>
-            </ul>
-          </div>
-          <div class="srv-result-box">
-            <h4>The Result</h4>
-            <p>Consistent, high-quality production runs with lower labor costs and maximum throughput—overseen directly
-              by our engineers.</p>
-          </div>
-        </div>
-      </div>
-
+  <main style="padding: 120px 20px 60px; max-width: 1000px; margin: 0 auto; color: white;">
+    <div style="text-align: center;">
+      <h1 style="font-size: 3.5rem; font-weight: 800; font-family: 'Outfit', sans-serif; letter-spacing: -1.5px; margin-bottom: 20px;">The Melbourne + Shenzhen Model</h1>
+      <p style="font-size: 1.25rem; color: var(--color-steel-400); max-width: 700px; margin: 0 auto; line-height: 1.6;">Local engineering accountability combined with direct access to the world's most capable manufacturing ecosystem.</p>
     </div>
   </main>
-  <footer id="footer" class="m-footer"
+
+  <section style="position: relative; width: 100%; min-height: 50vh; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+    <div style="position: absolute; inset: 0; background-image: url('/assets/images/team/boardroom-cad.jpg'); background-size: cover; background-position: center; z-index: 1;"></div>
+    <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(10,10,15,0.8) 0%, rgba(10,10,15,0.88) 100%); z-index: 2;"></div>
+    <div style="position: relative; z-index: 3; max-width: 1000px; width: 100%; padding: 80px 20px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; color: white;">
+      <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 40px; backdrop-filter: blur(10px);">
+        <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 16px; color: white;">Melbourne, Australia</h2>
+        <h3 style="font-size: 1rem; color: var(--color-electric); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; font-weight: 700;">Client Management &amp; Engineering</h3>
+        <p style="color: rgba(255,255,255,0.8); line-height: 1.6;">Our Australian headquarters handles your project intake, DFM analysis, and overarching strategy. You communicate directly with native English-speaking engineers who understand Western quality expectations, IP protection, and your commercial goals.</p>
+      </div>
+      <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 40px; backdrop-filter: blur(10px);">
+        <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 16px; color: white;">Shenzhen, China</h2>
+        <h3 style="font-size: 1rem; color: var(--color-electric); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; font-weight: 700;">Sourcing &amp; Production Execution</h3>
+        <p style="color: rgba(255,255,255,0.8); line-height: 1.6;">Our PRD-based team executes on the ground. We have native Mandarin-speaking project managers and QC inspectors who negotiate with factories, oversee tooling, resolve assembly bottlenecks in real-time, and enforce strict AQL standards before shipment.</p>
+      </div>
+    </div>
+  </section>
+
+  <main style="padding: 80px 20px; max-width: 1000px; margin: 0 auto; color: white;">
+    <div>
+      <h2 style="font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 60px;">Engagement Workflow</h2>
+      <div style="display: flex; flex-direction: column; gap: 30px; position: relative;">
+        <div style="position: absolute; top: 0; bottom: 0; left: 24px; width: 2px; background: rgba(255,255,255,0.1); z-index: 0;"></div>
+        <div style="display: flex; gap: 30px; position: relative; z-index: 1;">
+          <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--color-electric); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 800; flex-shrink: 0; border: 4px solid #0a0a0a;">1</div>
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 30px; flex: 1;">
+            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 12px;">Project Intake &amp; NDA</h3>
+            <p style="color: var(--color-steel-300); line-height: 1.6;">You submit your initial requirements via our secure intake portal. We immediately execute a mutual Non-Disclosure Agreement (NDA) to protect your IP before you share any CAD files or BOMs.</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 30px; position: relative; z-index: 1;">
+          <div style="width: 50px; height: 50px; border-radius: 50%; background: #222; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 800; flex-shrink: 0; border: 4px solid #0a0a0a;">2</div>
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 30px; flex: 1;">
+            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 12px;">Engineering Review</h3>
+            <p style="color: var(--color-steel-300); line-height: 1.6;">Our Melbourne engineers review your files for manufacturing feasibility. We flag potential high-cost components, tooling risks, and missing tolerances, providing you with a preliminary assessment report.</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 30px; position: relative; z-index: 1;">
+          <div style="width: 50px; height: 50px; border-radius: 50%; background: #222; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 800; flex-shrink: 0; border: 4px solid #0a0a0a;">3</div>
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 30px; flex: 1;">
+            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 12px;">Sourcing &amp; Formal Quotation</h3>
+            <p style="color: var(--color-steel-300); line-height: 1.6;">Our Shenzhen team takes the verified files to our audited factory network. We negotiate pricing and lead times, returning to you with a comprehensive quotation covering tooling (NRE), piece-price, and MOQ requirements.</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 30px; position: relative; z-index: 1;">
+          <div style="width: 50px; height: 50px; border-radius: 50%; background: #222; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 800; flex-shrink: 0; border: 4px solid #0a0a0a;">4</div>
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 30px; flex: 1;">
+            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 12px;">Project Kickoff</h3>
+            <p style="color: var(--color-steel-300); line-height: 1.6;">Upon quotation approval, we officially kick off the project. You are assigned a dedicated Project Manager in Melbourne, and tooling begins in China. You receive weekly updates via the AtlasDT platform until your product ships.</p>
+          </div>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 60px;">
+        <a href="#" class="nav-contact-trigger" style="background: var(--color-electric); color: white; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 700; font-size: 1.1rem; display: inline-block;">Start Your Project</a>
+      </div>
+    </div>
+  </main>
+
+<footer<footer id="footer" class="m-footer"
     style="padding: 100px var(--space-8); background: #080808; border-top: 1px solid rgba(255,255,255,0.05);">
     <div
       style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 60px; max-width: 1400px; margin: 0 auto; text-align: left;">
@@ -491,8 +142,7 @@
         </div>
         <p
           style="color: var(--color-steel-400); max-width: 480px; line-height: 1.6; font-size: 13px; margin-bottom: 32px;">
-          AtlasDT helps hardware companies design, prototype, source, cost-down, and manufacture physical products in
-          Asia through engineering-led DFM, supplier sourcing, and production support.
+          AtlasDT helps hardware companies design, prototype, source, cost-down, and manufacture physical products in Asia through engineering-led DFM, supplier sourcing, and production support.
         </p>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
@@ -500,8 +150,8 @@
           <div>
             <h4 style="color: var(--color-white); margin-bottom: 20px; font-weight: 600;">Explore</h4>
             <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
-              <li><a href="/" style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Home</a>
-              </li>
+              <li><a href="/"
+                  style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Home</a></li>
               <li><a href="/services.html"
                   style="color: var(--color-steel-400); text-decoration: none; font-size: 14px;">Services</a></li>
               <li><a href="/who-we-help.html"
@@ -557,7 +207,7 @@
       <div>
         <h4 style="color: white; margin-bottom: 24px; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">
           Get in Touch</h4>
-        <form class="atlasdt-footer-form" method="POST"
+        <form class="atlasdt-footer-form"  method="POST"
           style="display: flex; flex-direction: column; gap: 16px; background: rgba(255, 255, 255, 0.03); padding: 24px; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px;">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
             <input type="text" name="name" placeholder="Name" required

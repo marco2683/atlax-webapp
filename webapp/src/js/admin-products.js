@@ -142,30 +142,20 @@ function renderProductsTable(container, search = '') {
       btn.textContent = '...';
       btn.style.pointerEvents = 'none';
       
-      let deleteError;
-      const serviceKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
-      if (serviceKey) {
-        // Use service role key to bypass RLS for admin actions
-        const { createClient } = await import('@supabase/supabase-js');
-        const adminClient = createClient(import.meta.env.VITE_SUPABASE_URL, serviceKey);
-        const { error, data } = await adminClient.from('products').delete().eq('id', btn.dataset.id).select('id');
-        deleteError = error;
-        if (!deleteError && (!data || data.length === 0)) deleteError = { message: "Item not found or already deleted." };
-      } else {
-        const { error, data } = await supabase.from('products').delete().eq('id', btn.dataset.id).select('id');
-        deleteError = error;
-        if (!deleteError && (!data || data.length === 0)) deleteError = { message: "RLS prevented deletion. Admin needs VITE_SUPABASE_SERVICE_ROLE_KEY in .env" };
+      try {
+        const res = await fetch(`/.netlify/functions/admin-products?id=${btn.dataset.id}`, {
+          method: 'DELETE'
+        });
+        const result = await res.json();
+        if (!res.ok || result.error) throw new Error(result.error || 'Delete failed');
+        
+        allProducts = allProducts.filter(p => p.id !== btn.dataset.id);
+        renderProductsTable(container, search);
+      } catch (err) {
+        alert('Failed: ' + err.message);
+        btn.textContent = 'Delete';
+        btn.style.pointerEvents = '';
       }
-
-      if (deleteError) { 
-        alert('Failed: ' + deleteError.message); 
-        btn.textContent = 'Delete'; 
-        btn.style.pointerEvents = ''; 
-        return; 
-      }
-      
-      allProducts = allProducts.filter(p => p.id !== btn.dataset.id);
-      renderProductsTable(container, search);
     });
   });
 }
