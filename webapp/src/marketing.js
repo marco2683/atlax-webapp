@@ -1,11 +1,4 @@
-if (sessionStorage.getItem('atlasdt_access') !== 'granted') {
-  if (prompt('AtlasDT Site Maintenance. Enter password:') === 'atlas2026') {
-    sessionStorage.setItem('atlasdt_access', 'granted');
-  } else {
-    document.documentElement.innerHTML = '<div style="padding: 50px; text-align: center; color: white; background: #111; height: 100vh; font-family: sans-serif;">Access Denied.</div>';
-    throw new Error('Access Denied');
-  }
-}
+
 
 import './css/design-system.css';
 import './css/marketing.css';

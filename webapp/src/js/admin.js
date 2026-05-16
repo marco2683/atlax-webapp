@@ -5777,12 +5777,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cust = loadedCustomers.find(c => c.id === id);
     if (!cust) return;
 
+    function formatAddress(addrStr) {
+      if (!addrStr) return '—';
+      try {
+        const a = typeof addrStr === 'string' ? JSON.parse(addrStr) : addrStr;
+        return [a.line1, a.line2, a.city, a.state, a.postcode, a.country].filter(Boolean).join(', ');
+      } catch(e) {
+        return addrStr;
+      }
+    }
+
     let rfqCount = 0;
     try {
       const res = await fetch(`/.netlify/functions/admin-rfqs?action=count&userId=${id}`);
       if (res.ok) {
         const data = await res.json();
         rfqCount = data.count || 0;
+      }
+    } catch(e) {}
+
+    let hasAccess = false;
+    try {
+      const res = await fetch('/api/platform-access');
+      if (res.ok) {
+        const emails = await res.json();
+        hasAccess = emails.includes((cust.email || '').toLowerCase().trim());
       }
     } catch(e) {}
 
@@ -5793,7 +5812,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const dsLabel = (cust.designer_status || 'none').charAt(0).toUpperCase() + (cust.designer_status || 'none').slice(1);
 
     // Helper for field rows
-    const field = (label, val) => `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#64748b;font-size:13px;font-weight:500;">${label}</span><span style="color:#0f172a;font-size:13px;font-weight:600;text-align:right;max-width:60%;word-break:break-word;">${val || '—'}</span></div>`;
+    const field = (label, val, key) => {
+      if (!key) return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#64748b;font-size:13px;font-weight:500;">${label}</span><span style="color:#0f172a;font-size:13px;font-weight:600;text-align:right;max-width:60%;word-break:break-word;">${val || '—'}</span></div>`;
+      
+      if (['career_description', 'work_history', 'address', 'shipping_address', 'skills'].includes(key)) {
+        return `<div style="display:flex;flex-direction:column;padding:8px 0;border-bottom:1px solid #f1f5f9;gap:6px;">
+          <label style="color:#64748b;font-size:13px;font-weight:500;">${label}</label>
+          <textarea id="cust-edit-${key}" rows="2" style="width:100%;padding:8px 10px;border:1px solid transparent;border-radius:6px;font-size:13px;font-weight:600;color:#0f172a;background:rgba(255,255,255,0.5);outline:none;transition:all 0.2s;resize:vertical;" onfocus="this.style.border='1px solid #cbd5e1';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(37,99,235,0.1)'" onblur="this.style.border='1px solid transparent';this.style.background='rgba(255,255,255,0.5)';this.style.boxShadow='none'">${(val || '').replace(/</g, '&lt;')}</textarea>
+        </div>`;
+      }
+
+      return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;align-items:center;">
+        <label style="color:#64748b;font-size:13px;font-weight:500;min-width:120px;">${label}</label>
+        <input type="text" id="cust-edit-${key}" value="${(val || '').toString().replace(/"/g, '&quot;')}" style="flex:1;text-align:right;padding:6px 8px;border:1px solid transparent;border-radius:6px;font-size:13px;font-weight:600;color:#0f172a;background:rgba(255,255,255,0.5);outline:none;transition:all 0.2s;max-width:60%;" onfocus="this.style.border='1px solid #cbd5e1';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(37,99,235,0.1)'" onblur="this.style.border='1px solid transparent';this.style.background='rgba(255,255,255,0.5)';this.style.boxShadow='none'">
+      </div>`;
+    };
 
     const modalHTML = `
       <div id="admin-cust-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;">
@@ -5823,15 +5856,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div>
                   <div style="font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">Personal Information</div>
                   <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
-                    ${field('First Name', cust.first_name)}
-                    ${field('Last Name', cust.last_name)}
+                    ${field('First Name', cust.first_name, 'first_name')}
+                    ${field('Last Name', cust.last_name, 'last_name')}
                     ${field('Email', cust.email)}
-                    ${field('Phone', cust.phone)}
-                    ${field('Age', cust.age)}
-                    ${field('Gender', cust.gender ? cust.gender.charAt(0).toUpperCase() + cust.gender.slice(1) : null)}
-                    ${field('Address', cust.address)}
-                    ${field('Shipping Address', cust.shipping_address)}
-                    ${field('LinkedIn', cust.linkedin_url ? '<a href="' + cust.linkedin_url + '" target="_blank" style="color:#2563eb;text-decoration:none;">View Profile ↗</a>' : null)}
+                    ${field('Phone', cust.phone, 'phone')}
+                    ${field('Age', cust.age, 'age')}
+                    ${field('Gender', cust.gender, 'gender')}
+                    ${field('Address', formatAddress(cust.address), 'address')}
+                    ${field('Shipping Address', formatAddress(cust.shipping_address), 'shipping_address')}
+                    ${field('LinkedIn', cust.linkedin_url, 'linkedin_url')}
                   </div>
                 </div>
 
@@ -5839,13 +5872,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div>
                   <div style="font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">Company Information</div>
                   <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
-                    ${field('Company', cust.company)}
-                    ${field('Job Title', cust.job_title)}
-                    ${field('Website', cust.company_website)}
-                    ${field('Industry', cust.company_industry)}
-                    ${field('Company Size', cust.company_size)}
-                    ${field('Tax ID', cust.tax_id)}
-                    ${field('Registration No.', cust.registration_number)}
+                    ${field('Company', cust.company, 'company')}
+                    ${field('Job Title', cust.job_title, 'job_title')}
+                    ${field('Website', cust.company_website, 'company_website')}
+                    ${field('Industry', cust.company_industry, 'company_industry')}
+                    ${field('Company Size', cust.company_size, 'company_size')}
+                    ${field('Tax ID', cust.tax_id, 'tax_id')}
+                    ${field('Registration No.', cust.registration_number, 'registration_number')}
                   </div>
                 </div>
               </div>
@@ -5857,13 +5890,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div>
                   <div style="font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">Professional Profile</div>
                   <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
-                    ${field('Skills', cust.skills)}
-                    ${field('Career Description', cust.career_description ? (cust.career_description.length > 80 ? cust.career_description.slice(0,80) + '…' : cust.career_description) : null)}
-                    ${field('Experience (yrs)', cust.experience_years)}
-                    ${field('Methodologies', cust.methodologies)}
-                    ${field('Work History', cust.work_history ? (cust.work_history.length > 80 ? cust.work_history.slice(0,80) + '…' : cust.work_history) : null)}
-                    ${field('Resume', cust.resume_url ? '<a href="' + cust.resume_url + '" target="_blank" style="color:#2563eb;text-decoration:none;">View Resume ↗</a>' : null)}
-                    ${field('Portfolio', cust.portfolio_url ? '<a href="' + cust.portfolio_url + '" target="_blank" style="color:#2563eb;text-decoration:none;">View Portfolio ↗</a>' : null)}
+                    ${field('Skills', cust.skills, 'skills')}
+                    ${field('Career Description', cust.career_description, 'career_description')}
+                    ${field('Experience (yrs)', cust.experience_years, 'experience_years')}
+                    ${field('Methodologies', cust.methodologies, 'methodologies')}
+                    ${field('Work History', cust.work_history, 'work_history')}
+                    ${field('Resume', cust.resume_url, 'resume_url')}
+                    ${field('Portfolio', cust.portfolio_url, 'portfolio_url')}
                   </div>
                 </div>
 
@@ -5898,6 +5931,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                       <textarea id="cust-admin-notes" rows="3" placeholder="Billing refs, stripe IDs, internal notes…" style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;color:#0f172a;background:#ffffff;resize:vertical;box-sizing:border-box;font-family:inherit;">${cust.admin_notes || ''}</textarea>
                       <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Only visible to SysAdmins.</div>
                     </div>
+                    <div style="margin-top:16px; padding-top:16px; border-top:1px solid #e2e8f0; display: flex; align-items: center; gap: 8px;">
+                      <input type="checkbox" id="cust-platform-access" ${hasAccess ? 'checked' : ''} style="width:16px; height:16px; cursor:pointer;">
+                      <label for="cust-platform-access" style="font-size:13px;font-weight:700;color:#0f172a;cursor:pointer;">Grant Platform Access (Bypass Zero-Trust Lock)</label>
+                    </div>
                   </div>
                 </div>
 
@@ -5927,17 +5964,49 @@ document.addEventListener('DOMContentLoaded', async () => {
       btn.style.opacity = '0.6';
       const newRole    = document.getElementById('cust-role-select').value;
       const adminNotes = document.getElementById('cust-admin-notes').value;
+      const newPlatformAccess = document.getElementById('cust-platform-access').checked;
 
-      const { error } = await supabase.from('profiles').update({ role: newRole, admin_notes: adminNotes }).eq('id', id);
+      const updates = { role: newRole };
+      const keys = ['first_name', 'last_name', 'phone', 'age', 'gender', 'address', 'shipping_address', 'linkedin_url', 'company', 'job_title', 'company_website', 'company_industry', 'company_size', 'tax_id', 'registration_number', 'skills', 'career_description', 'experience_years', 'methodologies', 'work_history', 'resume_url', 'portfolio_url'];
+      
+      keys.forEach(k => {
+        const el = document.getElementById(`cust-edit-${k}`);
+        if (el) {
+          let val = el.value.trim();
+          if (val === '') {
+            updates[k] = null;
+          } else if (k === 'age' || k === 'experience_years') {
+            updates[k] = parseInt(val, 10) || null;
+          } else {
+            updates[k] = val;
+          }
+        }
+      });
 
-      if(error) {
-        console.error(error);
-        alert('Failed to save changes.');
+      console.log('[Admin] Saving profile updates:', updates);
+      const { error } = await supabase.from('profiles').update(updates).eq('id', id);
+      if (error) console.error('[Admin] Profile update error:', error);
+
+      let accessError = false;
+      if (newPlatformAccess !== hasAccess && cust.email) {
+        try {
+          if (newPlatformAccess) {
+            await fetch('/api/platform-access', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: cust.email }) });
+          } else {
+            await fetch('/api/platform-access?email=' + encodeURIComponent(cust.email), { method: 'DELETE' });
+          }
+        } catch(e) {
+          accessError = true;
+        }
+      }
+
+      if(error || accessError) {
+        console.error(error || 'Access API Error');
+        alert('Failed to save some changes.');
         btn.textContent = originalText;
         btn.style.opacity = '1';
       } else {
-        cust.role = newRole;
-        cust.admin_notes = adminNotes;
+        Object.assign(cust, updates);
         btn.textContent = '✓ Saved!';
         btn.style.background = '#059669';
         renderCustomersTable();

@@ -132,12 +132,7 @@
       try {
         var hasAuth = Object.keys(localStorage).some(function (k) { return k.startsWith('sb-') && k.endsWith('-auth-token'); });
 
-        // Gating unfinished marketplace modules
-        if (!hasAuth) {
-          window.location.href = '/';
-          return;
-        }
-
+        // Removed redirect so unauthenticated users hit the access wall instead
         var tier = sessionStorage.getItem('atlasdt_tier') || 'basic';
         var isBasic = tier.toLowerCase().trim() === 'basic';
 
@@ -199,8 +194,7 @@
             style="height: 32px; width: auto; object-fit: contain;" /></a>
         <div class="nav-engine-separator"></div>
         <div class="nav-engine-label">
-          <span class="nav-engine-top">Manufacturing</span>
-          <span class="nav-engine-bottom">Engine</span>
+          <span class="nav-engine-top" style="font-weight: 500; opacity: 0.9;">Platform</span>
         </div>
       </div>
 
@@ -290,7 +284,7 @@
     <!-- BETA PLACEHOLDER -->
     <section id="beta-engine" class="hidden"
       style="padding: 150px 20px; text-align: center; color: white; min-height: 80vh;">
-      <h2 style="font-size: 2.5rem; margin-bottom: 20px; font-family: 'Outfit', sans-serif;">Manufacturing Engine</h2>
+      <h2 style="font-size: 2.5rem; margin-bottom: 20px; font-family: 'Outfit', sans-serif;">Platform</h2>
       <p style="font-size: 1.2rem; color: var(--color-steel-400); max-width: 600px; margin: 0 auto 30px;">This module is
         currently restricted to active AtlasDT manufacturing partners.</p>
       <a href="#" class="btn-marketing btn-marketing--primary nav-contact-trigger"
@@ -317,16 +311,7 @@
       </button>
     </div>
 
-    <!-- FLAT EARTH TOGGLE -->
-    <div class="flatearth-toggle-pill hidden" id="flatearth-view-toggle">
-      <button class="flat-toggle-btn active" data-shape="conservative">
-        Conservative Globe
-      </button>
-      <span class="flat-toggle-divider">|</span>
-      <button class="flat-toggle-btn" data-shape="flatearth">
-        Flat Earth
-      </button>
-    </div>
+
 
     <!-- SUPPLIER SELECTION SCREEN -->
     <div class="sales-funnel-page" id="sales-funnel">

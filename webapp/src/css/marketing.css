@@ -581,7 +581,42 @@ body.marketing-page {
 .btn-marketing--secondary:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.4);
-}
+}
+
+/* Upload CTA — distinct from the booking CTA */
+.btn-marketing--upload {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
+  box-shadow: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-marketing--upload::before {
+  content: '\2191';
+  margin-right: 8px;
+  font-size: 1.1em;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.btn-marketing--upload:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.06);
+}
+
+.btn-marketing--upload:hover::before {
+  transform: translateY(-3px);
+}
+
 
 /* ── The Bridge Section (East meets West) ──────────────── */
 .m-bridge {

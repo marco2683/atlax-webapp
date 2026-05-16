@@ -389,6 +389,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ── Views ──
 
 function openTabularView() {
+  if (window.hasPlatformAccess === false) return;
   selectionScreen.classList.add('hidden');
   if (globeContainer) globeContainer.style.opacity = '0.3';
   tabularEngine.classList.remove('hidden');
@@ -439,7 +440,11 @@ function openGlobeView() {
   if (tagline) tagline.style.display = 'block';
   if (regionRow) regionRow.style.display = 'flex';
   
-  viewToggle.classList.remove('hidden');
+  if (window.hasPlatformAccess !== false) {
+    viewToggle.classList.remove('hidden');
+  } else {
+    viewToggle.style.display = 'none';
+  }
   
   // Show scroll hint and enable globe interaction in globe mode
   const scrollHint = document.getElementById('scroll-hint');

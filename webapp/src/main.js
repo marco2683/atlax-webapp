@@ -2,14 +2,7 @@
    PRD — Main Entry Point v3 — Radial results + cascading selector
    ============================================================ */
 
-if (sessionStorage.getItem('atlasdt_access') !== 'granted') {
-  if (prompt('AtlasDT Site Maintenance. Enter password:') === 'atlas2026') {
-    sessionStorage.setItem('atlasdt_access', 'granted');
-  } else {
-    document.documentElement.innerHTML = '<div style="padding: 50px; text-align: center; color: white; background: #111; height: 100vh; font-family: sans-serif;">Access Denied.</div>';
-    throw new Error('Access Denied');
-  }
-}
+
 
 import './css/design-system.css';
 import './css/components.css';
@@ -87,9 +80,65 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Failed to load suppliers:', err);
   }
   
-  // 0. Auth Guard removed — application is now open-by-default
+  // 0. Auth Guard
   const user = await getCurrentUser();
   if (user) console.log('[PRD] Authenticated as:', user.email);
+
+  // Platform Access Gate
+  window.hasPlatformAccess = false;
+  if (user) {
+    try {
+      const res = await fetch('/api/platform-access');
+      if (res.ok) {
+        const approvedEmails = await res.json();
+        if (approvedEmails.includes(user.email.toLowerCase().trim())) {
+          window.hasPlatformAccess = true;
+        }
+      }
+    } catch(e) {
+      console.warn('Failed to check platform access', e);
+    }
+  }
+
+  // If no access, lock down the initial UI view
+  if (!window.hasPlatformAccess) {
+    const betaEngine = document.getElementById('beta-engine');
+    if (betaEngine) {
+      betaEngine.classList.remove('hidden');
+      if (!user) {
+        const p = betaEngine.querySelector('p');
+        if(p) p.textContent = 'Please log in with an approved AtlasDT partner account to access the engine.';
+        const btn = betaEngine.querySelector('a');
+        if (btn) {
+          btn.textContent = 'Log In';
+          btn.classList.remove('nav-contact-trigger');
+          btn.onclick = (e) => {
+            e.preventDefault();
+            import('./js/components/auth-modal.js').then(m => m.openAuthModal());
+          };
+        }
+      } else {
+        const p = betaEngine.querySelector('p');
+        if(p) p.textContent = 'Your account (' + user.email + ') does not currently have access. Please request platform access.';
+        const btn = betaEngine.querySelector('a');
+        if(btn) {
+          btn.textContent = 'Request Access';
+          btn.href = 'mailto:admin@atlasdt.com?subject=Platform Access Request';
+          btn.classList.remove('nav-contact-trigger');
+        }
+      }
+    }
+    document.getElementById('bottom-results-container')?.classList.add('hidden');
+    const searchBar = document.getElementById('search-bar');
+    if (searchBar) {
+      searchBar.style.opacity = '0';
+      searchBar.style.pointerEvents = 'none';
+    }
+    const heroTitle = document.querySelector('.hero__title-container');
+    if (heroTitle) heroTitle.classList.add('hidden');
+    const quote = document.getElementById('supplier-discovery-quote');
+    if (quote) quote.style.display = 'none';
+  }
 
   window.scrollTo(0, 0); // Enforce top scroll on load
   // 1. Navigation (async — loads profile panel + auth state)
@@ -513,6 +562,16 @@ function updateStackedResultsOnly(globe) {
 
 // ── View Switching Logic ────────────────────────────────
 function switchView(view, globe) {
+  // PLATFORM ACCESS GUARD
+  if (window.hasPlatformAccess === false) {
+    console.warn(`[Auth] Blocked view attempt: ${view}. User lacks platform access.`);
+    const engines = ['rfq-engine', 'rfq-engine-right', 'project-quote-engine', 'designers-engine', 'services-engine', 'tariff-engine', 'taxonomy-engine', 'supplier-tabular-engine', 'sales-funnel', 'catalog-engine', 'hero'];
+    engines.forEach(id => document.getElementById(id)?.classList.add('hidden'));
+    document.getElementById('bottom-results-container')?.classList.add('hidden');
+    document.getElementById('beta-engine')?.classList.remove('hidden');
+    return;
+  }
+
   // ZERO-TRUST AUTHORIZATION GUARD
   const sysTier = sessionStorage.getItem('atlasdt_tier') || 'basic';
   const restrictedViews = ['tariff', 'taxonomy'];

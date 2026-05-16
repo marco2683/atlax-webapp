@@ -97,15 +97,59 @@ function crudPlugin() {
                 }
               }
               
-              await fs.writeFile(filePath, JSON.stringify(suppliers, null, 2));
-              res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify({ success: true }));
-            } catch(e) {
-              res.statusCode = 500;
-              res.end(JSON.stringify({ error: e.message }));
+                await fs.writeFile(filePath, JSON.stringify(suppliers, null, 2));
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ success: true }));
+              } catch(e) {
+                res.statusCode = 500;
+                res.end(JSON.stringify({ error: e.message }));
+              }
+            });
+          } else if (req.url.startsWith('/api/platform-access')) {
+            if (req.method === 'GET') {
+              try {
+                const filePath = resolve(__dirname, 'public/cms/platform_access.json');
+                let raw = '[]';
+                try { raw = await fs.readFile(filePath, 'utf-8'); } catch(e) {}
+                res.setHeader('Content-Type', 'application/json');
+                res.end(raw);
+              } catch(e) {
+                res.statusCode = 500;
+                res.end(JSON.stringify({ error: e.message }));
+              }
+            } else if (req.method === 'POST' || req.method === 'DELETE') {
+              let body = '';
+              req.on('data', chunk => { body += chunk.toString(); });
+              req.on('end', async () => {
+                try {
+                  const filePath = resolve(__dirname, 'public/cms/platform_access.json');
+                  let raw = '[]';
+                  try { raw = await fs.readFile(filePath, 'utf-8'); } catch(e) {}
+                  let emails = JSON.parse(raw);
+  
+                  if (req.method === 'POST') {
+                    const data = JSON.parse(body);
+                    if (data.email && !emails.includes(data.email.toLowerCase().trim())) {
+                      emails.push(data.email.toLowerCase().trim());
+                    }
+                  } else if (req.method === 'DELETE') {
+                    const urlObj = new URL(req.url, 'http://' + req.headers.host);
+                    const emailToRemove = urlObj.searchParams.get('email');
+                    if (emailToRemove) {
+                      emails = emails.filter(e => e !== emailToRemove.toLowerCase().trim());
+                    }
+                  }
+                  
+                  await fs.writeFile(filePath, JSON.stringify(emails, null, 2));
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(JSON.stringify({ success: true, emails }));
+                } catch(e) {
+                  res.statusCode = 500;
+                  res.end(JSON.stringify({ error: e.message }));
+                }
+              });
             }
-          });
-        } else if (req.url.startsWith('/.netlify/functions/admin-rfqs')) {
+          } else if (req.url.startsWith('/.netlify/functions/admin-rfqs')) {
           import('@supabase/supabase-js').then(async ({ createClient }) => {
             const { loadEnv } = await import('vite');
             const env = loadEnv('development', process.cwd(), '');
