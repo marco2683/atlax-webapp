@@ -785,7 +785,7 @@
   font-weight: 800;
   color: #ffffff !important;
   margin: 0;
-  padding: 20px 16px;
+  padding: 32px 16px 16px;
   letter-spacing: -0.5px;
   line-height: 1.2;
   text-align: center;
@@ -793,6 +793,10 @@
   position: relative;
   z-index: 2;
   width: 100%;
+  min-height: calc(1.8rem * 1.2 * 2 + 48px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
@@ -833,7 +837,7 @@
   font-size: 13px;
   font-style: italic;
   color: rgba(255, 255, 255, 0.6);
-  margin: 0px 0 12px;
+  margin: 16px 0 32px;
   text-align: center;
   letter-spacing: 0.3px;
   position: relative;
@@ -878,11 +882,11 @@
 .pb-stage-list {
   list-style: none;
   padding: 0;
-  margin: 0 0 16px 0;
+  margin: 0 0 24px 0;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 20px;
   align-items: center;
 }
 
