@@ -107,16 +107,18 @@ function crudPlugin() {
             });
           } else if (req.url.startsWith('/api/platform-access')) {
             if (req.method === 'GET') {
-              try {
-                const filePath = resolve(__dirname, 'public/cms/platform_access.json');
-                let raw = '[]';
-                try { raw = await fs.readFile(filePath, 'utf-8'); } catch(e) {}
-                res.setHeader('Content-Type', 'application/json');
-                res.end(raw);
-              } catch(e) {
-                res.statusCode = 500;
-                res.end(JSON.stringify({ error: e.message }));
-              }
+              (async () => {
+                try {
+                  const filePath = resolve(__dirname, 'public/cms/platform_access.json');
+                  let raw = '[]';
+                  try { raw = await fs.readFile(filePath, 'utf-8'); } catch(e) {}
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(raw);
+                } catch(e) {
+                  res.statusCode = 500;
+                  res.end(JSON.stringify({ error: e.message }));
+                }
+              })();
             } else if (req.method === 'POST' || req.method === 'DELETE') {
               let body = '';
               req.on('data', chunk => { body += chunk.toString(); });
