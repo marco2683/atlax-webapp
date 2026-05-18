@@ -3,6 +3,11 @@
    Breakpoints: 768px (mobile), 1024px (tablet)
    ═══════════════════════════════════════════════════════ */
 
+/* Mobile only insert hidden on desktop */
+.mobile-only-insert {
+  display: none !important;
+}
+
 /* ── Hamburger Toggle (hidden on desktop) ─────────────── */
 .mobile-menu-toggle {
   display: none;
@@ -141,6 +146,11 @@
     padding: 12px 0 !important;
     margin-top: 12px;
     border-radius: 0 0 12px 12px;
+  }
+
+  /* ── Hide Manufacturing Timeline on Mobile ── */
+  .mfg-timeline-wrap {
+    display: none !important;
   }
 
   /* Nav links inside the mobile menu — full-width tap targets */
@@ -313,9 +323,21 @@
     display: none !important;
   }
 
-  /* ── Homepage Hero Logo — position at ~45vh on mobile ── */
+  /* ── Homepage Hero Logo & Spacing on mobile ── */
   .hero-top-section {
-    padding-top: 35vh !important;
+    padding-top: 25vh !important;
+  }
+
+  .m-hero__content > img {
+    margin-bottom: 40px !important;
+  }
+  
+  .m-hero__content h1 {
+    margin-bottom: 48px !important;
+  }
+  
+  .m-hero__content > div.seq-anim-4 {
+    gap: 24px !important;
   }
 
   /* ══════════════════════════════════════════════════════
@@ -1294,12 +1316,33 @@
   }
 
   .prd-who-inner {
-    grid-template-columns: 1fr !important;
+    display: flex !important;
+    flex-direction: column !important;
     gap: 32px !important;
   }
 
-  .prd-who-eyebrow {
-    text-align: center !important;
+  .prd-who-left {
+    order: 1 !important;
+    width: 100% !important;
+  }
+
+  .prd-who-right {
+    order: 2 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Reset any hardcoded desktop heights for the bentos on mobile */
+  .prd-who-right > div {
+    min-height: auto !important;
+    height: auto !important;
+    aspect-ratio: 4/5 !important;
+  }
+
+  .prd-who-eyebrow,
+  .prd-who-title,
+  .prd-who-body {
+    text-align: left !important;
   }
 
   .prd-who-title {
@@ -1307,17 +1350,16 @@
   }
 
   .prd-who-body {
-    font-size: 0.9rem !important;
-    text-align: center !important;
+    font-size: 0.95rem !important;
   }
 
   .prd-who-left ul {
-    align-items: center !important;
+    align-items: flex-start !important;
   }
 
   .prd-who-left ul li {
-    justify-content: center !important;
-    text-align: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
   }
 
   .prd-who-right {
@@ -1367,17 +1409,25 @@
     padding: 0 !important;
   }
 
-  /* Hide the "How can we help you" prompt bar on mobile */
+  /* Show the "Discover how we can help you" prompt bar on mobile */
   .pb-stages-container > .hero-prompt {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: -70px auto 40px !important;
+  }
+
+  /* Hide the fading edges on the carousel for mobile */
+  .platform-carousel-wrap > div[style*="pointer-events: none"] {
     display: none !important;
   }
 
-  /* Cards stack vertically */
+  /* Stage Cards 1x4 Grid */
   .pb-stages-grid {
     grid-template-columns: 1fr !important;
-    gap: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
+    gap: 16px !important;
+    display: grid !important;
   }
 
   /* Wrapper for card + USP + arrow (JS-generated on mobile) */
@@ -1402,6 +1452,7 @@
 
   .pb-stage-card {
     aspect-ratio: auto !important;
+    height: calc(40vh) !important;
     min-height: 240px !important;
     flex: 0 0 auto !important;
     border-radius: 16px !important;
@@ -1412,12 +1463,42 @@
   }
 
   .pb-stage-title {
-    font-size: 1.3rem !important;
-    padding: 14px 12px !important;
+    font-size: 1.8rem !important;
+    padding: 24px 12px 12px !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     LAYOUT & SPACING TWEAKS
+     ══════════════════════════════════════════════════════════ */
+  .hero-top-section {
+    padding-top: 4vh !important;
+  }
+  
+  .m-hero__content {
+    justify-content: space-evenly !important;
+    min-height: 85vh !important;
+  }
+
+  .prd-tech-capabilities-container {
+    margin-top: 60px !important;
+  }
+
+  .quality-grid-container {
+    aspect-ratio: 1 / 1.8 !important; /* Extremely tall to fit bottom videos */
+    height: auto !important;
+  }
+
+  .pb-stage-list {
+    gap: 16px !important;
+    padding: 16px 12px 24px !important;
   }
 
   .pb-stage-list li {
-    font-size: 13px !important;
+    font-size: 16px !important;
+  }
+
+  .mobile-only-insert {
+    display: block !important;
   }
 
   .pb-stage-cta {

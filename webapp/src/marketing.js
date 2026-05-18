@@ -34,10 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let uspObserver = null;
 
   function handleCardFlow() {
+    // Disabled per user request: we now just use a 2x2 CSS grid instead of full-screen wrappers.
+    return;
     const grid = document.querySelector('.pb-stages-grid');
     if (!grid) return;
 
-    if (window.innerWidth <= 768) {
+    if (false && window.innerWidth <= 768) {
       if (mobileFlowInitialized) return;
       mobileFlowInitialized = true;
 

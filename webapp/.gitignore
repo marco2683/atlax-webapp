@@ -27,3 +27,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+assets/vids/*.MOV
+assets/vids/*.zip  

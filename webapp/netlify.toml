@@ -1,6 +1,6 @@
-[[edge_functions]]
-  path = "/*"
-  function = "protect"
+# [[edge_functions]]
+#   path = "/*"
+#   function = "protect"
 
 [build]
   command = "npm run build"
