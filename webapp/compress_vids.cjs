@@ -4,7 +4,7 @@ ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 const path = require('path');
 const fs = require('fs');
 
-const vidsToCompress = ['IMG_1536.MOV', 'IMG_2087.MOV', 'IMG_2085.MOV'];
+const vidsToCompress = ['IMG_2096.MOV', 'IMG_4430.MOV', 'IMG_1562.MOV', 'IMG_4404.MOV', 'IMG_1521.MOV'];
 const vidsDir = path.join(__dirname, 'assets', 'vids');
 
 async function compressVideo(filename) {
