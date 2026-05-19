@@ -1188,20 +1188,23 @@
 
     <!-- TECHNICAL CAPABILITIES (Alternating Layout) -->
     <div class="prd-tech-capabilities-container"
-      style="margin-top: 140px; width: 100%; display: flex; flex-direction: column; gap: 50px;">
+      style="margin-top: 80px; width: 100%; display: flex; flex-direction: column; gap: 50px;">
 
       <!-- Row 1: Image Left, Text Right (Header + Tooling) -->
       <div class="m-fade-up prd-who-inner"
-        style="max-width: 1400px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: stretch;">
+        style="max-width: 1400px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: center;">
         <div class="prd-who-right" style="width: 100%; max-width: 600px;">
-          <!-- Bento Box moved to left, set to height: 100% to fill vertical space -->
+          <!-- Bento Box moved to left, fixing intrinsic blowout with minmax(0, fr) -->
           <div
-            style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 12px; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.15); height: 100%; min-height: 450px;">
-            <video src="/assets/vids/VID_20191016_170234.mp4" autoplay loop muted playsinline
-              style="grid-column: 1 / span 2; width: 100%; height: 100%; object-fit: cover; min-height: 0;"></video>
-            <img src="/assets/vids/IMG_4388.jpg" style="width: 100%; height: 100%; object-fit: cover; min-height: 0;">
+            style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 12px; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.15); aspect-ratio: 12/10; width: 100%;">
+            <video src="/assets/vids/IMG_2096.MOV" autoplay loop muted playsinline
+              style="grid-column: 1; grid-row: 1 / span 3; width: 100%; height: 100%; object-fit: cover; min-height: 0;"></video>
+            <img src="/assets/vids/IMG_4388.jpg"
+              style="grid-column: 2; grid-row: 1; width: 100%; height: 100%; object-fit: cover; min-height: 0;">
             <img src="/assets/vids/IMG_20191016_165543.jpg"
-              style="width: 100%; height: 100%; object-fit: cover; min-height: 0;">
+              style="grid-column: 2; grid-row: 2; width: 100%; height: 100%; object-fit: cover; min-height: 0;">
+            <video src="/assets/vids/IMG_4430.MOV" autoplay loop muted playsinline
+              style="grid-column: 2; grid-row: 3; width: 100%; height: 100%; object-fit: cover; min-height: 0;"></video>
           </div>
         </div>
         <div class="prd-who-left"
@@ -1228,6 +1231,8 @@
               <li><strong style="color: #0e7a6c;">Tooling &amp; Injection Moulding</strong></li>
               <li><strong style="color: #0e7a6c;">Silicone Moulding</strong></li>
               <li><strong style="color: #0e7a6c;">CNC Machining &amp; Metal Fabrication</strong></li>
+              <li><strong style="color: #0e7a6c;">Multi-Cavity &amp; Overmolding</strong></li>
+              <li><strong style="color: #0e7a6c;">Rapid Prototype Tooling</strong></li>
             </ul>
           </div>
         </div>
@@ -1253,13 +1258,17 @@
               <li><strong style="color: #0e7a6c;">Factory Automation</strong></li>
               <li><strong style="color: #0e7a6c;">Assembly &amp; Box-Build</strong></li>
               <li><strong style="color: #0e7a6c;">Electronics &amp; PCBA Development</strong></li>
+              <li><strong style="color: #0e7a6c;">Robotics &amp; Conveyor Integration</strong></li>
+              <li><strong style="color: #0e7a6c;">End-of-Line Testing (EOL)</strong></li>
             </ul>
           </div>
         </div>
         <div class="prd-who-right" style="width: 100%; max-width: 600px;">
           <div
-            style="border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.15); aspect-ratio: 16/10;">
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.15); aspect-ratio: 16/10;">
             <video src="/assets/vids/IMG_1562.MOV" autoplay loop muted playsinline
+              style="width: 100%; height: 100%; object-fit: cover;"></video>
+            <video src="/assets/vids/IMG_4404.MOV" autoplay loop muted playsinline
               style="width: 100%; height: 100%; object-fit: cover;"></video>
           </div>
         </div>
@@ -1297,6 +1306,8 @@
               <li><strong style="color: #0e7a6c;">Medical Device Manufacturing</strong></li>
               <li><strong style="color: #0e7a6c;">Clean Room Assembly</strong></li>
               <li><strong style="color: #0e7a6c;">Surface Finishing &amp; Post-Processing</strong></li>
+              <li><strong style="color: #0e7a6c;">ISO-Certified Environments</strong></li>
+              <li><strong style="color: #0e7a6c;">Sterile Packaging Solutions</strong></li>
             </ul>
           </div>
         </div>
@@ -1322,19 +1333,26 @@
               <li><strong style="color: #0e7a6c;">Quality Assurance &amp; Compliance</strong></li>
               <li><strong style="color: #0e7a6c;">CMM &amp; Metrology Testing</strong></li>
               <li><strong style="color: #0e7a6c;">Design for Manufacturing (DFM)</strong></li>
+              <li><strong style="color: #0e7a6c;">X-Ray &amp; Non-Destructive Testing</strong></li>
+              <li><strong style="color: #0e7a6c;">Statistical Process Control (SPC)</strong></li>
             </ul>
           </div>
         </div>
-        <div class="prd-who-right" style="width: 100%; max-width: 600px;">
+        <div class="prd-who-right" style="width: 100%; max-width: 400px;">
           <div class="quality-grid-container"
             style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.15); aspect-ratio: 3/4;">
             <video src="/assets/vids/IMG_1536.mp4" autoplay loop muted playsinline
-              style="width: 100%; height: 100%; object-fit: cover;"></video>
-            <img src="/assets/vids/P1100878.JPG" style="width: 100%; height: 100%; object-fit: cover;">
+              style="grid-column: 1; grid-row: 1 / span 2; width: 100%; height: 100%; object-fit: cover;"></video>
+            
             <video src="/assets/vids/IMG_2087.mp4" autoplay loop muted playsinline
-              style="width: 100%; height: 100%; object-fit: cover;"></video>
-            <video src="/assets/vids/IMG_2085.mp4" autoplay loop muted playsinline
-              style="width: 100%; height: 100%; object-fit: cover;"></video>
+              style="grid-column: 2; grid-row: 1; width: 100%; height: 100%; object-fit: cover;"></video>
+            
+            <div style="grid-column: 2; grid-row: 2; position: relative; width: 100%; height: 100%; overflow: hidden; background: #f8fafc;">
+              <video src="/assets/vids/IMG_2085.mp4" autoplay loop muted playsinline
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(20px); transform: scale(1.1); opacity: 0.6;"></video>
+              <video src="/assets/vids/IMG_2085.mp4" autoplay loop muted playsinline
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;"></video>
+            </div>
           </div>
         </div>
       </div>
