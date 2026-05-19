@@ -325,34 +325,40 @@
 
   /* ── Homepage Hero Logo & Spacing on mobile ── */
   .hero-top-section {
-    padding-top: 15vh !important; /* Reduced to bring content up */
-    min-height: 100svh !important; /* Use svh for better mobile compatibility */
+    padding-top: 10vh !important; /* Move everything up */
+    min-height: 100svh !important; 
   }
 
   .m-hero__content > img {
     height: auto !important;
-    width: 65% !important;
-    max-width: 280px !important;
-    margin-bottom: 24px !important;
+    width: 85% !important; /* Increased logo size */
+    max-width: 320px !important;
+    margin-bottom: 32px !important; /* More breathing room */
   }
   
   .m-hero__content h1 {
-    font-size: clamp(1.7rem, 6.5vw, 2.5rem) !important; /* Smaller, responsive title */
-    margin-bottom: 24px !important; /* Tighter gap */
+    font-size: clamp(1.8rem, 7.5vw, 2.8rem) !important; 
+    margin-bottom: 32px !important; /* More breathing room */
   }
   
   .m-hero__content > p.seq-anim-3 {
-    font-size: 1.05rem !important; /* Scale down paragraph by ~15% */
+    font-size: 1.05rem !important; 
     margin-bottom: 32px !important;
   }
   
   .m-hero__content > div.seq-anim-4 {
-    gap: 12px !important; /* Tighter gap between buttons */
+    gap: 16px !important; /* Slightly better spacing between buttons */
+    margin-bottom: 40px !important; /* Push the bottom text further down */
   }
   
   .m-hero__content .btn-marketing {
-    padding: 12px 20px !important; /* Reduced padding by ~15% */
-    font-size: 0.9rem !important;
+    padding: 14px 20px !important; 
+    font-size: 0.95rem !important;
+  }
+
+  /* Prevent the next section from aggressively pulling up and overlapping buttons on mobile */
+  #home-cards-section {
+    margin-top: -20px !important; /* Reduced from -100px */
   }
 
   /* ══════════════════════════════════════════════════════
