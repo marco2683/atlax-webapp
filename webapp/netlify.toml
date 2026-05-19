@@ -5,3 +5,21 @@
 [build]
   command = "npm run build"
   publish = "dist"
+
+[[redirects]]
+  from = "/api/platform-access"
+  to = "/cms/platform_access.json"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff"
+  to = "/cms/staff.json"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/suppliers"
+  to = "/cms/suppliers.json"
+  status = 200
+  force = true
