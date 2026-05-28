@@ -471,7 +471,10 @@ export default defineConfig({
         faq: resolve(__dirname, 'faq.html'),
         nda: resolve(__dirname, 'nda.html'),
         "privacy-policy": resolve(__dirname, 'privacy-policy.html'),
-        "website-terms": resolve(__dirname, 'website-terms.html')
+        "website-terms": resolve(__dirname, 'website-terms.html'),
+        "who-we-help": resolve(__dirname, 'who-we-help.html'),
+        "how-it-works": resolve(__dirname, 'how-it-works.html'),
+        "email-signature": resolve(__dirname, 'email-signature.html')
       }
     }
   }

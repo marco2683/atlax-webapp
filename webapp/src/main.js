@@ -86,7 +86,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Platform Access Gate
   window.hasPlatformAccess = false;
-  if (user) {
+  const isLocalDev = import.meta.env.DEV || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  
+  if (isLocalDev) {
+    // Local dev: grant full access, skip remote API check
+    window.hasPlatformAccess = true;
+    console.log('[PRD] Local dev mode — platform access granted.');
+  } else if (user) {
     try {
       const res = await fetch('/api/platform-access');
       if (res.ok) {

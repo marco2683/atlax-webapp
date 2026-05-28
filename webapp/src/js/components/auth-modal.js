@@ -24,23 +24,29 @@ export function initAuthModal() {
   const loginForm = document.getElementById('login-form');
   const signupForm = document.getElementById('signup-form');
 
-  // Inject Turnstile into signup form
-  if (signupForm) {
-     const turnstileContainer = document.createElement('div');
-     turnstileContainer.className = 'cf-turnstile auth-input-group';
-     turnstileContainer.dataset.sitekey = '0x4AAAAAADOr_yhZAEAJ5dWN'; // Turnstile test key
-     turnstileContainer.style.marginTop = '15px';
-     signupForm.insertBefore(turnstileContainer, document.getElementById('signup-submit-btn'));
+  function injectTurnstile(formEl, btnId) {
+    if (formEl && !formEl.querySelector('.cf-turnstile')) {
+       const turnstileContainer = document.createElement('div');
+       turnstileContainer.className = 'cf-turnstile auth-input-group';
+       turnstileContainer.dataset.sitekey = '0x4AAAAAADOr_yhZAEAJ5dWN'; // Turnstile test key
+       turnstileContainer.style.marginTop = '15px';
+       formEl.insertBefore(turnstileContainer, document.getElementById(btnId));
 
-     if (!document.getElementById('turnstile-script')) {
-        const script = document.createElement('script');
-        script.id = 'turnstile-script';
-        script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-     }
+       if (!document.getElementById('turnstile-script')) {
+          const script = document.createElement('script');
+          script.id = 'turnstile-script';
+          script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+          script.async = true;
+          script.defer = true;
+          document.head.appendChild(script);
+       } else if (window.turnstile) {
+          window.turnstile.render(turnstileContainer, { sitekey: '0x4AAAAAADOr_yhZAEAJ5dWN' });
+       }
+    }
   }
+
+  injectTurnstile(signupForm, 'signup-submit-btn');
+  injectTurnstile(loginForm, 'login-submit-btn');
 
   // Function to open modal
   function openModal(state = 'login') {
@@ -117,11 +123,20 @@ export function initAuthModal() {
       const btn = document.getElementById('login-submit-btn');
       const err = document.getElementById('login-error');
       
+      const captchaToken = loginForm.querySelector('[name="cf-turnstile-response"]')?.value;
+
+      const isLocal = import.meta.env.DEV || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.');
+      if (!captchaToken && !isLocal) {
+        err.textContent = 'Please complete the CAPTCHA to proceed.';
+        err.classList.add('visible');
+        return;
+      }
+
       btn.disabled = true;
       btn.textContent = 'Logging in...';
       err.classList.remove('visible');
 
-      const { data, error } = await loginUser(email, pass);
+      const { data, error } = await loginUser(email, pass, captchaToken);
       
       btn.disabled = false;
       btn.textContent = 'Log In';
@@ -130,9 +145,11 @@ export function initAuthModal() {
         err.textContent = error.message;
         err.classList.add('visible');
       } else {
-        // Do not redirect to /app.html, simply close the modal to keep the user where they are
-        closeModal();
-        loginForm.reset();
+        if (window.location.pathname.includes('app.html')) {
+            window.location.reload();
+        } else {
+            window.location.href = '/app.html';
+        }
       }
     });
   }

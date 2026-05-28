@@ -46,12 +46,47 @@ export async function signUpUser(email, password, metadata = {}, captchaToken = 
  * @param {string} email 
  * @param {string} password 
  */
-export async function loginUser(email, password) {
+export async function loginUser(email, password, captchaToken = null) {
     try {
-        const { data, error } = await supabase.auth.signInWithPassword({
+        // Local Dev Fallback (Offline / Localhost bypass)
+        const isLocal = import.meta.env.DEV || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.');
+        if (isLocal) {
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success) {
+                        const mockSession = {
+                            access_token: "local_dev_token",
+                            token_type: "bearer",
+                            expires_in: 3600,
+                            refresh_token: "local_dev_refresh",
+                            user: { id: "local-dev-id", email: data.user.email, user_metadata: { first_name: data.user.name } }
+                        };
+                        // Get Supabase URL key dynamically or hardcode the project ref
+                        const sbKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token')) || 'sb-qvxrwbcmyrugjevgvujb-auth-token';
+                        localStorage.setItem(sbKey, JSON.stringify(mockSession));
+                        sessionStorage.setItem('atlasdt_tier', 'pro');
+                        return { data: { user: mockSession.user }, error: null };
+                    }
+                }
+            } catch (err) {
+                console.warn('Local /api/login failed, falling back to Supabase...', err);
+            }
+        }
+
+        const payload = {
             email,
             password
-        });
+        };
+        if (captchaToken) {
+            payload.options = { captchaToken };
+        }
+        const { data, error } = await supabase.auth.signInWithPassword(payload);
         if (error) throw error;
         return { data, error: null };
     } catch (error) {
@@ -116,6 +151,21 @@ export async function updatePassword(newPassword) {
  */
 export async function getCurrentUser() {
     try {
+        // Check for local dev mock session first
+        const isLocal = import.meta.env.DEV || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.');
+        if (isLocal) {
+            const sbKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+            if (sbKey) {
+                const localToken = localStorage.getItem(sbKey);
+                try {
+                    const session = JSON.parse(localToken);
+                    if (session && session.access_token === "local_dev_token") {
+                        return session.user;
+                    }
+                } catch(e) {}
+            }
+        }
+
         const { data: { user }, error } = await supabase.auth.getUser();
         if (error) throw error;
         return user;
